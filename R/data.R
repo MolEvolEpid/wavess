@@ -20,4 +20,4 @@
 #' Founder:
 #' <https://www.sciencedirect.com/science/article/pii/S0022175914000143?via%3Dihub>
 #' <https://www.hiv.lanl.gov/components/sequence/HIV/asearch/query_one.comp?se_id=KC473833>
-#' "hxb2_founder"
+"hxb2_founder"
