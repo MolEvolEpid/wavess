@@ -2,16 +2,13 @@
 #'
 #' @inheritParams define_growth_curve
 #'
-#' @return error if input parameters are incorrect
-#'
-#' @examples
-#' check_define_growth_curve_inputs('logistic', 3000, 2000, 1, 30, 0.9)
+#' @return error if inputs are incorrect
 check_define_growth_curve_inputs <- function(curve_type, gN, K, n0, gS, pK){
   check_is_pos(gN, 'gN')
   check_is_pos(K, 'K')
   check_is_numeric(n0, 'n0')
   check_is_numeric(gS, 'gS')
-  check_is_numeric(pK, 'pK')
+  check_is_0to1(pK, 'pK')
   if(!curve_type %in% c('logistic', 'linear', 'constant')){
     stop('`curve_type` must be logistic, linear, or constant. You provided: ',
          curve_type)
@@ -19,8 +16,6 @@ check_define_growth_curve_inputs <- function(curve_type, gN, K, n0, gS, pK){
     stop('n0 must be a number \u2264K, but is ', n0)
   }else if(gS > gN){
     stop('gS must be a number \u2264gN, but is ', gS)
-  }else if(pK < 0 | pK > 1){
-    stop('pK must be in the range [0,1], but is ', pK)
   }
 }
 
@@ -28,10 +23,7 @@ check_define_growth_curve_inputs <- function(curve_type, gN, K, n0, gS, pK){
 #'
 #' @inheritParams define_sampling_scheme
 #'
-#' @return error if input parameters are incorrect
-#'
-#' @examples
-#' check_define_sampling_scheme_inputs(define_growth_curve(), 300, 20)
+#' @return error if inputs are incorrect
 check_define_sampling_scheme_inputs <- function(growth_curve, sampling_frequency, max_samp){
   check_is_pos(sampling_frequency, 'sampling_frequency')
   check_is_pos(max_samp, 'max_samp')
@@ -44,15 +36,91 @@ check_define_sampling_scheme_inputs <- function(growth_curve, sampling_frequency
   }
 }
 
+#' Check get_seq_pos inputs
+#'
+#' @inheritParams get_seq_pos
+#'
+#' @return error if inputs are incorrect
+check_get_seq_pos_inputs <- function(aln_df, col_name){
+  check_is_df(aln_df, 'aln_df')
+  check_is_string(col_name, 'col_name')
+}
+
+#' Check map_ref_founder inputs
+#'
+#' @inheritParams map_ref_founder
+#'
+#' @return error if inputs are incorrect
+check_map_ref_founder_inputs <- function(aln, ref, founder){
+  check_is_dnabin(aln, 'aln')
+  check_is_string(ref, 'ref')
+  check_is_string(founder, 'founder')
+  check_name_in_alignment(aln, ref, 'aln', 'ref')
+  check_name_in_alignment(aln, founder, 'aln', 'founder')
+}
+
+#' Check find_consensus_inputs
+#'
+#' @inheritParams find_consensus
+#'
+#' @return error if inputs are incorrect
+check_find_consensus_inputs <- function(aln, founder, ref, founder_aln, founder_start_pos){
+  check_is_dnabin(aln, 'aln')
+  check_is_string(founder, 'founder')
+  check_is_pos(founder_start_pos, 'founder_start_pos')
+  if(is.null(ref) & is.null(founder_aln)){
+    check_name_in_alignment(aln, founder, 'aln', 'founder')
+  }else if(!is.null(ref)){
+    check_is_string(ref, 'ref')
+    if(is.null(founder_aln))
+      stop('When `ref` is specified, `founder_aln` must also be specified')
+  }else if(!is.null(founder_aln)){
+    check_is_dnabin(founder_aln, 'founder_aln')
+    if(is.null(ref))
+      stop('When `founder_aln` is specified, `ref` must also be specified')
+  }
+  if(!is.null(ref) & !is.null(founder_aln)){
+    check_name_in_alignment(aln, ref, 'aln', 'ref')
+    check_name_in_alignment(founder_aln, ref, 'founder_aln', 'ref')
+    check_name_in_alignment(founder_aln, founder, 'founder_aln', 'founder')
+  }
+}
+
+#' Check identify_conserved_sites inputs
+#'
+#' @inheritParams identify_conserved_sites
+#'
+#' @return error if inputs are incorrect
+check_identify_conserved_sites_inputs <- function(aln, founder, thresh, ref,
+                                           founder_aln, founder_start_pos){
+  check_find_consensus_inputs(aln, founder, ref, founder_aln, founder_start_pos)
+  check_is_numeric(thresh)
+  if(thresh < 0 | thresh > 1)
+    stop('`thresh` must be a number between 0 and 1 inclusive')
+}
+
+
+#' Check if name is in alignment
+#'
+#' @param aln Alignment in DNAbin format
+#' @param name Name of sequence to check
+#' @param aln_name Name of alignment
+#' @param name_name Name of name
+#'
+#' @return error if name isn't in the alignment
+check_name_in_alignment <- function(aln, name, aln_name, name_name){
+  check_is_dnabin(aln, aln_name)
+  check_is_string(name, name_name)
+  if(!name %in% labels(aln))
+    stop(name_name, ' must be the name of a sequence in ', aln_name, ', but is ', name)
+}
+
 #' Check if a variable is numeric
 #'
 #' @param x variable to check
 #' @param var_name name of variable
 #'
 #' @return error if variable is not numeric
-#'
-#' @examples
-#' check_is_numeric(1, 'test_var')
 check_is_numeric <- function(x, var_name){
   if(!is.numeric(x)){
     stop(var_name, ' must be numeric, but is a ', class(x))
@@ -64,13 +132,10 @@ check_is_numeric <- function(x, var_name){
 #' @inheritParams check_is_numeric
 #'
 #' @return error if variable is not positive
-#'
-#' @examples
-#' check_is_pos(1, 'test_var')
 check_is_pos <- function(x, var_name){
   check_is_numeric(x, var_name)
-  if(x <= 0){
-    stop(var_name, ' must be a positive number, but is ', x)
+  if(any(x <= 0)){
+    stop(var_name, ' must be a positive number(s), but is ', x)
   }
 }
 
@@ -80,11 +145,83 @@ check_is_pos <- function(x, var_name){
 #' @param var_name name of variable
 #'
 #' @return error if variable is not numeric
-#'
-#' @examples
-#' check_is_df(define_growth_curve(), 'test_var')
 check_is_df <- function(x, var_name){
   if(!is.data.frame(x)){
     stop(var_name, ' must be a data frame or tibble, but is a ', class(x))
+  }
+}
+
+#' Check if a variable is a string
+#'
+#' @param x variable to check
+#' @param var_name name of variable
+#'
+#' @return error if variable is not a string
+check_is_string <- function(x, var_name){
+  if(!is.character(x)){
+    stop(var_name, ' must be a string, but is a ', class(x))
+  }
+}
+
+#' Check if a variable is between 0 and 1 inclusive
+#'
+#' @param x variable to check
+#' @param var_name name of variable
+#'
+#' @return error if variable is not between 0 and 1 inclusive
+check_is_0to1 <- function(x, var_name){
+  check_is_numeric(x, var_name)
+  if(x < 0 | x > 1){
+    stop(var_name, ' must be in the range [0,1], but is ', x)
+  }
+}
+
+#' Check if a variable is a DNAbin object
+#'
+#' @param x variable to check
+#' @param var_name name of variable
+#'
+#' @return error if variable is not a DNAbin object
+check_is_dnabin <- function(x, var_name){
+  class_x <- class(x)
+  if(!class_x == "DNAbin")
+    stop(var_name,
+         ' must be of the `ape` class `DNAbin` (e.g. an alignment read in using `ape::read.FASTA()` or `ape::read.dna()` but is ',
+         class_x)
+}
+
+check_sample_epitopes_inputs <- function(epitope_probabilities, start_aa_pos, end_aa_pos,
+                                         num_epitopes, aa_epitope_length,
+                                         min_max_fit_cost, max_max_fit_cost, cost_type,
+                                         max_resamples, ref_founder_map){
+  check_is_df(epitope_probabilities)
+  if(!all(c('aa_position', 'epitope_probability') %in% colnames(epitope_probabilities))){
+    stop('The following columns must be included in `epitope_probabilities`:
+         `aa_position`, `epitope_probability`. See `sample_epitopes()`
+         documentation for more details')
+  }
+  check_is_string(cost_type)
+  if(!cost_type %in% c('linear', 'random')){
+    stop('Cost type must be either "linear" or "random", but you supplied: ', cost_type)
+  }
+  check_is_pos(start_aa_pos, 'start_aa_pos')
+  if(!is.null(end_aa_pos)){
+    check_is_pos(end_aa_pos, 'end_aa_pos')
+  }
+  check_is_pos(num_epitopes, 'num_epitopes')
+  check_is_pos(aa_epitope_length, 'aa_epitope_length')
+  check_is_0to1(min_max_fit_cost, 'min_max_fit_cost')
+  check_is_0to1(max_max_fit_cost, 'max_max_fit_cost')
+  check_is_pos(max_resamples, 'max_resamples')
+  if(!is.null(ref_founder_map)){
+    check_is_df(ref_founder_map)
+    if(!all(c('ref_pos', 'founder_pos') %in% colnames(ref_founder_map))){
+      stop('The following columns must be included in `ref_founder_map`:
+         `ref_pos`, `founder_pos`. See `sample_epitopes()`
+         documentation for more details')
+    }else{
+      check_is_numeric(ref_founder_map$ref_pos, 'ref_pos in ref_founder_map')
+      check_is_numeric(ref_founder_map$founder_pos, 'founder_pos in ref_founder_map')
+    }
   }
 }

@@ -2,3 +2,8 @@
 
 export(define_growth_curve)
 export(define_sampling_scheme)
+export(find_consensus)
+export(get_epitope_frequencies)
+export(identify_conserved_sites)
+export(map_ref_founder)
+export(sample_epitopes)
