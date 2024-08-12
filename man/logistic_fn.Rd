@@ -22,6 +22,3 @@ y value of logistic curve
 Get the y value for a logistic function given the
 x value, carrying capacity, growth rate, and midpoint
 }
-\examples{
-logistic_fn(1, 2000, 0.1, 30)
-}

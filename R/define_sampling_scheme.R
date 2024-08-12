@@ -12,16 +12,16 @@
 #' @export
 #'
 #' @examples
-#' define_growth_curve() %>% define_sampling_scheme()
+#' define_growth_curve() |> define_sampling_scheme()
 define_sampling_scheme <- function(growth_curve,
                                    sampling_frequency = 300,
                                    max_samp = 20){
   check_define_sampling_scheme_inputs(growth_curve, sampling_frequency, max_samp)
-  growth_curve %>%
-    dplyr::rowwise() %>%
+  ss <- growth_curve |>
+    dplyr::rowwise() |>
     # sample up to max_samp sequences every sampling_frequency generations
-    dplyr::mutate(n_sample_active = ifelse(generation%%sampling_frequency == 0,
-                                    min(max_samp, active_cell_count), 0)) %>%
-    dplyr::ungroup() %>%
-    return()
+    dplyr::mutate(n_sample_active = ifelse(.data$generation%%sampling_frequency == 0,
+                                    min(max_samp, .data$active_cell_count), 0)) |>
+    dplyr::ungroup()
+    return(ss)
 }

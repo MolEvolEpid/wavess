@@ -24,11 +24,8 @@ check_define_growth_curve_inputs(curve_type, gN, K, n0, gS, pK)
 (default: 0.9; used for logistic)}
 }
 \value{
-error if input parameters are incorrect
+error if inputs are incorrect
 }
 \description{
 Check define_growth_curve
-}
-\examples{
-check_define_growth_curve_inputs('logistic', 3000, 2000, 1, 30, 0.9)
 }

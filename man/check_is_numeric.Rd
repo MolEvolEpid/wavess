@@ -17,6 +17,3 @@ error if variable is not numeric
 \description{
 Check if a variable is numeric
 }
-\examples{
-check_is_numeric(1, 'test_var')
-}

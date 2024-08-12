@@ -17,6 +17,3 @@ error if variable is not positive
 \description{
 Check if a variable is positive
 }
-\examples{
-check_is_pos(1, 'test_var')
-}

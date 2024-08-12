@@ -17,11 +17,8 @@ sequences (and counts) (default: 300 generations)}
 given generation (default: 20 sequences)}
 }
 \value{
-error if input parameters are incorrect
+error if inputs are incorrect
 }
 \description{
 Check define_sampling_scheme
-}
-\examples{
-check_define_sampling_scheme_inputs(define_growth_curve(), 300, 20)
 }

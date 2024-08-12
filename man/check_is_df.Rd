@@ -17,6 +17,3 @@ error if variable is not numeric
 \description{
 Check if a variable is a dataframe or tibble
 }
-\examples{
-check_is_df(define_growth_curve(), 'test_var')
-}

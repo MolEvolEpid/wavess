@@ -47,15 +47,12 @@ define_growth_curve <- function(curve_type = 'logistic',
 
 #' Get logistic growth curve
 #'
-#' Note: to get the equations used in this function, I solved for k and xM using
-# the logistic functions for generation 0 and generation S (seroconversion generation)
+#' Note: to get the equations used in this function, I solved for the
+#' growth rate and midpoint based on n0, K, gS, and pK.
 #'
 #' @inheritParams define_growth_curve
 #'
 #' @return Population size at each generation
-#'
-#' @examples
-#' get_logistic_curve(1, 2000, 30, 0.9, 3000)
 get_logistic_curve <- function(n0, K, gS, pK, gN){
   # number of cells at seroconversion generation
   nS <- K*pK
@@ -82,9 +79,6 @@ get_logistic_curve <- function(n0, K, gS, pK, gN){
 #' @return y value of logistic curve
 #'
 #' @inheritParams define_growth_curve
-#'
-#' @examples
-#' logistic_fn(1, 2000, 0.1, 30)
 logistic_fn <- function(x, K, growth_rate, midpoint){
   K/(1+exp(-growth_rate*(x-midpoint)))
 }

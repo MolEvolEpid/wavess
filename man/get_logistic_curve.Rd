@@ -22,8 +22,6 @@ get_logistic_curve(n0, K, gS, pK, gN)
 Population size at each generation
 }
 \description{
-Note: to get the equations used in this function, I solved for k and xM using
-}
-\examples{
-get_logistic_curve(1, 2000, 30, 0.9, 3000)
+Note: to get the equations used in this function, I solved for the
+growth rate and midpoint based on n0, K, gS, and pK.
 }

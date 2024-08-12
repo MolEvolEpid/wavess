@@ -24,5 +24,5 @@ containing the number of sequences from active cells to samples
 Define sampling scheme
 }
 \examples{
-define_growth_curve() \%>\% define_sampling_scheme()
+define_growth_curve() |> define_sampling_scheme()
 }
