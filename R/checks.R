@@ -9,8 +9,8 @@ check_define_growth_curve_inputs <- function(curve_type, gN, K, n0, gS, pK){
   check_is_numeric(n0, 'n0')
   check_is_numeric(gS, 'gS')
   check_is_0to1(pK, 'pK')
-  if(!curve_type %in% c('logistic', 'linear', 'constant')){
-    stop('`curve_type` must be logistic, linear, or constant. You provided: ',
+  if(!curve_type %in% c('logistic', 'constant')){
+    stop('`curve_type` must be logistic or constant. You provided: ',
          curve_type)
   }else if(n0 > K){
     stop('n0 must be a number \u2264K, but is ', n0)

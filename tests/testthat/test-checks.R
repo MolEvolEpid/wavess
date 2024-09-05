@@ -1,6 +1,6 @@
 test_that("check_define_growth_curve_inputs works", {
   expect_error(define_growth_curve('not_a_curve'),
-               "`curve_type` must be logistic, linear, or constant. You provided: not_a_curve")
+               "`curve_type` must be logistic or constant. You provided: not_a_curve")
   expect_error(define_growth_curve(gN = 'a'), 'gN must be numeric, but is a character')
   expect_error(define_growth_curve(gN = -1), 'gN must be a positive')
   expect_error(define_growth_curve(K = 'a'), 'K must be numeric, but is a character')

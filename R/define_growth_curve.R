@@ -4,11 +4,10 @@
 #'
 #' @param curve_type type of growth, one of:
 #' `constant_pop` (constant population size),
-#' `linear` (constant growth),
 #' `logistic` (logistic growth; default)
 #' @param gN final sampling generation (default: 3000)
 #' @param K carrying capacity (default: 2000)
-#' @param n0 starting population size (default: 1; used for linear and logistic)
+#' @param n0 starting population size (default: 1; used for logistic)
 #' @param gS seroconversion generation (default: 30; used for logistic)
 #' @param pK proportion of carrying capacity population size at seroconversion
 #' (default: 0.9; used for logistic)
@@ -35,10 +34,6 @@ define_growth_curve <- function(curve_type = 'logistic',
     gen_df <- tibble::tibble(generation = 0:gN,
                              # infected cell population size over time
                              active_cell_count = K)
-  }else if(curve_type == 'linear'){
-    gen_df <- tibble::tibble(generation = 0:gN,
-                             # infected cell population size over time
-                             active_cell_count = floor(seq(n0, K, length.out = gN+1)))
   }
   return(gen_df)
 }

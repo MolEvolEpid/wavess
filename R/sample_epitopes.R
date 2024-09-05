@@ -140,7 +140,7 @@ convert_ref_to_founder_epitopes <- function(ref_epitopes, ref_founder_map){
     dplyr::left_join(ref_founder_map |>
                        # if there is a deletion in the HXB2 sequence,
                        # call it the nearest previous position
-                       tidyr::fill(.data$founder_pos, .direction = 'down'),
+                       tidyr::fill('founder_pos', .direction = 'down'),
                      by = c('ref_pos_start' = 'ref_pos')) |>
     dplyr::rename(epi_start_nt = 'founder_pos') |>
     dplyr::mutate(epi_end_nt = .data$epi_start_nt + (.data$ref_pos_end - .data$ref_pos_start)) |>

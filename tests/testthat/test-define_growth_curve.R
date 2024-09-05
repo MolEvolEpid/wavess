@@ -7,6 +7,4 @@ test_that("define_growth_curve works", {
   expect_equal(round(gc$active_cell_count[30]/2000, 1), 0.9)
   expect_equal(define_growth_curve(curve_type = 'constant')$active_cell_count,
                rep(2000, 3001))
-  expect_equal(define_growth_curve(curve_type = 'linear')$active_cell_count[3001],
-               2000)
 })
