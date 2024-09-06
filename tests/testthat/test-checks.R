@@ -155,4 +155,16 @@ test_that("check_map_ref_founder_inputs works", {
                                                max_resamples = 100,
                                                ref_founder_map = tibble::tibble(ref_pos=0:1,
                                                                                 founder_pos=0:1)))
+
+test_that('check_calc_nt_subst_probs_inputs works', {
+  expect_no_error(check_calc_nt_subst_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 'GTR+I+R(4)', 'none'))
+  expect_error(check_calc_nt_subst_probs_inputs('hiv_env_flt_2021', ape::rtree(3), 'GTR+I+R(4)', 'none'),
+               'aln must be of the ')
+  expect_error(check_calc_nt_subst_probs_inputs(hiv_env_flt_2021, 'ape::rtree(3)', 'GTR+I+R(4)', 'none'),
+               'tr must be of the ')
+  expect_error(check_calc_nt_subst_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 0, 'none'),
+               'model must be a string, but is a numeric')
+  expect_error(check_calc_nt_subst_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 'GTR+I+R(4)', 'wrong'),
+               'Rearrangement must be one of ')
+})
 })

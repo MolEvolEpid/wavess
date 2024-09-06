@@ -225,3 +225,35 @@ check_sample_epitopes_inputs <- function(epitope_probabilities, start_aa_pos, en
     }
   }
 }
+
+#' Check if a variable is a phylo object
+#'
+#' @param x variable to check
+#' @param var_name name of variable
+#'
+#' @return error if variable is not a phylo object
+check_is_phylo <- function(x, var_name){
+  class_x <- class(x)
+  if(!class_x == "phylo")
+    stop(var_name,
+         ' must be of the `ape` class `phylo` (e.g. an tree read in using `ape::read.tree()` but is ',
+         class_x)
+}
+
+#' Check map_ref_founder inputs
+#'
+#' @inheritParams map_ref_founder
+#'
+#' @return error if inputs are incorrect
+check_calc_nt_subst_probs_inputs <- function(aln, tr, model, rearrangement){
+  check_is_dnabin(aln, 'aln')
+  if(!is.null(tr)){
+    check_is_phylo(tr, 'tr')
+  }
+  check_is_string(model, 'model')
+  check_is_string(rearrangement, 'rearrangement')
+  if(!rearrangement %in% c("none", "NNI", "stochastic", "ratchet")){
+    stop('Rearrangement must be one of "none", "NNI", "stochastic" or "ratchet", but is ',
+         rearrangement)
+  }
+}
