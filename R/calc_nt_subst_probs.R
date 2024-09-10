@@ -1,5 +1,7 @@
 #' Calculate nucleotide substitution probabilities
 #'
+#' Fr this, you should probably use a set of within-host sequences for the genome region of interest.
+#'
 #' @param aln An alignment of class ape::DNAbin
 #' @param tr Starting tree
 #' @param model A string providing model (e.g. "GTR+G(4)+I")
@@ -11,8 +13,9 @@
 #' @export
 #'
 #' @examples
-#' # NOTE: This is just an example. You probably don't want to use 10 random samples.
-#' calc_nt_subst_probs(hiv_env_flt_2021[1:10])
+#' # NOTE: This is just an example. (**TODO: MAYBE ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
+#' hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
+#' calc_nt_subst_probs(hiv_env_flt_2021[1:10,])
 calc_nt_subst_probs <- function(aln, tr = NULL, model = 'GTR+R(4)+I', rearrangement = 'none'){
   check_calc_nt_subst_probs_inputs(aln, tr, model, rearrangement)
   if(is.null(tr)){
@@ -26,5 +29,6 @@ calc_nt_subst_probs <- function(aln, tr = NULL, model = 'GTR+R(4)+I', rearrangem
   prob_mat <- q_mat/rowSums(q_mat)
   rownames(prob_mat) <- c('A', 'C', 'G', 'T')
   colnames(prob_mat) <- c('A', 'C', 'G', 'T')
-  return(prob_mat)
+  return(data.frame(prob_mat))
 }
+
