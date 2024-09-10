@@ -7,17 +7,19 @@ Authors@R:
       person("Narmada", "Sambaturu", , "narmada.sambaturu@gmail.com", role = c("aut"),
            comment = c(ORCID = "0000-0002-2570-3699")))
 Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
     ape,
+    phangorn,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
     dplyr,
+    methods,
+    reticulate,
     stats,
     tibble,
     tidyr

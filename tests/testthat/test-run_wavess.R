@@ -1,0 +1,16 @@
+test_that("run_wavess works", {
+  hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
+  samp_scheme <- define_sampling_scheme(define_growth_curve(gN = 100), sampling_frequency = 50)
+  capture.output(probs <- calc_nt_subst_probs(hiv_env_flt_2021[1:3,]), file = nullfile())
+  out <- run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs)
+  expect_equal(out$counts$generation, c(0,50,100))
+  expect_equal(out$counts$active_cell_count, c(1,1999,1999))
+  expect_equal(dim(out$counts), c(3,13))
+  expect_equal(length(out$seqs), 43)
+  expect_no_error(run_wavess(samp_scheme, 'ATCG', probs))
+  expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, ref_seq = 'AAAA'))
+  expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, conserved_sites = 0))
+  expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, conserved_sites = c(0,2)))
+  expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs,
+                             epitope_locations = tibble::tibble(epi_start_nt=1, epi_end_nt=4, max_fitness_cost=0.4)))
+})

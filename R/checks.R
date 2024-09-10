@@ -129,14 +129,23 @@ check_is_numeric <- function(x, var_name){
 
 #' Check if a variable is positive
 #'
+#' @param ok0 whether 0 is okay (default: FALSE)
+#'
 #' @inheritParams check_is_numeric
 #'
 #' @return error if variable is not positive
-check_is_pos <- function(x, var_name){
+check_is_pos <- function(x, var_name, ok0 = FALSE){
   check_is_numeric(x, var_name)
-  if(any(x <= 0)){
-    stop(var_name, ' must be a positive number(s), but is ', x)
+  if(ok0){
+    if(any(x < 0)){
+      stop(var_name, ' must be a number >= 0, but is ', x)
+    }
+  }else{
+    if(any(x <= 0)){
+      stop(var_name, ' must be a positive number(s), but is ', x)
+    }
   }
+
 }
 
 #' Check if a variable is a dataframe or tibble
@@ -240,9 +249,9 @@ check_is_phylo <- function(x, var_name){
          class_x)
 }
 
-#' Check map_ref_founder inputs
+#' Check calc_nt_subst_probs inputs
 #'
-#' @inheritParams map_ref_founder
+#' @inheritParams calc_nt_subst_probs
 #'
 #' @return error if inputs are incorrect
 check_calc_nt_subst_probs_inputs <- function(aln, tr, model, rearrangement){
@@ -255,5 +264,80 @@ check_calc_nt_subst_probs_inputs <- function(aln, tr, model, rearrangement){
   if(!rearrangement %in% c("none", "NNI", "stochastic", "ratchet")){
     stop('Rearrangement must be one of "none", "NNI", "stochastic" or "ratchet", but is ',
          rearrangement)
+  }
+}
+
+check_seq <- function(seq, chars, seq_type){
+  if(!all(strsplit(seq, '')[[1]] %in% chars)){
+    stop(seq_type, ' must only contain the characters ', paste0(chars, collapse = ''))
+  }
+}
+
+check_run_wavess <- function(pop_samp, founder_seqs, nt_sub_probs,
+                             conserved_sites, conserved_cost,
+                             ref_seq, rep_exp,
+                             epitope_locations, seroconversion_time,
+                             prop_for_imm, gen_full_potency,
+                             prob_mut, prob_recomb,
+                             prob_act_to_lat, prob_lat_to_act,
+                             prob_lat_prolif, prob_lat_die,
+                             seed){
+  check_is_df(pop_samp, 'pop_samp')
+  if(!all(c('generation', 'active_cell_count', 'n_sample_active') %in% colnames(pop_samp))){
+    stop('pop_samp must contain the columns generation, active_cell_count, n_sample_active')
+  }
+  check_is_pos(pop_samp$generation, 'pop_samp$generation', TRUE)
+  check_is_pos(pop_samp$active_cell_count, 'pop_samp$active_cell_count', TRUE)
+  check_is_pos(pop_samp$n_sample_active, 'pop_samp$n_sample_active', TRUE)
+  if(!all(pop_samp$generation == 1:nrow(pop_samp)-1)){
+    stop('pop_samp$generation must be consecutive numbers from 0 to the number of rows in the data')
+  }
+  check_is_string(founder_seqs, 'founder_seqs')
+  lapply(as.list(founder_seqs), function(x) check_seq(x, c('A', 'C', 'G', 'T'), 'founder_seqs'))
+  if(length(unique(sapply(as.list(founder_seqs), nchar))) != 1){
+    stop('All founder sequences must be the same length')
+  }
+  check_is_df(nt_sub_probs, 'nt_sub_probs')
+  if(!all(rownames(nt_sub_probs) %in% c('A', 'C', 'G', 'T')) |
+     !all(c('A', 'C', 'G', 'T') %in% rownames(nt_sub_probs))){
+    stop('nt_sub_probs must have rownames A,C,G,T')
+  }
+  if(!all(colnames(nt_sub_probs) %in% c('A', 'C', 'G', 'T')) |
+     !all(c('A', 'C', 'G', 'T') %in% colnames(nt_sub_probs))){
+    stop('nt_sub_probs must have colnames A,C,G,T')
+  }
+  sapply(nt_sub_probs, function(x) lapply(x, function(y) check_is_0to1(y, 'nt_sub_probs')))
+  if(!is.null(conserved_sites)){
+    check_is_pos(conserved_sites, 'conserved_sites', TRUE)
+    check_is_0to1(conserved_cost, 'conserved_cost')
+  }
+  if(!is.null(ref_seq)){
+    check_is_string(ref_seq, 'ref_seq')
+    check_seq(ref_seq, c('A', 'C', 'G', 'T', '-'), 'founder_seqs')
+    if(nchar(as.list(founder_seqs)[1]) != nchar(ref_seq)){
+      stop('ref_seq must be the same length as the founder sequence(s)')
+    }
+    check_is_numeric(rep_exp, 'rep_exp')
+  }
+  if(!is.null(epitope_locations)){
+    check_is_df(epitope_locations, 'epitope_locations')
+    if(!all(c('epi_start_nt', 'epi_end_nt', 'max_fitness_cost') %in% colnames(epitope_locations))){
+      stop('epitope_locations must contain the columns epi_start_nt, epi_end_nt, max_fitness_cost')
+    }
+    lapply(epitope_locations$epi_start_nt, function(x) check_is_pos(x, 'epitope_locations$epi_start_nt', TRUE))
+    lapply(epitope_locations$epi_end_nt, function(x) check_is_pos(x, 'epitope_locations$epi_end_nt', FALSE))
+    lapply(epitope_locations$max_fitness_cost, function(x) check_is_0to1(x, 'epitope_locations$max_fitness_cost'))
+    check_is_pos(seroconversion_time, 'seroconversion_time', TRUE)
+    check_is_0to1(prop_for_imm, 'prop_for_imm')
+    check_is_pos(gen_full_potency, 'gen_full_potency', TRUE)
+  }
+  check_is_0to1(prob_mut, 'prob_mut')
+  check_is_0to1(prob_recomb, 'prob_recomb')
+  check_is_0to1(prob_act_to_lat, 'prob_act_to_lat')
+  check_is_0to1(prob_lat_to_act, 'prob_lat_to_act')
+  check_is_0to1(prob_lat_prolif, 'prob_lat_prolif')
+  check_is_0to1(prob_lat_die, 'prob_lat_die')
+  if(!is.null(seed)){
+    check_is_numeric(seed, 'seed')
   }
 }

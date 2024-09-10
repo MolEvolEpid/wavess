@@ -4,12 +4,14 @@
 \alias{check_is_pos}
 \title{Check if a variable is positive}
 \usage{
-check_is_pos(x, var_name)
+check_is_pos(x, var_name, ok0 = FALSE)
 }
 \arguments{
 \item{x}{variable to check}
 
 \item{var_name}{name of variable}
+
+\item{ok0}{whether 0 is okay (default: FALSE)}
 }
 \value{
 error if variable is not positive

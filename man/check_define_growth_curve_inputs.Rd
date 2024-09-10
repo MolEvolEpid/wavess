@@ -9,14 +9,13 @@ check_define_growth_curve_inputs(curve_type, gN, K, n0, gS, pK)
 \arguments{
 \item{curve_type}{type of growth, one of:
 \code{constant_pop} (constant population size),
-\code{linear} (constant growth),
 \code{logistic} (logistic growth; default)}
 
 \item{gN}{final sampling generation (default: 3000)}
 
 \item{K}{carrying capacity (default: 2000)}
 
-\item{n0}{starting population size (default: 1; used for linear and logistic)}
+\item{n0}{starting population size (default: 1; used for logistic)}
 
 \item{gS}{seroconversion generation (default: 30; used for logistic)}
 

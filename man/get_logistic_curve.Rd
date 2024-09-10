@@ -7,7 +7,7 @@
 get_logistic_curve(n0, K, gS, pK, gN)
 }
 \arguments{
-\item{n0}{starting population size (default: 1; used for linear and logistic)}
+\item{n0}{starting population size (default: 1; used for logistic)}
 
 \item{K}{carrying capacity (default: 2000)}
 
