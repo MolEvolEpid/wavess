@@ -13,7 +13,8 @@
 #' @export
 #'
 #' @examples
-#' # NOTE: This is just an example. (**TODO: MAYBE ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
+#' # NOTE: This is just an example.
+#' # (**TODO: MAYBE ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
 #' hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
 #' calc_nt_subst_probs(hiv_env_flt_2021[1:10,])
 calc_nt_subst_probs <- function(aln, tr = NULL, model = 'GTR+R(4)+I', rearrangement = 'none'){
