@@ -37,7 +37,9 @@ sample_epitopes <- function(epitope_probabilities,
                             end_aa_pos = NULL,
                             num_epitopes = 10,
                             aa_epitope_length = 10,
+                            # THIS IS KIND OF RANDOMLY CHOSEN - ANY BETTER IDEAS?
                             min_max_fit_cost = 0.1,
+                            # what should the default be? WHAT KIND OF DISTRIBUTION DO WE WANT TO DRAW FROM? uniform(0.1,0.4)?
                             max_max_fit_cost = 0.4,
                             cost_type = 'linear',
                             max_resamples = 100,
@@ -53,7 +55,7 @@ sample_epitopes <- function(epitope_probabilities,
   if(cost_type == 'linear'){
     max_fit_costs <- seq(min_max_fit_cost, max_max_fit_cost, length.out = num_epitopes)
   }else if(cost_type == 'random'){
-    max_fit_costs <- stats::runif(num_epitopes, min_max_fit_cost, max_max_fit_cost)
+    max_fit_costs <- c(max_max_fit_cost, stats::runif(num_epitopes-1, min_max_fit_cost, max_max_fit_cost))
   }
   # Draw num_epitopes positions
   start_pos <- c()  # list of epitope start positions
