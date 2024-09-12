@@ -10,8 +10,7 @@ sample_epitopes(
   end_aa_pos = NULL,
   num_epitopes = 10,
   aa_epitope_length = 10,
-  min_max_fit_cost = 0.1,
-  max_max_fit_cost = 0.4,
+  max_fit_cost = 0.4,
   cost_type = "linear",
   max_resamples = 100,
   ref_founder_map = NULL
@@ -32,18 +31,14 @@ sample_epitopes(
 
 \item{aa_epitope_length}{Amino acid epitope length}
 
-\item{min_max_fit_cost}{Minimum maximum fitness cost of the epitope,
-must be between 0 and 1 and less than or equal to\code{max_max_fit_cost} (default: 0.1)
-\strong{note that the model output is very sensitive to this parameter}}
-
-\item{max_max_fit_cost}{Maximum maximum fitness cost of the epitope,
-must be between 0 and 1 and greater than or equal to \code{min_max_fit_cost} (default: 0.4)
+\item{max_fit_cost}{Maximum fitness cost of the epitope,
+must be between 0 and 1 (default: 0.4)
 \strong{note that the model output is very sensitive to this parameter}}
 
 \item{cost_type}{"linear" or "random"; linear returns max fitness costs
-distributed linearly between \code{min_max_fit_cost} and \code{max_max_fit_cost}, random
+distributed linearly between 0 and \code{max_fit_cost}, random
 returns max fitness costs randomly selected from a uniform distribution between
-\code{min_max_fit_cost} and \code{max_max_fit_cost} (default: "linear")}
+0 and \code{max_fit_cost} (default: "linear")}
 
 \item{max_resamples}{Maximum number of resampling events to attempt;
 this is to prevent an infinite loop (default: 100)}

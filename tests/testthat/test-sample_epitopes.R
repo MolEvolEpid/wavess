@@ -6,9 +6,7 @@ test_that("sample_epitopes works", {
   expect_equal(sum(is.na(epitopes$epi_start_nt)), 0)
   expect_equal(sum(is.na(epitopes$epi_end_nt)), 0)
   expect_equal(epitopes$max_fitness_cost,
-               c(0.1, 0.133333333333333, 0.166666666666667, 0.2, 0.233333333333333,
-                 0.266666666666667, 0.3, 0.333333333333333, 0.366666666666667,
-                 0.4))
+               c(0.040, 0.080, 0.120, 0.160, 0.200, 0.240, 0.280, 0.320, 0.360, 0.400))
   expect_message(sample_epitopes(get_epitope_frequencies(env_features$position), cost_type = 'random'))
   expect_message(sample_epitopes(get_epitope_frequencies(env_features$position), end_aa_pos = 1000))
   expect_error(sample_epitopes(get_epitope_frequencies(env_features$position), max_resamples = 1),
