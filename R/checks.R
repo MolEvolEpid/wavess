@@ -1,37 +1,24 @@
-#' Check define_growth_curve
+#' Check generate_pop_samp
 #'
-#' @inheritParams define_growth_curve
+#' @inheritParams generate_pop_samp
 #'
 #' @return error if inputs are incorrect
-check_define_growth_curve_inputs <- function(curve_type, gN, K, n0, gS, pK){
+check_generate_pop_samp_inputs <- function(curve_type, gN, K, n0, g50, sampling_frequency, max_samp){
   check_is_pos(gN, 'gN')
   check_is_pos(K, 'K')
   check_is_numeric(n0, 'n0')
-  check_is_numeric(gS, 'gS')
-  check_is_0to1(pK, 'pK')
+  check_is_numeric(g50, 'g50')
   if(!curve_type %in% c('logistic', 'constant')){
     stop('`curve_type` must be logistic or constant. You provided: ',
          curve_type)
   }else if(n0 > K){
     stop('n0 must be a number \u2264K, but is ', n0)
-  }else if(gS > gN){
-    stop('gS must be a number \u2264gN, but is ', gS)
+  }else if(g50 > gN){
+    stop('g50 must be a number \u2264gN, but is ', g50)
   }
-}
-
-#' Check define_sampling_scheme
-#'
-#' @inheritParams define_sampling_scheme
-#'
-#' @return error if inputs are incorrect
-check_define_sampling_scheme_inputs <- function(growth_curve, sampling_frequency, max_samp){
   check_is_pos(sampling_frequency, 'sampling_frequency')
   check_is_pos(max_samp, 'max_samp')
-  check_is_df(growth_curve, 'growth_curve')
-  if(!all(colnames(growth_curve) %in% c('generation', 'active_cell_count'))){
-    stop('`growth_curve` must contain the columns `generation` and `active_cell_count`, but contains instead: ',
-         paste(colnames(growth_curve), collapse = ', '))
-  }else if(sampling_frequency > max(growth_curve$generation)){
+  if(sampling_frequency > gN){
     stop('sampling_frequency must be a number \u2264maximum generation, but is ', sampling_frequency)
   }
 }
@@ -201,7 +188,7 @@ check_is_dnabin <- function(x, var_name){
 
 check_sample_epitopes_inputs <- function(epitope_probabilities, start_aa_pos, end_aa_pos,
                                          num_epitopes, aa_epitope_length,
-                                         min_max_fit_cost, max_max_fit_cost, cost_type,
+                                         max_fit_cost, cost_type,
                                          max_resamples, ref_founder_map){
   check_is_df(epitope_probabilities)
   if(!all(c('aa_position', 'epitope_probability') %in% colnames(epitope_probabilities))){
@@ -219,8 +206,7 @@ check_sample_epitopes_inputs <- function(epitope_probabilities, start_aa_pos, en
   }
   check_is_pos(num_epitopes, 'num_epitopes')
   check_is_pos(aa_epitope_length, 'aa_epitope_length')
-  check_is_0to1(min_max_fit_cost, 'min_max_fit_cost')
-  check_is_0to1(max_max_fit_cost, 'max_max_fit_cost')
+  check_is_0to1(max_fit_cost, 'max_fit_cost')
   check_is_pos(max_resamples, 'max_resamples')
   if(!is.null(ref_founder_map)){
     check_is_df(ref_founder_map)
@@ -249,12 +235,12 @@ check_is_phylo <- function(x, var_name){
          class_x)
 }
 
-#' Check calc_nt_subst_probs inputs
+#' Check calc_nt_sub_probs inputs
 #'
-#' @inheritParams calc_nt_subst_probs
+#' @inheritParams calc_nt_sub_probs
 #'
 #' @return error if inputs are incorrect
-check_calc_nt_subst_probs_inputs <- function(aln, tr, model, rearrangement){
+check_calc_nt_sub_probs_inputs <- function(aln, tr, model, rearrangement){
   check_is_dnabin(aln, 'aln')
   if(!is.null(tr)){
     check_is_phylo(tr, 'tr')
@@ -267,13 +253,25 @@ check_calc_nt_subst_probs_inputs <- function(aln, tr, model, rearrangement){
   }
 }
 
+#' Check check_seq sequence input
+#'
+#' @param seq character sequence
+#' @param chars characters
+#' @param seq_type type of sequence
+#'
+#' @return error if wrong characters in sequence
 check_seq <- function(seq, chars, seq_type){
   if(!all(strsplit(seq, '')[[1]] %in% chars)){
     stop(seq_type, ' must only contain the characters ', paste0(chars, collapse = ''))
   }
 }
 
-check_run_wavess <- function(pop_samp, founder_seqs, nt_sub_probs,
+#' Check run_wavess inputs
+#'
+#' @inheritParams run_wavess
+#'
+#' @return error if wrong inputs
+check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
                              conserved_sites, conserved_cost,
                              ref_seq, rep_exp,
                              epitope_locations, seroconversion_time,
@@ -291,6 +289,9 @@ check_run_wavess <- function(pop_samp, founder_seqs, nt_sub_probs,
   check_is_pos(pop_samp$n_sample_active, 'pop_samp$n_sample_active', TRUE)
   if(!all(pop_samp$generation == 1:nrow(pop_samp)-1)){
     stop('pop_samp$generation must be consecutive numbers from 0 to the number of rows in the data')
+  }
+  if(!all(pop_samp$active_cell_count >= pop_samp$n_sample_active)){
+    stop('pop_samp$active_cell_count must always be >= pop_samp$n_sample_active')
   }
   check_is_string(founder_seqs, 'founder_seqs')
   lapply(as.list(founder_seqs), function(x) check_seq(x, c('A', 'C', 'G', 'T'), 'founder_seqs'))
@@ -339,5 +340,22 @@ check_run_wavess <- function(pop_samp, founder_seqs, nt_sub_probs,
   check_is_0to1(prob_lat_die, 'prob_lat_die')
   if(!is.null(seed)){
     check_is_numeric(seed, 'seed')
+  }
+}
+
+#' Check extract founder inputs
+#'
+#' @inheritParams extract_founder
+#'
+#' @return error if wrong inputs
+check_extract_founder_inputs <- function(aln, founder_name, start, end){
+  check_name_in_alignment(aln, founder_name, 'aln', 'founder_name')
+  aln <- as.matrix(aln)
+  check_is_pos(start, 'start')
+  if(!is.null(end)){
+    check_is_pos(end, 'end')
+    if(end > ncol(aln)){
+      stop('end must be <= the length of the alignment')
+    }
   }
 }
