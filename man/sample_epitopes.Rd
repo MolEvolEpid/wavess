@@ -31,14 +31,15 @@ sample_epitopes(
 
 \item{aa_epitope_length}{Amino acid epitope length}
 
-\item{max_fit_cost}{Maximum fitness cost of the epitope,
+\item{max_fit_cost}{Maximum fitness cost of an epitope,
 must be between 0 and 1 (default: 0.4)
 \strong{note that the model output is very sensitive to this parameter}}
 
 \item{cost_type}{"linear" or "random"; linear returns max fitness costs
-distributed linearly between 0 and \code{max_fit_cost}, random
-returns max fitness costs randomly selected from a uniform distribution between
-0 and \code{max_fit_cost} (default: "linear")}
+distributed linearly between 0 and \code{max_fit_cost} (not including 0, but including
+\code{max_fit_cost}), random returns one epitope with \code{max_fit_cost} and all other
+epitopes with max fitness costs randomly selected from a uniform distribution
+between 0 and \code{max_fit_cost} (default: "linear")}
 
 \item{max_resamples}{Maximum number of resampling events to attempt;
 this is to prevent an infinite loop (default: 100)}

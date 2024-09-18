@@ -52,11 +52,3 @@ base that comes first alphabetically. For more nuanced consensus-making,
 please check out the
 \href{https://www.hiv.lanl.gov/content/sequence/CONSENSUS/consensus.html}{LANL HIV database consensus maker}
 }
-\examples{
-# this is a hack to get the data in the right format...
-hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-hxb2_founder <- ape::as.matrix.DNAbin(hxb2_founder)
-find_consensus(hiv_env_flt_2021, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455')
-find_consensus(hiv_env_flt_2021, 'B.US.2011.DEMB11US006.KC473833',
-ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = hxb2_founder)
-}

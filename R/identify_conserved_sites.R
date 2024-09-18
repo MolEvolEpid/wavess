@@ -71,15 +71,6 @@ identify_conserved_sites <- function(aln, founder, thresh = 0.99,
 #' - `consensus_prop`: proportion of sequences that had that base at that position
 #' When using a reference, `NA` in the consensus columns indicates that that
 #' position was an insertion relative to the reference
-#' @export
-#'
-#' @examples
-#' # this is a hack to get the data in the right format...
-#' hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-#' hxb2_founder <- ape::as.matrix.DNAbin(hxb2_founder)
-#' find_consensus(hiv_env_flt_2021, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455')
-#' find_consensus(hiv_env_flt_2021, 'B.US.2011.DEMB11US006.KC473833',
-#' ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = hxb2_founder)
 find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL,
                               founder_start_pos = 1){
   check_find_consensus_inputs(aln, founder, ref, founder_aln, founder_start_pos)

@@ -68,7 +68,7 @@ define_growth_curve <- function(curve_type = 'logistic',
 #' @inheritParams define_growth_curve
 #'
 #' @return Population size at each generation
-get_logistic_curve <- function(n0, K, gS, pK, gN){
+get_logistic_curve <- function(n0, K, gpK, pK, gN){
   # number of cells at seroconversion generation
   nS <- K*pK
   # useful constants
