@@ -63,7 +63,7 @@ define_growth_curve <- function(curve_type = 'logistic',
 #' Get logistic growth curve
 #'
 #' Note: to get the equations used in this function, I solved for the
-#' growth rate and midpoint based on n0, K, gS, and pK.
+#' growth rate and midpoint based on n0, K, gpK, and pK.
 #'
 #' @inheritParams define_growth_curve
 #'
@@ -75,7 +75,7 @@ get_logistic_curve <- function(n0, K, gpK, pK, gN){
   c0 <- log(K/n0 - 1)
   cS <- log(K/nS - 1)
   # get growth rate
-  k = -(cS-c0)/gS
+  k = -(cS-c0)/gpK
   # get midpoint
   xM = c0/k
   return(floor(sapply(0:gN, function(x) logistic_fn(x, K, k, xM))))

@@ -272,11 +272,11 @@ check_seq <- function(seq, chars, seq_type){
 #'
 #' @return error if wrong inputs
 check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
+                                    prob_mut, prob_recomb,
                              conserved_sites, conserved_cost,
                              ref_seq, rep_exp,
                              epitope_locations, seroconversion_time,
                              prop_for_imm, gen_full_potency,
-                             prob_mut, prob_recomb,
                              prob_act_to_lat, prob_lat_to_act,
                              prob_lat_prolif, prob_lat_die,
                              seed){
@@ -310,6 +310,9 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
   sapply(nt_sub_probs, function(x) lapply(x, function(y) check_is_0to1(y, 'nt_sub_probs')))
   if(!is.null(conserved_sites)){
     check_is_pos(conserved_sites, 'conserved_sites', TRUE)
+    if(max(conserved_sites) >= nchar(as.list(founder_seqs)[[1]])){ # CHANGE THIS DEPENDING ON HOW WE DECIDE TO INDEX
+      stop('the maximum value of conserved_sites is greater than the length of the founder sequence')
+    }
     check_is_0to1(conserved_cost, 'conserved_cost')
   }
   if(!is.null(ref_seq)){

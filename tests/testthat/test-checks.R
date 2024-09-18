@@ -159,104 +159,144 @@ test_that('check_run_wavess_inputs works', {
   fs <- c('ACGT','ATTT')
   suppressMessages(el <- sample_epitopes(get_epitope_frequencies(env_features$position)))
   capture.output(ntsp <- calc_nt_sub_probs(hiv_env_flt_2021[1:3,]), file = nullfile())
-  expect_no_error(check_run_wavess_inputs(ps, fs, ntsp, NULL, 0.99, NULL, 1,
+  expect_no_error(check_run_wavess_inputs(ps, fs, ntsp,
+                                          3.5e-5, 1.4e-5,
+                                          NULL, 0.99, NULL, 1,
                                    NULL, 30, 0.01, 90,
-                                   3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, NULL))
-  expect_error(check_run_wavess_inputs('ps', fs, ntsp, NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, fs, ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       10000, 0.99, NULL, 1,
+                                          NULL, 30, 0.01, 90,
+                                          0.001, 0.01, 0.01, 0.01, NULL))
+  expect_error(check_run_wavess_inputs('ps', fs, ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                    NULL, 30, 0.01, 90,
-                   3.5e-5, 1.4e-5,
                    0.001, 0.01, 0.01, 0.01, NULL),
         'pop_samp must be a data frame or tibble, but is a character')
-  expect_error(check_run_wavess_inputs(ps |> dplyr::rename(gen = generation), fs, ntsp, NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps |> dplyr::rename(gen = generation), fs, ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                                 NULL, 30, 0.01, 90,
-                                3.5e-5, 1.4e-5,
                                 0.001, 0.01, 0.01, 0.01, NULL),
                'pop_samp must contain the columns generation, active_cell_count, n_sample_active')
-  expect_error(check_run_wavess_inputs(ps |> dplyr::mutate(generation = sample(generation)), fs, ntsp, NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps |> dplyr::mutate(generation = sample(generation)), fs, ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                                 NULL, 30, 0.01, 90,
-                                3.5e-5, 1.4e-5,
                                 0.001, 0.01, 0.01, 0.01, NULL),
                'pop_samp')
-  expect_error(check_run_wavess_inputs(ps, 'ADAA', ntsp, NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, 'ADAA', ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                                 NULL, 30, 0.01, 90,
-                                3.5e-5, 1.4e-5,
                                 0.001, 0.01, 0.01, 0.01, NULL),
                'founder_seqs must only contain the characters ACGT')
-  expect_error(check_run_wavess_inputs(ps, c('AG', 'ATAA'), ntsp, NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, c('AG', 'ATAA'), ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                          NULL, 30, 0.01, 90,
-                         3.5e-5, 1.4e-5,
                          0.001, 0.01, 0.01, 0.01, NULL),
                'All founder sequences must be the same length')
-  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp |> dplyr::select('A'), NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp |> dplyr::select('A'),
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                                 NULL, 30, 0.01, 90,
-                                3.5e-5, 1.4e-5,
                                 0.001, 0.01, 0.01, 0.01, NULL),
         'nt_sub_probs must have colnames A,C,G,T')
-  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp[1,], NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp[1,],
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                                 NULL, 30, 0.01, 90,
-                                3.5e-5, 1.4e-5,
                                 0.001, 0.01, 0.01, 0.01, NULL),
                'nt_sub_probs must have rownames A,C,G,T')
-  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, 1, 0.99, NULL, 1,
+  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                          3.5e-5, 1.4e-5,
+                                          1, 0.99, NULL, 1,
                                 NULL, 30, 0.01, 90,
-                                3.5e-5, 1.4e-5,
                                 0.001, 0.01, 0.01, 0.01, NULL))
-  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, c(1,2), 0.99, NULL, 1,
+  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                          3.5e-5, 1.4e-5,
+                                          c(1,2), 0.99, NULL, 1,
                                    NULL, 30, 0.01, 90,
-                                   3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, NULL))
-  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, 'a', 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       'a', 0.99, NULL, 1,
                                    NULL, 30, 0.01, 90,
-                                   3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, NULL),
         'conserved_sites must be numeric, but is a character')
-  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, 1, 10, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       1, 10, NULL, 1,
                                 NULL, 30, 0.01, 90,
-                                3.5e-5, 1.4e-5,
                                 0.001, 0.01, 0.01, 0.01, NULL),
                'conserved_cost must be in the range')
-  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, NULL, 0.99, 'ATTT', 1,
+  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                          3.5e-5, 1.4e-5,
+                                          NULL, 0.99, 'ATTT', 1,
                                    NULL, 30, 0.01, 90,
-                                   3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, NULL))
-  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, NULL, 0.99, 'ATT', 1,
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, 'ATT', 1,
                                    NULL, 30, 0.01, 90,
-                                   3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, NULL),
                'ref_seq must be the same length as the founder sequence')
-  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, NULL, 0.99, NULL, 1,
+  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                          3.5e-5, 1.4e-5,
+                                          NULL, 0.99, NULL, 1,
                                    el, 30, 0.01, 90,
-                                   3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, NULL))
-  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                                    el |> dplyr::select(epi_start_nt), 30, 0.01, 90,
-                                   3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, NULL),
                   'epitope_locations must contain the columns epi_start_nt, epi_end_nt, max_fitness_cost')
-  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                       -1, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                                    NULL, 30, 0.01, 90,
-                                   -1, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, NULL),
                'prob_mut must be in the range')
-  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                                 el, 30, 0.01, -1,
-                                3.5e-5, 1.4e-5,
                                 0.001, 0.01, 0.01, 0.01, NULL),
         'gen_full_potency must be a number')
-  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, NULL, 0.99, NULL, 1,
+  expect_no_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                          3.5e-5, 1.4e-5,
+                                          NULL, 0.99, NULL, 1,
                                    NULL, 30, 0.01, 90,
-                                   3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, 1))
-  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp, NULL, 0.99, NULL, 1,
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp,
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
                                    NULL, 30, 0.01, 90,
-                                   3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, 'a'),
                'seed must be numeric, but is a character')
-  expect_error(check_run_wavess_inputs(ps |> dplyr::mutate(n_sample_active = 10000), 'ATAA', ntsp, NULL, 0.99, NULL, 1,
-                                       NULL, 30, 0.01, 90,
+  expect_error(check_run_wavess_inputs(ps |> dplyr::mutate(n_sample_active = 10000), 'ATAA', ntsp,
                                        3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
+                                       NULL, 30, 0.01, 90,
                                        0.001, 0.01, 0.01, 0.01, NULL),
                'pop_samp')
+})
+
+test_that('check_extract_founder_inputs works', {
+  expect_no_error(extract_founder(hxb2_founder, 'B.US.2011.DEMB11US006.KC473833'))
+  expect_no_error(extract_founder(hxb2_founder, 'B.US.2011.DEMB11US006.KC473833',3,10))
+  expect_error(extract_founder('not_aln', 'B.US.2011.DEMB11US006.KC473833'),
+               'aln must be of the')
+  expect_error(extract_founder(hxb2_founder, 'wrong'),
+               'founder_name must be the name of a sequence in aln, but is wrong')
+  expect_error(extract_founder(hxb2_founder, 'B.US.2011.DEMB11US006.KC473833','wrong',10),
+               'start must be numeric, but is a character')
+  expect_error(extract_founder(hxb2_founder, 'B.US.2011.DEMB11US006.KC473833',1,10000),
+               'end must be <= the length of the alignment')
+
 })
 
