@@ -141,15 +141,15 @@ test_that("check_sample_epitopes_inputs works", {
                                                                                 founder_pos=0:1)))
 })
 
-test_that('check_calc_nt_subst_probs_inputs works', {
-  expect_no_error(check_calc_nt_subst_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 'GTR+I+R(4)', 'none'))
-  expect_error(check_calc_nt_subst_probs_inputs('hiv_env_flt_2021', ape::rtree(3), 'GTR+I+R(4)', 'none'),
+test_that('check_calc_nt_sub_probs_inputs works', {
+  expect_no_error(check_calc_nt_sub_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 'GTR+I+R(4)', 'none'))
+  expect_error(check_calc_nt_sub_probs_inputs('hiv_env_flt_2021', ape::rtree(3), 'GTR+I+R(4)', 'none'),
                'aln must be of the ')
-  expect_error(check_calc_nt_subst_probs_inputs(hiv_env_flt_2021, 'ape::rtree(3)', 'GTR+I+R(4)', 'none'),
+  expect_error(check_calc_nt_sub_probs_inputs(hiv_env_flt_2021, 'ape::rtree(3)', 'GTR+I+R(4)', 'none'),
                'tr must be of the ')
-  expect_error(check_calc_nt_subst_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 0, 'none'),
+  expect_error(check_calc_nt_sub_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 0, 'none'),
                'model must be a string, but is a numeric')
-  expect_error(check_calc_nt_subst_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 'GTR+I+R(4)', 'wrong'),
+  expect_error(check_calc_nt_sub_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 'GTR+I+R(4)', 'wrong'),
                'Rearrangement must be one of ')
 })
 
@@ -158,7 +158,7 @@ test_that('check_run_wavess_inputs works', {
   ps <- define_sampling_scheme(define_growth_curve(gN = 100), sampling_frequency = 50)
   fs <- c('ACGT','ATTT')
   suppressMessages(el <- sample_epitopes(get_epitope_frequencies(env_features$position)))
-  capture.output(ntsp <- calc_nt_subst_probs(hiv_env_flt_2021[1:3,]), file = nullfile())
+  capture.output(ntsp <- calc_nt_sub_probs(hiv_env_flt_2021[1:3,]), file = nullfile())
   expect_no_error(check_run_wavess_inputs(ps, fs, ntsp, NULL, 0.99, NULL, 1,
                                    NULL, 30, 0.01, 90,
                                    3.5e-5, 1.4e-5,
@@ -253,4 +253,9 @@ test_that('check_run_wavess_inputs works', {
                                    3.5e-5, 1.4e-5,
                                    0.001, 0.01, 0.01, 0.01, 'a'),
                'seed must be numeric, but is a character')
+  expect_error(check_run_wavess_inputs(ps |> dplyr::mutate(n_sample_active = 10000), 'ATAA', ntsp, NULL, 0.99, NULL, 1,
+                                       NULL, 30, 0.01, 90,
+                                       3.5e-5, 1.4e-5,
+                                       0.001, 0.01, 0.01, 0.01, NULL),
+               'pop_samp')
 })

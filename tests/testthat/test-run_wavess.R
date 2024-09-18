@@ -1,7 +1,7 @@
 test_that("run_wavess works", {
   hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
   samp_scheme <- define_sampling_scheme(define_growth_curve(gN = 100), sampling_frequency = 50)
-  capture.output(probs <- calc_nt_subst_probs(hiv_env_flt_2021[1:3,]), file = nullfile())
+  capture.output(probs <- calc_nt_sub_probs(hiv_env_flt_2021[1:3,]), file = nullfile())
   out <- run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs)
   expect_equal(out$counts$generation, c(0,50,100))
   expect_equal(out$counts$active_cell_count, c(1,1999,1999))
