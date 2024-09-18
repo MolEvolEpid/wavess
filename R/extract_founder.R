@@ -19,3 +19,4 @@ extract_founder <- function(aln, founder_name, start = 1, end = NULL){
   }
   return(toupper(gsub('-', '', paste0(as.character(aln[founder_name,start:end,drop=TRUE]), collapse = ''))))
 }
+

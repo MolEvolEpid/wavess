@@ -259,3 +259,4 @@ test_that('check_run_wavess_inputs works', {
                                        0.001, 0.01, 0.01, 0.01, NULL),
                'pop_samp')
 })
+
