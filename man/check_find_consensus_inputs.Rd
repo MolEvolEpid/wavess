@@ -4,7 +4,7 @@
 \alias{check_find_consensus_inputs}
 \title{Check find_consensus_inputs}
 \usage{
-check_find_consensus_inputs(aln, founder, ref, founder_aln, founder_start_pos)
+check_find_consensus_inputs(aln, founder, ref, founder_aln)
 }
 \arguments{
 \item{aln}{Alignment in \code{ape::DNAbin} format (e.g. read in with
@@ -20,13 +20,6 @@ the founder sequence is not in \code{aln} (default: \code{NULL})}
 
 \item{founder_aln}{Alignment including the reference and founder sequences,
 required if the founder is not present in \code{aln} (default: \code{NULL})}
-
-\item{founder_start_pos}{Starting position of the founder sequence in \code{aln}
-(default: 1). This start position is used to change the indexing of the
-positions in the original alignment so the first base in the
-founder is 0, and (if needed) to match \code{aln} and \code{founder_aln} based on the
-chosen reference. NOTE: this function assumes that the founder start position
-of \code{founder_aln} is 1.}
 }
 \value{
 error if inputs are incorrect

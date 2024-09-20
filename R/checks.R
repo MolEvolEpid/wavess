@@ -51,10 +51,9 @@ check_map_ref_founder_inputs <- function(aln, ref, founder){
 #' @inheritParams find_consensus
 #'
 #' @return error if inputs are incorrect
-check_find_consensus_inputs <- function(aln, founder, ref, founder_aln, founder_start_pos){
+check_find_consensus_inputs <- function(aln, founder, ref, founder_aln){
   check_is_dnabin(aln, 'aln')
   check_is_string(founder, 'founder')
-  check_is_pos(founder_start_pos, 'founder_start_pos')
   if(is.null(ref) & is.null(founder_aln)){
     check_name_in_alignment(aln, founder, 'aln', 'founder')
   }else if(!is.null(ref)){
@@ -79,8 +78,8 @@ check_find_consensus_inputs <- function(aln, founder, ref, founder_aln, founder_
 #'
 #' @return error if inputs are incorrect
 check_identify_conserved_sites_inputs <- function(aln, founder, thresh, ref,
-                                           founder_aln, founder_start_pos){
-  check_find_consensus_inputs(aln, founder, ref, founder_aln, founder_start_pos)
+                                           founder_aln){
+  check_find_consensus_inputs(aln, founder, ref, founder_aln)
   check_is_numeric(thresh)
   if(thresh < 0 | thresh > 1)
     stop('`thresh` must be a number between 0 and 1 inclusive')
@@ -286,6 +285,9 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
   }
   check_is_pos(pop_samp$generation, 'pop_samp$generation', TRUE)
   check_is_pos(pop_samp$active_cell_count, 'pop_samp$active_cell_count', TRUE)
+  if(all(pop_samp$n_sample_active == 0)){
+    stop('you must sample at least one generation')
+  }
   check_is_pos(pop_samp$n_sample_active, 'pop_samp$n_sample_active', TRUE)
   if(!all(pop_samp$generation == 1:nrow(pop_samp)-1)){
     stop('pop_samp$generation must be consecutive numbers from 0 to the number of rows in the data')
@@ -317,7 +319,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
   }
   if(!is.null(ref_seq)){
     check_is_string(ref_seq, 'ref_seq')
-    check_seq(ref_seq, c('A', 'C', 'G', 'T', '-'), 'founder_seqs')
+    check_seq(ref_seq, c('A', 'C', 'G', 'T', '-'), 'ref_seq')
     if(nchar(as.list(founder_seqs)[1]) != nchar(ref_seq)){
       stop('ref_seq must be the same length as the founder sequence(s)')
     }
@@ -348,11 +350,33 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
 
 #' Check extract founder inputs
 #'
-#' @inheritParams extract_founder
+#' @inheritParams extract_seqs
 #'
 #' @return error if wrong inputs
-check_extract_founder_inputs <- function(aln, founder_name, start, end){
+check_extract_seqs_inputs <- function(aln, founder_name, ref_name, start, end){
   check_name_in_alignment(aln, founder_name, 'aln', 'founder_name')
+  if(!is.null(ref_name)){
+    check_name_in_alignment(aln, ref_name, 'aln', 'ref_name')
+  }
+  aln <- as.matrix(aln)
+  check_is_pos(start, 'start')
+  if(!is.null(end)){
+    check_is_pos(end, 'end')
+    if(end > ncol(aln)){
+      stop('end must be <= the length of the alignment')
+    }
+  }
+}
+
+#' Check slice_aln inputs
+#'
+#' @inheritParams slice_aln
+#'
+#' @return error if wrong inputs
+check_slice_aln_inputs <- function(aln, start, end, seqs){
+  lapply(seqs, function(x){
+    check_name_in_alignment(aln, x, 'aln', 'seqs')
+  })
   aln <- as.matrix(aln)
   check_is_pos(start, 'start')
   if(!is.null(end)){

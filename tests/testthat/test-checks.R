@@ -47,36 +47,35 @@ test_that("check_is_0to1 works", {
 })
 
 test_that("check_is_dnabin works", {
-  expect_no_error(check_is_dnabin(hxb2_founder, 'hxb2_founder'))
+  expect_no_error(check_is_dnabin(hxb2_cons_founder, 'hxb2_cons_founder'))
   expect_error(check_is_dnabin(0, 'test'), 'test must be of the ')
 })
 
 test_that("check_name_in_alignment works", {
-  expect_no_error(check_name_in_alignment(hxb2_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455'))
-  expect_error(check_name_in_alignment(hxb2_founder, 'test', 'hxb2_founder', 'test_name'), 'test_name must be the name of a sequence in hxb2_founder, but is test')
+  expect_no_error(check_name_in_alignment(hxb2_cons_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455'))
+  expect_error(check_name_in_alignment(hxb2_cons_founder, 'test', 'hxb2_cons_founder', 'test_name'), 'test_name must be the name of a sequence in hxb2_cons_founder, but is test')
 })
 
 test_that("check_identify_conserved_sites_inputs works", {
   expect_no_error(check_identify_conserved_sites_inputs(hiv_env_flt_2021, 'B.US.2011.DEMB11US006.KC473833', thresh = 0.99,
-                                                        ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = hxb2_founder,
-                                                        founder_start_pos = 1))
+                                                        ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = hxb2_cons_founder))
   expect_error(check_identify_conserved_sites_inputs(hiv_env_flt_2021, 'B.US.2011.DEMB11US006.KC473833', thresh = 0.99,
-                                                     ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = NULL,
-                                                     founder_start_pos = 1), 'When `ref` is specified, `founder_aln` must also be specified')
+                                                     ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = NULL),
+               'When `ref` is specified, `founder_aln` must also be specified')
   expect_error(check_identify_conserved_sites_inputs(hiv_env_flt_2021, 'B.US.2011.DEMB11US006.KC473833', thresh = 0.99,
-                                                     ref = NULL, founder_aln = hxb2_founder,
-                                                     founder_start_pos = 1), 'When `founder_aln` is specified, `ref` must also be specified')
+                                                     ref = NULL, founder_aln = hxb2_cons_founder),
+               'When `founder_aln` is specified, `ref` must also be specified')
   expect_error(check_identify_conserved_sites_inputs(hiv_env_flt_2021, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', thresh = 2,
-                                                     ref = NULL, founder_aln = NULL,
-                                                     founder_start_pos = 1), '`thresh` must be a number between 0 and 1 inclusive')
+                                                     ref = NULL, founder_aln = NULL),
+               '`thresh` must be a number between 0 and 1 inclusive')
 })
 
 test_that("check_get_seq_pos_inputs works", {
-  expect_no_error(check_get_seq_pos_inputs(tibble::tibble(hxb2 = unlist(as.character(hxb2_founder[1]))), 'hxb2'))
+  expect_no_error(check_get_seq_pos_inputs(tibble::tibble(hxb2 = unlist(as.character(hxb2_cons_founder[1]))), 'hxb2'))
 })
 
 test_that("check_map_ref_founder_inputs works", {
-  expect_no_error(check_map_ref_founder_inputs(hxb2_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 'B.US.2011.DEMB11US006.KC473833'))
+  expect_no_error(check_map_ref_founder_inputs(hxb2_cons_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 'B.US.2011.DEMB11US006.KC473833'))
 })
 
 test_that("check_sample_epitopes_inputs works", {
@@ -164,6 +163,12 @@ test_that('check_run_wavess_inputs works', {
                                           NULL, 0.99, NULL, 1,
                                    NULL, 30, 0.01, 90,
                                    0.001, 0.01, 0.01, 0.01, NULL))
+  expect_error(check_run_wavess_inputs(ps |> mutate(n_sample_active = 0), fs, ntsp,
+                                          3.5e-5, 1.4e-5,
+                                          NULL, 0.99, NULL, 1,
+                                          NULL, 30, 0.01, 90,
+                                          0.001, 0.01, 0.01, 0.01, NULL),
+                  'you must sample at least one generation')
   expect_error(check_run_wavess_inputs(ps, fs, ntsp,
                                        3.5e-5, 1.4e-5,
                                        10000, 0.99, NULL, 1,
@@ -286,17 +291,36 @@ test_that('check_run_wavess_inputs works', {
                'pop_samp')
 })
 
-test_that('check_extract_founder_inputs works', {
-  expect_no_error(extract_founder(hxb2_founder, 'B.US.2011.DEMB11US006.KC473833'))
-  expect_no_error(extract_founder(hxb2_founder, 'B.US.2011.DEMB11US006.KC473833',3,10))
-  expect_error(extract_founder('not_aln', 'B.US.2011.DEMB11US006.KC473833'),
+test_that('check_extract_seqs_inputs works', {
+  expect_no_error(extract_seqs(hxb2_cons_founder, 'B.US.2011.DEMB11US006.KC473833'))
+  expect_no_error(extract_seqs(hxb2_cons_founder, 'B.US.2011.DEMB11US006.KC473833', NULL, 3,10))
+  expect_no_error(extract_seqs(hxb2_cons_founder, 'B.US.2011.DEMB11US006.KC473833', 'B.US.2011.DEMB11US006.KC473833', 3,10))
+  expect_error(extract_seqs('not_aln', 'B.US.2011.DEMB11US006.KC473833'),
                'aln must be of the')
-  expect_error(extract_founder(hxb2_founder, 'wrong'),
+  expect_error(extract_seqs(hxb2_cons_founder, 'wrong'),
                'founder_name must be the name of a sequence in aln, but is wrong')
-  expect_error(extract_founder(hxb2_founder, 'B.US.2011.DEMB11US006.KC473833','wrong',10),
+  expect_error(extract_seqs(hxb2_cons_founder, 'B.US.2011.DEMB11US006.KC473833','wrong'),
+               'ref_name must be the name of a sequence in aln, but is wrong')
+  expect_error(extract_seqs(hxb2_cons_founder, 'B.US.2011.DEMB11US006.KC473833',start='wrong',end=10),
                'start must be numeric, but is a character')
-  expect_error(extract_founder(hxb2_founder, 'B.US.2011.DEMB11US006.KC473833',1,10000),
+  expect_error(extract_seqs(hxb2_cons_founder, 'B.US.2011.DEMB11US006.KC473833',start=1,end=10000),
                'end must be <= the length of the alignment')
 
 })
+
+test_that('check_slice_aln_inputs works', {
+  expect_no_error(slice_aln(hxb2_cons_founder, 3,10))
+  expect_no_error(slice_aln(hxb2_cons_founder, 3,10, 'B.US.2011.DEMB11US006.KC473833'))
+  expect_error(slice_aln('not_aln', 3,10),
+               'aln must be of the')
+  expect_error(slice_aln(hxb2_cons_founder, 3,10,'wrong'),
+               'seqs must be the name of a sequence in aln, but is wrong')
+  expect_error(slice_aln(hxb2_cons_founder, start='wrong',end=10),
+               'start must be numeric, but is a character')
+  expect_error(slice_aln(hxb2_cons_founder,start=1,end=10000),
+               'end must be <= the length of the alignment')
+
+})
+
+
 

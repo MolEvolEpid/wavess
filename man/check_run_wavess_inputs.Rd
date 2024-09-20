@@ -8,6 +8,8 @@ check_run_wavess_inputs(
   pop_samp,
   founder_seqs,
   nt_sub_probs,
+  prob_mut,
+  prob_recomb,
   conserved_sites,
   conserved_cost,
   ref_seq,
@@ -16,8 +18,6 @@ check_run_wavess_inputs(
   seroconversion_time,
   prop_for_imm,
   gen_full_potency,
-  prob_mut,
-  prob_recomb,
   prob_act_to_lat,
   prob_lat_to_act,
   prob_lat_prolif,
@@ -34,9 +34,15 @@ Can be generated using the \code{define_growth_curve()} and \code{define_samplin
 \item{nt_sub_probs}{Named matrix of nucleotide substitution probabilities.
 Rows are from, columns are to. Can be generated using the \code{calc_nt_subst_probs()} function.}
 
-\item{conserved_sites}{Vector of conserved sites. \strong{NOTE:} This should be indexed at 0!!!
+\item{prob_mut}{Probability of a mutation at one site in one generation
+(default: 3.5e-5)}
+
+\item{prob_recomb}{Probability of a recombination event at a given site in
+one generation (default: 1.4e-5)}
+
+\item{conserved_sites}{Vector of conserved sites.
 This can be generated using the \code{identify_conserved_sites()} function
-(default: NULL, i.e. no conserved sites fitness costs) # ALTERNATIVELY, WE COULD INDEX IT AT 0 FOR THEM...}
+(default: NULL, i.e. no conserved sites fitness costs)}
 
 \item{conserved_cost}{Cost of mutation at conserved site (default: 0.99)}
 
@@ -47,7 +53,7 @@ that can be used as the reference sequence, can be generated using the function
 \item{rep_exp}{Replicative fitness exponent, only relevant when ref_seq is not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL DEFINITION}
 
 \item{epitope_locations}{Tibble of epitope locations and maximum fitness costs with columns
-epi_start_nt, epi_end_nt, max_fitness_cost. # CHECK TO SEE WHAT THIS IS INDEXED AT!!!
+epi_start_nt, epi_end_nt, max_fitness_cost.
 This can be generated using the functions \code{get_epitope_frequencies()} and \code{sample_epitopes()}
 (default: NULL, i.e. no immune fitness costs)}
 
@@ -61,12 +67,6 @@ relevant when epitope_locations is not NULL (default: 0.01).}
 \item{gen_full_potency}{Number of generations it takes for an immune response
 to an epitope to reach full potency, only relevant when epitope_locations is
 not NULL (default: 90).}
-
-\item{prob_mut}{Probability of a mutation at one site in one generation
-(default: 3.5e-5)}
-
-\item{prob_recomb}{Probability of a recombination event at a given site in
-one generation (default: 1.4e-5)}
 
 \item{prob_act_to_lat}{Probability that an active cell becomes latent in a
 generation (default: 0.001)}
