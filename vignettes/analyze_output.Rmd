@@ -1,0 +1,103 @@
+---
+title: "Analyze wavess output"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Analyze wavess output}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+In this vignette, we'll provide various ways to analyze the output of `run_wavess()`.
+Note that many of these functions can also be used to analyze real-world
+empirical data. 
+
+For simulated data, we highly recommend comparing the output to emperical data,
+or at least using your domain knowledge to determine whether the output seems
+reasonable. If it doesn't, you may have to tweak various input parameters to 
+get believable outputs. The default input parameters we provide generally 
+lead to a reasonable output for HIV, but even so, due to the stochastic nature
+of the model, some outputs look more like real data than others.
+
+## Run wavess
+
+First, let's run wavess including all the selective pressures. 
+For more details on the input and running wavess,
+please see the respective vignettes. (**LINKS**)
+
+```{r setup}
+library(wavess)
+library(dplyr)
+library(ggplot2)
+library(ape)
+library(phangorn)
+library(ggtree)
+
+hiv_env_flt_2021 <- as.matrix.DNAbin(hiv_env_flt_2021)
+hxb2_cons_founder <- as.matrix.DNAbin(hxb2_cons_founder)
+
+pop_samp <- generate_pop_samp(gN = 300, sampling_frequency = 100)
+founder_ref <- extract_seqs(hxb2_cons_founder, 
+             founder = 'B.US.2011.DEMB11US006.KC473833', 
+             ref = 'CON_B(1295)',
+             start = 6225, end = 7757)
+nt_sub_probs <- calc_nt_sub_probs(as.matrix(hiv_env_flt_2021)[1:10,])
+hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, 2517) 
+gp120 <- slice_aln(hxb2_cons_founder, 6225, 7757)
+founder_conserved_sites <- identify_conserved_sites(hiv_gp120_flt_2021, 
+                         founder = 'B.US.2011.DEMB11US006.KC473833', 
+                         ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 
+                         founder_aln = gp120) |>
+  filter(conserved == 'Yes') |>
+  pull(founder_pos)
+epi_probs <- get_epitope_frequencies(env_features$position)
+ref_founder_map <- map_ref_founder(gp120, 
+                ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 
+                founder = 'B.US.2011.DEMB11US006.KC473833')
+epitope_locations <- sample_epitopes(epi_probs, ref_founder_map = ref_founder_map)
+
+founder_ref$ref <- gsub('N', '-', founder_ref$ref)
+wavess_out <- run_wavess(pop_samp = pop_samp, 
+                            founder_seqs = founder_ref$founder, 
+                            nt_sub_probs = nt_sub_probs,
+                            conserved_sites = founder_conserved_sites,
+                            ref_seq = founder_ref$ref,
+                            epitope_locations = epitope_locations)
+```
+
+**WHY IS IT SOO MUCH SLOWER WHEN DOING MULTIPLE FITNESSES COMPARED TO JUST ONE?**
+
+## Plotting counts
+
+```{r}
+wavess_out$counts %>% 
+  pivot_longer(!generation) %>% 
+  ggplot(aes(x = generation, y = value)) +
+  facet_wrap(~name, scales = 'free') +
+  geom_line()
+```
+
+## Rate heterogeneity
+
+## Diversity and divergence
+
+## Phylogeny
+
+```{r}
+pml_out <- phangorn::pml_bb(wavess_out$seqs, start = bionj(dist.dna(wavess_out$seqs, model = "TN93")), model = "GTR+R(4)+I", rearrangement = 'none')
+
+tr <- root(pml_out$tree, 'founder1')
+gens <- c(gsub('gen_|_cell.*', '', tr$tip.label), rep(NA, Nnode(tr)))
+ggtree(tr) +
+  geom_tippoint(aes(col = gens)) +
+  scale_color_brewer(palette = 'Set1') +
+  geom_treescale()
+```
+
+## Phylogeny summary statistics
