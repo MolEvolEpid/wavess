@@ -222,6 +222,11 @@ immune_fitness$counts$mean_immune_cost_active
 Please note that the model is very sensitive to the maximum immune fitness cost
 for a given epitope. 
 
+## Multiple selective pressures at once
+
+You can also include multiple selective pressures at once. In this case, the
+fitness is defined as **ADD EQUATION**.
+
 ## Events defined by probabilities
 
 There are several events that can occur during within-host evolution that are 
