@@ -1,20 +1,25 @@
 #' Run wavess
 #'
+#' Simulate within-host evolution.
+#' Please note that the default arguments were set with the the HIV ENV gp120 gene
+#' in mind. If you'd like to simulate something else, you may
+#' have to modify certain parameters.
+#'
 #' @param pop_samp Tibble with columns generation, active_cell_count, n_sample_active.
 #' Can be generated using the `define_growth_curve()` and `define_sampling_scheme()` functions.
 #' @param founder_seqs Founder sequences as a vector of character strings. For example c('ATCG', 'ATTT')
 #' @param nt_sub_probs Named matrix of nucleotide substitution probabilities.
 #' Rows are from, columns are to. Can be generated using the `calc_nt_subst_probs()` function.
-#' @param conserved_sites Vector of conserved sites. **NOTE:** This should be indexed at 0!!!
+#' @param conserved_sites Vector of conserved sites.
 #' This can be generated using the `identify_conserved_sites()` function
-#' (default: NULL, i.e. no conserved sites fitness costs) # ALTERNATIVELY, WE COULD INDEX IT AT 0 FOR THEM...
+#' (default: NULL, i.e. no conserved sites fitness costs)
 #' @param conserved_cost Cost of mutation at conserved site (default: 0.99)
 #' @param ref_seq Reference sequence as a character string. A consensus sequence,
 #' that can be used as the reference sequence, can be generated using the function
 #' `find_consensus()` (default: NULL, i.e. no fitness cost relative to a reference sequence)
 #' @param rep_exp Replicative fitness exponent, only relevant when ref_seq is not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL DEFINITION
 #' @param epitope_locations Tibble of epitope locations and maximum fitness costs with columns
-#' epi_start_nt, epi_end_nt, max_fitness_cost. # CHECK TO SEE WHAT THIS IS INDEXED AT!!!
+#' epi_start_nt, epi_end_nt, max_fitness_cost.
 #' This can be generated using the functions `get_epitope_frequencies()` and `sample_epitopes()`
 #' (default: NULL, i.e. no immune fitness costs)
 #' @param seroconversion_time Generation at which seroconversion occurs, only
@@ -45,14 +50,18 @@
 #' @examples
 #' \dontrun{
 #' hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-#' run_wavess(define_sampling_scheme(define_growth_curve(gN = 300)), c('ATCG', 'ATTT'),
-#' calc_nt_subst_probs(hiv_env_flt_2021[1:3,]))
+#' run_wavess(generate_pop_samp(gN = 300), c('ATCG', 'ATTT'),
+#' calc_nt_sub_probs(hiv_env_flt_2021[1:3,]))
 #' }
 run_wavess <- function(pop_samp,
                        founder_seqs,
                        nt_sub_probs,
                        prob_mut = 3.5e-5,
                        prob_recomb = 1.4e-5,
+                       prob_act_to_lat = 0.001,
+                       prob_lat_to_act = 0.01,
+                       prob_lat_prolif = 0.01,
+                       prob_lat_die = 0.01,
                        conserved_sites = NULL,
                        conserved_cost = 0.99,
                        ref_seq = NULL,
@@ -61,10 +70,6 @@ run_wavess <- function(pop_samp,
                        seroconversion_time = 30,
                        prop_for_imm = 0.01,
                        gen_full_potency = 90,
-                       prob_act_to_lat = 0.001,
-                       prob_lat_to_act = 0.01,
-                       prob_lat_prolif = 0.01,
-                       prob_lat_die = 0.01,
                        seed = NULL){
 
   check_run_wavess_inputs(pop_samp, founder_seqs, nt_sub_probs,
@@ -79,8 +84,17 @@ run_wavess <- function(pop_samp,
 
   agents <- tryCatch(use_python_venv(), error=function(e) e, warning=function(w) w)
   # when testing you have to use a different path...
+  if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../inst/python'), error=function(e) e, warning=function(w) w)
   if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../../inst/python'), error=function(e) e, warning=function(w) w)
   if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../../wavess/python'), error=function(e) e, warning=function(w) w)
+  if("warning" %in% class(agents)) stop('Cannot find path to agents.py')
+
+  latent <- TRUE
+  # no latent cells
+  if(prob_act_to_lat == 0 & prob_lat_to_act == 0 & prob_lat_prolif == 0 & prob_lat_die == 0){
+    latent_nums <- c(0,0,0,0)
+    latent <- FALSE
+  }
 
   if(is.null(ref_seq)){
     ref_seq <- ''
@@ -93,11 +107,16 @@ run_wavess <- function(pop_samp,
     conserved_sites <- c()
   }else{
     conserved_fitness <- 1
+    # change indexing to 0 because underlying functions are in python
+    conserved_sites <- conserved_sites - 1
   }
   if(is.null(epitope_locations)){
     immune_fitness <- 0
   }else{
     immune_fitness <- 1
+    # change indexing to 0 because underlying functions are in python
+    epitope_locations$epi_start_nt <- epitope_locations$epi_start_nt - 1
+    epitope_locations$epi_end_nt <- epitope_locations$epi_end_nt - 1
   }
 
   conserved_sites <- as.list(conserved_sites)
@@ -156,8 +175,11 @@ run_wavess <- function(pop_samp,
   # Looping through generations until we sample everything we want
   for(t in 1:last_sampled_gen){
     # Latent reservoir dynamics
-    # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
-    latent_nums <- unlist(reticulate::py_to_r(host$get_next_gen_latent(prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif, generator)))
+    # only get latent cell dynamics if modeling latency (ALSO CHANGE THIS IN MAIN.PY?)
+    if(latent){
+      # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
+      latent_nums <- unlist(reticulate::py_to_r(host$get_next_gen_latent(prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif, generator)))
+    }
     # Productively infected cell dynamics
     # n_mut, number_recombination
     var_nums <- unlist(reticulate::py_to_r(host$get_next_gen_active(prob_mut, prob_recomb, pop_samp$active_cell_count[t+1], t,
@@ -205,7 +227,6 @@ record_counts <- function(counts, generation, host, latent_nums, var_nums, fitne
                     mean_conserved_cost_active = fitness[2],
                     mean_immune_cost_active = fitness[3],
                     mean_replicative_cost_active = fitness[4])
-
 }
 
 

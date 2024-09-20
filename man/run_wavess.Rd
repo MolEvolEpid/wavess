@@ -10,6 +10,10 @@ run_wavess(
   nt_sub_probs,
   prob_mut = 3.5e-05,
   prob_recomb = 1.4e-05,
+  prob_act_to_lat = 0.001,
+  prob_lat_to_act = 0.01,
+  prob_lat_prolif = 0.01,
+  prob_lat_die = 0.01,
   conserved_sites = NULL,
   conserved_cost = 0.99,
   ref_seq = NULL,
@@ -18,10 +22,6 @@ run_wavess(
   seroconversion_time = 30,
   prop_for_imm = 0.01,
   gen_full_potency = 90,
-  prob_act_to_lat = 0.001,
-  prob_lat_to_act = 0.01,
-  prob_lat_prolif = 0.01,
-  prob_lat_die = 0.01,
   seed = NULL
 )
 }
@@ -40,9 +40,21 @@ Rows are from, columns are to. Can be generated using the \code{calc_nt_subst_pr
 \item{prob_recomb}{Probability of a recombination event at a given site in
 one generation (default: 1.4e-5)}
 
-\item{conserved_sites}{Vector of conserved sites. \strong{NOTE:} This should be indexed at 0!!!
+\item{prob_act_to_lat}{Probability that an active cell becomes latent in a
+generation (default: 0.001)}
+
+\item{prob_lat_to_act}{Probability that a latent cell becomes active in a
+generation (default: 0.01)}
+
+\item{prob_lat_prolif}{Probability that a latent cell proliferates in a
+generation (default: 0.01)}
+
+\item{prob_lat_die}{Probability that a latent cell dies in a
+generation (default: 0.01)}
+
+\item{conserved_sites}{Vector of conserved sites.
 This can be generated using the \code{identify_conserved_sites()} function
-(default: NULL, i.e. no conserved sites fitness costs) # ALTERNATIVELY, WE COULD INDEX IT AT 0 FOR THEM...}
+(default: NULL, i.e. no conserved sites fitness costs)}
 
 \item{conserved_cost}{Cost of mutation at conserved site (default: 0.99)}
 
@@ -53,7 +65,7 @@ that can be used as the reference sequence, can be generated using the function
 \item{rep_exp}{Replicative fitness exponent, only relevant when ref_seq is not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL DEFINITION}
 
 \item{epitope_locations}{Tibble of epitope locations and maximum fitness costs with columns
-epi_start_nt, epi_end_nt, max_fitness_cost. # CHECK TO SEE WHAT THIS IS INDEXED AT!!!
+epi_start_nt, epi_end_nt, max_fitness_cost.
 This can be generated using the functions \code{get_epitope_frequencies()} and \code{sample_epitopes()}
 (default: NULL, i.e. no immune fitness costs)}
 
@@ -68,30 +80,21 @@ relevant when epitope_locations is not NULL (default: 0.01).}
 to an epitope to reach full potency, only relevant when epitope_locations is
 not NULL (default: 90).}
 
-\item{prob_act_to_lat}{Probability that an active cell becomes latent in a
-generation (default: 0.001)}
-
-\item{prob_lat_to_act}{Probability that a latent cell becomes active in a
-generation (default: 0.01)}
-
-\item{prob_lat_prolif}{Probability that a latent cell proliferates in a
-generation (default: 0.01)}
-
-\item{prob_lat_die}{Probability that a latent cell dies in a
-generation (default: 0.01)}
-
 \item{seed}{Optional seed (default: NULL)}
 }
 \value{
 List including: tibble of counts, and alignment of sequences
 }
 \description{
-Run wavess
+Simulate within-host evolution.
+Please note that the default arguments were set with the the HIV ENV gp120 gene
+in mind. If you'd like to simulate something else, you may
+have to modify certain parameters.
 }
 \examples{
 \dontrun{
 hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-run_wavess(define_sampling_scheme(define_growth_curve(gN = 300)), c('ATCG', 'ATTT'),
-calc_nt_subst_probs(hiv_env_flt_2021[1:3,]))
+run_wavess(generate_pop_samp(gN = 300), c('ATCG', 'ATTT'),
+calc_nt_sub_probs(hiv_env_flt_2021[1:3,]))
 }
 }

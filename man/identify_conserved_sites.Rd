@@ -9,8 +9,7 @@ identify_conserved_sites(
   founder,
   thresh = 0.99,
   ref = NULL,
-  founder_aln = NULL,
-  founder_start_pos = 1
+  founder_aln = NULL
 )
 }
 \arguments{
@@ -31,13 +30,6 @@ the founder sequence is not in \code{aln} (default: \code{NULL})}
 
 \item{founder_aln}{Alignment including the reference and founder sequences,
 required if the founder is not present in \code{aln} (default: \code{NULL})}
-
-\item{founder_start_pos}{Starting position of the founder sequence in \code{aln}
-(default: 1). This start position is used to change the indexing of the
-positions in the original alignment so the first base in the
-founder is 0, and (if needed) to match \code{aln} and \code{founder_aln} based on the
-chosen reference. NOTE: this function assumes that the founder start position
-of \code{founder_aln} is 1.}
 }
 \value{
 Tibble with the same columns as output in \code{find_consensus()}, plus
@@ -47,12 +39,14 @@ conserved position is a gap ('-'))
 }
 \description{
 Identify conserved sites relative to the founder sequence.
+Note that the positions returned assume that the start of the alignment
+is also the start of the founder sequence in the simulation.
 }
 \examples{
 # this is a hack to get the data in the right format...
-hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-hxb2_founder <- ape::as.matrix.DNAbin(hxb2_founder)
-identify_conserved_sites(hiv_env_flt_2021, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455')
-identify_conserved_sites(hiv_env_flt_2021, 'B.US.2011.DEMB11US006.KC473833',
-ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = hxb2_founder)
+hiv_gp120_flt_2021 <- slice_aln(ape::as.matrix.DNAbin(hiv_env_flt_2021), start = 1, end = 2517)
+hxb2_cons_founder <- slice_aln(ape::as.matrix.DNAbin(hxb2_cons_founder), start = 6225, end = 7757)
+identify_conserved_sites(hiv_gp120_flt_2021, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455')
+identify_conserved_sites(hiv_gp120_flt_2021, 'B.US.2011.DEMB11US006.KC473833',
+ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = hxb2_cons_founder)
 }

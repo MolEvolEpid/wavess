@@ -1,6 +1,8 @@
 #' Identify conserved sites
 #'
 #' Identify conserved sites relative to the founder sequence.
+#' Note that the positions returned assume that the start of the alignment
+#' is also the start of the founder sequence in the simulation.
 #'
 #' @param thresh Conserved site threshold. A position is considered to be
 #' conserved if >thresh proportion of sequences in the alignment are the same
@@ -17,20 +19,21 @@
 #'
 #' @examples
 #' # this is a hack to get the data in the right format...
-#' hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-#' hxb2_founder <- ape::as.matrix.DNAbin(hxb2_founder)
-#' identify_conserved_sites(hiv_env_flt_2021, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455')
-#' identify_conserved_sites(hiv_env_flt_2021, 'B.US.2011.DEMB11US006.KC473833',
-#' ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = hxb2_founder)
+#' hiv_gp120_flt_2021 <- slice_aln(ape::as.matrix.DNAbin(hiv_env_flt_2021), start = 1, end = 2517)
+#' hxb2_cons_founder <- slice_aln(ape::as.matrix.DNAbin(hxb2_cons_founder), start = 6225, end = 7757)
+#' identify_conserved_sites(hiv_gp120_flt_2021, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455')
+#' identify_conserved_sites(hiv_gp120_flt_2021, 'B.US.2011.DEMB11US006.KC473833',
+#' ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = hxb2_cons_founder)
 identify_conserved_sites <- function(aln, founder, thresh = 0.99,
-                                     ref = NULL, founder_aln = NULL,
-                                     founder_start_pos = 1){
-  check_identify_conserved_sites_inputs(aln, founder, thresh, ref, founder_aln, founder_start_pos)
-  conserved_dat <- find_consensus(aln, founder, ref, founder_aln, founder_start_pos) |>
+                                     ref = NULL, founder_aln = NULL){
+  check_identify_conserved_sites_inputs(aln, founder, thresh, ref, founder_aln)
+  conserved_dat <- find_consensus(aln, founder, ref, founder_aln) |>
     # Remove reference positions that are gaps in >thresh sequences
-    # because they would erroneously be called conserved in reference
-    dplyr::filter(!is.na(.data$consensus_base)) |>
+
+    # dplyr::filter(!is.na(.data$consensus_base)) |>
     # Consider conserved sequences to be those that are identical in >thresh sequences
+    # But if it's a gap, return the consensus base to be NA
+    # because they would erroneously be called conserved in reference
     dplyr::mutate(conserved = dplyr::case_when(.data$consensus_base == '-' & .data$consensus_prop > thresh ~ NA,
                                                .data$consensus_prop > thresh ~ 'Yes',
                                                TRUE ~ 'No')) |>
@@ -57,12 +60,6 @@ identify_conserved_sites <- function(aln, founder, thresh = 0.99,
 #' the founder sequence is not in `aln` (default: `NULL`)
 #' @param founder_aln Alignment including the reference and founder sequences,
 #' required if the founder is not present in `aln` (default: `NULL`)
-#' @param founder_start_pos Starting position of the founder sequence in `aln`
-#' (default: 1). This start position is used to change the indexing of the
-#' positions in the original alignment so the first base in the
-#' founder is 0, and (if needed) to match `aln` and `founder_aln` based on the
-#' chosen reference. NOTE: this function assumes that the founder start position
-#' of `founder_aln` is 1.
 #'
 #' @return Tibble including the following columns:
 #' - `founder_pos`: founder position
@@ -71,9 +68,8 @@ identify_conserved_sites <- function(aln, founder, thresh = 0.99,
 #' - `consensus_prop`: proportion of sequences that had that base at that position
 #' When using a reference, `NA` in the consensus columns indicates that that
 #' position was an insertion relative to the reference
-find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL,
-                              founder_start_pos = 1){
-  check_find_consensus_inputs(aln, founder, ref, founder_aln, founder_start_pos)
+find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL){
+  check_find_consensus_inputs(aln, founder, ref, founder_aln)
   # ensure the alignment is in matrix form
   aln <- as.matrix(aln)
 
@@ -90,10 +86,7 @@ find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL,
   ref_consensus_dat <- tibble::tibble(ref = as.character(aln[ref,])[1,],
                                       consensus_base = consensus_info[1,],
                                       consensus_prop = consensus_info[2,]) |>
-    # Subtract founder_start_pos to match to founder alignment, and
-    # because want to index positions from zero
     get_seq_pos('ref') |>
-    dplyr::mutate(ref_pos = .data$ref_pos - founder_start_pos) |>
     dplyr::rename(ref_base = 'ref') |>
     # Remove reference positions that are gaps
     # This might remove a small handful of bases that are conserved in other sequences,
@@ -101,8 +94,6 @@ find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL,
     dplyr::filter(!is.na(.data$ref_pos))
   if(is.null(founder_aln)){
     founder_consensus_dat <- ref_consensus_dat |>
-      # Remove positions prior to the founder start position
-      dplyr::filter(.data$ref_pos >= 0) |>
       dplyr::rename(founder_base = 'ref_base', founder_pos = 'ref_pos')
   }else{
     # Consensus sites relative to founder
@@ -144,8 +135,8 @@ find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL,
 #' @examples
 #' # this is a hack to get the data in the right format...
 #' hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-#' hxb2_founder <- ape::as.matrix.DNAbin(hxb2_founder)
-#' map_ref_founder(hxb2_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 'B.US.2011.DEMB11US006.KC473833')
+#' hxb2_cons_founder <- ape::as.matrix.DNAbin(hxb2_cons_founder)
+#' map_ref_founder(hxb2_cons_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 'B.US.2011.DEMB11US006.KC473833')
 map_ref_founder <- function(aln, ref, founder){
   check_map_ref_founder_inputs(aln, ref, founder)
   # read in alignment and select reference and founder sequences
@@ -166,12 +157,7 @@ map_ref_founder <- function(aln, ref, founder){
              rev(cumsum(tidyr::replace_na(rev(.data$founder_pos), 0))) > 0) |>
     # select columns of interest
     dplyr::select('alignment_pos', 'ref_pos', 'founder_pos',
-                  ref_base='ref', founder_base='founder') |>
-    # change to start indexing for each position at 0
-    # (because that's how it works in the model)
-    dplyr::mutate(alignment_pos = .data$alignment_pos - 1,
-           ref_pos = .data$ref_pos - 1,
-           founder_pos = .data$founder_pos - 1)
+                  ref_base='ref', founder_base='founder')
 }
 
 #' Get sequence position
