@@ -4,12 +4,15 @@
 \alias{get_logistic_curve}
 \title{Get logistic growth curve}
 \usage{
-get_logistic_curve(n0, K, gS, pK, gN)
+get_logistic_curve(n0, K, gpK, pK, gN)
 }
 \arguments{
 \item{n0}{starting population size (default: 1; used for logistic)}
 
 \item{K}{carrying capacity (default: 2000)}
+
+\item{gpK}{generation at which the population size reaches pK of K
+(default: 25; used for logistic)}
 
 \item{pK}{proportion of carrying capacity population size at gpK
 (default: 0.5; used for logistic)}
@@ -21,5 +24,5 @@ Population size at each generation
 }
 \description{
 Note: to get the equations used in this function, I solved for the
-growth rate and midpoint based on n0, K, gS, and pK.
+growth rate and midpoint based on n0, K, gpK, and pK.
 }

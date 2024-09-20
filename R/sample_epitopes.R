@@ -1,5 +1,9 @@
 #' Sample epitopes
 #'
+#' Sample epitopes based on epitope probabilities.
+#' Note that the positions returned assume that the start of the amino acid
+#' sequence is also the start of the founder sequence in the simulation.
+#'
 #' @param epitope_probabilities Epitope probability tibble as output by
 #' `get_epitope_frequencies()`, including columns
 #' `aa_position` and `epitope_probability`
@@ -23,8 +27,8 @@
 #' and founder positions (`ref_pos` and `founder_pos`).
 #'
 #' @return tibble with the `num_epitopes` rows and the following columns:
-#' - `epi_start_nt`: nucleotide epitope start position (indexed at 0)
-#' - `epi_end_nt`: nucleotide epitope end position (indexed at 0)
+#' - `epi_start_nt`: nucleotide epitope start position
+#' - `epi_end_nt`: nucleotide epitope end position
 #' - `max_fitness_cost`: maximum fitness cost for that epitope
 #' @export
 #'
@@ -83,9 +87,8 @@ sample_epitopes <- function(epitope_probabilities,
       message(n_resamples, " resamples required")
     }
   }
-  # return with indexing at 0 (because model is in python)
-  epitopes <- tibble::tibble(epi_start_nt = start_pos*3 - 1,
-                 epi_end_nt = (start_pos+10)*3 - 1,
+  epitopes <- tibble::tibble(epi_start_nt = start_pos*3,
+                 epi_end_nt = (start_pos+10)*3,
                  max_fitness_cost = max_fit_costs)
   if(!is.null(ref_founder_map)){
     epitopes <- convert_ref_to_founder_epitopes(epitopes, ref_founder_map)

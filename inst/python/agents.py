@@ -503,7 +503,6 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             nucleotides_order, substitution_probabilities, conserved_sites, time_to_full_potency, cost_per_mutation_in_conserved_site, 
             reference_sequence, immune_response_proportion, epitopes, immune_fitness, conserved_fitness, replicative_fitness, rf_exp, seed):
         # ***************************** Productively infected cell dynamics ***************************** #
-        #print(epitopes)
         # Get random number generator
         rng = default_rng(seed)
         # Mutate virus in productively infected cells

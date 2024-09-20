@@ -13,7 +13,7 @@ test_that("sample_epitopes works", {
                "Too many resamples required.")
   expect_message(sample_epitopes(get_epitope_frequencies(env_features$position),
                   end_aa_pos = (7785-6225)/3,
-                  ref_founder_map = map_ref_founder(hxb2_founder, names(hxb2_founder)[1], names(hxb2_founder)[2])))
+                  ref_founder_map = map_ref_founder(hxb2_cons_founder, labels(hxb2_cons_founder)[1], labels(hxb2_cons_founder)[2])))
   expect_message(sample_epitopes(get_epitope_frequencies(env_features$position),
                                  aa_epitope_length = 11))
 })

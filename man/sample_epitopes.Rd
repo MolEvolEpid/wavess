@@ -50,13 +50,15 @@ and founder positions (\code{ref_pos} and \code{founder_pos}).}
 \value{
 tibble with the \code{num_epitopes} rows and the following columns:
 \itemize{
-\item \code{epi_start_nt}: nucleotide epitope start position (indexed at 0)
-\item \code{epi_end_nt}: nucleotide epitope end position (indexed at 0)
+\item \code{epi_start_nt}: nucleotide epitope start position
+\item \code{epi_end_nt}: nucleotide epitope end position
 \item \code{max_fitness_cost}: maximum fitness cost for that epitope
 }
 }
 \description{
-Sample epitopes
+Sample epitopes based on epitope probabilities.
+Note that the positions returned assume that the start of the amino acid
+sequence is also the start of the founder sequence in the simulation.
 }
 \examples{
 sample_epitopes(get_epitope_frequencies(env_features$position))
