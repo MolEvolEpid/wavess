@@ -5,3 +5,6 @@
 .DS_Store
 .quarto
 inst/python/__pycache__/
+inst/doc
+/doc/
+/Meta/

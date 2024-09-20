@@ -1,0 +1,248 @@
+---
+title: "Simulate within-host evolution"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Simulate within-host evolution}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+In this vignette, we focus on how to simulate within-host evolution using the
+`run_wavess()` function. We will be using the HIV ENV gp120 gene as an example.
+Please note that the default arguments were set with this particular organism
+and genomic region in mind. If you'd like to simulate something else, you may
+have to modify certain parameters. 
+
+## A note about using the simulation output
+
+Before we get started, I just want to note that the output of these simulations
+is stochastic, meaning they will be different each time it is run. You can
+set a seed for reproducibility and troubleshooting if you'd like, but for the vast 
+majority of applications, you will want to run many replicates of a given simulation
+scenario with different seeds (random is okay) to get a reasonable sense of what 
+dynamics are observed. You will also want to check the simulation outputs to see
+if they are giving you reasonable/expected results that conform to your prior 
+knowledge about the system you're simulating. If the output does not seem right,
+you might have to tweak the input parameters to work for your particular system.
+We go into more detail about analyzing the model output in a separate vignette (**LINK**)
+
+## Load libraries and prepare input data
+
+First, we have to load the wavess library and generate the input data. 
+If you're interested in learning more about how to prepare the input data,
+please see the [corresponding vignette](prepare_input_data). 
+**TODO: LINK THIS THE CORRECT WAY**
+
+We will only simulate 300 generations with sampling every 100 generations so
+the simulation doesn't take too long to run. 
+
+**TODO: FIX nt_sub_probs ONCE INCLUDE EXAMPLE WITHIN-HOST ALIGNMENT**
+
+```{r setup}
+library(wavess)
+library(ape)
+library(tidyverse)
+
+hiv_env_flt_2021 <- as.matrix.DNAbin(hiv_env_flt_2021)
+hxb2_cons_founder <- as.matrix.DNAbin(hxb2_cons_founder)
+
+pop_samp <- generate_pop_samp(gN = 300, sampling_frequency = 100)
+founder_ref <- extract_seqs(hxb2_cons_founder, 
+             founder = 'B.US.2011.DEMB11US006.KC473833', 
+             ref = 'CON_B(1295)',
+             start = 6225, end = 7757)
+nt_sub_probs <- calc_nt_sub_probs(as.matrix(hiv_env_flt_2021)[1:10,])
+hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, 2517) 
+gp120 <- slice_aln(hxb2_cons_founder, 6225, 7757)
+founder_conserved_sites <- identify_conserved_sites(hiv_gp120_flt_2021, 
+                         founder = 'B.US.2011.DEMB11US006.KC473833', 
+                         ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 
+                         founder_aln = gp120) |>
+  filter(conserved == 'Yes') |>
+  pull(founder_pos)
+epi_probs <- get_epitope_frequencies(env_features$position)
+ref_founder_map <- map_ref_founder(gp120, 
+                ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 
+                founder = 'B.US.2011.DEMB11US006.KC473833')
+epitope_locations <- sample_epitopes(epi_probs, ref_founder_map = ref_founder_map)
+```
+
+## Simplest way to `run_wavess()`
+
+The simplest way to simulate within-host evolution is to use all of the defaults,
+and only input the population growth and sampling scheme, founder sequence, and
+nucleotide substitution probabilities.
+
+Please note that the total population size simulated greatly influences the 
+simulation output. 
+
+```{r}
+required_args_only <- run_wavess(pop_samp = pop_samp, 
+                            founder_seqs = founder_ref$founder, 
+                            nt_sub_probs = nt_sub_probs)
+```
+
+The output format of `run_waves()` is always the same: a list of length two 
+containing a tibble of various count and the sampled DNA sequences:
+
+```{r}
+names(required_args_only)
+```
+
+The counts tibble contains the following columns:
+
+- `generation`: generation that numbers were recorded and sequences were sampled
+- `active_cell_count`: active cell count 
+- `latent_cell_count`: latent cell count 
+- `active_turned_latent`: number of active cells that became latent
+- `latent_turned_active`: number of latent cells that became active
+- `latent_died`: number of latent cells that died
+- `latent_proliferated`: number of latent cells that proliferated
+- `number_mutations`: total number of mutations across all sequences 
+- `number_dual_inf`: total number of dually infected cells
+- `mean_fitness_active`:  mean fitness of active cells
+- `mean_conserved_cost_active`: mean conserved sites fitness cost of active cells
+- `mean_immune_cost_active`: mean immune fitness cost of active cells
+- `mean_replicative_cost_active`: mean replicative fitness cost (comparison to `ref_seq`) 
+of active cells
+
+```{r}
+required_args_only$counts
+```
+
+As you can see, the default values for `run_wavess()` include latency, mutations, 
+and dual infections (which lead to recombination), but no fitness costs. 
+
+The sequences are returned as well, in `ape::DNAbin` format:
+
+```{r}
+required_args_only$seqs
+```
+
+Each sequence is named as follows:
+
+- Founder sequences are named as "founderX" where X is the index of the founder
+sequence in the input vector
+- All other sequences are sampled and are named by the generation, the cell number,
+and then the immune fitness cost (ic), conserved fitness cost (cc), replicative
+fitness cost (rc), and overall fitness (f).
+
+These outputs can be plotted and analyzed in various ways. If you'd like to learn
+more about how to analyze the output, please checkout this vignette 
+**TODO: ADD LINK TO POST-PROCESSING VIGNETTTE**
+
+## Including selective pressures
+
+`run_wavess()` can simulate three types of selective pressure:
+
+- Conserved sites fitness
+- Fitness relative to a "most fit" reference sequence
+- B-cell immunity
+
+Including these requires additional inputs, which are described in more detail
+in the prepare input data vignette (**LINK**)
+
+### Conserved sites fitness
+
+To simulate conserved sites fitness, you must provide a vector of sites in the
+founder sequence that are considered to be conserved (`conserved_sites` argument). 
+By default, the cost of a mutation at these sites is 0.99 (`conserved_cost` argument), 
+but this can be modified.
+
+Here's an example of simulating evolution with conserved sites fitness:
+
+```{r}
+conserved_fitness <- run_wavess(pop_samp = pop_samp, 
+                            founder_seqs = founder_ref$founder, 
+                            nt_sub_probs = nt_sub_probs,
+                            conserved_sites = founder_conserved_sites)
+```
+
+If you look at the mean conserved cost of active cells, you'll see that it's not
+always 0 (although it may sometimes be 0 depending on the simulation, since
+the output is stochastic). 
+
+```{r}
+conserved_fitness$counts$mean_conserved_cost_active
+```
+
+### Comparison to a reference
+
+To simulate fitness compared to a reference, you must provide a "most fit" 
+reference sequence to compare each simulated sequence to. 
+The strenght of this fitness can be altered using the `rep_exp` argument.
+
+**TODO: ADD MORE DETAILS ABOUT THE EXACT WAY FITNESS IS CALCULATED ONCE WE'VE DECIDED**
+**TODO: DON'T INCLUDE CONSENSUS WITH N'S**
+
+```{r}
+founder_ref$ref <- gsub('N', '-', founder_ref$ref)
+ref_fitness <- run_wavess(pop_samp = pop_samp, 
+                            founder_seqs = founder_ref$founder, 
+                            nt_sub_probs = nt_sub_probs,
+                            ref_seq = founder_ref$ref)
+```
+
+Here, you can see that the mean replicative fitness cost is now non-zero:
+
+```{r}
+ref_fitness$counts$mean_replicative_cost_active
+```
+
+### Immune fitness
+
+Active immunity can be modeled by defining B-cell epitopes locations that can be 
+recognized by the immune system. Epitopes are recognized only after the 
+seroconversion time (`seroconversion_time` argument, default: 30 generations),
+and when the epitope is present in at least 1% of the total viral population
+(`prop_for_imm` argument). Once an epitope is recognized, it undergoes affinity
+maturation for 90 generations (`gen_full_potency`), at which time it reaches
+full potency. Epitopes are also cross-reactive. **EXPLAIN IN MORE DETAIL OR REFER TO PAPER**
+
+```{r}
+immune_fitness <- run_wavess(pop_samp = pop_samp, 
+                            founder_seqs = founder_ref$founder, 
+                            nt_sub_probs = nt_sub_probs,
+                            epitope_locations = epitope_locations)
+```
+
+The immune fitness cost here is non-zero:
+
+```{r}
+immune_fitness$counts$mean_immune_cost_active
+```
+
+Please note that the model is very sensitive to the maximum immune fitness cost
+for a given epitope. 
+
+## Events defined by probabilities
+
+There are several events that can occur during within-host evolution that are 
+defined by probabilities of occurrence. These include the probability of a 
+mutation occurring at a site in a generation (`prob_mut`), the probability of
+a recombination event occurring between two adjacent sites in a generation
+(`prob_recomb`), and various probabilities related to latent cell dynamics
+(`prob_act_to_lat`, `prob_lat_to_act`, `prob_lat_prolif`, `prob_lat_die`).
+Each of these can be turned off by setting the respective probability value to 0.
+The simulation starts with 0 latent cells, so setting `prob_act_to_lat` will
+turn latent cell dynamics off, although you can choose to set all of the 
+latency-related parameters to zero if you'd like. 
+
+## Seed
+
+A seed can be set for reproducibility:
+
+```{r}
+seed_out <- run_wavess(pop_samp = pop_samp, 
+                            founder_seqs = founder_ref$founder, 
+                            nt_sub_probs = nt_sub_probs)
+```
+
+
