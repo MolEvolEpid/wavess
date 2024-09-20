@@ -541,7 +541,20 @@ You can input this into `sample_epitopes()`, which will then return nucleotide
 positions relative to the founder sequence (instead of HXB2):
 
 ```{r}
-sample_epitopes(epi_probs, ref_founder_map = ref_founder_map)
+(epitope_locations <- sample_epitopes(epi_probs, ref_founder_map = ref_founder_map))
+```
+Here are two ways to visualize the epitopes:
+
+```{r}
+epitope_locations %>% 
+  ggplot(aes(x = epi_start_nt, y = max_fitness_cost)) +
+  geom_point() +
+  labs(x = 'Epitope start position', y = 'Max fitness cost')
+
+epitope_locations %>% 
+  ggplot(aes(x = 1:nrow(.), y = max_fitness_cost, col = epi_start_nt)) +
+  geom_point() +
+  labs(x = 'Epitope', y = 'Max fitness cost', col = 'Epitope start\nposition')
 ```
 
 
