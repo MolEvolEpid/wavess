@@ -185,6 +185,21 @@ check_is_dnabin <- function(x, var_name){
          class_x)
 }
 
+
+#' Check if a variable is a phylo object
+#'
+#' @param x variable to check
+#' @param var_name name of variable
+#'
+#' @return error if variable is not a DNAbin object
+check_is_phylo <- function(x, var_name){
+  class_x <- class(x)
+  if(!class_x == "phylo")
+    stop(var_name,
+         ' must be of the `ape` class `phylo` (e.g. an tree read in using `ape::read.tree()` but is ',
+         class_x)
+}
+
 check_sample_epitopes_inputs <- function(epitope_probabilities, start_aa_pos, end_aa_pos,
                                          num_epitopes, aa_epitope_length,
                                          max_fit_cost, cost_type,
