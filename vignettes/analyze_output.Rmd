@@ -18,7 +18,7 @@ In this vignette, we'll provide various ways to analyze the output of `run_waves
 Note that many of these functions can also be used to analyze real-world
 empirical data. 
 
-For simulated data, we highly recommend comparing the output to emperical data,
+For simulated data, we highly recommend comparing the output to empirical data,
 or at least using your domain knowledge to determine whether the output seems
 reasonable. If it doesn't, you may have to tweak various input parameters to 
 get believable outputs. The default input parameters we provide generally 
@@ -35,6 +35,7 @@ please see the respective vignettes. (**LINKS**)
 library(wavess)
 library(dplyr)
 library(ggplot2)
+library(tidyr)
 library(ape)
 library(phangorn)
 library(ggtree)
@@ -72,6 +73,7 @@ wavess_out <- run_wavess(pop_samp = pop_samp,
 ```
 
 **WHY IS IT SOO MUCH SLOWER WHEN DOING MULTIPLE FITNESSES COMPARED TO JUST ONE?**
+seems like conserved + ref_seq is the culprit
 
 ## Plotting counts
 
@@ -87,17 +89,59 @@ wavess_out$counts %>%
 
 ## Diversity and divergence
 
+Within-generation diversity and divergence from the founder sequence across time 
+can be computed and plotted as follows:
+
+```{r}
+gens <- gsub('gen_|_cell.*', '', labels(wavess_out$seqs))
+div_metrics <- calc_div_metrics(wavess_out$seqs, 'founder1', gens)
+
+div_metrics %>% 
+  mutate(gen = as.numeric(gen)) %>% 
+  pivot_longer(!gen) %>% 
+  ggplot(aes(x = gen, y = value)) +
+  facet_grid(~name) +
+  geom_line()
+```
+
+
 ## Phylogeny
+
+While you may want to use a different tree-building algorithm outside of R such
+as [IQ-TREE](http://www.iqtree.org/), here is a way to quickly build a tree in 
+R using `ape` to generate a neighbor-joining tree and `phangorn` to estimate
+branch lengths using maximum likelihood:
 
 ```{r}
 pml_out <- phangorn::pml_bb(wavess_out$seqs, start = bionj(dist.dna(wavess_out$seqs, model = "TN93")), model = "GTR+R(4)+I", rearrangement = 'none')
 
 tr <- root(pml_out$tree, 'founder1')
-gens <- c(gsub('gen_|_cell.*', '', tr$tip.label), rep(NA, Nnode(tr)))
+gens <- gsub('gen_|_cell.*', '', tr$tip.label)
 ggtree(tr) +
-  geom_tippoint(aes(col = gens)) +
+  geom_tippoint(aes(col = c(gens, rep(NA, Nnode(tr))))) +
   scale_color_brewer(palette = 'Set1') +
-  geom_treescale()
+  geom_treescale() +
+  labs(col = 'Generation')
 ```
 
 ## Phylogeny summary statistics
+
+Using the tree generated above, we provide the functionality to compute three
+relevant summary statistics:
+
+- The Sackin index normalized by the number of tree tips (to be able to compare
+values across trees of different sizes).
+- The ratio between the mean internal branch length and the mean external branch
+length.
+- The mean proportion of lineages that survived from one generation to the next.
+**CHECK WITH THOMAS TO SEE IF WE SHOULD JUST KEEP THE CURRENT AND PREVIOUS GENERATION IN THE CALCULATION**
+
+```{r}
+gens_numeric <- as.numeric(gens)
+names(gens_numeric) <- tr$tip.label
+gens_numeric <- gens_numeric[!is.na(gens_numeric)]
+calc_tr_summary_stats(tr, gens_numeric)
+```
+
+Each of these can also individually be computed using the following functions:
+`calc_sackin_norm()`, `calc_int_over_ext()`, and `calc_prop_survived()`.

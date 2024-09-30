@@ -222,8 +222,6 @@ rate_to_probability(1, k=0)
 What you'll notice is that the rates and the probabilities are effectively
 identical for slow rates, but quite different for faster rates. 
 
-**MAKE SURE THE WAY WE'RE CONVERTING RATES TO PROBABILITIES IS ACCURATE**
-**SHOULD WE RECOMMENT NOT USING RATES >1 BECAUSE THAT WOULD MEAN MULTIPLE EVENTS HAPPENING TO A GIVEN CELL IN ONE GENERATION**
 **IS ONE ASSUMPTION THAT THE RATES ARE SMALL ENOUGH THAT IT'S NOT LIKELY FOR MORE THAN ONE EVENT TO HAPPEN TO A GIVEN CELL IN A SINGLE GENERATION?**
 
 ### Visualize latent cell dynamics {#visualize-latent-cell-dynamics}
@@ -246,10 +244,7 @@ Below is example code you can use to plot the latent cell dynamics given
 certain probabilities. Please note that this is not *exactly* how it works in
 the underlying simulator, which uses a multinomial distribution to get the
 number of latent cells to activate, die, and proliferate. 
-**TODO: CHANGE THIS TO USE MULTINOMIAL?**
-
-**IS THE WAY WE'RE COMPUTING THESE CORRECT? SHOULD WE BE ADDING THE PROBABILITIES TO GET THE TOTAL PROBABILITY?** Should we be getting 4 numbers from the multinomial rather than
-doing the binomial first and then the multinomial?
+**TODO: UPDATE THIS TO THE NEW WAY WE'VE DECIDED TO COMPUTE THEM**
 
 ```{r, viz_latent}
 # set parameters to get latent curve
