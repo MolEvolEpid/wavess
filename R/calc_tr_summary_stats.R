@@ -57,7 +57,10 @@ calc_int_over_ext <- function(tr){
 #'
 #' @inheritParams calc_tr_summary_stats
 #'
-#' @return
+#' @return Tibble including:
+#' - `n_seqs_timepoint`: Number of sequences included in that time point
+#' - `n_clusters`: Number of monophyletic clusters for that time point
+#' - `prop_survived`: Proportion of lineages that survived from the previous generation
 #' @export
 #'
 #' @examples
@@ -71,17 +74,16 @@ calc_prop_survived <- function(tr, timepoints){
   storage.mode(timepoints) <- 'integer'
   timepts_unique <- unique(timepoints)
   # can't find clusters for first timepoint
-  #timepts_unique <- timepts_unique[!timepts_unique == min(timepts_unique)]
   lapply(timepts_unique, function(t){
     tr_sub <- ape::keep.tip(tr, names(timepoints)[timepoints <= t])
     timepoints_sub <- timepoints[timepoints <= t]
     get_clusters(tr_sub, timepoints_sub)$pure_subtree_info |>
       dplyr::filter(timepoint == t) |>
       dplyr::group_by(timepoint) |>
-      dplyr::summarize(n_samps_timepoint = sum(subtr_size),
+      dplyr::summarize(n_seqs_timepoint = sum(subtr_size),
                 n_clusters = n())
   }) |> dplyr::bind_rows() |>
-    dplyr::mutate(prop_survived = n_clusters/dplyr::lag(n_samps_timepoint))
+    dplyr::mutate(prop_survived = n_clusters/dplyr::lag(n_seqs_timepoint))
 }
 
 #' Get monophyletic clusters on the phylogeny
