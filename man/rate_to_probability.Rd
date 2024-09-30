@@ -2,22 +2,22 @@
 % Please edit documentation in R/rate_to_probability.R
 \name{rate_to_probability}
 \alias{rate_to_probability}
-\title{Convert a rate to a Poisson probability}
+\title{Convert a rate to a probability}
 \usage{
-rate_to_probability(rate, k = 1)
+rate_to_probability(rate, time = 1)
 }
 \arguments{
 \item{rate}{Rate to be converted}
 
-\item{k}{Number of events observed in the rate-defined time period (default: 1)}
+\item{time}{Time period (default: 1, e.g. 1 generation)}
 }
 \value{
-Probability that the event occurs in the rate-defined time period
+Probability that at least one event occurs in the time period
 }
 \description{
 The \code{wavess()} function takes probabilities,
 but sometimes in the literature you find rates instead.
-This funciton allows you to convert that rate to a probability.
+This function allows you to convert that rate to a probability.
 }
 \examples{
 rate_to_probability(2.1)
