@@ -212,17 +212,14 @@ generation. Therefore, we provide a function to convert a per-generation rate
 to a per-generation probability:
 
 ```{r, rate_to_prob}
-# THIS IS ALL FOR K=1 RIGHT NOW, WHICH MIGHT BE WRONG!
 rate_to_probability(0.001)
 rate_to_probability(0.01)
 rate_to_probability(0.1)
-rate_to_probability(1, k=0) 
+rate_to_probability(1)
 ```
 
 What you'll notice is that the rates and the probabilities are effectively
 identical for slow rates, but quite different for faster rates. 
-
-**IS ONE ASSUMPTION THAT THE RATES ARE SMALL ENOUGH THAT IT'S NOT LIKELY FOR MORE THAN ONE EVENT TO HAPPEN TO A GIVEN CELL IN A SINGLE GENERATION?**
 
 ### Visualize latent cell dynamics {#visualize-latent-cell-dynamics}
 
@@ -241,10 +238,14 @@ will therefore be using the `pop_samp` dataset we created earlier in the
 vignette.
 
 Below is example code you can use to plot the latent cell dynamics given
-certain probabilities. Please note that this is not *exactly* how it works in
-the underlying simulator, which uses a multinomial distribution to get the
-number of latent cells to activate, die, and proliferate. 
-**TODO: UPDATE THIS TO THE NEW WAY WE'VE DECIDED TO COMPUTE THEM**
+certain probabilities. 
+
+**Please note that we assume the probabilities are small for all latency rates**,
+such that it is unlikely that multiple events (activate, die, proliferate) will
+occur to a single latent cell in a single [active cell] generation. 
+If multiple events occur to a single latent cell, then the first event in this ordered
+list will be chosen as the event that occurred to the cell in that generation:
+cell becomes active, cell dies, cell proliferates.
 
 ```{r, viz_latent}
 # set parameters to get latent curve
@@ -253,22 +254,16 @@ to_active_rate <- 0.01
 proliferation_rate <- 0.01 
 death_rate <- 0.01
 
-# prob_event = prob_latent_to_active + prob_latent_die + prob_latent_proliferate
-#         num_latent_events = rng.binomial(n_latent_cd4, prob_event)
-#         num_to_activate, num_to_die, num_to_proliferate = rng.multinomial(num_latent_events,
-#                                                             [prob_latent_to_active / prob_event,
-#                                                              prob_latent_die / prob_event,
-#                                                              prob_latent_proliferate / prob_event])
-
-#n_latent_events <- rbinom(1, latent, )
-        
 # get latent cell count for each generation
 latent <- 0
 active_latent_counts <- lapply(pop_samp$active_cell_count, function(x){
   n_to_latent <- rbinom(1, x, prob = to_latent_rate)
-  n_to_active <- rbinom(1, latent, prob = to_active_rate)
-  n_to_proliferate <- rbinom(1, latent, prob = proliferation_rate)
-  n_to_die <- rbinom(1, latent, prob = death_rate)
+  to_active <- rbinom(latent, 1, prob = to_active_rate)
+  to_proliferate <- rbinom(latent, 1, prob = proliferation_rate)
+  to_die <- rbinom(latent, 1, prob = death_rate)
+  n_to_active <- sum(to_active == 1)
+  n_to_die <- sum((to_die - to_active) == 1)
+  n_to_proliferate <- sum((to_proliferate - to_die - to_active) == 1)
   counts <- tibble(Active = x, Latent = latent, n_to_latent, n_to_active, n_to_proliferate, n_to_die)
   latent <<- latent + n_to_latent - n_to_active + n_to_proliferate - n_to_die
   return(counts)

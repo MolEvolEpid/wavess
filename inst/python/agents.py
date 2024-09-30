@@ -5,6 +5,8 @@ from random import sample
 from random import randrange
 from numpy.random import default_rng
 from numpy import arange
+from numpy import where
+from numpy import concatenate
 from collections import defaultdict
 from collections import Counter
 
@@ -160,7 +162,8 @@ class HIV:
     def mutate(self, position_to_mutate, nucleotides_order, substitution_probabilities, conserved_sites, 
             cost_per_mutation_in_conserved_site, reference_sequence, conserved_fitness, replicative_fitness, rf_exp):
         # Figure out what the mutation is based on mutation probabilities
-        new_nucleotide = get_substitution(self.nuc_sequence[position_to_mutate], nucleotides_order, substitution_probabilities)
+        old_nucleotide = self.nuc_sequence[position_to_mutate]
+        new_nucleotide = get_substitution(old_nucleotide, nucleotides_order, substitution_probabilities)
         # Fastest way I can find to mutate - add part before to new nt to part after
         self.nuc_sequence = self.nuc_sequence[:position_to_mutate] + new_nucleotide + self.nuc_sequence[position_to_mutate+1:]
 
@@ -171,9 +174,12 @@ class HIV:
                 self.conserved_sites_mutated.add(position_to_mutate)
                 self.conserved_fitness_cost = conserved_fitness_cost(len(self.conserved_sites_mutated), cost_per_mutation_in_conserved_site)
 
-        # Update replicative fitness cost
+        # Update replicative fitness cost only if needed
         if replicative_fitness:
-            self.replicative_fitness_cost = replicative_fitness_cost(self.nuc_sequence, reference_sequence, conserved_sites, rf_exp)
+            ref_base = reference_sequence[position_to_mutate]
+            prev_comp = old_nucleotide == ref_base
+            if prev_comp != (ref_base == new_nucleotide):
+                self.replicative_fitness_cost = replicative_fitness_cost(self.nuc_sequence, reference_sequence, conserved_sites, rf_exp)
 
 
 class InfectedCD4:
@@ -471,33 +477,45 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             index_to_make_latent = indices_to_make_latent[i] - i
             self.make_latent(index_to_make_latent)
 
-        # Draw the number of cells that leave the latent reservoir by activation or death, or proliferate
-        prob_event = prob_latent_to_active + prob_latent_die + prob_latent_proliferate
-        num_latent_events = rng.binomial(n_latent_cd4, prob_event)
-        num_to_activate, num_to_die, num_to_proliferate = rng.multinomial(num_latent_events,
-                                                            [prob_latent_to_active / prob_event,
-                                                             prob_latent_die / prob_event,
-                                                             prob_latent_proliferate / prob_event])
-        assert num_to_activate + num_to_die + num_to_proliferate == num_latent_events, "Activation, death, and proliferation" \
-                "don't add up to number of cells leaving latent pool"
-
-        # Get indices of cells that activate, die, or proliferate
-        latent_event_indices = sample(range(n_latent_cd4), num_latent_events)
-        to_active = latent_event_indices[:num_to_activate]
-        to_die = latent_event_indices[num_to_activate:num_to_activate+num_to_die]
-        to_proliferate = latent_event_indices[num_to_activate+num_to_die:]
+        # # Draw the number of cells that leave the latent reservoir by activation or death, or proliferate
+        # prob_event = prob_latent_to_active + prob_latent_die + prob_latent_proliferate
+        # num_latent_events = rng.binomial(n_latent_cd4, prob_event)
+        # num_to_activate, num_to_die, num_to_proliferate = rng.multinomial(num_latent_events,
+        #                                                     [prob_latent_to_active / prob_event,
+        #                                                      prob_latent_die / prob_event,
+        #                                                      prob_latent_proliferate / prob_event])
+        # assert num_to_activate + num_to_die + num_to_proliferate == num_latent_events, "Activation, death, and proliferation" \
+        #         "don't add up to number of cells leaving latent pool"
+        # 
+        # # Get indices of cells that activate, die, or proliferate
+        # latent_event_indices = sample(range(n_latent_cd4), num_latent_events)
+        # to_active = latent_event_indices[:num_to_activate]
+        # to_die = latent_event_indices[num_to_activate:num_to_activate+num_to_die]
+        # to_proliferate = latent_event_indices[num_to_activate+num_to_die:]
+        
+        latent_indices = range(n_latent_cd4)
+        to_active = where(rng.binomial(1, prob_latent_to_active, n_latent_cd4))[0].tolist()
+        to_die = where(rng.binomial(1, prob_latent_die, n_latent_cd4))[0].tolist()
+        to_proliferate = where(rng.binomial(1, prob_latent_proliferate, n_latent_cd4))[0].tolist()
+        latent_event_indices = set(to_active + to_die + to_proliferate)
 
         # Perform events
-        # Sort first so that the highest indices are popped first (doesn't influence earlier indices)
+        # Sort so that the highest indices are popped first (doesn't influence earlier indices)
+        n_to_active = 0
+        n_to_die = 0
+        n_to_proliferate = 0
         for i in sorted(latent_event_indices, reverse=True):
             if i in to_active:
                 self.make_active(i)
+                n_to_active += 1
             elif i in to_die:
                 self.die_latent_CD4(i)
+                n_to_die += 1
             else:
                 self.proliferate_latent_CD4(i)
+                n_to_proliferate += 1
 
-        return num_to_make_latent, int(num_to_activate), int(num_to_die), int(num_to_proliferate)
+        return len(latent_event_indices), n_to_active, n_to_die, n_to_proliferate
 
     def get_next_gen_active(self, prob_mutation, prob_recombination, n_active_next_gen, gen, seroconversion_time, 
             nucleotides_order, substitution_probabilities, conserved_sites, time_to_full_potency, cost_per_mutation_in_conserved_site, 
