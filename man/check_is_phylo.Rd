@@ -5,6 +5,8 @@
 \title{Check if a variable is a phylo object}
 \usage{
 check_is_phylo(x, var_name)
+
+check_is_phylo(x, var_name)
 }
 \arguments{
 \item{x}{variable to check}
@@ -12,8 +14,12 @@ check_is_phylo(x, var_name)
 \item{var_name}{name of variable}
 }
 \value{
+error if variable is not a DNAbin object
+
 error if variable is not a phylo object
 }
 \description{
+Check if a variable is a phylo object
+
 Check if a variable is a phylo object
 }
