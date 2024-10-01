@@ -17,7 +17,7 @@
 calc_tr_summary_stats <- function(tr, timepoints){
   check_is_phylo(tr)
   check_is_pos(timepoints, ok0 = TRUE)
-  tibble(stat_name = c('sackin_norm', 'int_over_ext', 'mean_prop_survived'),
+  tibble::tibble(stat_name = c('sackin_norm', 'int_over_ext', 'mean_prop_survived'),
          stat_value = c(calc_sackin_norm(tr), calc_int_over_ext(tr), mean(calc_prop_survived(tr, timepoints)$prop_survived, na.rm = TRUE)))
 }
 
@@ -33,7 +33,7 @@ calc_tr_summary_stats <- function(tr, timepoints){
 #' calc_sackin_norm(tr)
 calc_sackin_norm <- function(tr){
   check_is_phylo(tr)
-  treebalance::sackinI(tr)/Ntip(tr)
+  treebalance::sackinI(tr)/ape::Ntip(tr)
 }
 
 #' Calculate mean internal/external branch length ratio
@@ -48,8 +48,8 @@ calc_sackin_norm <- function(tr){
 #' calc_int_over_ext(tr)
 calc_int_over_ext <- function(tr){
   check_is_phylo(tr)
-  int_bl <- mean(tr$edge.length[tr$edge[,2] > Ntip(tr)])
-  ext_bl <- mean(tr$edge.length[tr$edge[,2] <= Ntip(tr)])
+  int_bl <- mean(tr$edge.length[tr$edge[,2] > ape::Ntip(tr)])
+  ext_bl <- mean(tr$edge.length[tr$edge[,2] <= ape::Ntip(tr)])
   int_over_ext <- int_bl/ext_bl
 }
 
@@ -78,12 +78,12 @@ calc_prop_survived <- function(tr, timepoints){
     tr_sub <- ape::keep.tip(tr, names(timepoints)[timepoints <= t])
     timepoints_sub <- timepoints[timepoints <= t]
     get_clusters(tr_sub, timepoints_sub)$pure_subtree_info |>
-      dplyr::filter(timepoint == t) |>
-      dplyr::group_by(timepoint) |>
-      dplyr::summarize(n_seqs_timepoint = sum(subtr_size),
-                n_clusters = n())
+      dplyr::filter(.data$timepoint == t) |>
+      dplyr::group_by(.data$timepoint) |>
+      dplyr::summarize(n_seqs_timepoint = sum(.data$subtr_size),
+                n_clusters = dplyr::n())
   }) |> dplyr::bind_rows() |>
-    dplyr::mutate(prop_survived = n_clusters/dplyr::lag(n_seqs_timepoint))
+    dplyr::mutate(prop_survived = .data$n_clusters/dplyr::lag(.data$n_seqs_timepoint))
 }
 
 #' Get monophyletic clusters on the phylogeny
@@ -119,11 +119,11 @@ get_clusters <- function(tr, timepoints, pureness = 1, bootstrap = NULL, grps = 
                                       index=unlist(pure_subtrees$largest_st_i),
                                       isolate_id=names(timepoints_sub))
   # change singletons from 0 to 1
-  pure_subtr_info <- pure_subtr_info |> dplyr::mutate(subtr_size=ifelse(subtr_size==0 & index == 1, 1, subtr_size))
+  pure_subtr_info <- pure_subtr_info |> dplyr::mutate(subtr_size=ifelse(.data$subtr_size==0 & .data$index == 1, 1, .data$subtr_size))
   # change index from 1 to NA
-  pure_subtr_info <- pure_subtr_info |> dplyr::mutate(index=ifelse(index==1, NA, index))
+  pure_subtr_info <- pure_subtr_info |> dplyr::mutate(index=ifelse(.data$index==1, NA, index))
   #add a column to indicate the isolate name if the index = NA
-  pure_subtr_info <- pure_subtr_info |> dplyr::mutate(isolate_id=ifelse(is.na(index), isolate_id, NA))
+  pure_subtr_info <- pure_subtr_info |> dplyr::mutate(isolate_id=ifelse(is.na(.data$index), .data$isolate_id, NA))
   # remove duplicates (singletons aren't duplicates)
   pure_subtr_info <- pure_subtr_info[!duplicated(pure_subtr_info$index) | pure_subtr_info$subtr_size == 1,]
 
