@@ -74,20 +74,22 @@ run_wavess <- function(pop_samp,
 
   check_run_wavess_inputs(pop_samp, founder_seqs, nt_sub_probs,
                           prob_mut, prob_recomb,
-                   conserved_sites, conserved_cost,
-                   ref_seq, rep_exp,
-                   epitope_locations, seroconversion_time,
-                   prop_for_imm, gen_full_potency,
-                   prob_act_to_lat, prob_lat_to_act,
-                   prob_lat_prolif, prob_lat_die,
-                   seed)
+                         conserved_sites, conserved_cost,
+                         ref_seq, rep_exp,
+                         epitope_locations, seroconversion_time,
+                         prop_for_imm, gen_full_potency,
+                         prob_act_to_lat, prob_lat_to_act,
+                         prob_lat_prolif, prob_lat_die,
+                         seed)
 
-  agents <- tryCatch(use_python_venv(), error=function(e) e, warning=function(w) w)
-  # when testing you have to use a different path...
-  if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../inst/python'), error=function(e) e, warning=function(w) w)
-  if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../../inst/python'), error=function(e) e, warning=function(w) w)
-  if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../../wavess/python'), error=function(e) e, warning=function(w) w)
-  if("warning" %in% class(agents)) stop('Cannot find path to agents.py')
+  agents <- use_python_venv()
+
+  # agents <- tryCatch(use_python_venv(), error=function(e) e, warning=function(w) w)
+  # # when testing you have to use a different path...
+  # if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../inst/python'), error=function(e) e, warning=function(w) w)
+  # if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../../inst/python'), error=function(e) e, warning=function(w) w)
+  # if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../../wavess/python'), error=function(e) e, warning=function(w) w)
+  # if("warning" %in% class(agents)) stop('Cannot find path to agents.py')
 
   latent <- TRUE
   # no latent cells
