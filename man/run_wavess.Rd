@@ -91,6 +91,9 @@ Please note that the default arguments were set with the the HIV ENV gp120 gene
 in mind. If you'd like to simulate something else, you may
 have to modify certain parameters.
 }
+\details{
+See \code{vignette('run_wavess')} for more details.
+}
 \examples{
 \dontrun{
 hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)

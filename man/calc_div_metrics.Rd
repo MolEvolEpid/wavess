@@ -18,11 +18,10 @@ assumed to be in the same order as the alignment}
 tibble including mean divergence for each generation
 }
 \description{
-Calculate diversity and divergence
+See \code{vignette('analyze_output')} for more details.
 }
 \examples{
+# This example is somewhat contrived, but it shows how it works.
 hxb2_cons_founder <- ape::as.matrix.DNAbin(hxb2_cons_founder)
 calc_div_metrics(hxb2_cons_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', c(1,2,2))
-
-# ADD BETTER EXAMPLE WITH OUTPUT FROM run_wavess()?
 }

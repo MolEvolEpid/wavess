@@ -5,6 +5,8 @@
 #' in mind. If you'd like to simulate something else, you may
 #' have to modify certain parameters.
 #'
+#' See `vignette('run_wavess')` for more details.
+#'
 #' @param pop_samp Tibble with columns generation, active_cell_count, n_sample_active.
 #' Can be generated using the `define_growth_curve()` and `define_sampling_scheme()` functions.
 #' @param founder_seqs Founder sequences as a vector of character strings. For example c('ATCG', 'ATTT')
