@@ -27,5 +27,6 @@ get_largest_subtree(
 list containing the largest pure subtree that each isolate belongs to, the index of that subtree, and the edges in that subtree.
 }
 \description{
-Get largest pure subtrees
+This code was modified from https://github.com/Snitkin-Lab-Umich/regentrans/,
+which is under an MIT license
 }

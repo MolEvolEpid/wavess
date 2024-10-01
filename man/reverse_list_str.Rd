@@ -13,7 +13,8 @@ reverse_list_str(ls)
 reversed list
 }
 \description{
-Reverse list structure
+This code was modified from https://github.com/Snitkin-Lab-Umich/regentrans/,
+which is under an MIT license
 }
 \details{
 Reference with example: https://stackoverflow.com/questions/15263146/revert-list-structure

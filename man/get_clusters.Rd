@@ -25,5 +25,6 @@ subtrees is an object of the actual subtrees (can be used for plotting);
 cluster_pureness is the purness of each cluster
 }
 \description{
-Get monophyletic clusters on the phylogeny
+This code was modified from https://github.com/Snitkin-Lab-Umich/regentrans/,
+which is under an MIT license
 }
