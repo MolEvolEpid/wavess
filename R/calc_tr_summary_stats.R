@@ -90,6 +90,9 @@ calc_prop_survived <- function(tr, timepoints){
 
 #' Get monophyletic clusters on the phylogeny
 #'
+#' This code was modified from https://github.com/Snitkin-Lab-Umich/regentrans/,
+#' which is under an MIT license
+#'
 #' @inheritParams calc_tr_summary_stats
 #' @param pureness How pure each cluster should be (must be > 0.5) (optional, default = 1)
 #' @param bootstrap Bootstrap support to use to filter unconfident tree edges (optional, default = NULL)
@@ -137,6 +140,9 @@ get_clusters <- function(tr, timepoints, pureness = 1, bootstrap = NULL, grps = 
 
 
 #' Get largest pure subtrees
+#'
+#' This code was modified from https://github.com/Snitkin-Lab-Umich/regentrans/,
+#' which is under an MIT license
 #'
 #' @param subtrs Subtrees created using ape::subtrees to look for clustering on. Should include all isolates of interest.
 #' @param isolate_labels Named vector of labels by which pure clusters are defined. Names must be equivalent to tree tip label names.
@@ -191,6 +197,9 @@ get_largest_subtree <- function(subtrs, isolate_labels, control_labels=NULL, boo
 }#end get_largest_subtree
 
 #' Reverse list structure
+#'
+#' This code was modified from https://github.com/Snitkin-Lab-Umich/regentrans/,
+#' which is under an MIT license
 #'
 #' @param ls list you want to reverse
 #'
