@@ -85,12 +85,12 @@ wavess_out$counts %>%
   geom_line()
 ```
 
-## Rate heterogeneity
-
 ## Diversity and divergence
 
 Within-generation diversity and divergence from the founder sequence across time 
-can be computed and plotted as follows:
+can be computed and plotted as follows 
+(reference for calculations 
+[here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004625)):
 
 ```{r}
 gens <- gsub('gen_|_cell.*', '', labels(wavess_out$seqs))
@@ -129,12 +129,15 @@ ggtree(tr) +
 Using the tree generated above, we provide the functionality to compute three
 relevant summary statistics:
 
-- The Sackin index normalized by the number of tree tips (to be able to compare
-values across trees of different sizes).
+- The [Sackin index](https://treebalance.wordpress.com/sackin-index/) normalized 
+by the number of tree tips (to be able to compare values across trees of different sizes).
 - The ratio between the mean internal branch length and the mean external branch
 length.
 - The mean proportion of lineages that survived from one generation to the next.
 **CHECK WITH THOMAS TO SEE IF WE SHOULD JUST KEEP THE CURRENT AND PREVIOUS GENERATION IN THE CALCULATION**
+
+Many other tree statistics can be calculated using the 
+[`treebalance`](https://treebalance.wordpress.com/) package.
 
 ```{r}
 gens_numeric <- as.numeric(gens)

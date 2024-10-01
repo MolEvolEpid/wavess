@@ -5,7 +5,8 @@
 #' @param aln An alignment of class ape::DNAbin
 #' @param tr Starting tree
 #' @param model A string providing model (e.g. "GTR+G(4)+I")
-#' @param rearrangement Type of tree rearrangements to perform, one of "none", "NNI", "stochastic" or "ratchet" (default: "none")
+#' @param rearrangement Type of tree rearrangements to perform, one of
+#' "none", "NNI", "stochastic" or "ratchet" (default: "none")
 #'
 #' @return
 #' Matrix of nucleotide substitution probabilities.
@@ -14,7 +15,7 @@
 #'
 #' @examples
 #' # NOTE: This is just an example.
-#' # (**TODO: MAYBE ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
+#' # (**TODO: ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
 #' hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
 #' calc_nt_sub_probs(hiv_env_flt_2021[1:10,])
 calc_nt_sub_probs <- function(aln, tr = NULL, model = 'GTR+R(4)+I', rearrangement = 'none'){

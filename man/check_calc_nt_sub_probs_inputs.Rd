@@ -13,7 +13,8 @@ check_calc_nt_sub_probs_inputs(aln, tr, model, rearrangement)
 
 \item{model}{A string providing model (e.g. "GTR+G(4)+I")}
 
-\item{rearrangement}{Type of tree rearrangements to perform, one of "none", "NNI", "stochastic" or "ratchet" (default: "none")}
+\item{rearrangement}{Type of tree rearrangements to perform, one of
+"none", "NNI", "stochastic" or "ratchet" (default: "none")}
 }
 \value{
 error if inputs are incorrect

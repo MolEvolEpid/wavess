@@ -324,6 +324,9 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
      !all(c('A', 'C', 'G', 'T') %in% colnames(nt_sub_probs))){
     stop('nt_sub_probs must have colnames A,C,G,T')
   }
+  if(!all(rownames(nt_sub_probs) == colnames(nt_sub_probs))){
+    stop('nt_sub_probs must have the same rownames and colnames in the same order')
+  }
   sapply(nt_sub_probs, function(x) lapply(x, function(y) check_is_0to1(y, 'nt_sub_probs')))
   if(!is.null(conserved_sites)){
     check_is_pos(conserved_sites, 'conserved_sites', TRUE)

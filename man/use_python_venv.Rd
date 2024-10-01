@@ -4,10 +4,7 @@
 \alias{use_python_venv}
 \title{Use wavess python virtual environment}
 \usage{
-use_python_venv(path = "inst/python")
-}
-\arguments{
-\item{path}{Path to directory with agents.py}
+use_python_venv()
 }
 \value{
 functions in agents

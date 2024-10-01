@@ -110,7 +110,6 @@ remove_python_venv <- function(confirm = interactive()) {
 #' @return boolean whether dependency is installed
 py_check_installed <- function(x) {
   if (is.null(x)) return(FALSE)
-  # x <- gsub("_", "-", x) # for model names
   return(x %in% trimws(reticulate::py_list_packages(
       Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))$package
     ))

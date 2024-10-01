@@ -13,7 +13,8 @@ calc_nt_sub_probs(aln, tr = NULL, model = "GTR+R(4)+I", rearrangement = "none")
 
 \item{model}{A string providing model (e.g. "GTR+G(4)+I")}
 
-\item{rearrangement}{Type of tree rearrangements to perform, one of "none", "NNI", "stochastic" or "ratchet" (default: "none")}
+\item{rearrangement}{Type of tree rearrangements to perform, one of
+"none", "NNI", "stochastic" or "ratchet" (default: "none")}
 }
 \value{
 Matrix of nucleotide substitution probabilities.
@@ -24,7 +25,7 @@ Fr this, you should probably use a set of within-host sequences for the genome r
 }
 \examples{
 # NOTE: This is just an example.
-# (**TODO: MAYBE ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
+# (**TODO: ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
 hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
 calc_nt_sub_probs(hiv_env_flt_2021[1:10,])
 }

@@ -50,7 +50,7 @@ calc_int_over_ext <- function(tr){
   check_is_phylo(tr)
   int_bl <- mean(tr$edge.length[tr$edge[,2] > ape::Ntip(tr)])
   ext_bl <- mean(tr$edge.length[tr$edge[,2] <= ape::Ntip(tr)])
-  int_over_ext <- int_bl/ext_bl
+  int_bl/ext_bl
 }
 
 #' Calculate percent of lineages that survived from one generation to the next
@@ -58,7 +58,7 @@ calc_int_over_ext <- function(tr){
 #' @inheritParams calc_tr_summary_stats
 #'
 #' @return Tibble including:
-#' - `n_seqs_timepoint`: Number of sequences included in that time point
+#' - `n_seqs`: Number of sequences included in that time point
 #' - `n_clusters`: Number of monophyletic clusters for that time point
 #' - `prop_survived`: Proportion of lineages that survived from the previous generation
 #' @export
@@ -77,13 +77,13 @@ calc_prop_survived <- function(tr, timepoints){
   lapply(timepts_unique, function(t){
     tr_sub <- ape::keep.tip(tr, names(timepoints)[timepoints <= t])
     timepoints_sub <- timepoints[timepoints <= t]
-    get_clusters(tr_sub, timepoints_sub)$pure_subtree_info |>
+    get_clusters(tr_sub, timepoints_sub, bootstrap = NULL)$pure_subtree_info |>
       dplyr::filter(.data$timepoint == t) |>
       dplyr::group_by(.data$timepoint) |>
-      dplyr::summarize(n_seqs_timepoint = sum(.data$subtr_size),
+      dplyr::summarize(n_seqs = sum(.data$subtr_size),
                 n_clusters = dplyr::n())
   }) |> dplyr::bind_rows() |>
-    dplyr::mutate(prop_survived = .data$n_clusters/dplyr::lag(.data$n_seqs_timepoint))
+    dplyr::mutate(prop_survived = .data$n_clusters/dplyr::lag(.data$n_seqs))
 }
 
 #' Get monophyletic clusters on the phylogeny
@@ -102,10 +102,9 @@ get_clusters <- function(tr, timepoints, pureness = 1, bootstrap = NULL, grps = 
   #get the names of the things in common
   isolates <- intersect(tr$tip.label, names(timepoints))
   if(!is.null(grps)){
-    #subset patients to one isolate per patient
-    pt_df <- as.data.frame(grps) |> dplyr::distinct(grps, .keep_all = TRUE) |> rownames() |> as.vector()
-    #subset isolates to one per patient
-    isolates <- intersect(isolates, pt_df)
+    #subset to one sequence per group
+    grp_df <- as.data.frame(grps) |> dplyr::distinct(grps, .keep_all = TRUE) |> rownames() |> as.vector()
+    isolates <- intersect(isolates, grp_df)
   }
   #subset timepoints
   timepoints_sub <- timepoints[isolates]
@@ -164,7 +163,7 @@ get_largest_subtree <- function(subtrs, isolate_labels, control_labels=NULL, boo
       }
       good_bootstrap = rep(TRUE, length(st$node.label[[1]]))
       if(!is.null(bootstrap)){
-        good_bootstrap = !is.na(as.numeric(st$node.label[[1]])) && as.numeric(st$node.label[[1]]) > bootstrap # bootstrap support > 90
+        good_bootstrap = !is.na(as.numeric(st$node.label[[1]])) && as.numeric(st$node.label[[1]]) > bootstrap # bootstrap support > bootstrap
       }
       multiple_control = ifelse(is.null(control_labels), TRUE, # always true if not controlling for another variable
                                 length(unique(control_labels[intersect(st$tip.label, names(control_labels))])) > 1) # more than one control label in subtree

@@ -93,7 +93,7 @@ run_wavess <- function(pop_samp,
 
   latent <- TRUE
   # no latent cells
-  if(prob_act_to_lat == 0 & prob_lat_to_act == 0 & prob_lat_prolif == 0 & prob_lat_die == 0){
+  if(prob_act_to_lat == 0){
     latent_nums <- c(0,0,0,0)
     latent <- FALSE
   }
@@ -131,8 +131,6 @@ run_wavess <- function(pop_samp,
   generator <- agents$set_python_seed(seed)
 
   # Get nucleotide substitution probabilities in right format
-  if(!all(rownames(nt_sub_probs) == colnames(nt_sub_probs))) stop('')
-
   nucleotides_order <- rownames(nt_sub_probs)
   substitution_probabilities <- unname(lapply(data.frame(t(nt_sub_probs)), function(x) x))
 

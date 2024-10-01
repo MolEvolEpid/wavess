@@ -210,6 +210,14 @@ test_that('check_run_wavess_inputs works', {
                                 NULL, 30, 0.01, 90,
                                 0.001, 0.01, 0.01, 0.01, NULL),
         'nt_sub_probs must have colnames A,C,G,T')
+  expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp |>
+                                         dplyr::rename('tmp'='A', 'A'='T') |>
+                                         dplyr::rename('T'='tmp'),
+                                       3.5e-5, 1.4e-5,
+                                       NULL, 0.99, NULL, 1,
+                                       NULL, 30, 0.01, 90,
+                                       0.001, 0.01, 0.01, 0.01, NULL),
+               'nt_sub_probs must have the same rownames and colnames in the same order')
   expect_error(check_run_wavess_inputs(ps, 'ATAA', ntsp[1,],
                                        3.5e-5, 1.4e-5,
                                        NULL, 0.99, NULL, 1,
