@@ -8,4 +8,4 @@ env_features <- readr::read_tsv('data-raw/env_features_2024-05-01.tsv') |>
                   grepl('gp120', `Env feature(s)`)
                 )
 
-usethis::use_data(env_features, overwrite = TRUE)
+usethis::use_data(env_features, compress = 'xz', overwrite = TRUE)

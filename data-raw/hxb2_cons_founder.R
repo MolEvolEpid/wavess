@@ -2,4 +2,4 @@
 
 hxb2_cons_founder <- ape::read.FASTA('data-raw/hxb2_cons_founder_aligned.fasta')
 
-usethis::use_data(hxb2_cons_founder, overwrite = TRUE)
+usethis::use_data(hxb2_cons_founder, compress = 'xz', overwrite = TRUE)
