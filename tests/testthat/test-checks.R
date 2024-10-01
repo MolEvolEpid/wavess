@@ -163,7 +163,7 @@ test_that('check_run_wavess_inputs works', {
                                           NULL, 0.99, NULL, 1,
                                    NULL, 30, 0.01, 90,
                                    0.001, 0.01, 0.01, 0.01, NULL))
-  expect_error(check_run_wavess_inputs(ps |> mutate(n_sample_active = 0), fs, ntsp,
+  expect_error(check_run_wavess_inputs(ps |> dplyr::mutate(n_sample_active = 0), fs, ntsp,
                                           3.5e-5, 1.4e-5,
                                           NULL, 0.99, NULL, 1,
                                           NULL, 30, 0.01, 90,
