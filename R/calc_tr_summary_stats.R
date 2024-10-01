@@ -120,7 +120,7 @@ get_clusters <- function(tr, timepoints, pureness = 1, bootstrap = NULL, grps = 
   # change singletons from 0 to 1
   pure_subtr_info <- pure_subtr_info |> dplyr::mutate(subtr_size=ifelse(.data$subtr_size==0 & .data$index == 1, 1, .data$subtr_size))
   # change index from 1 to NA
-  pure_subtr_info <- pure_subtr_info |> dplyr::mutate(index=ifelse(.data$index==1, NA, index))
+  pure_subtr_info <- pure_subtr_info |> dplyr::mutate(index=ifelse(.data$index==1, NA, .data$index))
   #add a column to indicate the isolate name if the index = NA
   pure_subtr_info <- pure_subtr_info |> dplyr::mutate(isolate_id=ifelse(is.na(.data$index), .data$isolate_id, NA))
   # remove duplicates (singletons aren't duplicates)
