@@ -29,7 +29,8 @@ of the model, some outputs look more like real data than others.
 
 First, let's run wavess including all the selective pressures. 
 For more details on the input and running wavess,
-please see the respective vignettes. (**LINKS**)
+please see the respective vignettes. (`vignette(prepare_input_data)` and 
+`vignette(run_wavess)`)
 
 ```{r setup}
 library(wavess)

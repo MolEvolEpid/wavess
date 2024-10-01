@@ -31,14 +31,14 @@ dynamics are observed. You will also want to check the simulation outputs to see
 if they are giving you reasonable/expected results that conform to your prior 
 knowledge about the system you're simulating. If the output does not seem right,
 you might have to tweak the input parameters to work for your particular system.
-We go into more detail about analyzing the model output in a separate vignette (**LINK**)
+We go into more detail about analyzing the model output in a separate vignette 
+(see `vignette(analyze_output)`).
 
 ## Load libraries and prepare input data
 
 First, we have to load the wavess library and generate the input data. 
 If you're interested in learning more about how to prepare the input data,
-please see the [corresponding vignette](prepare_input_data). 
-**TODO: LINK THIS THE CORRECT WAY**
+please see the corresponding vignette (see `vignette(prepare_input_data)`). 
 
 We will only simulate 300 generations with sampling every 100 generations so
 the simulation doesn't take too long to run. 
@@ -135,8 +135,8 @@ and then the immune fitness cost (ic), conserved fitness cost (cc), replicative
 fitness cost (rc), and overall fitness (f).
 
 These outputs can be plotted and analyzed in various ways. If you'd like to learn
-more about how to analyze the output, please checkout this vignette 
-**TODO: ADD LINK TO POST-PROCESSING VIGNETTTE**
+more about how to analyze the output, please checkout the post-processing vignette
+`vignette('analyze_output')`.
 
 ## Including selective pressures
 
@@ -147,7 +147,7 @@ more about how to analyze the output, please checkout this vignette
 - B-cell immunity
 
 Including these requires additional inputs, which are described in more detail
-in the prepare input data vignette (**LINK**)
+in the prepare input data vignette (`vignette(prepare_input_data)`)
 
 ### Conserved sites fitness
 
@@ -237,8 +237,7 @@ a recombination event occurring between two adjacent sites in a generation
 (`prob_act_to_lat`, `prob_lat_to_act`, `prob_lat_prolif`, `prob_lat_die`).
 Each of these can be turned off by setting the respective probability value to 0.
 The simulation starts with 0 latent cells, so setting `prob_act_to_lat` will
-turn latent cell dynamics off, although you can choose to set all of the 
-latency-related parameters to zero if you'd like. 
+turn latent cell dynamics off. 
 
 ## Seed
 
