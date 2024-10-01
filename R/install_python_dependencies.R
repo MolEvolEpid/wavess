@@ -130,10 +130,8 @@ py_check_version <- function(package, ...) {
 
 #' Use wavess python virtual environment
 #'
-#' @param path Path to directory with agents.py
-#'
 #' @return functions in agents
-use_python_venv <- function(path = 'inst/python'){
+use_python_venv <- function(){
   if (!reticulate::virtualenv_exists(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess")))
     stop("No wavess environment found. Use `install_python_dependencies()` to get started.")
 
@@ -142,5 +140,5 @@ use_python_venv <- function(path = 'inst/python'){
          "to get started.")
 
   reticulate::use_virtualenv(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))
-  return(reticulate::import_from_path('agents', path, convert = FALSE))
+  return(reticulate::import_from_path('agents', system.file('python', package = 'wavess'), convert = FALSE))
 }
