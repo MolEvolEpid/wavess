@@ -1,34 +1,46 @@
 Package: wavess
-Title: What the Package Does (One Line, Title Case)
+Title: Within-Host Agent-Based Viral Evolution Sequence Simulator
 Version: 0.0.0.9000
 Authors@R: 
-    c(person("Zena", "Lapp", , "zenalapp@lanl.gov", role = c("aut", "cre"),
+    c(person("Zena", "Lapp", "zenalapp@lanl.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-4674-2176")),
-      person("Narmada", "Sambaturu", , "narmada.sambaturu@gmail.com", role = c("aut"),
-           comment = c(ORCID = "0000-0002-2570-3699")))
-Description: What the package does (one paragraph).
+      person("Narmada", "Sambaturu", "narmada.sambaturu@gmail.com", role = c("aut"),
+           comment = c(ORCID = "0000-0002-2570-3699")),
+      person(given = "Sophie", family = "Hoffman", role = c("cph"),
+           email = "shoffm@umich.edu", comment = c(ORCID = "0000-0003-2518-6422",
+           code = 'clusters')),
+      person(given = "Joyce", family = "Wang", role = c("cph"),
+           email = "wangjoy@umich.edu", comment = c(ORCID = "0000-0002-8674-1015",
+           code = 'clusters')),
+      person(given = "Evan", family = "Snitkin", role = c("cph"),
+             email = "esnitkin@umich.edu", comment = c(ORCID = "0000-0001-8409-278X",
+           code = 'clusters')))
+Description: Simulates within-host viral sequence evolution. Optionally includes
+    recombination, a latent cell reservoir, and three types of selective pressures 
+    (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity). 
 License: file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Suggests: 
-    ape,
     ggplot2,
     ggtree,
     knitr,
-    phangorn,
     rmarkdown,
-    testthat (>= 3.0.0),
-    treebalance
+    testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
+    ape,
     dplyr,
     methods,
+    phangorn,
     reticulate,
     stats,
     tibble,
-    tidyr
+    tidyr,
+    treebalance
 Depends: 
     R (>= 2.10)
 LazyData: true
 VignetteBuilder: knitr
+SystemRequirements: python, numpy
