@@ -1,4 +1,5 @@
 from copy import deepcopy
+from random import seed
 from random import choice
 from random import choices
 from random import sample
@@ -10,11 +11,11 @@ from numpy import concatenate
 from collections import defaultdict
 from collections import Counter
 
-def set_python_seed(seed):
-  if seed != None:
+def set_python_seed(s):
+  if s != None:
     # Set seed (need to set a seed for random and for numpy.random)
-    seed(seed)
-    generator = default_rng(int(seed))
+    seed(s)
+    generator = default_rng(int(s))
   else:
     generator = default_rng()
   return generator
