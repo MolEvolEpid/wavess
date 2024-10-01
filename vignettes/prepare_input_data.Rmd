@@ -75,8 +75,12 @@ In particular, we include the following example data in the package:
 
 You can check out the documentation for these datasets for more details.
 
-For some reason, the data doesn't load exactly right. This is a way to get 
-the data in the correct format: 
+If you want to load your own data, you can use `ape::read.dna()` or 
+`ape::read.FASTA()` to load alignment files and `readr::read_delim()` to load 
+delimited files. 
+
+For some reason, the package data doesn't load exactly right. 
+This is a way to get the data in the correct format: 
 
 ```{r, format}
 hiv_env_flt_2021 <- as.matrix.DNAbin(hiv_env_flt_2021)
