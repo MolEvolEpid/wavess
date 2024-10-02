@@ -20,7 +20,7 @@ test_that("run_wavess works", {
   expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, ref_seq = 'AAAA'))
   expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, ref_seq = 'AAAA'))
   expect_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, conserved_sites = 0),
-               'conserved_sites must be a positive number(s), but is 0')
+               'conserved_sites must be a positive number')
   expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, ref_seq = 'AAAA', conserved_sites = 1))
   expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, conserved_sites = c(1,2)))
   expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs,

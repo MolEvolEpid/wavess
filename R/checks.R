@@ -97,6 +97,8 @@ check_identify_conserved_sites_inputs <- function(aln, founder, thresh, ref,
 check_name_in_alignment <- function(aln, name, aln_name, name_name){
   check_is_dnabin(aln, aln_name)
   check_is_string(name, name_name)
+  # added this because of a weird issue with devtools::check()...
+  aln <- ape::as.matrix.DNAbin(aln)
   if(!name %in% labels(aln))
     stop(name_name, ' must be the name of a sequence in ', aln_name, ', but is ', name)
 }
