@@ -2,9 +2,9 @@ Package: wavess
 Title: Within-Host Agent-Based Viral Evolution Sequence Simulator
 Version: 0.0.0.9000
 Authors@R: 
-    c(person("Zena", "Lapp", "zenalapp@lanl.gov", role = c("aut", "cre"),
+    c(person(given="Zena", family="Lapp", email="zenalapp@lanl.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0003-4674-2176")),
-      person("Narmada", "Sambaturu", "narmada.sambaturu@gmail.com", role = c("aut"),
+      person(given="Narmada", family="Sambaturu", email="narmada.sambaturu@gmail.com", role = c("aut"),
            comment = c(ORCID = "0000-0002-2570-3699")),
       person(given = "Sophie", family = "Hoffman", role = c("cph"),
            email = "shoffm@umich.edu", comment = c(ORCID = "0000-0003-2518-6422",
