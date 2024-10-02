@@ -18,8 +18,11 @@ test_that("run_wavess works", {
   expect_equal(unique(no_lat$counts$latent_proliferated), 0)
   expect_no_error(run_wavess(samp_scheme, 'ATCG', probs))
   expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, ref_seq = 'AAAA'))
-  expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, conserved_sites = 0))
-  expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, conserved_sites = c(0,2)))
+  expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, ref_seq = 'AAAA'))
+  expect_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, conserved_sites = 0),
+               'conserved_sites must be a positive number(s), but is 0')
+  expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, ref_seq = 'AAAA', conserved_sites = 1))
+  expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, conserved_sites = c(1,2)))
   expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs,
                              epitope_locations = tibble::tibble(epi_start_nt=1, epi_end_nt=4, max_fitness_cost=0.4)))
 })

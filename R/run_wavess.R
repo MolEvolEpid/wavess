@@ -86,13 +86,6 @@ run_wavess <- function(pop_samp,
 
   agents <- use_python_venv()
 
-  # agents <- tryCatch(use_python_venv(), error=function(e) e, warning=function(w) w)
-  # # when testing you have to use a different path...
-  # if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../inst/python'), error=function(e) e, warning=function(w) w)
-  # if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../../inst/python'), error=function(e) e, warning=function(w) w)
-  # if("warning" %in% class(agents)) agents <- tryCatch(use_python_venv('../../wavess/python'), error=function(e) e, warning=function(w) w)
-  # if("warning" %in% class(agents)) stop('Cannot find path to agents.py')
-
   latent <- TRUE
   # no latent cells
   if(prob_act_to_lat == 0){
@@ -105,6 +98,12 @@ run_wavess <- function(pop_samp,
     replicative_fitness <- 0
   }else{
     replicative_fitness <- 1
+    if(!is.null(conserved_sites)){
+      # mask conserved sites so they aren't included in replicative fitness computation
+      ref_seq_str <- strsplit(ref_seq, '')[[1]]
+      ref_seq_str[conserved_sites] = '-'
+      ref_seq <- paste0(ref_seq_str, collapse = '')
+    }
   }
   if(is.null(conserved_sites)){
     conserved_fitness <- 0
