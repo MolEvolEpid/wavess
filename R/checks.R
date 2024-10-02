@@ -329,8 +329,8 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
   }
   sapply(nt_sub_probs, function(x) lapply(x, function(y) check_is_0to1(y, 'nt_sub_probs')))
   if(!is.null(conserved_sites)){
-    check_is_pos(conserved_sites, 'conserved_sites', TRUE)
-    if(max(conserved_sites) >= nchar(as.list(founder_seqs)[[1]])){ # CHANGE THIS DEPENDING ON HOW WE DECIDE TO INDEX
+    check_is_pos(conserved_sites, 'conserved_sites')
+    if(max(conserved_sites) > nchar(as.list(founder_seqs)[[1]])){
       stop('the maximum value of conserved_sites is greater than the length of the founder sequence')
     }
     check_is_0to1(conserved_cost, 'conserved_cost')
