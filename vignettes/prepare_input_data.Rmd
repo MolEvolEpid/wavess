@@ -66,10 +66,10 @@ In particular, we include the following example data in the package:
 - `hxb2_cons_founder`: an alignment in `ape::DNAbin` format that includes
   the HIV full-genome sequence for the HXB2 reference sequence, the consensus 
   sequence, and an example founder sequence.
-- `hiv_env_flt_2021`: the filtered HIV ENV alignment downloaded from
-  the [LANL HIV sequence
+- `hiv_env_flt_2021`: the first 10 sequences from the filtered HIV ENV alignment 
+downloaded from the [LANL HIV sequence
   database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html),
-  in `ape::DNAbin` format.
+  in `ape::DNAbin` format. Feel free to download the entire alignment if you'd like.
 - `env_features`: a tibble of binding, contact, and and neutralization
   features for HIV ENV from the [LANL HIV immunology
   database](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp).
@@ -79,14 +79,6 @@ You can check out the documentation for these datasets for more details.
 If you want to load your own data, you can use `ape::read.dna()` or 
 `ape::read.FASTA()` to load alignment files and `readr::read_delim()` to load 
 delimited files. 
-
-For some reason, the package data doesn't load exactly right. 
-This is a way to get the data in the correct format: 
-
-```{r, format}
-hiv_env_flt_2021 <- as.matrix.DNAbin(hiv_env_flt_2021)
-hxb2_cons_founder <- as.matrix.DNAbin(hxb2_cons_founder)
-```
 
 ## Required `run_wavess()` inputs
 
@@ -192,7 +184,7 @@ the "from" nucleotide and the columns are the "to" nucleotide.
 **TODO: ADD AN EXAMPLE WITHIN-HOST ALIGNMENT**
 
 ```{r, calc_nt_sub_probs}
-calc_nt_sub_probs(as.matrix(hiv_env_flt_2021)[1:10,])
+calc_nt_sub_probs(as.matrix(hiv_env_flt_2021))
 ```
 
 By default, a neighbor joining tree is created using
@@ -356,7 +348,16 @@ sequence in the alignment.
 Note that the function assumes that the alignment consists of only the segment
 of the founder sequence that you want to simulate (i.e., the beginning of the 
 alignment is the beginning of the founder sequence that you want to simulate,
-and the end of the alignment is the end of the sequence you want to simulate). 
+and the end of the alignment is the end of the sequence you want to simulate).
+
+We will be using the built-in `hiv_env_flt_2021` alignment as an example.
+However, this contains only 10 sequences. **In reality, you should use many more 
+sequences.** For HIV, you can download the entire filtered alignment for each gene
+or for the entire genome from the [LANL HIV sequence
+database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html). 
+
+For gp120, we also provide a vector of conserved sites in the package for ease of 
+use. **TODO: ACTUALLY DO THIS**
 
 First, since the `hxb2_cons_founder` sequence is all of env, but we just want to 
 simulate gp120, we have to slice out that part of the alignment:

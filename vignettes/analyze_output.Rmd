@@ -30,7 +30,9 @@ of the model, some outputs look more like real data than others.
 First, let's run wavess including all the selective pressures. 
 For more details on the input and running wavess,
 please see the respective vignettes. (`vignette(prepare_input_data)` and 
-`vignette(run_wavess)`)
+`vignette(run_wavess)`). If you haven't checked out those vignettes first, be
+sure to at least run the `create_python_venv()` function prior to running the 
+below code, or else you'll get an error telling you to do so.
 
 ```{r setup}
 library(wavess)
@@ -41,15 +43,12 @@ library(ape)
 library(phangorn)
 library(ggtree)
 
-hiv_env_flt_2021 <- as.matrix.DNAbin(hiv_env_flt_2021)
-hxb2_cons_founder <- as.matrix.DNAbin(hxb2_cons_founder)
-
 pop_samp <- generate_pop_samp(gN = 300, sampling_frequency = 100)
 founder_ref <- extract_seqs(hxb2_cons_founder, 
              founder = 'B.US.2011.DEMB11US006.KC473833', 
              ref = 'CON_B(1295)',
              start = 6225, end = 7757)
-nt_sub_probs <- calc_nt_sub_probs(as.matrix(hiv_env_flt_2021)[1:10,])
+nt_sub_probs <- calc_nt_sub_probs(as.matrix(hiv_env_flt_2021))
 hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, 2517) 
 gp120 <- slice_aln(hxb2_cons_founder, 6225, 7757)
 founder_conserved_sites <- identify_conserved_sites(hiv_gp120_flt_2021, 

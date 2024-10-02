@@ -11,7 +11,7 @@
 #' Can be generated using the `define_growth_curve()` and `define_sampling_scheme()` functions.
 #' @param founder_seqs Founder sequences as a vector of character strings. For example c('ATCG', 'ATTT')
 #' @param nt_sub_probs Named matrix of nucleotide substitution probabilities.
-#' Rows are from, columns are to. Can be generated using the `calc_nt_subst_probs()` function.
+#' Rows are from, columns are to. Can be generated using the `calc_nt_sub_probs()` function.
 #' @param conserved_sites Vector of conserved sites.
 #' This can be generated using the `identify_conserved_sites()` function
 #' (default: NULL, i.e. no conserved sites fitness costs)
@@ -51,9 +51,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
 #' run_wavess(generate_pop_samp(gN = 300), c('ATCG', 'ATTT'),
-#' calc_nt_sub_probs(hiv_env_flt_2021[1:3,]))
+#' calc_nt_sub_probs(hiv_env_flt_2021))
 #' }
 run_wavess <- function(pop_samp,
                        founder_seqs,

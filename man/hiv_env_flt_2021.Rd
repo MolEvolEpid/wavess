@@ -7,7 +7,9 @@
 \format{
 \subsection{\code{hiv_env_flt_2021}}{
 
-An \code{ape} DNAbin object with 6,741 DNA sequences of length 3993
+An \code{ape} DNAbin object with 10 DNA sequences of length 3993.
+If you would like to download the entire set of 6,741 sequences, please
+visit the link below.
 }
 }
 \source{

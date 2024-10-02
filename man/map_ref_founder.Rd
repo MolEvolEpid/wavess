@@ -29,9 +29,6 @@ Tibble including columns for:
 Map reference and founder sequence positions
 }
 \examples{
-# this is a hack to get the data in the right format...
-hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-hxb2_cons_founder <- ape::as.matrix.DNAbin(hxb2_cons_founder)
 map_ref_founder(hxb2_cons_founder,
 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455',
 'B.US.2011.DEMB11US006.KC473833')

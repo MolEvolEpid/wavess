@@ -26,6 +26,5 @@ Fr this, you should probably use a set of within-host sequences for the genome r
 \examples{
 # NOTE: This is just an example.
 # (**TODO: ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
-hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-calc_nt_sub_probs(hiv_env_flt_2021[1:10,])
+calc_nt_sub_probs(hiv_env_flt_2021)
 }

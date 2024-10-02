@@ -12,7 +12,6 @@
 #'
 #' @examples
 #' # This example is somewhat contrived, but it shows how it works.
-#' hxb2_cons_founder <- ape::as.matrix.DNAbin(hxb2_cons_founder)
 #' calc_div_metrics(hxb2_cons_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', c(1,2,2))
 calc_div_metrics <- function(aln, founder, gen){
   check_is_dnabin(aln, 'aln')

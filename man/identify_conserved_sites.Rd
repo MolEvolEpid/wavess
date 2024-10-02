@@ -43,9 +43,8 @@ Note that the positions returned assume that the start of the alignment
 is also the start of the founder sequence in the simulation.
 }
 \examples{
-# this is a hack to get the data in the right format...
-hiv_gp120_flt_2021 <- slice_aln(ape::as.matrix.DNAbin(hiv_env_flt_2021), start = 1, end = 2517)
-hxb2_cons_founder <- slice_aln(ape::as.matrix.DNAbin(hxb2_cons_founder), start = 6225, end = 7757)
+hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, start = 1, end = 2517)
+hxb2_cons_founder <- slice_aln(hxb2_cons_founder, start = 6225, end = 7757)
 identify_conserved_sites(hiv_gp120_flt_2021, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455')
 identify_conserved_sites(hiv_gp120_flt_2021, 'B.US.2011.DEMB11US006.KC473833',
 ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', founder_aln = hxb2_cons_founder)

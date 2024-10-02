@@ -32,7 +32,7 @@ Can be generated using the \code{define_growth_curve()} and \code{define_samplin
 \item{founder_seqs}{Founder sequences as a vector of character strings. For example c('ATCG', 'ATTT')}
 
 \item{nt_sub_probs}{Named matrix of nucleotide substitution probabilities.
-Rows are from, columns are to. Can be generated using the \code{calc_nt_subst_probs()} function.}
+Rows are from, columns are to. Can be generated using the \code{calc_nt_sub_probs()} function.}
 
 \item{prob_mut}{Probability of a mutation at one site in one generation
 (default: 3.5e-5)}
@@ -96,8 +96,7 @@ See \code{vignette('run_wavess')} for more details.
 }
 \examples{
 \dontrun{
-hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
 run_wavess(generate_pop_samp(gN = 300), c('ATCG', 'ATTT'),
-calc_nt_sub_probs(hiv_env_flt_2021[1:3,]))
+calc_nt_sub_probs(hiv_env_flt_2021))
 }
 }
