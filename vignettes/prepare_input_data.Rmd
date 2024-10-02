@@ -288,8 +288,11 @@ to generate the inputs for each of these selective pressures.
 
 First, everything must be indexed relative to the start of the 
 founder sequence in the simulation. Even though the back-end is implemented in
-Python, we expect the indexing to begin at 1, since this is more intuitive for
-R users (we account for this internally).
+Python, for the `run_wavess()` R function we expect the indexing to begin at 1, 
+since this is more intuitive for R users (we account for this internally). If
+you would like to use these functions followed by the Python script, you will have
+to make sure to change the indexing to 0 for the conserved sites and epitopes
+(i.e. subtract 1 from all numbers). 
 
 Second, information of interest such as conserved sites or antibody contacts, 
 is often computed or provided relative to what is 
@@ -539,6 +542,7 @@ positions relative to the founder sequence (instead of HXB2):
 ```{r}
 (epitope_locations <- sample_epitopes(epi_probs, ref_founder_map = ref_founder_map))
 ```
+
 Here are two ways to visualize the epitopes:
 
 ```{r}

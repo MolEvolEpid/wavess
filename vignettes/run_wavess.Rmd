@@ -102,8 +102,8 @@ simulation output.
 
 ```{r}
 required_args_only <- run_wavess(pop_samp = pop_samp, 
-                            founder_seqs = founder_ref$founder, 
-                            nt_sub_probs = nt_sub_probs)
+                                 founder_seqs = founder_ref$founder, 
+                                 nt_sub_probs = nt_sub_probs)
 ```
 
 The output format of `run_waves()` is always the same: a list of length two 
@@ -164,7 +164,10 @@ more about how to analyze the output, please checkout the post-processing vignet
 - B-cell immunity
 
 Including these requires additional inputs, which are described in more detail
-in the prepare input data vignette (`vignette(prepare_input_data)`)
+in the prepare input data vignette (`vignette(prepare_input_data)`).
+
+For additional details on how each of these selective pressures is implemented,
+please see the manuscript [**ADD LINK WHEN WE HAVE IT**].
 
 ### Conserved sites fitness
 
@@ -177,9 +180,9 @@ Here's an example of simulating evolution with conserved sites fitness:
 
 ```{r}
 conserved_fitness <- run_wavess(pop_samp = pop_samp, 
-                            founder_seqs = founder_ref$founder, 
-                            nt_sub_probs = nt_sub_probs,
-                            conserved_sites = founder_conserved_sites)
+                                founder_seqs = founder_ref$founder, 
+                                nt_sub_probs = nt_sub_probs,
+                                conserved_sites = founder_conserved_sites)
 ```
 
 If you look at the mean conserved cost of active cells, you'll see that it's not
@@ -194,7 +197,7 @@ conserved_fitness$counts$mean_conserved_cost_active
 
 To simulate fitness compared to a reference, you must provide a "most fit" 
 reference sequence to compare each simulated sequence to. 
-The strenght of this fitness can be altered using the `rep_exp` argument.
+The strength of this fitness can be altered using the `rep_exp` argument.
 
 **TODO: ADD MORE DETAILS ABOUT THE EXACT WAY FITNESS IS CALCULATED ONCE WE'VE DECIDED**
 **TODO: DON'T INCLUDE CONSENSUS WITH N'S**
@@ -221,7 +224,7 @@ seroconversion time (`seroconversion_time` argument, default: 30 generations),
 and when the epitope is present in at least 1% of the total viral population
 (`prop_for_imm` argument). Once an epitope is recognized, it undergoes affinity
 maturation for 90 generations (`gen_full_potency`), at which time it reaches
-full potency. Epitopes are also cross-reactive. **EXPLAIN IN MORE DETAIL OR REFER TO PAPER**
+full potency. Epitopes are also cross-reactive.
 
 ```{r}
 immune_fitness <- run_wavess(pop_samp = pop_samp, 
@@ -241,8 +244,8 @@ for a given epitope.
 
 ## Multiple selective pressures at once
 
-You can also include multiple selective pressures at once. In this case, the
-fitness is defined as **ADD EQUATION**.
+You can also include multiple selective pressures at once by using multiple of
+the arguments described above. 
 
 ## Events defined by probabilities
 
@@ -258,13 +261,4 @@ turn latent cell dynamics off.
 
 ## Seed
 
-A seed can be set for reproducibility:
-
-```{r}
-seed_out <- run_wavess(pop_samp = pop_samp, 
-                       founder_seqs = founder_ref$founder, 
-                       nt_sub_probs = nt_sub_probs,
-                       seed = 1234)
-```
-
-
+A seed can be set for reproducibility using the `seed` argument. 
