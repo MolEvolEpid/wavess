@@ -9,11 +9,11 @@
 Simulates within-host viral sequence evolution. Optionally includes recombination, a latent cell reservoir, and three types of selective pressures (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity).
 }
 \author{
-\strong{Maintainer}: Zena zenalapp@lanl.gov Lapp (\href{https://orcid.org/0000-0003-4674-2176}{ORCID})
+\strong{Maintainer}: Zena Lapp \email{zenalapp@lanl.gov} (\href{https://orcid.org/0000-0003-4674-2176}{ORCID})
 
 Authors:
 \itemize{
-  \item Narmada narmada.sambaturu@gmail.com Sambaturu (\href{https://orcid.org/0000-0002-2570-3699}{ORCID})
+  \item Narmada Sambaturu \email{narmada.sambaturu@gmail.com} (\href{https://orcid.org/0000-0002-2570-3699}{ORCID})
 }
 
 Other contributors:

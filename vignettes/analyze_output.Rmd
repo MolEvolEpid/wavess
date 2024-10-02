@@ -79,8 +79,8 @@ seems like conserved + ref_seq is the culprit
 ## Plotting counts
 
 ```{r}
-wavess_out$counts %>% 
-  pivot_longer(!generation) %>% 
+wavess_out$counts |> 
+  pivot_longer(!generation) |> 
   ggplot(aes(x = generation, y = value)) +
   facet_wrap(~name, scales = 'free') +
   geom_line()
@@ -97,9 +97,9 @@ can be computed and plotted as follows
 gens <- gsub('gen_|_cell.*', '', labels(wavess_out$seqs))
 div_metrics <- calc_div_metrics(wavess_out$seqs, 'founder1', gens)
 
-div_metrics %>% 
-  mutate(gen = as.numeric(gen)) %>% 
-  pivot_longer(!gen) %>% 
+div_metrics |> 
+  mutate(gen = as.numeric(gen)) |> 
+  pivot_longer(!gen) |> 
   ggplot(aes(x = gen, y = value)) +
   facet_grid(~name) +
   geom_line()

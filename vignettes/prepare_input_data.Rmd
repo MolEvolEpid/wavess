@@ -42,7 +42,7 @@ dynamics](#visualize-latent-cell-dynamics).
 ## Install and load `wavess`
 
 First, you need to install (if needed) and load the `wavess` library, as
-well as a couple others:
+well as a few others:
 
 ```{r load}
 # install.packages("remotes")
@@ -51,6 +51,7 @@ well as a couple others:
 
 library(wavess)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 library(ape)
 ```
@@ -145,9 +146,9 @@ red dots are the number of samples taken:
 
 ```{r, plot_counts}
 # plot active cell counts
-pop_samp %>% 
+pop_samp |> 
   # to only plot the number of samples taken when it's not 0
-  mutate(n_sample_active = ifelse(n_sample_active == 0, NA, n_sample_active)) %>% 
+  mutate(n_sample_active = ifelse(n_sample_active == 0, NA, n_sample_active)) |> 
   ggplot(aes(x = generation, y = active_cell_count)) +
   geom_line() +
   geom_point(aes(x = generation, y = n_sample_active), col = 'red') +
@@ -271,12 +272,12 @@ active_latent_counts <- lapply(pop_samp$active_cell_count, function(x){
   counts <- tibble(Active = x, Latent = latent, n_to_latent, n_to_active, n_to_proliferate, n_to_die)
   latent <<- latent + n_to_latent - n_to_active + n_to_proliferate - n_to_die
   return(counts)
-}) %>% bind_rows() %>% 
+}) |> bind_rows() |> 
   mutate(gen = row_number()) 
 
 # Plot (latent) cell counts
-active_latent_counts %>% 
-  pivot_longer(c(Active, Latent)) %>% 
+active_latent_counts |> 
+  pivot_longer(c(Active, Latent)) |> 
   ggplot(aes(x = gen, y = value, col = name)) +
   geom_line() +
   # scale_y_log10() + # uncomment this if you want to scale the y axis by log10
@@ -390,7 +391,7 @@ relative to the founder sequence:
 You can visualize the conserved sites across the genome using the following code:
 
 ```{r, viz_conserved}
-founder_conserved_df %>% 
+founder_conserved_df |> 
   ggplot(aes(x = founder_pos, y = consensus_prop, fill = conserved)) +
   geom_col()
 ```
@@ -540,12 +541,12 @@ positions relative to the founder sequence (instead of HXB2):
 Here are two ways to visualize the epitopes:
 
 ```{r}
-epitope_locations %>% 
+epitope_locations |> 
   ggplot(aes(x = epi_start_nt, y = max_fitness_cost)) +
   geom_point() +
   labs(x = 'Epitope start position', y = 'Max fitness cost')
 
-epitope_locations %>% 
+epitope_locations %>%
   ggplot(aes(x = 1:nrow(.), y = max_fitness_cost, col = epi_start_nt)) +
   geom_point() +
   labs(x = 'Epitope', y = 'Max fitness cost', col = 'Epitope start\nposition')

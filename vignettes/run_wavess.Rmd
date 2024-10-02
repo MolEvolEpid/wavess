@@ -34,10 +34,34 @@ you might have to tweak the input parameters to work for your particular system.
 We go into more detail about analyzing the model output in a separate vignette 
 (see `vignette(analyze_output)`).
 
-## Load libraries and prepare input data
+## Load libraries 
 
-First, we have to load the wavess library and generate the input data. 
-If you're interested in learning more about how to prepare the input data,
+First, we have to load the wavess library and a few additional libraries
+that we'll use for this vignette:
+
+```{r}
+library(wavess)
+library(ape)
+library(dplyr)
+```
+
+
+## Create Python virtual environment
+
+Next, we must create a Python virtual environment.
+The virtual environment is required because the underlying code of `run_wavess()`
+is written in Python. You only have to create the virtual environment once on
+each machine.
+
+```{r}
+create_python_venv()
+```
+
+
+## Prepare input data
+
+Next, we must generate the input data. If you're interested in learning more about 
+how to prepare the input data,
 please see the corresponding vignette (see `vignette(prepare_input_data)`). 
 
 We will only simulate 300 generations with sampling every 100 generations so
@@ -46,10 +70,6 @@ the simulation doesn't take too long to run.
 **TODO: FIX nt_sub_probs ONCE INCLUDE EXAMPLE WITHIN-HOST ALIGNMENT**
 
 ```{r setup}
-library(wavess)
-library(ape)
-library(tidyverse)
-
 hiv_env_flt_2021 <- as.matrix.DNAbin(hiv_env_flt_2021)
 hxb2_cons_founder <- as.matrix.DNAbin(hxb2_cons_founder)
 

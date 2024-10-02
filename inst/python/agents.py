@@ -94,6 +94,7 @@ def replicative_fitness_cost(s1, s2, conserved_sites, rf_exp):
     #return (sum(1 for x,y in zip(s1, s2) if x != y and y in ['A','T','C','G']))/len(s1)
     #return len([1 for x,y in zip(s1, s2) if x != y and y in ['A','T','C','G']])/len(s1) # slightly faster
     # don't include conserved sites in calculation
+    # INSTEAD OF THIS, MASK SITES DIRECTLY IN FOUNDER SEQUENCE AT BEGINNING OF SIMULATION
     s1 = [s1[x] for x in range(len(s1)) if x not in conserved_sites]
     s2 = [s2[x] for x in range(len(s2)) if x not in conserved_sites]
     n_compare = len([1 for x in range(len(s2)) if s2[x] in ['A','T','C','G']])
@@ -323,7 +324,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # Compute overall fitness
         viral_fitness = (1 - self.C[CD4_index].infecting_virus.immune_fitness_cost) * \
                 (1 - self.C[CD4_index].infecting_virus.conserved_fitness_cost) * \
-                (1 - self.C[CD4_index].infecting_virus.replicative_fitness_cost)**rf_exp
+                # DECIDE HOW TO DO THIS
+                (1 - self.C[CD4_index].infecting_virus.replicative_fitness_cost)**rf_exp 
 
         # Update the virus object with the fitness costs
         self.C[CD4_index].infecting_virus.fitness = viral_fitness
