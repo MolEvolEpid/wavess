@@ -17,6 +17,8 @@ test_that("run_wavess works", {
   expect_equal(unique(no_lat$counts$latent_died), 0)
   expect_equal(unique(no_lat$counts$latent_proliferated), 0)
   expect_no_error(run_wavess(samp_scheme, 'ATCG', probs))
+  expect_error(run_wavess(samp_scheme, c('ATCG', 'A'), probs),
+               'All founder sequences must be the same length')
   expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, ref_seq = 'AAAA'))
   expect_no_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, ref_seq = 'AAAA'))
   expect_error(run_wavess(samp_scheme, c('ATCG', 'ATTT'), probs, conserved_sites = 0),

@@ -106,7 +106,7 @@ required_args_only <- run_wavess(pop_samp = pop_samp,
                                  nt_sub_probs = nt_sub_probs)
 ```
 
-The output format of `run_waves()` is always the same: a list of length two 
+The output format of `run_wavess()` is always the same: a list of length two 
 containing a tibble of various count and the sampled DNA sequences:
 
 ```{r}

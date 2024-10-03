@@ -127,10 +127,13 @@ sampling and more samples taken at each sampling event:
 (pop_samp <- generate_pop_samp(gN = 500, sampling_frequency = 30, max_samp = 50))
 ```
 
-Note that the default starts with 1 active cell in generation 0, which means 
+A couple notes:
+
+- Assuming everything else remains the same, the maximum population size simulated 
+greatly influences the simulation output. 
+- The default starts with 1 active cell in generation 0, which means 
 that no multiple infections can occur. If multiple founders are provided, one
-would be randomly chosen to start the simulation. 
-**TODO: IS THIS OKAY OR DO WE WANT TO MODIFY?**
+would be randomly chosen to start the simulation.
 
 You can visualize the active cell dynamics over time using the following
 code, where the black line is the effective population size and the 
@@ -149,7 +152,7 @@ pop_samp |>
 
 ### Extract founder sequence from an alignment {#extract-founder-sequence-from-an-alignment}
 
-`run_wavess()` takes as input a character vector of founder sequences
+`run_wavess()` takes as input a character vector of founder sequence(s)
 (`founder_seqs`). All sequences must be the same length and not contain
 gaps.
 
@@ -157,10 +160,9 @@ We provide the function `extract_seqs()` to extract a founder
 sequence from an alignment in `ape::DNAbin` format and convert it into a
 character vector. The alignment can be read in using `ape::read.FASTA()`
 or `ape::read.dna()`. NOTE: We do not recommend using this function to extract
-more than one founder sequence to initiate a single simulation, because
+more than one founder sequence to initiate a single simulation because
 if any gaps are present then the founder sequences will not be the same
-length.
-**TODO: THINK ABOUT THE BEST WAY TO INTRODUCE MULTIPLE FOUNDER SEQUENCES (E.G. FROM DIFFERENT SUBTYPES)**
+length, which will lead to an error.
 
 This alignment is of the entire HIV genome, but we're only interested in the
 ENV gp120 gene, which we can subset to using the `start` and `end` arguments.

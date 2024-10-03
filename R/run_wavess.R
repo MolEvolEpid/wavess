@@ -2,14 +2,19 @@
 #'
 #' Simulate within-host evolution.
 #' Please note that the default arguments were set with the the HIV ENV gp120 gene
-#' in mind. If you'd like to simulate something else, you may
+#' in mind. If you'd like to simulate something else, you will likely
 #' have to modify certain parameters.
-#'
-#' See `vignette('run_wavess')` for more details.
+#' Also, the parameters for latent probabilities are assumed to be small, such
+#' that it is unlikely that multiple events (activate, die, proliferate) will
+#' occur to a single latent cell in a single (active cell) generation.
+#' See `vignette('run_wavess')` for more details about the simulator and input
+#' arguments.
 #'
 #' @param pop_samp Tibble with columns generation, active_cell_count, n_sample_active.
 #' Can be generated using the `define_growth_curve()` and `define_sampling_scheme()` functions.
-#' @param founder_seqs Founder sequences as a vector of character strings. For example c('ATCG', 'ATTT')
+#' @param founder_seqs Founder sequence(s) as a character string or a vector of
+#' character strings, for example 'ACATG'. The founder sequence(s) may only contain
+#' the characters ACGT, and no gaps are allowed.
 #' @param nt_sub_probs Named matrix of nucleotide substitution probabilities.
 #' Rows are from, columns are to. Can be generated using the `calc_nt_sub_probs()` function.
 #' @param conserved_sites Vector of conserved sites.
@@ -37,7 +42,8 @@
 #' @param prob_recomb Probability of a recombination event at a given site in
 #' one generation (default: 1.4e-5)
 #' @param prob_act_to_lat Probability that an active cell becomes latent in a
-#' generation (default: 0.001)
+#' generation (default: 0.001). Set this to 0 if you don't want to model
+#' latent cell dynamics.
 #' @param prob_lat_to_act Probability that a latent cell becomes active in a
 #' generation (default: 0.01)
 #' @param prob_lat_prolif Probability that a latent cell proliferates in a
@@ -46,7 +52,7 @@
 #' generation (default: 0.01)
 #' @param seed Optional seed (default: NULL)
 #'
-#' @return List including: tibble of counts, and alignment of sequences
+#' @return List including: tibble of counts, and alignment of sampled sequences
 #' @export
 #'
 #' @examples
