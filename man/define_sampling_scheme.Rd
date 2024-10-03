@@ -7,7 +7,7 @@
 define_sampling_scheme(growth_curve, sampling_frequency = 300, max_samp = 20)
 }
 \arguments{
-\item{growth_curve}{output from \code{define_growth_curve()}, or customized
+\item{growth_curve}{output from \verb{[define_growth_curve()]}, or customized
 growth curve with columns named \code{generation} and \code{active_cell_count}}
 
 \item{sampling_frequency}{frequency in generations at which to record

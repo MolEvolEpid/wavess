@@ -18,7 +18,7 @@ sample_epitopes(
 }
 \arguments{
 \item{epitope_probabilities}{Epitope probability tibble as output by
-\code{get_epitope_frequencies()}, including columns
+\verb{[get_epitope_frequencies()]}, including columns
 \code{aa_position} and \code{epitope_probability}}
 
 \item{start_aa_pos}{Starting amino acid position to consider for epitopes
@@ -44,7 +44,7 @@ between 0 and \code{max_fit_cost} (default: "linear")}
 \item{max_resamples}{Maximum number of resampling events to attempt;
 this is to prevent an infinite loop (default: 100)}
 
-\item{ref_founder_map}{Output from \code{map_ref_founder()}, including reference
+\item{ref_founder_map}{Output from \verb{[map_ref_founder()]}, including reference
 and founder positions (\code{ref_pos} and \code{founder_pos}).}
 }
 \value{

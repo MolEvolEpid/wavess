@@ -13,8 +13,8 @@ identify_conserved_sites(
 )
 }
 \arguments{
-\item{aln}{Alignment in \code{ape::DNAbin} format (e.g. read in with
-\code{ape::read.dna()} or \code{ape::read.FASTA()}) that includes the founder sequence or
+\item{aln}{Alignment in \verb{[ape::DNAbin]} format (e.g. read in with
+\code{ape::read.dna()} or \verb{[ape::read.FASTA()]}) that includes the founder sequence or
 a reference sequence, plus a representative set of sequences for your genome
 region of interest}
 
@@ -32,10 +32,17 @@ the founder sequence is not in \code{aln} (default: \code{NULL})}
 required if the founder is not present in \code{aln} (default: \code{NULL})}
 }
 \value{
-Tibble with the same columns as output in \code{find_consensus()}, plus
-an additional column, \code{conserved}, that indicates whether or not the position
-is conserved (Yes means conserved, No means not conserved, NA means the
-conserved position is a gap ('-'))
+Tibble including the following columns:
+\itemize{
+\item \code{founder_pos}: founder position
+\item \code{founder_base}: founder base
+\item \code{consensus_base}: consensus base
+\item \code{consensus_prop}: proportion of sequences that had that base at that position
+\item \code{conserved}: whether or not the position is conserved (Yes means conserved,
+No means not conserved, NA means the conserved position is a gap ('-'))
+When using a reference, \code{NA} in the consensus columns indicates that that
+position was an insertion relative to the reference
+}
 }
 \description{
 Identify conserved sites relative to the founder sequence.

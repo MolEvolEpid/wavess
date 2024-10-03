@@ -7,15 +7,15 @@
 convert_ref_to_founder_epitopes(ref_epitopes, ref_founder_map)
 }
 \arguments{
-\item{ref_epitopes}{Output from \code{sample_epitopes()}, including start and end
+\item{ref_epitopes}{Output from \verb{[sample_epitopes()]}, including start and end
 nt positions of the epitopes (\code{epi_start_nt} and \code{epi_end_nt})}
 
-\item{ref_founder_map}{Output from \code{map_ref_founder()}, including reference
+\item{ref_founder_map}{Output from \verb{[map_ref_founder()]}, including reference
 and founder positions (\code{ref_pos} and \code{founder_pos}).}
 }
 \value{
 Tibble with epitope positions relative to the founder, with the
-same columns as output by \code{sample_epitopes()}
+same columns as output by \verb{[sample_epitopes()]}
 }
 \description{
 Convert reference epitope locations to founder epitope locations

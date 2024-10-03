@@ -14,7 +14,7 @@ sample_viral_sequences(generation, host, n_to_samp)
 \item{n_to_samp}{Number of cells to sample}
 }
 \value{
-Sampled sequences in \code{ape::DNAbin} format.
+Sampled sequences in \verb{[ape::DNAbin]} format.
 }
 \description{
 Sample viral sequences

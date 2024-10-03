@@ -7,7 +7,7 @@
 calc_div_metrics(aln, founder, gen)
 }
 \arguments{
-\item{aln}{DNA alignment in \code{ape::DNAbin} format}
+\item{aln}{DNA alignment in \verb{[ape::DNAbin]} format}
 
 \item{founder}{Name of the founder sequence in the alignment}
 
@@ -18,7 +18,7 @@ assumed to be in the same order as the alignment}
 tibble including mean divergence for each generation
 }
 \description{
-See \code{vignette('analyze_output')} for more details.
+See \verb{[vignette('analyze_output')]} for more details.
 }
 \examples{
 # This example is somewhat contrived, but it shows how it works.

@@ -21,6 +21,9 @@ Other contributors:
   \item Sophie Hoffman \email{shoffm@umich.edu} (\href{https://orcid.org/0000-0003-2518-6422}{ORCID}) (clusters) [copyright holder]
   \item Joyce Wang \email{wangjoy@umich.edu} (\href{https://orcid.org/0000-0002-8674-1015}{ORCID}) (clusters) [copyright holder]
   \item Evan Snitkin \email{esnitkin@umich.edu} (\href{https://orcid.org/0000-0001-8409-278X}{ORCID}) (clusters) [copyright holder]
+  \item Kenneth Benoit (\href{https://orcid.org/0000-0002-0797-564X}{ORCID}) [copyright holder]
+  \item Akitaka Matsuo (\href{https://orcid.org/0000-0002-3323-6330}{ORCID}) [copyright holder]
+  \item Johannes Gruber (\href{https://orcid.org/0000-0001-9177-1772}{ORCID}) [copyright holder]
 }
 
 }

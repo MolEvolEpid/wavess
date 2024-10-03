@@ -14,8 +14,8 @@ default, questions are only asked in interactive sessions.}
 it anyway.}
 }
 \description{
-Modified from the \code{install_python_dependencies()} funciton in the \code{spacyr} package:
-https://github.com/quanteda/spacyr/blob/master/R/install_python_dependencies.R
+Modified from the \verb{[spacyr::spacy_install()]} function:
+https://github.com/quanteda/spacyr/blob/master/R/spacy_install.R
 }
 \details{
 The dependencies are python, some base python packages (copy, random,

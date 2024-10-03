@@ -27,12 +27,14 @@ run_wavess(
 }
 \arguments{
 \item{pop_samp}{Tibble with columns generation, active_cell_count, n_sample_active.
-Can be generated using the \code{define_growth_curve()} and \code{define_sampling_scheme()} functions.}
+Can be generated using the \verb{[define_growth_curve()]} and \verb{[define_sampling_scheme()]} functions.}
 
-\item{founder_seqs}{Founder sequences as a vector of character strings. For example c('ATCG', 'ATTT')}
+\item{founder_seqs}{Founder sequence(s) as a character string or a vector of
+character strings, for example 'ACATG'. The founder sequence(s) may only contain
+the characters ACGT, and no gaps are allowed.}
 
 \item{nt_sub_probs}{Named matrix of nucleotide substitution probabilities.
-Rows are from, columns are to. Can be generated using the \code{calc_nt_sub_probs()} function.}
+Rows are from, columns are to. Can be generated using the \verb{[calc_nt_sub_probs()]} function.}
 
 \item{prob_mut}{Probability of a mutation at one site in one generation
 (default: 3.5e-5)}
@@ -41,7 +43,8 @@ Rows are from, columns are to. Can be generated using the \code{calc_nt_sub_prob
 one generation (default: 1.4e-5)}
 
 \item{prob_act_to_lat}{Probability that an active cell becomes latent in a
-generation (default: 0.001)}
+generation (default: 0.001). Set this to 0 if you don't want to model
+latent cell dynamics.}
 
 \item{prob_lat_to_act}{Probability that a latent cell becomes active in a
 generation (default: 0.01)}
@@ -53,20 +56,20 @@ generation (default: 0.01)}
 generation (default: 0.01)}
 
 \item{conserved_sites}{Vector of conserved sites.
-This can be generated using the \code{identify_conserved_sites()} function
+This can be generated using the \verb{[identify_conserved_sites()]} function
 (default: NULL, i.e. no conserved sites fitness costs)}
 
 \item{conserved_cost}{Cost of mutation at conserved site (default: 0.99)}
 
 \item{ref_seq}{Reference sequence as a character string. A consensus sequence,
 that can be used as the reference sequence, can be generated using the function
-\code{find_consensus()} (default: NULL, i.e. no fitness cost relative to a reference sequence)}
+\verb{[identify_conserved_sites()]} (default: NULL, i.e. no fitness cost relative to a reference sequence)}
 
 \item{rep_exp}{Replicative fitness exponent, only relevant when ref_seq is not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL DEFINITION}
 
 \item{epitope_locations}{Tibble of epitope locations and maximum fitness costs with columns
 epi_start_nt, epi_end_nt, max_fitness_cost.
-This can be generated using the functions \code{get_epitope_frequencies()} and \code{sample_epitopes()}
+This can be generated using the functions \verb{[get_epitope_frequencies()]} and \verb{[sample_epitopes()]}
 (default: NULL, i.e. no immune fitness costs)}
 
 \item{seroconversion_time}{Generation at which seroconversion occurs, only
@@ -83,20 +86,22 @@ not NULL (default: 90).}
 \item{seed}{Optional seed (default: NULL)}
 }
 \value{
-List including: tibble of counts, and alignment of sequences
+List including: tibble of counts, and alignment of sampled sequences
 }
 \description{
 Simulate within-host evolution.
 Please note that the default arguments were set with the the HIV ENV gp120 gene
-in mind. If you'd like to simulate something else, you may
+in mind. If you'd like to simulate something else, you will likely
 have to modify certain parameters.
-}
-\details{
-See \code{vignette('run_wavess')} for more details.
+Also, the parameters for latent probabilities are assumed to be small, such
+that it is unlikely that multiple events (activate, die, proliferate) will
+occur to a single latent cell in a single (active cell) generation.
+See \verb{[vignette('run_wavess')]} for more details about the simulator and input
+arguments.
 }
 \examples{
 \dontrun{
-run_wavess(generate_pop_samp(gN = 300), c('ATCG', 'ATTT'),
+run_wavess(generate_pop_samp(gN = 300), 'ATCG',
 calc_nt_sub_probs(hiv_env_flt_2021))
 }
 }
