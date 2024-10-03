@@ -560,4 +560,7 @@ epitope_locations %>%
   labs(x = 'Epitope', y = 'Max fitness cost', col = 'Epitope start\nposition')
 ```
 
+## On to simulations
 
+Next, check out the `vignette("run_wavess")` to see how to use all these inputs
+to simulate within-host evolution. 

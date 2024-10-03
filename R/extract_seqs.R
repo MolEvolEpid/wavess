@@ -3,7 +3,7 @@
 #' @param aln Alignment
 #' @param founder_name Name of founder sequence in the alignment
 #' @param ref_name Optional name of reference sequence in the alignment.
-#' This can be used as input to the `ref_seq` argument in `run_wavess()`
+#' This can be used as input to the `ref_seq` argument in `[run_wavess()]`
 #' (default: NULL, i.e. no reference sequence is returned)
 #' @param start Start of founder sequence in alignment
 #' (default: 1, i.e. beginning of sequence)
@@ -47,7 +47,7 @@ extract_seqs <- function(aln, founder_name, ref_name = NULL, start = 1, end = NU
 #' @param end end position in alignment
 #' @param seqs sequences to keep (default: labels(aln), i.e. all sequences)
 #'
-#' @return sliced alignment in `ape::DNAbin` format
+#' @return sliced alignment in `[ape::DNAbin]` format
 #' @export
 #'
 #' @examples

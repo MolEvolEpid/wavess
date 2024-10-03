@@ -32,7 +32,7 @@ if they are giving you reasonable/expected results that conform to your prior
 knowledge about the system you're simulating. If the output does not seem right,
 you might have to tweak the input parameters to work for your particular system.
 We go into more detail about analyzing the model output in a separate vignette 
-(see `vignette(analyze_output)`).
+(see `vignette("analyze_output")`).
 
 ## Load libraries 
 
@@ -62,7 +62,7 @@ create_python_venv()
 
 Next, we must generate the input data. If you're interested in learning more about 
 how to prepare the input data,
-please see the corresponding vignette (see `vignette(prepare_input_data)`). 
+please see the corresponding vignette (see `vignette("prepare_input_data")`). 
 
 We will only simulate 300 generations with sampling every 100 generations so
 the simulation doesn't take too long to run. 
@@ -153,7 +153,7 @@ fitness cost (rc), and overall fitness (f).
 
 These outputs can be plotted and analyzed in various ways. If you'd like to learn
 more about how to analyze the output, please checkout the post-processing vignette
-`vignette('analyze_output')`.
+`vignette("analyze_output")`.
 
 ## Including selective pressures
 
@@ -164,7 +164,7 @@ more about how to analyze the output, please checkout the post-processing vignet
 - B-cell immunity
 
 Including these requires additional inputs, which are described in more detail
-in the prepare input data vignette (`vignette(prepare_input_data)`).
+in the prepare input data vignette (`vignette("prepare_input_data")`).
 
 For additional details on how each of these selective pressures is implemented,
 please see the manuscript [**ADD LINK WHEN WE HAVE IT**].

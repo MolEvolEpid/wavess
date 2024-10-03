@@ -14,7 +14,10 @@ Authors@R:
            code = 'clusters')),
       person(given = "Evan", family = "Snitkin", role = c("cph"),
              email = "esnitkin@umich.edu", comment = c(ORCID = "0000-0001-8409-278X",
-           code = 'clusters')))
+           code = 'clusters')),
+      person(given="Kenneth", family="Benoit", role = c("cph"), comment = c(ORCID = "0000-0002-0797-564X")), 
+      person(given="Akitaka", family="Matsuo", role = "cph", comment = c(ORCID = "0000-0002-3323-6330")),
+      person(given="Johannes", family="Gruber", role = "cph", comment = c(ORCID = "0000-0001-9177-1772")))
 Description: Simulates within-host viral sequence evolution. Optionally includes
     recombination, a latent cell reservoir, and three types of selective pressures 
     (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity). 

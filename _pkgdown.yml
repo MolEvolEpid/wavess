@@ -2,3 +2,43 @@ url: ~
 template:
   bootstrap: 5
 
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - prepare_input_data
+  - run_wavess
+  - analyze_output
+
+reference:
+- title: Pre-processing
+  contents:
+  - generate_pop_samp
+  - slice_aln
+  - extract_seqs
+  - calc_nt_sub_probs
+  - rate_to_probability
+  - identify_conserved_sites
+  - get_epitope_frequencies
+  - sample_epitopes
+  - map_ref_founder
+
+- title: Main simulator
+  contents:
+  - create_python_venv
+  - remove_python_venv
+  - run_wavess
+- title: Output analysis
+  contents:
+  - calc_div_metrics
+  - calc_tr_summary_stats
+  - calc_sackin_norm
+  - calc_int_over_ext
+  - calc_prop_survived
+
+
+
+
+
+
+

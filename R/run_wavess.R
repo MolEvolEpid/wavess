@@ -7,27 +7,27 @@
 #' Also, the parameters for latent probabilities are assumed to be small, such
 #' that it is unlikely that multiple events (activate, die, proliferate) will
 #' occur to a single latent cell in a single (active cell) generation.
-#' See `vignette('run_wavess')` for more details about the simulator and input
+#' See `[vignette('run_wavess')]` for more details about the simulator and input
 #' arguments.
 #'
 #' @param pop_samp Tibble with columns generation, active_cell_count, n_sample_active.
-#' Can be generated using the `define_growth_curve()` and `define_sampling_scheme()` functions.
+#' Can be generated using the `[define_growth_curve()]` and `[define_sampling_scheme()]` functions.
 #' @param founder_seqs Founder sequence(s) as a character string or a vector of
 #' character strings, for example 'ACATG'. The founder sequence(s) may only contain
 #' the characters ACGT, and no gaps are allowed.
 #' @param nt_sub_probs Named matrix of nucleotide substitution probabilities.
-#' Rows are from, columns are to. Can be generated using the `calc_nt_sub_probs()` function.
+#' Rows are from, columns are to. Can be generated using the `[calc_nt_sub_probs()]` function.
 #' @param conserved_sites Vector of conserved sites.
-#' This can be generated using the `identify_conserved_sites()` function
+#' This can be generated using the `[identify_conserved_sites()]` function
 #' (default: NULL, i.e. no conserved sites fitness costs)
 #' @param conserved_cost Cost of mutation at conserved site (default: 0.99)
 #' @param ref_seq Reference sequence as a character string. A consensus sequence,
 #' that can be used as the reference sequence, can be generated using the function
-#' `find_consensus()` (default: NULL, i.e. no fitness cost relative to a reference sequence)
+#' `[identify_conserved_sites()]` (default: NULL, i.e. no fitness cost relative to a reference sequence)
 #' @param rep_exp Replicative fitness exponent, only relevant when ref_seq is not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL DEFINITION
 #' @param epitope_locations Tibble of epitope locations and maximum fitness costs with columns
 #' epi_start_nt, epi_end_nt, max_fitness_cost.
-#' This can be generated using the functions `get_epitope_frequencies()` and `sample_epitopes()`
+#' This can be generated using the functions `[get_epitope_frequencies()]` and `[sample_epitopes()]`
 #' (default: NULL, i.e. no immune fitness costs)
 #' @param seroconversion_time Generation at which seroconversion occurs, only
 #' relevant when epitope_locations is not NULL (default: 30).
@@ -248,7 +248,7 @@ record_counts <- function(counts, generation, host, latent_nums, var_nums, fitne
 #' @param n_to_samp Number of cells to sample
 #'
 #' @return
-#' Sampled sequences in `ape::DNAbin` format.
+#' Sampled sequences in `[ape::DNAbin]` format.
 sample_viral_sequences <- function(generation, host, n_to_samp){
   sampled_cells <- sample(1:length(host$C), n_to_samp)-1 # because python indexes at 0
   seqs <- lapply(sampled_cells, function(x){

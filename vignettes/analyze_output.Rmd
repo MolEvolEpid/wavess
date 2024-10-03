@@ -31,8 +31,8 @@ First, let's load the relevant libraries, set the default plotting theme, and
 run wavess including all the selective pressures.
 We're going to set a seed for reproducibility.
 For more details on the input and running wavess,
-please see the respective vignettes. (`vignette(prepare_input_data)` and 
-`vignette(run_wavess)`). If you haven't checked out those vignettes first, be
+please see the respective vignettes. (`vignette("prepare_input_data")` and 
+`vignette("run_wavess")`). If you haven't checked out those vignettes first, be
 sure to at least run the `create_python_venv()` function prior to running the 
 below code, or else you'll get an error telling you to do so. 
 

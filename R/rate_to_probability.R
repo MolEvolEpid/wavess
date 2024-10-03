@@ -1,6 +1,6 @@
 #' Convert a rate to a probability
 #'
-#' The `wavess()` function takes probabilities,
+#' The `[run_wavess()]` function takes probabilities,
 #' but sometimes in the literature you find rates instead.
 #' This function allows you to convert that rate to a probability.
 #'
