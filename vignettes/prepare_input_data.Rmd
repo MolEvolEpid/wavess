@@ -442,8 +442,6 @@ are converted to gaps:
 gsub('NA', '-', paste0(founder_conserved_df$consensus_base, collapse = ''))
 ```
 
-**TODO: CHECK TO SEE IF THIS NEEDS TO BE UPPERCASE/DECIDE IF WE WANT IT TO HAVE TO BE UPPERCASE**
-
 If you have an alignment including the founder sequence and wavess reference
 sequence you'd like to use, then you can also use the `extract_seqs()` function
 to obtain both at once:
