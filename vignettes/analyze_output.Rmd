@@ -49,6 +49,9 @@ set.seed(12345)
 
 theme_set(theme_classic() + theme(strip.background = element_rect(color = "white")))
 
+# if needed
+create_python_venv()
+
 pop_samp <- generate_pop_samp(gN = 300, sampling_frequency = 100) |>
   # sample at generation 10 to see diversity and divergence earlier on
   mutate(n_sample_active = ifelse(generation == 10, 20, n_sample_active))
