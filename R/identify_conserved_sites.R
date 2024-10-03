@@ -54,8 +54,8 @@ identify_conserved_sites <- function(aln, founder, thresh = 0.99,
 #' please check out the
 #' [LANL HIV database consensus maker](https://www.hiv.lanl.gov/content/sequence/CONSENSUS/consensus.html)
 #'
-#' @param aln Alignment in `[ape::DNAbin]` format (e.g. read in with
-#' `ape::read.dna()` or `[ape::read.FASTA()]`) that includes the founder sequence or
+#' @param aln Alignment in [ape::DNAbin] format (e.g. read in with
+#' [ape::read.dna()] or [ape::read.FASTA()]) that includes the founder sequence or
 #' a reference sequence, plus a representative set of sequences for your genome
 #' region of interest
 #' @param founder  Name of the founder sequence in the input alignment or in the
@@ -121,8 +121,8 @@ find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL){
 
 #' Map reference and founder sequence positions
 #'
-#' @param aln Alignment in `[ape::DNAbin]` format (e.g. read in with
-#' `[ape::read.dna()]` or `[ape::read.FASTA()]`) that includes the reference sequence
+#' @param aln Alignment in [ape::DNAbin] format (e.g. read in with
+#' [ape::read.dna()] or [ape::read.FASTA()]) that includes the reference sequence
 #' and the founder sequence
 #' @param ref Name of the reference sequence in the input alignment
 #' @param founder Name of the founder sequence in the input alignment

@@ -99,7 +99,7 @@ logistic_fn <- function(x, K, growth_rate, midpoint){
 
 #' Define sampling scheme
 #'
-#' @param growth_curve output from `[define_growth_curve()]`, or customized
+#' @param growth_curve output from [define_growth_curve()], or customized
 #' growth curve with columns named `generation` and `active_cell_count`
 #' @param sampling_frequency frequency in generations at which to record
 #' sequences (and counts) (default: 300 generations)

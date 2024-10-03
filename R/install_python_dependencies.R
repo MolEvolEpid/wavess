@@ -1,6 +1,6 @@
 #' Create python virtual environment and dependencies in conda or virtualenv environment
 #'
-#' Modified from the `[spacyr::spacy_install()]` function:
+#' Modified from the [spacyr::spacy_install()] function:
 #' https://github.com/quanteda/spacyr/blob/master/R/spacy_install.R
 #'
 #' The dependencies are python, some base python packages (copy, random,

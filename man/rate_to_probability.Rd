@@ -15,7 +15,7 @@ rate_to_probability(rate, time = 1)
 Probability that at least one event occurs in the time period
 }
 \description{
-The \verb{[run_wavess()]} function takes probabilities,
+The \code{\link[=run_wavess]{run_wavess()}} function takes probabilities,
 but sometimes in the literature you find rates instead.
 This function allows you to convert that rate to a probability.
 }

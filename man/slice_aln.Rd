@@ -16,7 +16,7 @@ slice_aln(aln, start, end, seqs = labels(aln))
 \item{seqs}{sequences to keep (default: labels(aln), i.e. all sequences)}
 }
 \value{
-sliced alignment in \verb{[ape::DNAbin]} format
+sliced alignment in \link[ape:DNAbin]{ape::DNAbin} format
 }
 \description{
 Slice alignment

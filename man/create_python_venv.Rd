@@ -14,7 +14,7 @@ default, questions are only asked in interactive sessions.}
 it anyway.}
 }
 \description{
-Modified from the \verb{[spacyr::spacy_install()]} function:
+Modified from the \code{\link[spacyr:spacy_install]{spacyr::spacy_install()}} function:
 https://github.com/quanteda/spacyr/blob/master/R/spacy_install.R
 }
 \details{

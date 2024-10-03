@@ -5,7 +5,7 @@
 #' sequence is also the start of the founder sequence in the simulation.
 #'
 #' @param epitope_probabilities Epitope probability tibble as output by
-#' `[get_epitope_frequencies()]`, including columns
+#' [get_epitope_frequencies()], including columns
 #' `aa_position` and `epitope_probability`
 #' @param start_aa_pos Starting amino acid position to consider for epitopes
 #' (default: 1)
@@ -23,7 +23,7 @@
 #' between 0 and `max_fit_cost` (default: "linear")
 #' @param max_resamples Maximum number of resampling events to attempt;
 #' this is to prevent an infinite loop (default: 100)
-#' @param ref_founder_map Output from `[map_ref_founder()]`, including reference
+#' @param ref_founder_map Output from [map_ref_founder()], including reference
 #' and founder positions (`ref_pos` and `founder_pos`).
 #'
 #' @return tibble with the `num_epitopes` rows and the following columns:
@@ -126,12 +126,12 @@ get_epitope_frequencies <- function(epitope_positions){
 
 #' Convert reference epitope locations to founder epitope locations
 #'
-#' @param ref_epitopes Output from `[sample_epitopes()]`, including start and end
+#' @param ref_epitopes Output from [sample_epitopes()], including start and end
 #' nt positions of the epitopes (`epi_start_nt` and `epi_end_nt`)
 #' @inheritParams sample_epitopes
 #'
 #' @return Tibble with epitope positions relative to the founder, with the
-#' same columns as output by `[sample_epitopes()]`
+#' same columns as output by [sample_epitopes()]
 convert_ref_to_founder_epitopes <- function(ref_epitopes, ref_founder_map){
   # internal function so don't include checks right now...
   ref_epitopes |>
