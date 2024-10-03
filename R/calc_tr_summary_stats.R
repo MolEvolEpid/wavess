@@ -103,7 +103,7 @@ calc_prop_survived <- function(tr, timepoints){
 #' NA indicates it is not part of a subtree;
 #' subtrees is an object of the actual subtrees (can be used for plotting);
 #' cluster_pureness is the purness of each cluster
-#' @keyword internal
+#' @noRd
 get_clusters <- function(tr, timepoints, pureness = 1, bootstrap = NULL, grps = NULL){
   #get the names of the things in common
   isolates <- intersect(tr$tip.label, names(timepoints))
@@ -152,7 +152,7 @@ get_clusters <- function(tr, timepoints, pureness = 1, bootstrap = NULL, grps = 
 #' @param pureness How pure the subtree has to be to call it a "pure" subtree (default: 1; range 0-1).
 #'
 #' @return list containing the largest pure subtree that each isolate belongs to, the index of that subtree, and the edges in that subtree.
-#' @keyword internal
+#' @noRd
 get_largest_subtree <- function(subtrs, isolate_labels, control_labels=NULL, bootstrap = 90, pureness = 1){
 
   #largest_st_info = future.apply::future_lapply(names(isolate_labels), function(i){
@@ -207,7 +207,7 @@ get_largest_subtree <- function(subtrs, isolate_labels, control_labels=NULL, boo
 #'
 #' @return reversed list
 #' @details Reference with example: https://stackoverflow.com/questions/15263146/revert-list-structure
-#' @keyword internal
+#' @noRd
 reverse_list_str <- function(ls) { # @Josh O'Brien
   # get sub-elements in same order
   x <- lapply(ls, `[`, names(ls[[1]]))

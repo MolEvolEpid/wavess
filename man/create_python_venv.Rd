@@ -37,10 +37,10 @@ reticulate::virtualenv_install(packages = c("numpy==VERSION_NUM")) instead.
 \examples{
 \dontrun{
 install dependencies
-install_python_venv()
+create_python_venv()
 
 # update dependencies
-install_python_venv(force = TRUE)
+create_python_venv(force = TRUE)
 }
 
 }

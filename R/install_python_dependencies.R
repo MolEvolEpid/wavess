@@ -121,7 +121,7 @@ py_check_installed <- function(x) {
 #' @param ... Extra stuff for reticulate::py_list_packages
 #'
 #' @return package version
-#' @keyword internal
+#' @noRd
 py_check_version <- function(package, ...) {
   packages <- reticulate::py_list_packages(...)
   packages$version[packages$package == package]
@@ -131,7 +131,7 @@ py_check_version <- function(package, ...) {
 #' Use wavess python virtual environment
 #'
 #' @return functions in agents
-#' @keyword internal
+#' @noRd
 use_python_venv <- function(){
   if (!reticulate::virtualenv_exists(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess")))
     stop("No wavess environment found. Use `install_python_dependencies()` to get started.")

@@ -4,11 +4,19 @@
 #' Note that the positions returned assume that the start of the alignment
 #' is also the start of the founder sequence in the simulation.
 #'
+#' @param aln Alignment in [ape::DNAbin] format (e.g. read in with
+#' [ape::read.dna()] or [ape::read.FASTA()]) that includes the founder sequence or
+#' a reference sequence, plus a representative set of sequences for your genome
+#' region of interest
+#' @param founder  Name of the founder sequence in the input alignment or in the
+#' optional founder-specific alignment (`founder_aln`)
+#' @param ref Name of the reference sequence in the input alignment, required if
+#' the founder sequence is not in `aln` (default: `NULL`)
+#' @param founder_aln Alignment including the reference and founder sequences,
+#' required if the founder is not present in `aln` (default: `NULL`)
 #' @param thresh Conserved site threshold. A position is considered to be
 #' conserved if >thresh proportion of sequences in the alignment are the same
 #' base (default: 0.99)
-#'
-#' @inheritParams find_consensus
 #'
 #' @return Tibble including the following columns:
 #' - `founder_pos`: founder position
@@ -54,16 +62,7 @@ identify_conserved_sites <- function(aln, founder, thresh = 0.99,
 #' please check out the
 #' [LANL HIV database consensus maker](https://www.hiv.lanl.gov/content/sequence/CONSENSUS/consensus.html)
 #'
-#' @param aln Alignment in [ape::DNAbin] format (e.g. read in with
-#' [ape::read.dna()] or [ape::read.FASTA()]) that includes the founder sequence or
-#' a reference sequence, plus a representative set of sequences for your genome
-#' region of interest
-#' @param founder  Name of the founder sequence in the input alignment or in the
-#' optional founder-specific alignment (`founder_aln`)
-#' @param ref Name of the reference sequence in the input alignment, required if
-#' the founder sequence is not in `aln` (default: `NULL`)
-#' @param founder_aln Alignment including the reference and founder sequences,
-#' required if the founder is not present in `aln` (default: `NULL`)
+#' @inheritParams identify_conserved_sites
 #'
 #' @return Tibble including the following columns:
 #' - `founder_pos`: founder position
@@ -72,7 +71,7 @@ identify_conserved_sites <- function(aln, founder, thresh = 0.99,
 #' - `consensus_prop`: proportion of sequences that had that base at that position
 #' When using a reference, `NA` in the consensus columns indicates that that
 #' position was an insertion relative to the reference
-#' @keyword internal
+#' @noRd
 find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL){
   check_find_consensus_inputs(aln, founder, ref, founder_aln)
   # ensure the alignment is in matrix form
@@ -175,7 +174,7 @@ map_ref_founder <- function(aln, ref, founder){
 #' @return
 #' Original data frame with an additional column (the column name prepended to
 #' _pos) that indicates the position of that base in the sequence.
-#' @keyword internal
+#' @noRd
 get_seq_pos <- function(aln_df, col_name){
   check_get_seq_pos_inputs(aln_df, col_name)
   aln_df |>

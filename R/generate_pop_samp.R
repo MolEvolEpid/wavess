@@ -1,10 +1,17 @@
 #' Generate population growth curve and sampling scheme
 #'
+#' @param curve_type type of growth, one of:
+#' `constant_pop` (constant population size),
+#' `logistic` (logistic growth; default)
+#' @param gN final sampling generation (default: 3000)
+#' @param K carrying capacity (default: 2000)
+#' @param n0 starting population size (default: 1; used for logistic)
 #' @param g50 generation at which the population size reaches 50% of K
 #' (default: 25; used for logistic)
-#'
-#' @inheritParams define_growth_curve
-#' @inheritParams define_sampling_scheme
+#' @param sampling_frequency frequency in generations at which to record
+#' sequences (and counts) (default: 300 generations)
+#' @param max_samp maximum number of cells (and thus sequences) to sample in a
+#' given generation (default: 20 sequences)
 #'
 #' @return tibble with two columns:
 #' - `generation`: Each generation to be simulated
@@ -30,19 +37,14 @@ generate_pop_samp <- function(curve_type = "logistic",
 
 #' Define growth curve
 #'
-#' @param curve_type type of growth, one of:
-#' `constant_pop` (constant population size),
-#' `logistic` (logistic growth; default)
-#' @param gN final sampling generation (default: 3000)
-#' @param K carrying capacity (default: 2000)
-#' @param n0 starting population size (default: 1; used for logistic)
 #' @param gpK generation at which the population size reaches pK of K
 #' (default: 25; used for logistic)
 #' @param pK proportion of carrying capacity population size at gpK
 #' (default: 0.5; used for logistic)
+#' @inheritParams generate_pop_samp
 #'
 #' @return tibble with two columns: generation and active cell count
-#' @keyword internal
+#' @noRd
 define_growth_curve <- function(curve_type = 'logistic',
                                 gN = 3000,
                                 K = 2000,
@@ -66,10 +68,14 @@ define_growth_curve <- function(curve_type = 'logistic',
 #' Note: to get the equations used in this function, I solved for the
 #' growth rate and midpoint based on n0, K, gpK, and pK.
 #'
-#' @inheritParams define_growth_curve
+#' @param gpK generation at which the population size reaches pK of K
+#' (default: 25; used for logistic)
+#' @param pK proportion of carrying capacity population size at gpK
+#' (default: 0.5; used for logistic)
+#' @inheritParams generate_pop_samp
 #'
 #' @return Population size at each generation
-#' @keyword internal
+#' @noRd
 get_logistic_curve <- function(n0, K, gpK, pK, gN){
   # number of cells at seroconversion generation
   nS <- K*pK
@@ -94,8 +100,8 @@ get_logistic_curve <- function(n0, K, gpK, pK, gN){
 #'
 #' @return y value of logistic curve
 #'
-#' @inheritParams define_growth_curve
-#' @keyword internal
+#' @inheritParams generate_pop_samp
+#' @noRd
 logistic_fn <- function(x, K, growth_rate, midpoint){
   K/(1+exp(-growth_rate*(x-midpoint)))
 }
@@ -104,14 +110,11 @@ logistic_fn <- function(x, K, growth_rate, midpoint){
 #'
 #' @param growth_curve output from [define_growth_curve()], or customized
 #' growth curve with columns named `generation` and `active_cell_count`
-#' @param sampling_frequency frequency in generations at which to record
-#' sequences (and counts) (default: 300 generations)
-#' @param max_samp maximum number of cells (and thus sequences) to sample in a
-#' given generation (default: 20 sequences)
+#' @inheritParams generate_pop_samp
 #'
 #' @return input growth curve tibble with one additional column (`n_sample_active`)
 #' containing the number of sequences from active cells to samples
-#' @keyword internal
+#' @noRd
 define_sampling_scheme <- function(growth_curve,
                                    sampling_frequency = 300,
                                    max_samp = 20){

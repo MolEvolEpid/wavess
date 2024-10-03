@@ -220,7 +220,7 @@ run_wavess <- function(pop_samp,
 #' @param fitness Numbers related to fitness (mean_fitness_active, mean_conserved_cost_active, mean_immune_cost_active, mean_replicative_cost_active)
 #'
 #' @return Updated counts tibble with additional row added for generation
-#' @keyword internal
+#' @noRd
 record_counts <- function(counts, generation, host, latent_nums, var_nums, fitness){
   counts |>
     tibble::add_row(generation = generation,
@@ -250,7 +250,7 @@ record_counts <- function(counts, generation, host, latent_nums, var_nums, fitne
 #'
 #' @return
 #' Sampled sequences in [ape::DNAbin] format.
-#' @keyword internal
+#' @noRd
 sample_viral_sequences <- function(generation, host, n_to_samp){
   sampled_cells <- sample(1:length(host$C), n_to_samp)-1 # because python indexes at 0
   seqs <- lapply(sampled_cells, function(x){
