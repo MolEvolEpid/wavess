@@ -40,57 +40,62 @@ sample_epitopes <- function(epitope_probabilities,
                             num_epitopes = 10,
                             aa_epitope_length = 10,
                             max_fit_cost = 0.4,
-                            cost_type = 'linear',
+                            cost_type = "linear",
                             max_resamples = 100,
-                            ref_founder_map = NULL){
-  check_sample_epitopes_inputs(epitope_probabilities, start_aa_pos, end_aa_pos,
-                               num_epitopes, aa_epitope_length,
-                               max_fit_cost, cost_type,
-                               max_resamples, ref_founder_map)
-  if(is.null(end_aa_pos)){
+                            ref_founder_map = NULL) {
+  check_sample_epitopes_inputs(
+    epitope_probabilities, start_aa_pos, end_aa_pos,
+    num_epitopes, aa_epitope_length,
+    max_fit_cost, cost_type,
+    max_resamples, ref_founder_map
+  )
+  if (is.null(end_aa_pos)) {
     end_aa_pos <- max(epitope_probabilities$aa_position)
   }
   # max fitness cost for each epitope
-  if(cost_type == 'linear'){
-    max_fit_costs <- seq(0, max_fit_cost, length.out = num_epitopes+1)[2:(num_epitopes+1)]
-  }else if(cost_type == 'random'){
-    max_fit_costs <- c(max_fit_cost, stats::runif(num_epitopes-1, 0, max_fit_cost))
+  if (cost_type == "linear") {
+    max_fit_costs <- seq(0, max_fit_cost, length.out = num_epitopes + 1)[2:(num_epitopes + 1)]
+  } else if (cost_type == "random") {
+    max_fit_costs <- c(max_fit_cost, stats::runif(num_epitopes - 1, 0, max_fit_cost))
   }
   # Draw num_epitopes positions
-  start_pos <- c()  # list of epitope start positions
-  all_pos <- c()  # list of all epitope positions
+  start_pos <- c() # list of epitope start positions
+  all_pos <- c() # list of all epitope positions
   n_resamples <- 0
-  while(length(start_pos) < num_epitopes & n_resamples < max_resamples){
+  while (length(start_pos) < num_epitopes & n_resamples < max_resamples) {
     mid <- sample(epitope_probabilities$aa_position, 1,
-                  prob = epitope_probabilities$epitope_probability)
-    start <- mid - floor(aa_epitope_length/2)
-    if(aa_epitope_length%%2 == 0){ # eptiope has even length
-      end <- mid + floor(aa_epitope_length/2) - 1
-    }else{
-      end <-  mid + floor(aa_epitope_length/2)
+      prob = epitope_probabilities$epitope_probability
+    )
+    start <- mid - floor(aa_epitope_length / 2)
+    if (aa_epitope_length %% 2 == 0) { # eptiope has even length
+      end <- mid + floor(aa_epitope_length / 2) - 1
+    } else {
+      end <- mid + floor(aa_epitope_length / 2)
     }
     # Don't want overlapping epitopes,
     # and can't start before start of sequence or end after end of sequence
-    if(start %in% all_pos | end %in% all_pos | start < start_aa_pos | end > end_aa_pos){
+    if (start %in% all_pos | end %in% all_pos | start < start_aa_pos | end > end_aa_pos) {
       n_resamples <- n_resamples + 1
-    }else{
+    } else {
       start_pos <- c(start_pos, start)
-      all_pos <- c(all_pos, start:(end+1))
+      all_pos <- c(all_pos, start:(end + 1))
     }
   }
-  if(n_resamples > 0){
-    if(n_resamples >= max_resamples){
-      stop('Too many resamples required.
+  if (n_resamples > 0) {
+    if (n_resamples >= max_resamples) {
+      stop("Too many resamples required.
             Try increasing `max_resamples`, or decreasing `num_epitopes` or
-            `aa_epitope_length`')
-    }else{
+            `aa_epitope_length`")
+    } else {
       message(n_resamples, " resamples required")
     }
   }
-  epitopes <- tibble::tibble(epi_start_nt = start_pos*3,
-                 epi_end_nt = (start_pos+10)*3,
-                 max_fitness_cost = max_fit_costs)
-  if(!is.null(ref_founder_map)){
+  epitopes <- tibble::tibble(
+    epi_start_nt = start_pos * 3,
+    epi_end_nt = (start_pos + 10) * 3,
+    max_fitness_cost = max_fit_costs
+  )
+  if (!is.null(ref_founder_map)) {
     epitopes <- convert_ref_to_founder_epitopes(epitopes, ref_founder_map)
   }
   return(epitopes)
@@ -109,19 +114,22 @@ sample_epitopes <- function(epitope_probabilities,
 #'
 #' @examples
 #' get_epitope_frequencies(env_features$position)
-get_epitope_frequencies <- function(epitope_positions){
+get_epitope_frequencies <- function(epitope_positions) {
   check_is_pos(epitope_positions)
   # get epitope probability for each site
   tibble::tibble(aa_position = min(epitope_positions):max(epitope_positions)) |>
     dplyr::left_join(tibble::enframe(epitope_positions) |>
-                # count up the number of features for each position
-                dplyr::group_by(aa_position=epitope_positions) |>
-                dplyr::tally(name = 'n_features'), by = 'aa_position') |>
+      # count up the number of features for each position
+      dplyr::group_by(aa_position = epitope_positions) |>
+      dplyr::tally(name = "n_features"), by = "aa_position") |>
     # make any positions with no features 0
-    dplyr::mutate(n_features = ifelse(is.na(.data$n_features),
-                                      0, .data$n_features),
-           # normalize to get probabilities
-           epitope_probability = .data$n_features/sum(.data$n_features))
+    dplyr::mutate(
+      n_features = ifelse(is.na(.data$n_features),
+        0, .data$n_features
+      ),
+      # normalize to get probabilities
+      epitope_probability = .data$n_features / sum(.data$n_features)
+    )
 }
 
 #' Convert reference epitope locations to founder epitope locations
@@ -133,18 +141,21 @@ get_epitope_frequencies <- function(epitope_positions){
 #' @return Tibble with epitope positions relative to the founder, with the
 #' same columns as output by [sample_epitopes()]
 #' @noRd
-convert_ref_to_founder_epitopes <- function(ref_epitopes, ref_founder_map){
+convert_ref_to_founder_epitopes <- function(ref_epitopes, ref_founder_map) {
   # internal function so don't include checks right now...
   ref_epitopes |>
-    dplyr::rename(ref_pos_start = 'epi_start_nt',
-                  ref_pos_end = 'epi_end_nt') |>
-    dplyr::left_join(ref_founder_map |>
-                       # if there is a deletion in the HXB2 sequence,
-                       # call it the nearest previous position
-                       tidyr::fill('founder_pos', .direction = 'down'),
-                     by = c('ref_pos_start' = 'ref_pos')) |>
-    dplyr::rename(epi_start_nt = 'founder_pos') |>
+    dplyr::rename(
+      ref_pos_start = "epi_start_nt",
+      ref_pos_end = "epi_end_nt"
+    ) |>
+    dplyr::left_join(
+      ref_founder_map |>
+        # if there is a deletion in the HXB2 sequence,
+        # call it the nearest previous position
+        tidyr::fill("founder_pos", .direction = "down"),
+      by = c("ref_pos_start" = "ref_pos")
+    ) |>
+    dplyr::rename(epi_start_nt = "founder_pos") |>
     dplyr::mutate(epi_end_nt = .data$epi_start_nt + (.data$ref_pos_end - .data$ref_pos_start)) |>
-    dplyr::select('epi_start_nt', 'epi_end_nt', 'max_fitness_cost')
+    dplyr::select("epi_start_nt", "epi_end_nt", "max_fitness_cost")
 }
-

@@ -11,7 +11,7 @@
 #' arguments.
 #'
 #' @param pop_samp Tibble with columns generation, active_cell_count, n_sample_active.
-#' Can be generated using the [define_growth_curve()] and [define_sampling_scheme()] functions.
+#' Can be generated using the [generate_pop_samp()] functions.
 #' @param founder_seqs Founder sequence(s) as a character string or a vector of
 #' character strings, for example 'ACATG'. The founder sequence(s) may only contain
 #' the characters ACGT, and no gaps are allowed.
@@ -57,8 +57,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' run_wavess(generate_pop_samp(gN = 300), 'ATCG',
-#' calc_nt_sub_probs(hiv_env_flt_2021))
+#' run_wavess(
+#'   generate_pop_samp(gN = 300), "ATCG",
+#'   calc_nt_sub_probs(hiv_env_flt_2021)
+#' )
 #' }
 run_wavess <- function(pop_samp,
                        founder_seqs,
@@ -77,17 +79,18 @@ run_wavess <- function(pop_samp,
                        seroconversion_time = 30,
                        prop_for_imm = 0.01,
                        gen_full_potency = 90,
-                       seed = NULL){
-
-  check_run_wavess_inputs(pop_samp, founder_seqs, nt_sub_probs,
-                          prob_mut, prob_recomb,
-                         conserved_sites, conserved_cost,
-                         ref_seq, rep_exp,
-                         epitope_locations, seroconversion_time,
-                         prop_for_imm, gen_full_potency,
-                         prob_act_to_lat, prob_lat_to_act,
-                         prob_lat_prolif, prob_lat_die,
-                         seed)
+                       seed = NULL) {
+  check_run_wavess_inputs(
+    pop_samp, founder_seqs, nt_sub_probs,
+    prob_mut, prob_recomb,
+    conserved_sites, conserved_cost,
+    ref_seq, rep_exp,
+    epitope_locations, seroconversion_time,
+    prop_for_imm, gen_full_potency,
+    prob_act_to_lat, prob_lat_to_act,
+    prob_lat_prolif, prob_lat_die,
+    seed
+  )
 
   # make sure founder sequences are all uppercase
   founder_seqs <- toupper(founder_seqs)
@@ -97,35 +100,35 @@ run_wavess <- function(pop_samp,
 
   latent <- TRUE
   # no latent cells
-  if(prob_act_to_lat == 0){
-    latent_nums <- c(0,0,0,0)
+  if (prob_act_to_lat == 0) {
+    latent_nums <- c(0, 0, 0, 0)
     latent <- FALSE
   }
 
-  if(is.null(ref_seq)){
-    ref_seq <- ''
+  if (is.null(ref_seq)) {
+    ref_seq <- ""
     replicative_fitness <- 0
-  }else{
+  } else {
     replicative_fitness <- 1
     ref_seq <- toupper(ref_seq)
-    if(!is.null(conserved_sites)){
+    if (!is.null(conserved_sites)) {
       # mask conserved sites so they aren't included in replicative fitness computation
-      ref_seq_str <- strsplit(ref_seq, '')[[1]]
-      ref_seq_str[conserved_sites] = '-'
-      ref_seq <- paste0(ref_seq_str, collapse = '')
+      ref_seq_str <- strsplit(ref_seq, "")[[1]]
+      ref_seq_str[conserved_sites] <- "-"
+      ref_seq <- paste0(ref_seq_str, collapse = "")
     }
   }
-  if(is.null(conserved_sites)){
+  if (is.null(conserved_sites)) {
     conserved_fitness <- 0
     conserved_sites <- c()
-  }else{
+  } else {
     conserved_fitness <- 1
     # change indexing to 0 because underlying functions are in python
     conserved_sites <- conserved_sites - 1
   }
-  if(is.null(epitope_locations)){
+  if (is.null(epitope_locations)) {
     immune_fitness <- 0
-  }else{
+  } else {
     immune_fitness <- 1
     # change indexing to 0 because underlying functions are in python
     epitope_locations$epi_start_nt <- epitope_locations$epi_start_nt - 1
@@ -133,7 +136,7 @@ run_wavess <- function(pop_samp,
   }
 
   conserved_sites <- as.list(conserved_sites)
-  if(!is.null(epitope_locations)){
+  if (!is.null(epitope_locations)) {
     epitope_locations <- apply(epitope_locations, 1, function(x) agents$create_epitope(x[1], x[2], x[3]))
   }
 
@@ -146,33 +149,37 @@ run_wavess <- function(pop_samp,
   substitution_probabilities <- unname(lapply(data.frame(t(nt_sub_probs)), function(x) x))
 
   # Create host environment and initialize infected cells
-  host <- agents$create_host_env(as.list(founder_seqs),
-                                 ref_seq, conserved_sites, replicative_fitness, rep_exp,
-                                 as.integer(pop_samp$active_cell_count[1]))
+  host <- agents$create_host_env(
+    as.list(founder_seqs),
+    ref_seq, conserved_sites, replicative_fitness, rep_exp,
+    as.integer(pop_samp$active_cell_count[1])
+  )
   # Last sampled generation (don't have to continue simulation after this)
   last_sampled_gen <- max(pop_samp$generation[pop_samp$n_sample_active != 0])
 
   # Initialize counts and sequences objects
-  counts <- tibble::tibble(generation = integer(),
-                           active_cell_count = integer(),
-                           latent_cell_count = integer(),
-                           active_turned_latent = integer(),
-                           latent_turned_active = integer(),
-                           latent_died = integer(),
-                           latent_proliferated = integer(),
-                           number_mutations = integer(),
-                           number_dual_inf = integer(),
-                           mean_fitness_active = numeric(),
-                           mean_conserved_cost_active = numeric(),
-                           mean_immune_cost_active = numeric(),
-                           mean_replicative_cost_active = numeric())
+  counts <- tibble::tibble(
+    generation = integer(),
+    active_cell_count = integer(),
+    latent_cell_count = integer(),
+    active_turned_latent = integer(),
+    latent_turned_active = integer(),
+    latent_died = integer(),
+    latent_proliferated = integer(),
+    number_mutations = integer(),
+    number_dual_inf = integer(),
+    mean_fitness_active = numeric(),
+    mean_conserved_cost_active = numeric(),
+    mean_immune_cost_active = numeric(),
+    mean_replicative_cost_active = numeric()
+  )
 
   # put founders at top of file
-  founders <- strsplit(founder_seqs, '')
-  seqs <- ape::as.DNAbin(strsplit(founder_seqs, ''))
-  names(seqs) <- paste0('founder', 1:length(founders))
+  founders <- strsplit(founder_seqs, "")
+  seqs <- ape::as.DNAbin(strsplit(founder_seqs, ""))
+  names(seqs) <- paste0("founder", 1:length(founders))
 
-  if(pop_samp$n_sample_active[1] != 0){
+  if (pop_samp$n_sample_active[1] != 0) {
     # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
     latent_nums <- c(0, 0, 0, 0)
     # n_mut, number_recombination
@@ -184,30 +191,31 @@ run_wavess <- function(pop_samp,
   }
 
   # Looping through generations until we sample everything we want
-  for(t in 1:last_sampled_gen){
+  for (t in 1:last_sampled_gen) {
     # Latent reservoir dynamics
     # only get latent cell dynamics if modeling latency (ALSO CHANGE THIS IN MAIN.PY?)
-    if(latent){
+    if (latent) {
       # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
       latent_nums <- unlist(reticulate::py_to_r(host$get_next_gen_latent(prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif, generator)))
     }
     # Productively infected cell dynamics
     # n_mut, number_recombination
-    var_nums <- unlist(reticulate::py_to_r(host$get_next_gen_active(prob_mut, prob_recomb, pop_samp$active_cell_count[t+1], t,
-                             seroconversion_time, nucleotides_order, substitution_probabilities, conserved_sites,
-                             gen_full_potency, conserved_cost, ref_seq,
-                             prop_for_imm, epitope_locations,
-                             immune_fitness, conserved_fitness, replicative_fitness, rep_exp, generator)))
+    var_nums <- unlist(reticulate::py_to_r(host$get_next_gen_active(
+      prob_mut, prob_recomb, pop_samp$active_cell_count[t + 1], t,
+      seroconversion_time, nucleotides_order, substitution_probabilities, conserved_sites,
+      gen_full_potency, conserved_cost, ref_seq,
+      prop_for_imm, epitope_locations,
+      immune_fitness, conserved_fitness, replicative_fitness, rep_exp, generator
+    )))
     # Record events
-    if(pop_samp$n_sample_active[t+1] != 0){
+    if (pop_samp$n_sample_active[t + 1] != 0) {
       fitness <- unlist(reticulate::py_to_r(host$summarize_fitness()))
       counts <- record_counts(counts, t, host, latent_nums, var_nums, fitness)
-      seqs <- c(seqs, sample_viral_sequences(t, host, pop_samp$n_sample_active[t+1]))
+      seqs <- c(seqs, sample_viral_sequences(t, host, pop_samp$n_sample_active[t + 1]))
     }
   }
 
-  return(list(counts=counts,seqs=seqs))
-
+  return(list(counts = counts, seqs = seqs))
 }
 
 #' Record counts
@@ -221,24 +229,26 @@ run_wavess <- function(pop_samp,
 #'
 #' @return Updated counts tibble with additional row added for generation
 #' @noRd
-record_counts <- function(counts, generation, host, latent_nums, var_nums, fitness){
+record_counts <- function(counts, generation, host, latent_nums, var_nums, fitness) {
   counts |>
-    tibble::add_row(generation = generation,
-                    active_cell_count = length(host$C),
-                    latent_cell_count = length(host$L),
-                    # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
-                    active_turned_latent = latent_nums[1],
-                    latent_turned_active = latent_nums[2],
-                    latent_died = latent_nums[3],
-                    latent_proliferated = latent_nums[4],
-                    # n_mut, number_recombination
-                    number_mutations = var_nums[1],
-                    number_dual_inf = var_nums[2],
-                    # mean_fitness_active, mean_conserved_cost_active, mean_immune_cost_active, mean_replicative_cost_active
-                    mean_fitness_active = fitness[1],
-                    mean_conserved_cost_active = fitness[2],
-                    mean_immune_cost_active = fitness[3],
-                    mean_replicative_cost_active = fitness[4])
+    tibble::add_row(
+      generation = generation,
+      active_cell_count = length(host$C),
+      latent_cell_count = length(host$L),
+      # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
+      active_turned_latent = latent_nums[1],
+      latent_turned_active = latent_nums[2],
+      latent_died = latent_nums[3],
+      latent_proliferated = latent_nums[4],
+      # n_mut, number_recombination
+      number_mutations = var_nums[1],
+      number_dual_inf = var_nums[2],
+      # mean_fitness_active, mean_conserved_cost_active, mean_immune_cost_active, mean_replicative_cost_active
+      mean_fitness_active = fitness[1],
+      mean_conserved_cost_active = fitness[2],
+      mean_immune_cost_active = fitness[3],
+      mean_replicative_cost_active = fitness[4]
+    )
 }
 
 
@@ -251,17 +261,19 @@ record_counts <- function(counts, generation, host, latent_nums, var_nums, fitne
 #' @return
 #' Sampled sequences in [ape::DNAbin] format.
 #' @noRd
-sample_viral_sequences <- function(generation, host, n_to_samp){
-  sampled_cells <- sample(1:length(host$C), n_to_samp)-1 # because python indexes at 0
-  seqs <- lapply(sampled_cells, function(x){
-    strsplit(reticulate::py_to_r(host$C[[x]]$infecting_virus$nuc_sequence), split = '')[[1]]
+sample_viral_sequences <- function(generation, host, n_to_samp) {
+  sampled_cells <- sample(1:length(host$C), n_to_samp) - 1 # because python indexes at 0
+  seqs <- lapply(sampled_cells, function(x) {
+    strsplit(reticulate::py_to_r(host$C[[x]]$infecting_virus$nuc_sequence), split = "")[[1]]
   })
-  names(seqs) <- lapply(sampled_cells, function(x){
-    paste0('gen_', generation, '_cell_', x,
-           '_ic_', host$C[[x]]$infecting_virus$immune_fitness_cost,
-           '_cc_', host$C[[x]]$infecting_virus$conserved_fitness_cost,
-           '_rc_', host$C[[x]]$infecting_virus$replicative_fitness_cost,
-           '_f_', host$C[[x]]$infecting_virus$fitness)
+  names(seqs) <- lapply(sampled_cells, function(x) {
+    paste0(
+      "gen_", generation, "_cell_", x,
+      "_ic_", host$C[[x]]$infecting_virus$immune_fitness_cost,
+      "_cc_", host$C[[x]]$infecting_virus$conserved_fitness_cost,
+      "_rc_", host$C[[x]]$infecting_virus$replicative_fitness_cost,
+      "_f_", host$C[[x]]$infecting_virus$fitness
+    )
   })
   return(ape::as.DNAbin(seqs))
 }

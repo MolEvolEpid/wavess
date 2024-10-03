@@ -22,5 +22,5 @@ See \code{vignette('analyze_output')} for more details.
 }
 \examples{
 # This example is somewhat contrived, but it shows how it works.
-calc_div_metrics(hxb2_cons_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', c(1,2,2))
+calc_div_metrics(hxb2_cons_founder, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", c(1, 2, 2))
 }

@@ -71,23 +71,26 @@ the simulation doesn't take too long to run.
 
 ```{r setup}
 pop_samp <- generate_pop_samp(gN = 300, sampling_frequency = 100)
-founder_ref <- extract_seqs(hxb2_cons_founder, 
-             founder = 'B.US.2011.DEMB11US006.KC473833', 
-             ref = 'CON_B(1295)',
-             start = 6225, end = 7757)
+founder_ref <- extract_seqs(hxb2_cons_founder,
+  founder = "B.US.2011.DEMB11US006.KC473833",
+  ref = "CON_B(1295)",
+  start = 6225, end = 7757
+)
 nt_sub_probs <- calc_nt_sub_probs(hiv_env_flt_2021)
-hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, 2517) 
+hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, 2517)
 gp120 <- slice_aln(hxb2_cons_founder, 6225, 7757)
-founder_conserved_sites <- identify_conserved_sites(hiv_gp120_flt_2021, 
-                         founder = 'B.US.2011.DEMB11US006.KC473833', 
-                         ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 
-                         founder_aln = gp120) |>
-  filter(conserved == 'Yes') |>
+founder_conserved_sites <- identify_conserved_sites(hiv_gp120_flt_2021,
+  founder = "B.US.2011.DEMB11US006.KC473833",
+  ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+  founder_aln = gp120
+) |>
+  filter(conserved == "Yes") |>
   pull(founder_pos)
 epi_probs <- get_epitope_frequencies(env_features$position)
-ref_founder_map <- map_ref_founder(gp120, 
-                ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 
-                founder = 'B.US.2011.DEMB11US006.KC473833')
+ref_founder_map <- map_ref_founder(gp120,
+  ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+  founder = "B.US.2011.DEMB11US006.KC473833"
+)
 epitope_locations <- sample_epitopes(epi_probs, ref_founder_map = ref_founder_map)
 ```
 
@@ -101,9 +104,11 @@ Please note that the total population size simulated greatly influences the
 simulation output. 
 
 ```{r}
-required_args_only <- run_wavess(pop_samp = pop_samp, 
-                                 founder_seqs = founder_ref$founder, 
-                                 nt_sub_probs = nt_sub_probs)
+required_args_only <- run_wavess(
+  pop_samp = pop_samp,
+  founder_seqs = founder_ref$founder,
+  nt_sub_probs = nt_sub_probs
+)
 ```
 
 The output format of `run_wavess()` is always the same: a list of length two 
@@ -179,10 +184,12 @@ but this can be modified.
 Here's an example of simulating evolution with conserved sites fitness:
 
 ```{r}
-conserved_fitness <- run_wavess(pop_samp = pop_samp, 
-                                founder_seqs = founder_ref$founder, 
-                                nt_sub_probs = nt_sub_probs,
-                                conserved_sites = founder_conserved_sites)
+conserved_fitness <- run_wavess(
+  pop_samp = pop_samp,
+  founder_seqs = founder_ref$founder,
+  nt_sub_probs = nt_sub_probs,
+  conserved_sites = founder_conserved_sites
+)
 ```
 
 If you look at the mean conserved cost of active cells, you'll see that it's not
@@ -203,11 +210,13 @@ The strength of this fitness can be altered using the `rep_exp` argument.
 **TODO: DON'T INCLUDE CONSENSUS WITH N'S**
 
 ```{r}
-founder_ref$ref <- gsub('N', '-', founder_ref$ref)
-ref_fitness <- run_wavess(pop_samp = pop_samp, 
-                            founder_seqs = founder_ref$founder, 
-                            nt_sub_probs = nt_sub_probs,
-                            ref_seq = founder_ref$ref)
+founder_ref$ref <- gsub("N", "-", founder_ref$ref)
+ref_fitness <- run_wavess(
+  pop_samp = pop_samp,
+  founder_seqs = founder_ref$founder,
+  nt_sub_probs = nt_sub_probs,
+  ref_seq = founder_ref$ref
+)
 ```
 
 Here, you can see that the mean replicative fitness cost is now non-zero:
@@ -227,10 +236,12 @@ maturation for 90 generations (`gen_full_potency`), at which time it reaches
 full potency. Epitopes are also cross-reactive.
 
 ```{r}
-immune_fitness <- run_wavess(pop_samp = pop_samp, 
-                            founder_seqs = founder_ref$founder, 
-                            nt_sub_probs = nt_sub_probs,
-                            epitope_locations = epitope_locations)
+immune_fitness <- run_wavess(
+  pop_samp = pop_samp,
+  founder_seqs = founder_ref$founder,
+  nt_sub_probs = nt_sub_probs,
+  epitope_locations = epitope_locations
+)
 ```
 
 The immune fitness cost here is non-zero:

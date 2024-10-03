@@ -27,7 +27,7 @@ generate_pop_samp <- function(curve_type = "logistic",
                               n0 = 1,
                               g50 = 25,
                               sampling_frequency = 300,
-                              max_samp = 20){
+                              max_samp = 20) {
   check_generate_pop_samp_inputs(curve_type, gN, K, n0, g50, sampling_frequency, max_samp)
   define_growth_curve(curve_type, gN, K, n0, g50, 0.5) |>
     define_sampling_scheme(sampling_frequency, max_samp)
@@ -45,20 +45,24 @@ generate_pop_samp <- function(curve_type = "logistic",
 #'
 #' @return tibble with two columns: generation and active cell count
 #' @noRd
-define_growth_curve <- function(curve_type = 'logistic',
+define_growth_curve <- function(curve_type = "logistic",
                                 gN = 3000,
                                 K = 2000,
                                 n0 = 1,
                                 gpK = 25,
-                                pK = 0.5){
-  if(curve_type == 'logistic'){
-    gen_df <- tibble::tibble(generation = 0:gN,
-                             # infected cell population size over time
-                             active_cell_count = get_logistic_curve(n0, K, gpK, pK, gN))
-  }else if(curve_type == 'constant'){
-    gen_df <- tibble::tibble(generation = 0:gN,
-                             # infected cell population size over time
-                             active_cell_count = K)
+                                pK = 0.5) {
+  if (curve_type == "logistic") {
+    gen_df <- tibble::tibble(
+      generation = 0:gN,
+      # infected cell population size over time
+      active_cell_count = get_logistic_curve(n0, K, gpK, pK, gN)
+    )
+  } else if (curve_type == "constant") {
+    gen_df <- tibble::tibble(
+      generation = 0:gN,
+      # infected cell population size over time
+      active_cell_count = K
+    )
   }
   return(gen_df)
 }
@@ -76,16 +80,16 @@ define_growth_curve <- function(curve_type = 'logistic',
 #'
 #' @return Population size at each generation
 #' @noRd
-get_logistic_curve <- function(n0, K, gpK, pK, gN){
+get_logistic_curve <- function(n0, K, gpK, pK, gN) {
   # number of cells at seroconversion generation
-  nS <- K*pK
+  nS <- K * pK
   # useful constants
-  c0 <- log(K/n0 - 1)
-  cS <- log(K/nS - 1)
+  c0 <- log(K / n0 - 1)
+  cS <- log(K / nS - 1)
   # get growth rate
-  k = -(cS-c0)/gpK
+  k <- -(cS - c0) / gpK
   # get midpoint
-  xM = c0/k
+  xM <- c0 / k
   return(floor(sapply(0:gN, function(x) logistic_fn(x, K, k, xM))))
 }
 
@@ -102,8 +106,8 @@ get_logistic_curve <- function(n0, K, gpK, pK, gN){
 #'
 #' @inheritParams generate_pop_samp
 #' @noRd
-logistic_fn <- function(x, K, growth_rate, midpoint){
-  K/(1+exp(-growth_rate*(x-midpoint)))
+logistic_fn <- function(x, K, growth_rate, midpoint) {
+  K / (1 + exp(-growth_rate * (x - midpoint)))
 }
 
 #' Define sampling scheme
@@ -117,13 +121,13 @@ logistic_fn <- function(x, K, growth_rate, midpoint){
 #' @noRd
 define_sampling_scheme <- function(growth_curve,
                                    sampling_frequency = 300,
-                                   max_samp = 20){
+                                   max_samp = 20) {
   ss <- growth_curve |>
     dplyr::rowwise() |>
     # sample up to max_samp sequences every sampling_frequency generations
-    dplyr::mutate(n_sample_active = ifelse(.data$generation%%sampling_frequency == 0,
-                                           min(max_samp, .data$active_cell_count), 0)) |>
+    dplyr::mutate(n_sample_active = ifelse(.data$generation %% sampling_frequency == 0,
+      min(max_samp, .data$active_cell_count), 0
+    )) |>
     dplyr::ungroup()
   return(ss)
 }
-

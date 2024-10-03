@@ -27,7 +27,7 @@ run_wavess(
 }
 \arguments{
 \item{pop_samp}{Tibble with columns generation, active_cell_count, n_sample_active.
-Can be generated using the \code{\link[=define_growth_curve]{define_growth_curve()}} and \code{\link[=define_sampling_scheme]{define_sampling_scheme()}} functions.}
+Can be generated using the \code{\link[=generate_pop_samp]{generate_pop_samp()}} functions.}
 
 \item{founder_seqs}{Founder sequence(s) as a character string or a vector of
 character strings, for example 'ACATG'. The founder sequence(s) may only contain
@@ -101,7 +101,9 @@ arguments.
 }
 \examples{
 \dontrun{
-run_wavess(generate_pop_samp(gN = 300), 'ATCG',
-calc_nt_sub_probs(hiv_env_flt_2021))
+run_wavess(
+  generate_pop_samp(gN = 300), "ATCG",
+  calc_nt_sub_probs(hiv_env_flt_2021)
+)
 }
 }

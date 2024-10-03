@@ -143,13 +143,13 @@ red dots are the number of samples taken:
 
 ```{r, plot_counts}
 # plot active cell counts
-pop_samp |> 
+pop_samp |>
   # to only plot the number of samples taken when it's not 0
-  mutate(n_sample_active = ifelse(n_sample_active == 0, NA, n_sample_active)) |> 
+  mutate(n_sample_active = ifelse(n_sample_active == 0, NA, n_sample_active)) |>
   ggplot(aes(x = generation, y = active_cell_count)) +
   geom_line() +
-  geom_point(aes(x = generation, y = n_sample_active), col = 'red') +
-  labs(x = 'Generation', y = 'Number of infected active cells')
+  geom_point(aes(x = generation, y = n_sample_active), col = "red") +
+  labs(x = "Generation", y = "Number of infected active cells")
 ```
 
 ### Extract founder sequence from an alignment {#extract-founder-sequence-from-an-alignment}
@@ -170,7 +170,7 @@ This alignment is of the entire HIV genome, but we're only interested in the
 ENV gp120 gene, which we can subset to using the `start` and `end` arguments.
 
 ```{r, extract_seqs}
-extract_seqs(hxb2_cons_founder, 'B.US.2011.DEMB11US006.KC473833', start = 6225, end = 7757)
+extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", start = 6225, end = 7757)
 ```
 
 This function can also take a reference sequence name (`ref_name`), which can be
@@ -252,12 +252,12 @@ cell becomes active, cell dies, cell proliferates.
 # set parameters to get latent curve
 to_latent_rate <- 0.001
 to_active_rate <- 0.01
-proliferation_rate <- 0.01 
+proliferation_rate <- 0.01
 death_rate <- 0.01
 
 # get latent cell count for each generation
 latent <- 0
-active_latent_counts <- lapply(pop_samp$active_cell_count, function(x){
+active_latent_counts <- lapply(pop_samp$active_cell_count, function(x) {
   n_to_latent <- rbinom(1, x, prob = to_latent_rate)
   to_active <- rbinom(latent, 1, prob = to_active_rate)
   to_proliferate <- rbinom(latent, 1, prob = proliferation_rate)
@@ -268,17 +268,18 @@ active_latent_counts <- lapply(pop_samp$active_cell_count, function(x){
   counts <- tibble(Active = x, Latent = latent, n_to_latent, n_to_active, n_to_proliferate, n_to_die)
   latent <<- latent + n_to_latent - n_to_active + n_to_proliferate - n_to_die
   return(counts)
-}) |> bind_rows() |> 
-  mutate(gen = row_number()) 
+}) |>
+  bind_rows() |>
+  mutate(gen = row_number())
 
 # Plot (latent) cell counts
-active_latent_counts |> 
-  pivot_longer(c(Active, Latent)) |> 
+active_latent_counts |>
+  pivot_longer(c(Active, Latent)) |>
   ggplot(aes(x = gen, y = value, col = name)) +
   geom_line() +
   # scale_y_log10() + # uncomment this if you want to scale the y axis by log10
-  scale_color_manual(values = c('black', 'red')) +
-  labs(x = 'Generation', y = 'Number of infected cells', col = 'Type of cell') 
+  scale_color_manual(values = c("black", "red")) +
+  labs(x = "Generation", y = "Number of infected cells", col = "Type of cell")
 ```
 
 ## Selection
@@ -371,16 +372,16 @@ simulate gp120, we have to slice out that part of the alignment:
 
 ```{r}
 # get hxb2 gp120 end position
-len_hxb2_gp120 <- nchar(extract_seqs(hxb2_cons_founder, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', start = 6225, end = 7757)$founder)
-hxb2_gp120_end <- which(cumsum(as.character(hiv_env_flt_2021[1,]) != '-') == len_hxb2_gp120)
+len_hxb2_gp120 <- nchar(extract_seqs(hxb2_cons_founder, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", start = 6225, end = 7757)$founder)
+hxb2_gp120_end <- which(cumsum(as.character(hiv_env_flt_2021[1, ]) != "-") == len_hxb2_gp120)
 # subset to only gp120 section
-hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, hxb2_gp120_end) 
+hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, hxb2_gp120_end)
 ```
 
 Then we can use this sliced alignment to identify conserved sites:
 
 ```{r, conserved}
-identify_conserved_sites(hiv_gp120_flt_2021, 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455')
+identify_conserved_sites(hiv_gp120_flt_2021, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455")
 ```
 
 Alternatively, if you have two alignments with a shared reference, one
@@ -390,16 +391,17 @@ common reference, and the function will return the conserved sites
 relative to the founder sequence:
 
 ```{r, conserved2}
-(founder_conserved_df <- identify_conserved_sites(hiv_gp120_flt_2021, 
-                         founder = 'B.US.2011.DEMB11US006.KC473833', 
-                         ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 
-                         founder_aln = gp120))
+(founder_conserved_df <- identify_conserved_sites(hiv_gp120_flt_2021,
+  founder = "B.US.2011.DEMB11US006.KC473833",
+  ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+  founder_aln = gp120
+))
 ```
 
 You can visualize the conserved sites across the genome using the following code:
 
 ```{r, viz_conserved}
-founder_conserved_df |> 
+founder_conserved_df |>
   ggplot(aes(x = founder_pos, y = consensus_prop, fill = conserved)) +
   geom_col()
 ```
@@ -417,7 +419,7 @@ generate this, you can run the following code:
 
 ```{r, prep_conserved}
 founder_conserved_sites <- founder_conserved_df |>
-  filter(conserved == 'Yes') |>
+  filter(conserved == "Yes") |>
   pull(founder_pos)
 
 head(founder_conserved_sites)
@@ -441,7 +443,7 @@ format for `run_wavess()`, you can use the following code, where NA values
 are converted to gaps:
 
 ```{r, prep_founder}
-gsub('NA', '-', paste0(founder_conserved_df$consensus_base, collapse = ''))
+gsub("NA", "-", paste0(founder_conserved_df$consensus_base, collapse = ""))
 ```
 
 If you have an alignment including the founder sequence and wavess reference
@@ -449,10 +451,11 @@ sequence you'd like to use, then you can also use the `extract_seqs()` function
 to obtain both at once:
 
 ```{r}
-(founder_ref <- extract_seqs(hxb2_cons_founder, 
-             founder = 'B.US.2011.DEMB11US006.KC473833', 
-             ref = 'CON_B(1295)',
-             start = 6225, end = 7757))
+(founder_ref <- extract_seqs(hxb2_cons_founder,
+  founder = "B.US.2011.DEMB11US006.KC473833",
+  ref = "CON_B(1295)",
+  start = 6225, end = 7757
+))
 ```
 
 It's okay if the reference sequence has gaps. These will be ignored when 
@@ -533,9 +536,10 @@ using the `slice_aln()` function described above), you can the `map_ref_founder(
 function, which returns reference and founder positions mapped to each other:
 
 ```{r}
-(ref_founder_map <- map_ref_founder(gp120, 
-                ref = 'B.FR.83.HXB2_LAI_IIIB_BRU.K03455', 
-                founder = 'B.US.2011.DEMB11US006.KC473833'))
+(ref_founder_map <- map_ref_founder(gp120,
+  ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+  founder = "B.US.2011.DEMB11US006.KC473833"
+))
 ```
 
 You can input this into `sample_epitopes()`, which will then return nucleotide
@@ -548,16 +552,16 @@ positions relative to the founder sequence (instead of HXB2):
 Here are two ways to visualize the epitopes:
 
 ```{r}
-epitope_locations |> 
+epitope_locations |>
   ggplot(aes(x = epi_start_nt, y = max_fitness_cost)) +
   geom_point() +
-  labs(x = 'Epitope start position', y = 'Max fitness cost')
+  labs(x = "Epitope start position", y = "Max fitness cost")
 
 epitope_locations %>%
   ggplot(aes(x = 1:nrow(.), y = max_fitness_cost, col = epi_start_nt)) +
   geom_point() +
   scale_x_continuous(breaks = 1:10) +
-  labs(x = 'Epitope', y = 'Max fitness cost', col = 'Epitope start\nposition')
+  labs(x = "Epitope", y = "Max fitness cost", col = "Epitope start\nposition")
 ```
 
 ## On to simulations

@@ -15,8 +15,8 @@
 #' rate_to_probability(2.1)
 #' rate_to_probability(0.1)
 #' rate_to_probability(3.5e-5)
-rate_to_probability <- function(rate, time = 1){
-  check_is_numeric(rate, 'rate')
-  check_is_pos(time, 'time')
-  return(1-exp(-rate*time))
+rate_to_probability <- function(rate, time = 1) {
+  check_is_numeric(rate, "rate")
+  check_is_pos(time, "time")
+  return(1 - exp(-rate * time))
 }

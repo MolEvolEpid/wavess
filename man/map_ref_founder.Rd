@@ -29,7 +29,9 @@ Tibble including columns for:
 Map reference and founder sequence positions
 }
 \examples{
-map_ref_founder(hxb2_cons_founder,
-'B.FR.83.HXB2_LAI_IIIB_BRU.K03455',
-'B.US.2011.DEMB11US006.KC473833')
+map_ref_founder(
+  hxb2_cons_founder,
+  "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+  "B.US.2011.DEMB11US006.KC473833"
+)
 }
