@@ -15,6 +15,8 @@ knitr::opts_chunk$set(
 
 # wavess
 
+**Within-host agent-based viral evolution sequence simulator.**
+
 <!-- badges: start -->
 <!-- badges: end -->
 

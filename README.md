@@ -3,6 +3,8 @@
 
 # wavess
 
+**Within-host agent-based viral evolution sequence simulator.**
+
 <!-- badges: start -->
 <!-- badges: end -->
 
