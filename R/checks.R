@@ -313,7 +313,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
     stop('pop_samp$active_cell_count must always be >= pop_samp$n_sample_active')
   }
   check_is_string(founder_seqs, 'founder_seqs')
-  lapply(as.list(founder_seqs), function(x) check_seq(x, c('A', 'C', 'G', 'T'), 'founder_seqs'))
+  lapply(as.list(founder_seqs), function(x) check_seq(toupper(x), c('A', 'C', 'G', 'T'), 'founder_seqs'))
   if(length(unique(sapply(as.list(founder_seqs), nchar))) != 1){
     stop('All founder sequences must be the same length')
   }
@@ -339,7 +339,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
   }
   if(!is.null(ref_seq)){
     check_is_string(ref_seq, 'ref_seq')
-    check_seq(ref_seq, c('A', 'C', 'G', 'T', '-'), 'ref_seq')
+    check_seq(toupper(ref_seq), c('A', 'C', 'G', 'T', '-'), 'ref_seq')
     if(nchar(as.list(founder_seqs)[1]) != nchar(ref_seq)){
       stop('ref_seq must be the same length as the founder sequence(s)')
     }
