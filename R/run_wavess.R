@@ -57,7 +57,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' run_wavess(generate_pop_samp(gN = 300), c('ATCG', 'ATTT'),
+#' run_wavess(generate_pop_samp(gN = 300), 'ATCG',
 #' calc_nt_sub_probs(hiv_env_flt_2021))
 #' }
 run_wavess <- function(pop_samp,
@@ -89,6 +89,10 @@ run_wavess <- function(pop_samp,
                          prob_lat_prolif, prob_lat_die,
                          seed)
 
+  # make sure founder sequences are all uppercase
+  founder_seqs <- toupper(founder_seqs)
+
+  # initiate python virtual environment
   agents <- use_python_venv()
 
   latent <- TRUE
@@ -103,6 +107,7 @@ run_wavess <- function(pop_samp,
     replicative_fitness <- 0
   }else{
     replicative_fitness <- 1
+    ref_seq <- toupper(ref_seq)
     if(!is.null(conserved_sites)){
       # mask conserved sites so they aren't included in replicative fitness computation
       ref_seq_str <- strsplit(ref_seq, '')[[1]]
