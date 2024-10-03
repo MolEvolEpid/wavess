@@ -42,7 +42,7 @@ dynamics](#visualize-latent-cell-dynamics).
 ## Install and load `wavess`
 
 First, you need to install (if needed) and load the `wavess` library, as
-well as a few others:
+well as a few others, and we will set the plotting theme:
 
 ```{r load}
 # install.packages("remotes")
@@ -54,6 +54,8 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(ape)
+
+theme_set(theme_classic())
 ```
 
 This will also load some example data that we will be using in this
@@ -404,7 +406,10 @@ founder_conserved_df |>
 
 The blue sites are conserved, the red sites are not conserved, and the
 y-axis indicates the proportion of sequences in the alignment that
-contain the consensus base.
+contain the consensus base. **Note that this example only uses 10 sequences.
+We recommend using a large alignment with very diverse sequences to
+identify conserved sites to ensure that the identified
+sites are across many genetic backgrounds.** 
 
 While we provide information about each sequence in the output, the
 input of `run_wavess` only takes a vector of the conserved sites. To
@@ -419,9 +424,6 @@ head(founder_conserved_sites)
 tail(founder_conserved_sites)
 ```
 
-We recommend using a large alignment with very diverse sequences to
-identify conserved sites, as we do here, to ensure that the identified
-sites are across many genetic backgrounds.
 
 ### Find a consensus sequence
 
@@ -554,6 +556,7 @@ epitope_locations |>
 epitope_locations %>%
   ggplot(aes(x = 1:nrow(.), y = max_fitness_cost, col = epi_start_nt)) +
   geom_point() +
+  scale_x_continuous(breaks = 1:10) +
   labs(x = 'Epitope', y = 'Max fitness cost', col = 'Epitope start\nposition')
 ```
 

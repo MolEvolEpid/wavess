@@ -27,13 +27,14 @@ of the model, some outputs look more like real data than others.
 
 ## Run wavess
 
-First, let's run wavess including all the selective pressures.
+First, let's load the relevant libraries, set the default plotting theme, and
+run wavess including all the selective pressures.
 We're going to set a seed for reproducibility.
 For more details on the input and running wavess,
 please see the respective vignettes. (`vignette(prepare_input_data)` and 
 `vignette(run_wavess)`). If you haven't checked out those vignettes first, be
 sure to at least run the `create_python_venv()` function prior to running the 
-below code, or else you'll get an error telling you to do so.
+below code, or else you'll get an error telling you to do so. 
 
 ```{r setup}
 library(wavess)
@@ -44,7 +45,13 @@ library(ape)
 library(phangorn)
 library(ggtree)
 
-pop_samp <- generate_pop_samp(gN = 300, sampling_frequency = 100)
+set.seed(12345)
+
+theme_set(theme_classic() + theme(strip.background = element_rect(color = 'white')))
+
+pop_samp <- generate_pop_samp(gN = 300, sampling_frequency = 100) |>
+  # sample at generation 10 to see diversity and divergence earlier on
+  mutate(n_sample_active = ifelse(generation == 10, 20, n_sample_active))
 founder_ref <- extract_seqs(hxb2_cons_founder, 
              founder = 'B.US.2011.DEMB11US006.KC473833', 
              ref = 'CON_B(1295)',
@@ -93,8 +100,14 @@ can be computed and plotted as follows
 
 ```{r}
 gens <- gsub('gen_|_cell.*', '', labels(wavess_out$seqs))
-div_metrics <- calc_div_metrics(wavess_out$seqs, 'founder1', gens)
+(div_metrics <- calc_div_metrics(wavess_out$seqs, 'founder1', gens))
+```
 
+As can be seen, the diversity of founder1 and generation 0 are NaN. This is because
+there is only one sampled sequence at those timepoints, so diversity cannot be
+computed.
+
+```{r}
 div_metrics |> 
   mutate(gen = as.numeric(gen)) |> 
   pivot_longer(!gen) |> 
