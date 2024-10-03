@@ -72,6 +72,7 @@ identify_conserved_sites <- function(aln, founder, thresh = 0.99,
 #' - `consensus_prop`: proportion of sequences that had that base at that position
 #' When using a reference, `NA` in the consensus columns indicates that that
 #' position was an insertion relative to the reference
+#' @keyword internal
 find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL){
   check_find_consensus_inputs(aln, founder, ref, founder_aln)
   # ensure the alignment is in matrix form
@@ -173,7 +174,8 @@ map_ref_founder <- function(aln, ref, founder){
 #'
 #' @return
 #' Original data frame with an additional column (the column name prepended to
-#' _pos) that indicates the position of that base in the sequence.n
+#' _pos) that indicates the position of that base in the sequence.
+#' @keyword internal
 get_seq_pos <- function(aln_df, col_name){
   check_get_seq_pos_inputs(aln_df, col_name)
   aln_df |>

@@ -42,6 +42,7 @@ generate_pop_samp <- function(curve_type = "logistic",
 #' (default: 0.5; used for logistic)
 #'
 #' @return tibble with two columns: generation and active cell count
+#' @keyword internal
 define_growth_curve <- function(curve_type = 'logistic',
                                 gN = 3000,
                                 K = 2000,
@@ -68,6 +69,7 @@ define_growth_curve <- function(curve_type = 'logistic',
 #' @inheritParams define_growth_curve
 #'
 #' @return Population size at each generation
+#' @keyword internal
 get_logistic_curve <- function(n0, K, gpK, pK, gN){
   # number of cells at seroconversion generation
   nS <- K*pK
@@ -93,6 +95,7 @@ get_logistic_curve <- function(n0, K, gpK, pK, gN){
 #' @return y value of logistic curve
 #'
 #' @inheritParams define_growth_curve
+#' @keyword internal
 logistic_fn <- function(x, K, growth_rate, midpoint){
   K/(1+exp(-growth_rate*(x-midpoint)))
 }
@@ -108,6 +111,7 @@ logistic_fn <- function(x, K, growth_rate, midpoint){
 #'
 #' @return input growth curve tibble with one additional column (`n_sample_active`)
 #' containing the number of sequences from active cells to samples
+#' @keyword internal
 define_sampling_scheme <- function(growth_curve,
                                    sampling_frequency = 300,
                                    max_samp = 20){

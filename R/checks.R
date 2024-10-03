@@ -3,6 +3,7 @@
 #' @inheritParams generate_pop_samp
 #'
 #' @return error if inputs are incorrect
+#' @keyword internal
 check_generate_pop_samp_inputs <- function(curve_type, gN, K, n0, g50, sampling_frequency, max_samp){
   check_is_pos(gN, 'gN')
   check_is_pos(K, 'K')
@@ -28,6 +29,7 @@ check_generate_pop_samp_inputs <- function(curve_type, gN, K, n0, g50, sampling_
 #' @inheritParams get_seq_pos
 #'
 #' @return error if inputs are incorrect
+#' @keyword internal
 check_get_seq_pos_inputs <- function(aln_df, col_name){
   check_is_df(aln_df, 'aln_df')
   check_is_string(col_name, 'col_name')
@@ -38,6 +40,7 @@ check_get_seq_pos_inputs <- function(aln_df, col_name){
 #' @inheritParams map_ref_founder
 #'
 #' @return error if inputs are incorrect
+#' @keyword internal
 check_map_ref_founder_inputs <- function(aln, ref, founder){
   check_is_dnabin(aln, 'aln')
   check_is_string(ref, 'ref')
@@ -51,6 +54,7 @@ check_map_ref_founder_inputs <- function(aln, ref, founder){
 #' @inheritParams find_consensus
 #'
 #' @return error if inputs are incorrect
+#' @keyword internal
 check_find_consensus_inputs <- function(aln, founder, ref, founder_aln){
   check_is_dnabin(aln, 'aln')
   check_is_string(founder, 'founder')
@@ -77,6 +81,7 @@ check_find_consensus_inputs <- function(aln, founder, ref, founder_aln){
 #' @inheritParams identify_conserved_sites
 #'
 #' @return error if inputs are incorrect
+#' @keyword internal
 check_identify_conserved_sites_inputs <- function(aln, founder, thresh, ref,
                                            founder_aln){
   check_find_consensus_inputs(aln, founder, ref, founder_aln)
@@ -94,6 +99,7 @@ check_identify_conserved_sites_inputs <- function(aln, founder, thresh, ref,
 #' @param name_name Name of name
 #'
 #' @return error if name isn't in the alignment
+#' @keyword internal
 check_name_in_alignment <- function(aln, name, aln_name, name_name){
   check_is_dnabin(aln, aln_name)
   check_is_string(name, name_name)
@@ -109,6 +115,7 @@ check_name_in_alignment <- function(aln, name, aln_name, name_name){
 #' @param var_name name of variable
 #'
 #' @return error if variable is not numeric
+#' @keyword internal
 check_is_numeric <- function(x, var_name){
   if(!is.numeric(x)){
     stop(var_name, ' must be numeric, but is a ', class(x))
@@ -122,6 +129,7 @@ check_is_numeric <- function(x, var_name){
 #' @inheritParams check_is_numeric
 #'
 #' @return error if variable is not positive
+#' @keyword internal
 check_is_pos <- function(x, var_name, ok0 = FALSE){
   check_is_numeric(x, var_name)
   if(ok0){
@@ -142,6 +150,7 @@ check_is_pos <- function(x, var_name, ok0 = FALSE){
 #' @param var_name name of variable
 #'
 #' @return error if variable is not numeric
+#' @keyword internal
 check_is_df <- function(x, var_name){
   if(!is.data.frame(x)){
     stop(var_name, ' must be a data frame or tibble, but is a ', class(x))
@@ -154,6 +163,7 @@ check_is_df <- function(x, var_name){
 #' @param var_name name of variable
 #'
 #' @return error if variable is not a string
+#' @keyword internal
 check_is_string <- function(x, var_name){
   if(!is.character(x)){
     stop(var_name, ' must be a string, but is a ', class(x))
@@ -166,6 +176,7 @@ check_is_string <- function(x, var_name){
 #' @param var_name name of variable
 #'
 #' @return error if variable is not between 0 and 1 inclusive
+#' @keyword internal
 check_is_0to1 <- function(x, var_name){
   check_is_numeric(x, var_name)
   if(x < 0 | x > 1){
@@ -179,6 +190,7 @@ check_is_0to1 <- function(x, var_name){
 #' @param var_name name of variable
 #'
 #' @return error if variable is not a DNAbin object
+#' @keyword internal
 check_is_dnabin <- function(x, var_name){
   class_x <- class(x)
   if(!class_x == "DNAbin")
@@ -194,6 +206,7 @@ check_is_dnabin <- function(x, var_name){
 #' @param var_name name of variable
 #'
 #' @return error if variable is not a DNAbin object
+#' @keyword internal
 check_is_phylo <- function(x, var_name){
   class_x <- class(x)
   if(!class_x == "phylo")
@@ -243,6 +256,7 @@ check_sample_epitopes_inputs <- function(epitope_probabilities, start_aa_pos, en
 #' @param var_name name of variable
 #'
 #' @return error if variable is not a phylo object
+#' @keyword internal
 check_is_phylo <- function(x, var_name){
   class_x <- class(x)
   if(!class_x == "phylo")
@@ -256,6 +270,7 @@ check_is_phylo <- function(x, var_name){
 #' @inheritParams calc_nt_sub_probs
 #'
 #' @return error if inputs are incorrect
+#' @keyword internal
 check_calc_nt_sub_probs_inputs <- function(aln, tr, model, rearrangement){
   check_is_dnabin(aln, 'aln')
   if(!is.null(tr)){
@@ -276,6 +291,7 @@ check_calc_nt_sub_probs_inputs <- function(aln, tr, model, rearrangement){
 #' @param seq_type type of sequence
 #'
 #' @return error if wrong characters in sequence
+#' @keyword internal
 check_seq <- function(seq, chars, seq_type){
   if(!all(strsplit(seq, '')[[1]] %in% chars)){
     stop(seq_type, ' must only contain the characters ', paste0(chars, collapse = ''))
@@ -287,6 +303,7 @@ check_seq <- function(seq, chars, seq_type){
 #' @inheritParams run_wavess
 #'
 #' @return error if wrong inputs
+#' @keyword internal
 check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
                                     prob_mut, prob_recomb,
                              conserved_sites, conserved_cost,
@@ -373,6 +390,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
 #' @inheritParams extract_seqs
 #'
 #' @return error if wrong inputs
+#' @keyword internal
 check_extract_seqs_inputs <- function(aln, founder_name, ref_name, start, end){
   check_name_in_alignment(aln, founder_name, 'aln', 'founder_name')
   if(!is.null(ref_name)){
@@ -393,6 +411,7 @@ check_extract_seqs_inputs <- function(aln, founder_name, ref_name, start, end){
 #' @inheritParams slice_aln
 #'
 #' @return error if wrong inputs
+#' @keyword internal
 check_slice_aln_inputs <- function(aln, start, end, seqs){
   lapply(seqs, function(x){
     check_name_in_alignment(aln, x, 'aln', 'seqs')

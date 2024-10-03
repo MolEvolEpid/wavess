@@ -132,6 +132,7 @@ get_epitope_frequencies <- function(epitope_positions){
 #'
 #' @return Tibble with epitope positions relative to the founder, with the
 #' same columns as output by [sample_epitopes()]
+#' @keyword internal
 convert_ref_to_founder_epitopes <- function(ref_epitopes, ref_founder_map){
   # internal function so don't include checks right now...
   ref_epitopes |>

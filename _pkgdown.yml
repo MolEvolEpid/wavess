@@ -36,6 +36,29 @@ reference:
   - calc_int_over_ext
   - calc_prop_survived
 
+- title: Data
+  contents:
+  - hxb2_cons_founder
+  - hiv_env_flt_2021
+  - env_features
+
+- title: internal
+  contents:
+  - starts_with('check')
+  - starts_with('define')
+  - convert_ref_to_founder_epitopes
+  - find_consensus
+  - get_clusters
+  - get_largest_subtree
+  - get_logistic_curve
+  - get_seq_pos
+  - logistic_fn
+  - py_check_installed
+  - py_check_version
+  - record_counts
+  - reverse_list_str
+  - sample_viral_sequences
+  - use_python_venv
 
 
 

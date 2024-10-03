@@ -1,5 +1,5 @@
 ---
-title: "Simulate within-host evolution"
+title: "Simulate within-host evolution with `wavess`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Simulate within-host evolution}
