@@ -27,7 +27,8 @@ of the model, some outputs look more like real data than others.
 
 ## Run wavess
 
-First, let's run wavess including all the selective pressures. 
+First, let's run wavess including all the selective pressures.
+We're going to set a seed for reproducibility.
 For more details on the input and running wavess,
 please see the respective vignettes. (`vignette(prepare_input_data)` and 
 `vignette(run_wavess)`). If you haven't checked out those vignettes first, be
@@ -65,15 +66,13 @@ epitope_locations <- sample_epitopes(epi_probs, ref_founder_map = ref_founder_ma
 
 founder_ref$ref <- gsub('N', '-', founder_ref$ref)
 wavess_out <- run_wavess(pop_samp = pop_samp, 
-                            founder_seqs = founder_ref$founder, 
-                            nt_sub_probs = nt_sub_probs,
-                            conserved_sites = founder_conserved_sites,
-                            ref_seq = founder_ref$ref,
-                            epitope_locations = epitope_locations)
+                         founder_seqs = founder_ref$founder, 
+                         nt_sub_probs = nt_sub_probs,
+                         conserved_sites = founder_conserved_sites,
+                         ref_seq = founder_ref$ref,
+                         epitope_locations = epitope_locations,
+                         seed = 12345)
 ```
-
-**WHY IS IT SOO MUCH SLOWER WHEN DOING MULTIPLE FITNESSES COMPARED TO JUST ONE?**
-seems like conserved + ref_seq is the culprit
 
 ## Plotting counts
 
