@@ -96,7 +96,7 @@ have to modify certain parameters.
 Also, the parameters for latent probabilities are assumed to be small, such
 that it is unlikely that multiple events (activate, die, proliferate) will
 occur to a single latent cell in a single (active cell) generation.
-See \link{vignette('run_wavess')} for more details about the simulator and input
+See \code{vignette('run_wavess')} for more details about the simulator and input
 arguments.
 }
 \examples{

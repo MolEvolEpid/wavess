@@ -18,7 +18,7 @@ assumed to be in the same order as the alignment}
 tibble including mean divergence for each generation
 }
 \description{
-See \link{vignette('analyze_output')} for more details.
+See \code{vignette('analyze_output')} for more details.
 }
 \examples{
 # This example is somewhat contrived, but it shows how it works.

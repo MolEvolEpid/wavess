@@ -20,7 +20,7 @@ Tibble including 3 tree summary statistics:
 }
 }
 \description{
-See \link{vignette('analyze_output')} for more details.
+See \code{vignette('analyze_output')} for more details.
 }
 \examples{
 tr <- ape::rtree(100)

@@ -1,6 +1,6 @@
 #' Calculate tree summary statistics
 #'
-#' See [vignette('analyze_output')] for more details.
+#' See `vignette('analyze_output')` for more details.
 #'
 #' @param tr Phylogeny
 #' @param timepoints Vector of time points named by tree tip label

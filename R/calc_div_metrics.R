@@ -1,6 +1,6 @@
 #' Calculate diversity and divergence
 #'
-#' See [vignette('analyze_output')] for more details.
+#' See `vignette('analyze_output')` for more details.
 #'
 #' @param aln DNA alignment in [ape::DNAbin] format
 #' @param founder Name of the founder sequence in the alignment

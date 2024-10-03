@@ -7,7 +7,7 @@
 #' Also, the parameters for latent probabilities are assumed to be small, such
 #' that it is unlikely that multiple events (activate, die, proliferate) will
 #' occur to a single latent cell in a single (active cell) generation.
-#' See [vignette('run_wavess')] for more details about the simulator and input
+#' See `vignette('run_wavess')` for more details about the simulator and input
 #' arguments.
 #'
 #' @param pop_samp Tibble with columns generation, active_cell_count, n_sample_active.
