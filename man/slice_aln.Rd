@@ -7,7 +7,7 @@
 slice_aln(aln, start, end, seqs = labels(aln))
 }
 \arguments{
-\item{aln}{alignment to slice}
+\item{aln}{alignment}
 
 \item{start}{start position in alignment}
 

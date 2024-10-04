@@ -1,24 +1,20 @@
 #' Extract founder (and reference) sequence from an alignment
 #'
-#' @param aln Alignment
 #' @param founder_name Name of founder sequence in the alignment
 #' @param ref_name Optional name of reference sequence in the alignment.
 #' This can be used as input to the `ref_seq` argument in [run_wavess()]
 #' (default: NULL, i.e. no reference sequence is returned)
-#' @param start Start of founder sequence in alignment
-#' (default: 1, i.e. beginning of sequence)
-#' @param end End of founder sequence in alignment
-#' (default: NULL, i.e. end of sequence)
+#' @inheritParams slice_aln
 #'
 #' @return List of founder sequence and optional reference sequence
 #' as character strings
 #' @export
 #'
 #' @examples
-#' extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", start = 6225, end = 7757)
+#' extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", start = 6225, end = 7787)
 #' extract_seqs(hxb2_cons_founder,
 #'   "B.US.2011.DEMB11US006.KC473833", "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
-#'   start = 6225, end = 7757
+#'   start = 6225, end = 7787
 #' )
 extract_seqs <- function(aln, founder_name, ref_name = NULL, start = 1, end = NULL) {
   check_extract_seqs_inputs(aln, founder_name, ref_name, start, end)
@@ -43,7 +39,7 @@ extract_seqs <- function(aln, founder_name, ref_name = NULL, start = 1, end = NU
 
 #' Slice alignment
 #'
-#' @param aln alignment to slice
+#' @param aln alignment
 #' @param start start position in alignment
 #' @param end end position in alignment
 #' @param seqs sequences to keep (default: labels(aln), i.e. all sequences)

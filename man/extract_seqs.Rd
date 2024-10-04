@@ -7,7 +7,7 @@
 extract_seqs(aln, founder_name, ref_name = NULL, start = 1, end = NULL)
 }
 \arguments{
-\item{aln}{Alignment}
+\item{aln}{alignment}
 
 \item{founder_name}{Name of founder sequence in the alignment}
 
@@ -15,11 +15,9 @@ extract_seqs(aln, founder_name, ref_name = NULL, start = 1, end = NULL)
 This can be used as input to the \code{ref_seq} argument in \code{\link[=run_wavess]{run_wavess()}}
 (default: NULL, i.e. no reference sequence is returned)}
 
-\item{start}{Start of founder sequence in alignment
-(default: 1, i.e. beginning of sequence)}
+\item{start}{start position in alignment}
 
-\item{end}{End of founder sequence in alignment
-(default: NULL, i.e. end of sequence)}
+\item{end}{end position in alignment}
 }
 \value{
 List of founder sequence and optional reference sequence

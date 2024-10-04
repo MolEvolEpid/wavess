@@ -169,8 +169,25 @@ length, which will lead to an error.
 This alignment is of the entire HIV genome, but we're only interested in the
 ENV gp120 gene, which we can subset to using the `start` and `end` arguments.
 
+To do this, we first have to know what the start and end positions of gp120 are
+in the alignment. We know the start and end positions of gp120 in HXB2 from
+[here](https://www.hiv.lanl.gov/content/sequence/HIV/MAP/landmark.html) (6225 and 7757).
+To get the start and end positions in our alignment, we can therefore find what
+alignment positions correspond to these HXB2 coordinates:
+
+**(MAKE THIS INTO A FUNCTION?)**
+
+```{r}
+gp120_start <- which(cumsum(as.character(hxb2_cons_founder['B.FR.83.HXB2_LAI_IIIB_BRU.K03455',]) != '-') == 6225)
+gp120_end <- which(cumsum(as.character(hxb2_cons_founder['B.FR.83.HXB2_LAI_IIIB_BRU.K03455',]) != '-') == 7757)
+```
+
+Then we can use these start and end positions to extract gp120 for our founder 
+sequence:
+
 ```{r, extract_seqs}
-extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", start = 6225, end = 7757)
+extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", 
+             start = gp120_start, end = gp120_end)
 ```
 
 This function can also take a reference sequence name (`ref_name`), which can be
@@ -323,10 +340,8 @@ If you have an alignment with sequences that are longer than
 the input sequence you want to simulate, you can use the `slice_aln()` function
 to slice out the desired section of the alignment. Here's an example:
 
-**TODO: CONFIRM THAT THE END POSITION IS CORRECT**
-
 ```{r, slice_aln}
-(gp120 <- slice_aln(hxb2_cons_founder, 6225, 7757))
+(gp120 <- slice_aln(hxb2_cons_founder, gp120_start, gp120_end))
 ```
 
 We will use this alignment below. 
@@ -371,11 +386,12 @@ First, since the `hxb2_cons_founder` sequence is all of env, but we just want to
 simulate gp120, we have to slice out that part of the alignment:
 
 ```{r}
-# get hxb2 gp120 end position
-len_hxb2_gp120 <- nchar(extract_seqs(hxb2_cons_founder, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", start = 6225, end = 7757)$founder)
-hxb2_gp120_end <- which(cumsum(as.character(hiv_env_flt_2021[1, ]) != "-") == len_hxb2_gp120)
+# get hxb2 gp120 length and end position in flt alignment
+len_hxb2_gp120 <- nchar(extract_seqs(hxb2_cons_founder, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", 
+                                     start = gp120_start, end = gp120_end)$founder)
+flt_gp120_end <- which(cumsum(as.character(hiv_env_flt_2021[1, ]) != "-") == len_hxb2_gp120)
 # subset to only gp120 section
-hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, hxb2_gp120_end)
+hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, flt_gp120_end)
 ```
 
 Then we can use this sliced alignment to identify conserved sites:
@@ -504,8 +520,6 @@ which returns a tibble with three columns:
 (epi_probs <- get_epitope_frequencies(env_features$position))
 ```
 
-**TODO: FIGURE OUT WHERE gp120 ENDS AND ONLY SAMPLE FROM THAT SECTION**
-
 This information can be used as input to the `sample_epitopes()`
 function. Note that the output of this function is different each time
 it's run, since the locations are selected randomly each time.
@@ -566,5 +580,5 @@ epitope_locations %>%
 
 ## On to simulations
 
-Next, check out the `vignette("run_wavess")` to see how to use all these inputs
+Next, check out `vignette("run_wavess")` to see how to use all these inputs
 to simulate within-host evolution. 
