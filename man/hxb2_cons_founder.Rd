@@ -13,7 +13,8 @@ sequence, and DEMB11US006 (founder)
 }
 \source{
 HXB2 and consensus (1st 2 sequences):
-\url{https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html} Founder:
+\url{https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html}
+Founder:
 \url{https://www.sciencedirect.com/science/article/pii/S0022175914000143?via\%3Dihub}
 \url{https://www.hiv.lanl.gov/components/sequence/HIV/asearch/query_one.comp?se_id=KC473833}
 }

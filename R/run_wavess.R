@@ -2,12 +2,14 @@
 #'
 #' Simulate within-host evolution. Please note that the default arguments were
 #' set with the the HIV ENV gp120 gene in mind. If you'd like to simulate
-#' something else, you will likely have to modify certain parameters. Also, the
-#' parameters for latent probabilities are assumed to be small, such that it is
-#' unlikely that multiple events (activate, die, proliferate) will occur to a
-#' single latent cell in a single (active cell) generation. See
-#' `vignette('run_wavess')` for more details about the simulator and input
-#' arguments.
+#' something else, you will likely have to modify certain parameters. However,
+#' if you are interested in this gene in particular, you can probably use most
+#' of the defaults including the founder and reference sequences provided as
+#' examples. Also, the parameters for latent probabilities are assumed to be
+#' small, such that it is unlikely that multiple events (activate, die,
+#' proliferate) will occur to a single latent cell in a single (active cell)
+#' generation. See `vignette('run_wavess')` for more details about the simulator
+#' and input arguments.
 #'
 #' @param pop_samp Tibble with columns generation, active_cell_count,
 #'   n_sample_active. Can be generated using the [generate_pop_samp()]
@@ -62,7 +64,7 @@
 #' @examples
 #' \dontrun{
 #' run_wavess(
-#'   generate_pop_samp(gN = 300), "ATCG",
+#'   generate_pop_samp(n_gen = 300), "ATCG",
 #'   calc_nt_sub_probs(hiv_env_flt_2021)
 #' )
 #' }

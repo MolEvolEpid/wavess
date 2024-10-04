@@ -18,7 +18,9 @@ In this vignette, we focus on how to simulate within-host evolution using the
 `run_wavess()` function. We will be using the HIV ENV gp120 gene as an example.
 Please note that the default arguments were set with this particular organism
 and genomic region in mind. If you'd like to simulate something else, you may
-have to modify certain parameters. 
+have to modify certain parameters. However, if you are interested in this gene
+in particular, you can probably use most of the defaults including the founder
+and reference sequences provided as examples.
 
 ## A note about using the simulation output
 
@@ -71,22 +73,14 @@ the simulation doesn't take too long to run.
 **TODO: CHANGE TO INTERNAL CONSERVED SITES VECTOR ONCE INCLUDED**
 
 ```{r setup}
-pop_samp <- generate_pop_samp(gN = 300, sampling_frequency = 100)
+pop_samp <- generate_pop_samp(n_gen = 300, sampling_frequency = 100)
 founder_ref <- extract_seqs(hxb2_cons_founder,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "CON_B(1295)",
   start = 6225, end = 7787
 )
 nt_sub_probs <- calc_nt_sub_probs(hiv_env_flt_2021)
-hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, 2517)
 gp120 <- slice_aln(hxb2_cons_founder, 6225, 7787)
-founder_conserved_sites <- identify_conserved_sites(hiv_gp120_flt_2021,
-  founder = "B.US.2011.DEMB11US006.KC473833",
-  ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
-  founder_aln = gp120
-) |>
-  filter(conserved == "Yes") |>
-  pull(founder_pos)
 epi_probs <- get_epitope_frequencies(env_features$position)
 ref_founder_map <- map_ref_founder(gp120,
   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
@@ -191,7 +185,7 @@ conserved_fitness <- run_wavess(
   pop_samp = pop_samp,
   founder_seqs = founder_ref$founder,
   nt_sub_probs = nt_sub_probs,
-  conserved_sites = founder_conserved_sites
+  conserved_sites = conserved_sites
 )
 ```
 

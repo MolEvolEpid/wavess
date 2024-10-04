@@ -72,6 +72,8 @@ In particular, we include the following example data in the package:
 downloaded from the [LANL HIV sequence
   database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html),
   in `ape::DNAbin` format. Feel free to download the entire alignment if you'd like.
+- `conserved_sites`: a vector of conserved sites for the example founder sequence.
+More details on this below.
 - `env_features`: a tibble of binding, contact, and and neutralization
   features for HIV ENV from the [LANL HIV immunology
   database](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp).
@@ -112,8 +114,8 @@ generate_pop_samp()
 
 By default, the infected cell population growth follows a logistic
 growth curve (`curve_type`) starting with a population of 1 (`n0`) and a
-carrying capacity of 2000 (`K`), the simulation is run for 3000
-generations (`gN`), and a maximum of 20 sequences (`max_samp`) are
+carrying capacity of 2000 (`carry_cap`), the simulation is run for 3000
+generations (`n_gen`), and a maximum of 20 sequences (`max_samp`) are
 sampled every 300 generations (`sampling_frequency`).
 All of these defaults can be changed by altering the input parameters of
 the function. The curve type can be defined as "logistic" or "linear".
@@ -127,7 +129,7 @@ sampling and more samples taken at each sampling event:
 
 ```{r, generate_pop_samp2}
 (pop_samp <- generate_pop_samp(
-  gN = 500,
+  n_gen = 500,
   sampling_frequency = 30,
   max_samp = 50
 ))
@@ -387,12 +389,13 @@ and the end of the alignment is the end of the sequence you want to simulate).
 
 We will be using the built-in `hiv_env_flt_2021` alignment as an example.
 However, this contains only 10 sequences. **In reality, you should use many more 
-sequences.** For HIV, you can download the entire filtered alignment for each gene
-or for the entire genome from the [LANL HIV sequence
+sequences.** For HIV, you can download the entire filtered alignment for each 
+gene or for the entire genome from the [LANL HIV sequence
 database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html). 
 
-For gp120, we also provide a vector of conserved sites in the package for ease of 
-use. **TODO: ACTUALLY DO THIS**
+For the example founder gp120 sequence we use in the package 
+(B.US.2011.DEMB11US006.KC473833), we also provide a vector of conserved sites 
+for this founder sequence (`conserved_sites`) for ease of use.
 
 First, since the `hxb2_cons_founder` sequence is all of env, but we just want to 
 simulate gp120, we have to slice out that part of the alignment:

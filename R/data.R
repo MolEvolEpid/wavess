@@ -17,12 +17,30 @@
 #'   length 1563 including the full-genome sequence for hxb2, the consensus
 #'   sequence, and DEMB11US006 (founder)
 #' @source HXB2 and consensus (1st 2 sequences):
-#' <https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html> Founder:
+#' <https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html>
+#' Founder:
 #' <https://www.sciencedirect.com/science/article/pii/S0022175914000143?via%3Dihub>
 #' <https://www.hiv.lanl.gov/components/sequence/HIV/asearch/query_one.comp?se_id=KC473833>
 "hxb2_cons_founder"
 
-#' env features
+#' Example founder conserved sites
+#'
+#' Conserved sites (indexed at 1) for the gp120 DEMB11US006 sequence, which is
+#' used as an example founder sequence throughout the package. These sites were
+#' identified using the `identify_conserved_sites()` function with the full
+#' HIV ENV filtered alignment from the LANL HIV database.
+#' See `hiv_env_flt_2021` for more details and the link to the entire alignment.
+#'
+#' @format ## `conserved_sites` Vector of conserved nucleotide sites for the
+#' gp120 gene of DEMB11US006 (founder)
+#' @source Full alignment used:
+#' <https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html>
+#' Founder sequence:
+#' <https://www.sciencedirect.com/science/article/pii/S0022175914000143?via%3Dihub>
+#' <https://www.hiv.lanl.gov/components/sequence/HIV/asearch/query_one.comp?se_id=KC473833>
+"conserved_sites"
+
+#' ENV features
 #'
 #' Binding, contact, and neutralization features in HIV env gene
 #'
