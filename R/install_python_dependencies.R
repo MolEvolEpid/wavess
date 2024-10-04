@@ -27,7 +27,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' install dependencies
+#' # install dependencies
 #' create_python_venv()
 #'
 #' # update dependencies
@@ -36,8 +36,7 @@
 #'
 #' @export
 create_python_venv <- function(ask = interactive(),
-                                        force = FALSE) {
-
+                               force = FALSE) {
   if (!reticulate::virtualenv_exists(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))) {
     # this has turned out to be the easiest way to test if a suitable Python
     # version is present. All other methods load Python, which creates
@@ -53,11 +52,13 @@ create_python_venv <- function(ask = interactive(),
       }
 
       if (permission) {
-        if (utils::packageVersion("reticulate") < "1.19")
+        if (utils::packageVersion("reticulate") < "1.19") {
           stop("Your version or reticulate is too old for this action. Please update")
+        }
         python <- reticulate::install_python()
         reticulate::virtualenv_create(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"),
-                                      python = python)
+          python = python
+        )
       } else {
         stop("Aborted by user")
       }
@@ -65,24 +66,28 @@ create_python_venv <- function(ask = interactive(),
   }
   reticulate::use_virtualenv(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))
 
-  dependencies <- c('numpy')
+  dependencies <- c("numpy")
 
   installed <- c()
-  for(dep in dependencies){
-    if (py_check_installed(dep) & !force){
+  for (dep in dependencies) {
+    if (py_check_installed(dep) & !force) {
       installed <- c(installed, dep)
-    }else{
+    } else {
       reticulate::py_install(dep, envname = Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))
-      message("Installation of ", dep, " version ",
-              py_check_version(dep, envname = Sys.getenv("WAVESS_PYTHON", unset = "r-wavess")),
-              " complete.")
+      message(
+        "Installation of ", dep, " version ",
+        py_check_version(dep, envname = Sys.getenv("WAVESS_PYTHON", unset = "r-wavess")),
+        " complete."
+      )
     }
   }
 
-  if(length(installed) > 0){
-    warning("Skipped installation of the following packages: ",
-            installed,
-            " Use `force` to force installation or update.")
+  if (length(installed) > 0) {
+    warning(
+      "Skipped installation of the following packages: ",
+      installed,
+      " Use `force` to force installation or update."
+    )
   }
   invisible(NULL)
 }
@@ -95,9 +100,9 @@ create_python_venv <- function(ask = interactive(),
 #'
 #' @export
 remove_python_venv <- function(confirm = interactive()) {
-
   reticulate::virtualenv_remove(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"),
-                                confirm = confirm)
+    confirm = confirm
+  )
 
   message("Deinstallation complete.")
   invisible(NULL)
@@ -109,10 +114,12 @@ remove_python_venv <- function(confirm = interactive()) {
 #'
 #' @return boolean whether dependency is installed
 py_check_installed <- function(x) {
-  if (is.null(x)) return(FALSE)
+  if (is.null(x)) {
+    return(FALSE)
+  }
   return(x %in% trimws(reticulate::py_list_packages(
-      Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))$package
-    ))
+    Sys.getenv("WAVESS_PYTHON", unset = "r-wavess")
+  )$package))
 }
 
 #' Check python package version
@@ -132,14 +139,18 @@ py_check_version <- function(package, ...) {
 #'
 #' @return functions in agents
 #' @noRd
-use_python_venv <- function(){
-  if (!reticulate::virtualenv_exists(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess")))
+use_python_venv <- function() {
+  if (!reticulate::virtualenv_exists(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))) {
     stop("No wavess environment found. Use `install_python_dependencies()` to get started.")
+  }
 
-  if (!"numpy" %in% reticulate::py_list_packages(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))$package)
-    stop("numpy was not found in your environment. Use `install_python_dependencies()`",
-         "to get started.")
+  if (!"numpy" %in% reticulate::py_list_packages(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))$package) {
+    stop(
+      "numpy was not found in your environment. Use `install_python_dependencies()`",
+      "to get started."
+    )
+  }
 
   reticulate::use_virtualenv(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))
-  return(reticulate::import_from_path('agents', system.file('python', package = 'wavess'), convert = FALSE))
+  return(reticulate::import_from_path("agents", system.file("python", package = "wavess"), convert = FALSE))
 }
