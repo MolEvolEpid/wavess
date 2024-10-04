@@ -178,16 +178,17 @@ alignment positions correspond to these HXB2 coordinates:
 **(MAKE THIS INTO A FUNCTION?)**
 
 ```{r}
-gp120_start <- which(cumsum(as.character(hxb2_cons_founder['B.FR.83.HXB2_LAI_IIIB_BRU.K03455',]) != '-') == 6225)
-gp120_end <- which(cumsum(as.character(hxb2_cons_founder['B.FR.83.HXB2_LAI_IIIB_BRU.K03455',]) != '-') == 7757)
+gp120_start <- which(cumsum(as.character(hxb2_cons_founder["B.FR.83.HXB2_LAI_IIIB_BRU.K03455", ]) != "-") == 6225)
+gp120_end <- which(cumsum(as.character(hxb2_cons_founder["B.FR.83.HXB2_LAI_IIIB_BRU.K03455", ]) != "-") == 7757)
 ```
 
 Then we can use these start and end positions to extract gp120 for our founder 
 sequence:
 
 ```{r, extract_seqs}
-extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", 
-             start = gp120_start, end = gp120_end)
+extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833",
+  start = gp120_start, end = gp120_end
+)
 ```
 
 This function can also take a reference sequence name (`ref_name`), which can be
@@ -387,8 +388,9 @@ simulate gp120, we have to slice out that part of the alignment:
 
 ```{r}
 # get hxb2 gp120 length and end position in flt alignment
-len_hxb2_gp120 <- nchar(extract_seqs(hxb2_cons_founder, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", 
-                                     start = gp120_start, end = gp120_end)$founder)
+len_hxb2_gp120 <- nchar(extract_seqs(hxb2_cons_founder, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+  start = gp120_start, end = gp120_end
+)$founder)
 flt_gp120_end <- which(cumsum(as.character(hiv_env_flt_2021[1, ]) != "-") == len_hxb2_gp120)
 # subset to only gp120 section
 hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, flt_gp120_end)
