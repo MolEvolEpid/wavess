@@ -6,8 +6,8 @@
 \usage{
 generate_pop_samp(
   curve_type = "logistic",
-  gN = 3000,
-  K = 2000,
+  n_gen = 3000,
+  carry_cap = 2000,
   n0 = 1,
   g50 = 25,
   sampling_frequency = 300,
@@ -19,13 +19,13 @@ generate_pop_samp(
 \code{constant_pop} (constant population size),
 \code{logistic} (logistic growth; default)}
 
-\item{gN}{final sampling generation (default: 3000)}
+\item{n_gen}{final sampling generation (default: 3000)}
 
-\item{K}{carrying capacity (default: 2000)}
+\item{carry_cap}{carrying capacity (default: 2000)}
 
 \item{n0}{starting population size (default: 1; used for logistic)}
 
-\item{g50}{generation at which the population size reaches 50\% of K
+\item{g50}{generation at which the population size reaches 50\% of carry_cap
 (default: 25; used for logistic)}
 
 \item{sampling_frequency}{frequency in generations at which to record

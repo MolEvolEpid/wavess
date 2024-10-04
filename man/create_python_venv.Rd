@@ -2,7 +2,8 @@
 % Please edit documentation in R/install_python_dependencies.R
 \name{create_python_venv}
 \alias{create_python_venv}
-\title{Create python virtual environment and dependencies in conda or virtualenv environment}
+\title{Create python virtual environment and dependencies in conda or virtualenv
+environment}
 \usage{
 create_python_venv(ask = interactive(), force = FALSE)
 }
@@ -10,8 +11,8 @@ create_python_venv(ask = interactive(), force = FALSE)
 \item{ask}{logical; ask whether to proceed during the installation. By
 default, questions are only asked in interactive sessions.}
 
-\item{force}{ignore if the dependencies are already present and install
-it anyway.}
+\item{force}{ignore if the dependencies are already present and install it
+anyway.}
 }
 \description{
 Modified from the \code{\link[spacyr:spacy_install]{spacyr::spacy_install()}} function:
@@ -22,21 +23,20 @@ The dependencies are python, some base python packages (copy, random,
 collections), and numpy.
 
 The function checks whether a suitable installation of Python is
-present on the system and installs one via
-\code{\link[reticulate:install_python]{reticulate::install_python()}} otherwise. It then creates a
-virtual environment with the necessary packages in the default location
-chosen by \code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_root()}}.
+present on the system and installs one via \code{\link[reticulate:install_python]{reticulate::install_python()}}
+otherwise. It then creates a virtual environment with the necessary
+packages in the default location chosen by \code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_root()}}.
 
 If you want to install a different version of Python than the default, you
-should call \code{\link[reticulate:install_python]{reticulate::install_python()}} directly. If you want
-to create or use a different virtual environment, you can use, e.g.,
-\code{Sys.setenv(WAVESS_PYTHON = "path/to/directory")}. If you want to install
-a different version of a particular package, then use, e.g.
+should call \code{\link[reticulate:install_python]{reticulate::install_python()}} directly. If you want to create
+or use a different virtual environment, you can use, e.g.,
+\code{Sys.setenv(WAVESS_PYTHON = "path/to/directory")}. If you want to install a
+different version of a particular package, then use, e.g.
 reticulate::virtualenv_install(packages = c("numpy==VERSION_NUM")) instead.
 }
 \examples{
 \dontrun{
-install dependencies
+# install dependencies
 create_python_venv()
 
 # update dependencies

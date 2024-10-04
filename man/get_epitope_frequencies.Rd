@@ -7,8 +7,8 @@
 get_epitope_frequencies(epitope_positions)
 }
 \arguments{
-\item{epitope_positions}{numeric vector of \strong{amino acid} positions of identified epitopes
-(e.g. the env features from the \href{https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp}{LANL HIV database})}
+\item{epitope_positions}{numeric vector of \strong{amino acid} positions of
+identified epitopes (e.g. the env features from the \href{https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp}{LANL HIV database})}
 }
 \value{
 tibble with the following columns:

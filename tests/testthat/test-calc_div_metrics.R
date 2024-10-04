@@ -38,6 +38,6 @@ test_that("calc_div_metrics works", {
       seq3 = c("A", "C", "G", "T"),
       seq4 = c("A", "C", "G", "T")
     )), "seq1", c(1, 2, 3)),
-    "The length of gen must be the same as the number of sequences in the alignment"
+    "The length of gen must be the same as the number of sequences in the"
   )
 })

@@ -11,12 +11,15 @@
 #' @export
 #'
 #' @examples
-#' extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", start = 6225, end = 7787)
+#' extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833",
+#'   start = 6225, end = 7787
+#' )
 #' extract_seqs(hxb2_cons_founder,
 #'   "B.US.2011.DEMB11US006.KC473833", "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
 #'   start = 6225, end = 7787
 #' )
-extract_seqs <- function(aln, founder_name, ref_name = NULL, start = 1, end = NULL) {
+extract_seqs <- function(aln, founder_name, ref_name = NULL, start = 1,
+                         end = NULL) {
   check_extract_seqs_inputs(aln, founder_name, ref_name, start, end)
   aln <- as.matrix(aln)
   if (is.null(end)) {

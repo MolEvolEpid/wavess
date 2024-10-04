@@ -1,30 +1,30 @@
 #' Sample epitopes
 #'
-#' Sample epitopes based on epitope probabilities.
-#' Note that the positions returned assume that the start of the amino acid
-#' sequence is also the start of the founder sequence in the simulation.
+#' Sample epitopes based on epitope probabilities. Note that the positions
+#' returned assume that the start of the amino acid sequence is also the start
+#' of the founder sequence in the simulation.
 #'
 #' @param epitope_probabilities Epitope probability tibble as output by
-#' [get_epitope_frequencies()], including columns
-#' `aa_position` and `epitope_probability`
+#'   [get_epitope_frequencies()], including columns `aa_position` and
+#'   `epitope_probability`
 #' @param start_aa_pos Starting amino acid position to consider for epitopes
-#' (default: 1)
+#'   (default: 1)
 #' @param end_aa_pos Ending amino acid position to consider for epitopes
-#' (default: NULL, i.e. all positions)
+#'   (default: NULL, i.e. all positions)
 #' @param num_epitopes Number of epitopes to sample
 #' @param aa_epitope_length Amino acid epitope length
-#' @param max_fit_cost Maximum fitness cost of an epitope,
-#' must be between 0 and 1 (default: 0.4)
+#' @param max_fit_cost Maximum fitness cost of an epitope, must be between 0 and
+#'   1 (default: 0.4)
 #' **note that the model output is very sensitive to this parameter**
 #' @param cost_type "linear" or "random"; linear returns max fitness costs
-#' distributed linearly between 0 and `max_fit_cost` (not including 0, but including
-#' `max_fit_cost`), random returns one epitope with `max_fit_cost` and all other
-#' epitopes with max fitness costs randomly selected from a uniform distribution
-#' between 0 and `max_fit_cost` (default: "linear")
-#' @param max_resamples Maximum number of resampling events to attempt;
-#' this is to prevent an infinite loop (default: 100)
+#'   distributed linearly between 0 and `max_fit_cost` (not including 0, but
+#'   including `max_fit_cost`), random returns one epitope with `max_fit_cost`
+#'   and all other epitopes with max fitness costs randomly selected from a
+#'   uniform distribution between 0 and `max_fit_cost` (default: "linear")
+#' @param max_resamples Maximum number of resampling events to attempt; this is
+#'   to prevent an infinite loop (default: 100)
 #' @param ref_founder_map Output from [map_ref_founder()], including reference
-#' and founder positions (`ref_pos` and `founder_pos`).
+#'   and founder positions (`ref_pos` and `founder_pos`).
 #'
 #' @return tibble with the `num_epitopes` rows and the following columns:
 #' - `epi_start_nt`: nucleotide epitope start position
@@ -54,15 +54,20 @@ sample_epitopes <- function(epitope_probabilities,
   }
   # max fitness cost for each epitope
   if (cost_type == "linear") {
-    max_fit_costs <- seq(0, max_fit_cost, length.out = num_epitopes + 1)[2:(num_epitopes + 1)]
+    max_fit_costs <- seq(0, max_fit_cost,
+      length.out = num_epitopes + 1
+    )[2:(num_epitopes + 1)]
   } else if (cost_type == "random") {
-    max_fit_costs <- c(max_fit_cost, stats::runif(num_epitopes - 1, 0, max_fit_cost))
+    max_fit_costs <- c(
+      max_fit_cost,
+      stats::runif(num_epitopes - 1, 0, max_fit_cost)
+    )
   }
   # Draw num_epitopes positions
   start_pos <- c() # list of epitope start positions
   all_pos <- c() # list of all epitope positions
   n_resamples <- 0
-  while (length(start_pos) < num_epitopes & n_resamples < max_resamples) {
+  while (length(start_pos) < num_epitopes && n_resamples < max_resamples) {
     mid <- sample(epitope_probabilities$aa_position, 1,
       prob = epitope_probabilities$epitope_probability
     )
@@ -74,7 +79,8 @@ sample_epitopes <- function(epitope_probabilities,
     }
     # Don't want overlapping epitopes,
     # and can't start before start of sequence or end after end of sequence
-    if (start %in% all_pos | end %in% all_pos | start < start_aa_pos | end > end_aa_pos) {
+    if (start %in% all_pos || end %in% all_pos || start < start_aa_pos ||
+      end > end_aa_pos) {
       n_resamples <- n_resamples + 1
     } else {
       start_pos <- c(start_pos, start)
@@ -96,15 +102,16 @@ sample_epitopes <- function(epitope_probabilities,
     max_fitness_cost = max_fit_costs
   )
   if (!is.null(ref_founder_map)) {
-    epitopes <- convert_ref_to_founder_epitopes(epitopes, ref_founder_map)
+    epitopes <- convert_ref_to_found_epitopes(epitopes, ref_founder_map)
   }
   return(epitopes)
 }
 
 #' Get epitope frequencies
 #'
-#' @param epitope_positions numeric vector of **amino acid** positions of identified epitopes
-#' (e.g. the env features from the [LANL HIV database](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp))
+#' @param epitope_positions numeric vector of **amino acid** positions of
+#'   identified epitopes (e.g. the env features from the [LANL HIV
+#'   database](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp))
 #'
 #' @return tibble with the following columns:
 #' - `aa_position`: amino acid position
@@ -141,7 +148,7 @@ get_epitope_frequencies <- function(epitope_positions) {
 #' @return Tibble with epitope positions relative to the founder, with the
 #' same columns as output by [sample_epitopes()]
 #' @noRd
-convert_ref_to_founder_epitopes <- function(ref_epitopes, ref_founder_map) {
+convert_ref_to_found_epitopes <- function(ref_epitopes, ref_founder_map) {
   # internal function so don't include checks right now...
   ref_epitopes |>
     dplyr::rename(
@@ -156,6 +163,7 @@ convert_ref_to_founder_epitopes <- function(ref_epitopes, ref_founder_map) {
       by = c("ref_pos_start" = "ref_pos")
     ) |>
     dplyr::rename(epi_start_nt = "founder_pos") |>
-    dplyr::mutate(epi_end_nt = .data$epi_start_nt + (.data$ref_pos_end - .data$ref_pos_start)) |>
+    dplyr::mutate(epi_end_nt = .data$epi_start_nt +
+      (.data$ref_pos_end - .data$ref_pos_start)) |>
     dplyr::select("epi_start_nt", "epi_end_nt", "max_fitness_cost")
 }

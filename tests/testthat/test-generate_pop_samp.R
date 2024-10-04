@@ -1,7 +1,10 @@
 test_that("generate_pop_samp works", {
   ps <- generate_pop_samp()
   expect_equal(dim(ps), c(3001, 3))
-  expect_equal(colnames(ps), c("generation", "active_cell_count", "n_sample_active"))
+  expect_equal(colnames(ps), c(
+    "generation", "active_cell_count",
+    "n_sample_active"
+  ))
   expect_equal(ps$generation, 0:3000)
   expect_equal(ps$active_cell_count[1], 1)
   expect_equal(round(ps$active_cell_count[26] / 2000, 1), 0.5)

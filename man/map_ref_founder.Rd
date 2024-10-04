@@ -8,8 +8,8 @@ map_ref_founder(aln, ref, founder)
 }
 \arguments{
 \item{aln}{Alignment in \link[ape:DNAbin]{ape::DNAbin} format (e.g. read in with
-\code{\link[ape:read.dna]{ape::read.dna()}} or \code{\link[ape:read.dna]{ape::read.FASTA()}}) that includes the reference sequence
-and the founder sequence}
+\code{\link[ape:read.dna]{ape::read.dna()}} or \code{\link[ape:read.dna]{ape::read.FASTA()}}) that includes the reference
+sequence and the founder sequence}
 
 \item{ref}{Name of the reference sequence in the input alignment}
 

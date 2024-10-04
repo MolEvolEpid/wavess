@@ -47,7 +47,8 @@ library(ggtree)
 
 set.seed(12345)
 
-theme_set(theme_classic() + theme(strip.background = element_rect(color = "white")))
+theme_set(theme_classic() +
+  theme(strip.background = element_rect(color = "white")))
 
 # if needed
 create_python_venv()
@@ -75,7 +76,9 @@ ref_founder_map <- map_ref_founder(gp120,
   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
   founder = "B.US.2011.DEMB11US006.KC473833"
 )
-epitope_locations <- sample_epitopes(epi_probs, ref_founder_map = ref_founder_map)
+epitope_locations <- sample_epitopes(epi_probs,
+  ref_founder_map = ref_founder_map
+)
 
 founder_ref$ref <- gsub("N", "-", founder_ref$ref)
 wavess_out <- run_wavess(
@@ -133,7 +136,10 @@ R using `ape` to generate a neighbor-joining tree and `phangorn` to estimate
 branch lengths using maximum likelihood:
 
 ```{r}
-pml_out <- phangorn::pml_bb(wavess_out$seqs, start = bionj(dist.dna(wavess_out$seqs, model = "TN93")), model = "GTR+R(4)+I", rearrangement = "none")
+pml_out <- phangorn::pml_bb(wavess_out$seqs,
+  start = bionj(dist.dna(wavess_out$seqs, model = "TN93")),
+  model = "GTR+R(4)+I", rearrangement = "none"
+)
 
 tr <- root(pml_out$tree, "founder1")
 gens <- gsub("gen_|_cell.*", "", tr$tip.label)

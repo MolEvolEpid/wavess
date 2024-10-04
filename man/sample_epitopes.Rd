@@ -18,8 +18,8 @@ sample_epitopes(
 }
 \arguments{
 \item{epitope_probabilities}{Epitope probability tibble as output by
-\code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}}, including columns
-\code{aa_position} and \code{epitope_probability}}
+\code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}}, including columns \code{aa_position} and
+\code{epitope_probability}}
 
 \item{start_aa_pos}{Starting amino acid position to consider for epitopes
 (default: 1)}
@@ -31,18 +31,18 @@ sample_epitopes(
 
 \item{aa_epitope_length}{Amino acid epitope length}
 
-\item{max_fit_cost}{Maximum fitness cost of an epitope,
-must be between 0 and 1 (default: 0.4)
+\item{max_fit_cost}{Maximum fitness cost of an epitope, must be between 0 and
+1 (default: 0.4)
 \strong{note that the model output is very sensitive to this parameter}}
 
 \item{cost_type}{"linear" or "random"; linear returns max fitness costs
-distributed linearly between 0 and \code{max_fit_cost} (not including 0, but including
-\code{max_fit_cost}), random returns one epitope with \code{max_fit_cost} and all other
-epitopes with max fitness costs randomly selected from a uniform distribution
-between 0 and \code{max_fit_cost} (default: "linear")}
+distributed linearly between 0 and \code{max_fit_cost} (not including 0, but
+including \code{max_fit_cost}), random returns one epitope with \code{max_fit_cost}
+and all other epitopes with max fitness costs randomly selected from a
+uniform distribution between 0 and \code{max_fit_cost} (default: "linear")}
 
-\item{max_resamples}{Maximum number of resampling events to attempt;
-this is to prevent an infinite loop (default: 100)}
+\item{max_resamples}{Maximum number of resampling events to attempt; this is
+to prevent an infinite loop (default: 100)}
 
 \item{ref_founder_map}{Output from \code{\link[=map_ref_founder]{map_ref_founder()}}, including reference
 and founder positions (\code{ref_pos} and \code{founder_pos}).}
@@ -56,9 +56,9 @@ tibble with the \code{num_epitopes} rows and the following columns:
 }
 }
 \description{
-Sample epitopes based on epitope probabilities.
-Note that the positions returned assume that the start of the amino acid
-sequence is also the start of the founder sequence in the simulation.
+Sample epitopes based on epitope probabilities. Note that the positions
+returned assume that the start of the amino acid sequence is also the start
+of the founder sequence in the simulation.
 }
 \examples{
 sample_epitopes(get_epitope_frequencies(env_features$position))

@@ -3,25 +3,67 @@ test_that("check_generate_pop_samp_inputs works", {
     generate_pop_samp("not_a_curve"),
     "`curve_type` must be logistic or constant. You provided: not_a_curve"
   )
-  expect_error(generate_pop_samp(gN = "a"), "gN must be numeric, but is a character")
-  expect_error(generate_pop_samp(gN = -1), "gN must be a positive")
-  expect_error(generate_pop_samp(K = "a"), "K must be numeric, but is a character")
-  expect_error(generate_pop_samp(K = -1), "K must be a positive")
-  expect_error(generate_pop_samp(n0 = "a"), "n0 must be numeric, but is a character")
-  expect_error(generate_pop_samp(n0 = 10000), "n0 must be a number \u2264K, but is 10000")
-  expect_error(generate_pop_samp(g50 = "a"), "g50 must be numeric, but is a character")
-  expect_error(generate_pop_samp(g50 = 10000), "g50 must be a number \u2264gN, but is 10000")
-  expect_error(generate_pop_samp(sampling_frequency = "a"), "sampling_frequency must be numeric, but is a character")
-  expect_error(generate_pop_samp(sampling_frequency = -1), "sampling_frequency must be a positive number")
-  expect_error(generate_pop_samp(sampling_frequency = "a"), "sampling_frequency must be numeric, but is a character")
-  expect_error(generate_pop_samp(sampling_frequency = 10000), "sampling_frequency must be ")
-  expect_error(generate_pop_samp(max_samp = "a"), "max_samp must be numeric, but is a character")
-  expect_error(generate_pop_samp(max_samp = -1), "max_samp must be a positive number")
+  expect_error(
+    generate_pop_samp(n_gen = "a"),
+    "n_gen must be numeric, but is a character"
+  )
+  expect_error(generate_pop_samp(n_gen = -1), "n_gen must be a positive")
+  expect_error(
+    generate_pop_samp(carry_cap = "a"),
+    "carry_cap must be numeric, but is a character"
+  )
+  expect_error(
+    generate_pop_samp(carry_cap = -1),
+    "carry_cap must be a positive"
+  )
+  expect_error(
+    generate_pop_samp(n0 = "a"),
+    "n0 must be numeric, but is a character"
+  )
+  expect_error(
+    generate_pop_samp(n0 = 10000),
+    "n0 must be a number "
+  )
+  expect_error(
+    generate_pop_samp(g50 = "a"),
+    "g50 must be numeric, but is a character"
+  )
+  expect_error(
+    generate_pop_samp(g50 = 10000),
+    "g50 must be a number \u2264n_gen, but is 10000"
+  )
+  expect_error(
+    generate_pop_samp(sampling_frequency = "a"),
+    "sampling_frequency must be numeric, but is a character"
+  )
+  expect_error(
+    generate_pop_samp(sampling_frequency = -1),
+    "sampling_frequency must be a positive number"
+  )
+  expect_error(
+    generate_pop_samp(sampling_frequency = "a"),
+    "sampling_frequency must be numeric, but is a character"
+  )
+  expect_error(
+    generate_pop_samp(sampling_frequency = 10000),
+    "sampling_frequency must be "
+  )
+  expect_error(
+    generate_pop_samp(max_samp = "a"),
+    "max_samp must be numeric, but is a character"
+  )
+  expect_error(
+    generate_pop_samp(max_samp = -1),
+    "max_samp must be a positive number"
+  )
 })
 
 test_that("check_is_numeric works", {
   expect_no_error(check_is_numeric(0, "test"))
-  expect_error(check_is_numeric("a", "test"), "test must be numeric, but is a character")
+  expect_error(
+    check_is_numeric("a", "test"),
+    "test must be numeric, but is a character"
+  )
 })
 
 test_that("check_is_pos works", {
@@ -31,19 +73,28 @@ test_that("check_is_pos works", {
 
 test_that("check_is_df works", {
   expect_no_error(check_is_df(define_growth_curve(), "test"))
-  expect_error(check_is_df(0, "test"), "test must be a data frame or tibble, but is a numeric")
+  expect_error(
+    check_is_df(0, "test"),
+    "test must be a data frame or tibble, but is a numeric"
+  )
 })
 
 test_that("check_is_string works", {
   expect_no_error(check_is_string("str", "test"))
-  expect_error(check_is_string(0, "test"), "test must be a string, but is a numeric")
+  expect_error(
+    check_is_string(0, "test"),
+    "test must be a string, but is a numeric"
+  )
 })
 
 test_that("check_is_0to1 works", {
   expect_no_error(check_is_0to1(0, "test"))
   expect_no_error(check_is_0to1(1, "test"))
   expect_no_error(check_is_0to1(0.5, "test"))
-  expect_error(check_is_0to1("wrong", "test"), "test must be numeric, but is a character")
+  expect_error(
+    check_is_0to1("wrong", "test"),
+    "test must be numeric, but is a character"
+  )
   expect_error(check_is_0to1(-1, "test"), "test must be in the range")
   expect_error(check_is_0to1(10, "test"), "test must be in the range")
 })
@@ -54,31 +105,44 @@ test_that("check_is_dnabin works", {
 })
 
 test_that("check_name_in_alignment works", {
-  expect_no_error(check_name_in_alignment(hxb2_cons_founder, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455"))
-  expect_error(check_name_in_alignment(hxb2_cons_founder, "test", "hxb2_cons_founder", "test_name"), "test_name must be the name of a sequence in hxb2_cons_founder, but is test")
+  expect_no_error(check_name_in_alignment(
+    hxb2_cons_founder,
+    "B.FR.83.HXB2_LAI_IIIB_BRU.K03455"
+  ))
+  expect_error(
+    check_name_in_alignment(
+      hxb2_cons_founder, "test",
+      "hxb2_cons_founder", "test_name"
+    ),
+    "test_name must be the name of a sequence in hxb2_cons_founder, but is test"
+  )
 })
 
-test_that("check_identify_conserved_sites_inputs works", {
-  expect_no_error(check_identify_conserved_sites_inputs(hiv_env_flt_2021, "B.US.2011.DEMB11US006.KC473833",
+test_that("check_conserved_sites_inputs works", {
+  expect_no_error(check_conserved_sites_inputs(hiv_env_flt_2021,
+    "B.US.2011.DEMB11US006.KC473833",
     thresh = 0.99,
     ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", founder_aln = hxb2_cons_founder
   ))
   expect_error(
-    check_identify_conserved_sites_inputs(hiv_env_flt_2021, "B.US.2011.DEMB11US006.KC473833",
+    check_conserved_sites_inputs(hiv_env_flt_2021,
+      "B.US.2011.DEMB11US006.KC473833",
       thresh = 0.99,
       ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", founder_aln = NULL
     ),
     "When `ref` is specified, `founder_aln` must also be specified"
   )
   expect_error(
-    check_identify_conserved_sites_inputs(hiv_env_flt_2021, "B.US.2011.DEMB11US006.KC473833",
+    check_conserved_sites_inputs(hiv_env_flt_2021,
+      "B.US.2011.DEMB11US006.KC473833",
       thresh = 0.99,
       ref = NULL, founder_aln = hxb2_cons_founder
     ),
     "When `founder_aln` is specified, `ref` must also be specified"
   )
   expect_error(
-    check_identify_conserved_sites_inputs(hiv_env_flt_2021, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+    check_conserved_sites_inputs(hiv_env_flt_2021,
+      "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
       thresh = 2,
       ref = NULL, founder_aln = NULL
     ),
@@ -87,15 +151,21 @@ test_that("check_identify_conserved_sites_inputs works", {
 })
 
 test_that("check_get_seq_pos_inputs works", {
-  expect_no_error(check_get_seq_pos_inputs(tibble::tibble(hxb2 = unlist(as.character(hxb2_cons_founder[1]))), "hxb2"))
+  expect_no_error(check_get_seq_pos_inputs(
+    tibble::tibble(hxb2 = unlist(as.character(hxb2_cons_founder[1]))), "hxb2"
+  ))
 })
 
 test_that("check_map_ref_founder_inputs works", {
-  expect_no_error(check_map_ref_founder_inputs(hxb2_cons_founder, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", "B.US.2011.DEMB11US006.KC473833"))
+  expect_no_error(check_map_ref_founder_inputs(
+    hxb2_cons_founder,
+    "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", "B.US.2011.DEMB11US006.KC473833"
+  ))
 })
 
 test_that("check_sample_epitopes_inputs works", {
-  expect_no_error(check_sample_epitopes_inputs(get_epitope_frequencies(env_features$position),
+  expect_no_error(check_sample_epitopes_inputs(
+    get_epitope_frequencies(env_features$position),
     start_aa_pos = 1,
     end_aa_pos = NULL,
     num_epitopes = 10,
@@ -157,7 +227,8 @@ test_that("check_sample_epitopes_inputs works", {
     ),
     "The following columns must be included in "
   )
-  expect_no_error(check_sample_epitopes_inputs(get_epitope_frequencies(env_features$position),
+  expect_no_error(check_sample_epitopes_inputs(
+    get_epitope_frequencies(env_features$position),
     start_aa_pos = 1,
     end_aa_pos = NULL,
     num_epitopes = 10,
@@ -173,13 +244,19 @@ test_that("check_sample_epitopes_inputs works", {
 })
 
 test_that("check_calc_nt_sub_probs_inputs works", {
-  expect_no_error(check_calc_nt_sub_probs_inputs(hiv_env_flt_2021, ape::rtree(3), "GTR+I+R(4)", "none"))
+  expect_no_error(check_calc_nt_sub_probs_inputs(
+    hiv_env_flt_2021, ape::rtree(3), "GTR+I+R(4)", "none"
+  ))
   expect_error(
-    check_calc_nt_sub_probs_inputs("hiv_env_flt_2021", ape::rtree(3), "GTR+I+R(4)", "none"),
+    check_calc_nt_sub_probs_inputs(
+      "hiv_env_flt_2021", ape::rtree(3), "GTR+I+R(4)", "none"
+    ),
     "aln must be of the "
   )
   expect_error(
-    check_calc_nt_sub_probs_inputs(hiv_env_flt_2021, "ape::rtree(3)", "GTR+I+R(4)", "none"),
+    check_calc_nt_sub_probs_inputs(
+      hiv_env_flt_2021, "ape::rtree(3)", "GTR+I+R(4)", "none"
+    ),
     "tr must be of the "
   )
   expect_error(
@@ -187,17 +264,25 @@ test_that("check_calc_nt_sub_probs_inputs works", {
     "model must be a string, but is a numeric"
   )
   expect_error(
-    check_calc_nt_sub_probs_inputs(hiv_env_flt_2021, ape::rtree(3), "GTR+I+R(4)", "wrong"),
+    check_calc_nt_sub_probs_inputs(
+      hiv_env_flt_2021, ape::rtree(3), "GTR+I+R(4)", "wrong"
+    ),
     "Rearrangement must be one of "
   )
 })
 
 test_that("check_run_wavess_inputs works", {
-  hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
-  ps <- define_sampling_scheme(define_growth_curve(gN = 100), sampling_frequency = 50)
+  # hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
+  ps <- define_sampling_scheme(define_growth_curve(n_gen = 100),
+    sampling_frequency = 50
+  )
   fs <- c("ACGT", "ATTT")
-  suppressMessages(el <- sample_epitopes(get_epitope_frequencies(env_features$position)))
-  capture.output(ntsp <- calc_nt_sub_probs(hiv_env_flt_2021[1:3, ]), file = nullfile())
+  suppressMessages(el <- sample_epitopes(
+    get_epitope_frequencies(env_features$position)
+  ))
+  capture.output(ntsp <- calc_nt_sub_probs(
+    hiv_env_flt_2021[1:3, ]
+  ), file = nullfile())
   expect_no_error(check_run_wavess_inputs(
     ps, fs, ntsp,
     3.5e-5, 1.4e-5,
@@ -240,7 +325,7 @@ test_that("check_run_wavess_inputs works", {
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "pop_samp must contain the columns generation, active_cell_count, n_sample_active"
+    "pop_samp must contain the columns generation, active_cell_count, "
   )
   expect_error(
     check_run_wavess_inputs(
@@ -370,7 +455,7 @@ test_that("check_run_wavess_inputs works", {
       el |> dplyr::select(epi_start_nt), 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "epitope_locations must contain the columns epi_start_nt, epi_end_nt, max_fitness_cost"
+    "epitope_locations must contain the columns epi_start_nt, epi_end_nt, "
   )
   expect_error(
     check_run_wavess_inputs(
@@ -422,9 +507,19 @@ test_that("check_run_wavess_inputs works", {
 })
 
 test_that("check_extract_seqs_inputs works", {
-  expect_no_error(extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833"))
-  expect_no_error(extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", NULL, 3, 10))
-  expect_no_error(extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", "B.US.2011.DEMB11US006.KC473833", 3, 10))
+  expect_no_error(extract_seqs(
+    hxb2_cons_founder,
+    "B.US.2011.DEMB11US006.KC473833"
+  ))
+  expect_no_error(extract_seqs(
+    hxb2_cons_founder,
+    "B.US.2011.DEMB11US006.KC473833", NULL, 3, 10
+  ))
+  expect_no_error(extract_seqs(
+    hxb2_cons_founder,
+    "B.US.2011.DEMB11US006.KC473833",
+    "B.US.2011.DEMB11US006.KC473833", 3, 10
+  ))
   expect_error(
     extract_seqs("not_aln", "B.US.2011.DEMB11US006.KC473833"),
     "aln must be of the"
@@ -438,18 +533,25 @@ test_that("check_extract_seqs_inputs works", {
     "ref_name must be the name of a sequence in aln, but is wrong"
   )
   expect_error(
-    extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", start = "wrong", end = 10),
+    extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833",
+      start = "wrong", end = 10
+    ),
     "start must be numeric, but is a character"
   )
   expect_error(
-    extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833", start = 1, end = 10000),
+    extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833",
+      start = 1, end = 10000
+    ),
     "end must be <= the length of the alignment"
   )
 })
 
 test_that("check_slice_aln_inputs works", {
   expect_no_error(slice_aln(hxb2_cons_founder, 3, 10))
-  expect_no_error(slice_aln(hxb2_cons_founder, 3, 10, "B.US.2011.DEMB11US006.KC473833"))
+  expect_no_error(slice_aln(
+    hxb2_cons_founder, 3, 10,
+    "B.US.2011.DEMB11US006.KC473833"
+  ))
   expect_error(
     slice_aln("not_aln", 3, 10),
     "aln must be of the"

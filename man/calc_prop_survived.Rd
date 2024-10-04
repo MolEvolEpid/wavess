@@ -16,7 +16,8 @@ Tibble including:
 \itemize{
 \item \code{n_seqs}: Number of sequences included in that time point
 \item \code{n_clusters}: Number of monophyletic clusters for that time point
-\item \code{prop_survived}: Proportion of lineages that survived from the previous generation
+\item \code{prop_survived}: Proportion of lineages that survived from the
+previous generation
 }
 }
 \description{

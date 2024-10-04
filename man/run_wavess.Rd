@@ -26,15 +26,17 @@ run_wavess(
 )
 }
 \arguments{
-\item{pop_samp}{Tibble with columns generation, active_cell_count, n_sample_active.
-Can be generated using the \code{\link[=generate_pop_samp]{generate_pop_samp()}} functions.}
+\item{pop_samp}{Tibble with columns generation, active_cell_count,
+n_sample_active. Can be generated using the \code{\link[=generate_pop_samp]{generate_pop_samp()}}
+functions.}
 
 \item{founder_seqs}{Founder sequence(s) as a character string or a vector of
-character strings, for example 'ACATG'. The founder sequence(s) may only contain
-the characters ACGT, and no gaps are allowed.}
+character strings, for example 'ACATG'. The founder sequence(s) may only
+contain the characters ACGT, and no gaps are allowed.}
 
 \item{nt_sub_probs}{Named matrix of nucleotide substitution probabilities.
-Rows are from, columns are to. Can be generated using the \code{\link[=calc_nt_sub_probs]{calc_nt_sub_probs()}} function.}
+Rows are from, columns are to. Can be generated using the
+\code{\link[=calc_nt_sub_probs]{calc_nt_sub_probs()}} function.}
 
 \item{prob_mut}{Probability of a mutation at one site in one generation
 (default: 3.5e-5)}
@@ -52,36 +54,39 @@ generation (default: 0.01)}
 \item{prob_lat_prolif}{Probability that a latent cell proliferates in a
 generation (default: 0.01)}
 
-\item{prob_lat_die}{Probability that a latent cell dies in a
-generation (default: 0.01)}
+\item{prob_lat_die}{Probability that a latent cell dies in a generation
+(default: 0.01)}
 
-\item{conserved_sites}{Vector of conserved sites.
-This can be generated using the \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} function
-(default: NULL, i.e. no conserved sites fitness costs)}
+\item{conserved_sites}{Vector of conserved sites. This can be generated using
+the \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} function (default: NULL, i.e. no conserved
+sites fitness costs)}
 
 \item{conserved_cost}{Cost of mutation at conserved site (default: 0.99)}
 
-\item{ref_seq}{Reference sequence as a character string. A consensus sequence,
-that can be used as the reference sequence, can be generated using the function
-\code{\link[=identify_conserved_sites]{identify_conserved_sites()}} (default: NULL, i.e. no fitness cost relative to a reference sequence)}
+\item{ref_seq}{Reference sequence as a character string. A consensus
+sequence, that can be used as the reference sequence, can be generated
+using the function \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} (default: NULL, i.e. no
+fitness cost relative to a reference sequence)}
 
-\item{rep_exp}{Replicative fitness exponent, only relevant when ref_seq is not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL DEFINITION}
+\item{rep_exp}{Replicative fitness exponent, only relevant when ref_seq is
+not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL
+DEFINITION}
 
-\item{epitope_locations}{Tibble of epitope locations and maximum fitness costs with columns
-epi_start_nt, epi_end_nt, max_fitness_cost.
-This can be generated using the functions \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and \code{\link[=sample_epitopes]{sample_epitopes()}}
-(default: NULL, i.e. no immune fitness costs)}
+\item{epitope_locations}{Tibble of epitope locations and maximum fitness
+costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. This can be
+generated using the functions \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and
+\code{\link[=sample_epitopes]{sample_epitopes()}} (default: NULL, i.e. no immune fitness costs)}
 
 \item{seroconversion_time}{Generation at which seroconversion occurs, only
 relevant when epitope_locations is not NULL (default: 30).}
 
-\item{prop_for_imm}{Proportion of all infected cells that must be infected with
-a given sequence for that sequence to be recognized by the immune system, only
-relevant when epitope_locations is not NULL (default: 0.01).}
+\item{prop_for_imm}{Proportion of all infected cells that must be infected
+with a given sequence for that sequence to be recognized by the immune
+system, only relevant when epitope_locations is not NULL (default: 0.01).}
 
 \item{gen_full_potency}{Number of generations it takes for an immune response
-to an epitope to reach full potency, only relevant when epitope_locations is
-not NULL (default: 90).}
+to an epitope to reach full potency, only relevant when epitope_locations
+is not NULL (default: 90).}
 
 \item{seed}{Optional seed (default: NULL)}
 }
@@ -89,14 +94,13 @@ not NULL (default: 90).}
 List including: tibble of counts, and alignment of sampled sequences
 }
 \description{
-Simulate within-host evolution.
-Please note that the default arguments were set with the the HIV ENV gp120 gene
-in mind. If you'd like to simulate something else, you will likely
-have to modify certain parameters.
-Also, the parameters for latent probabilities are assumed to be small, such
-that it is unlikely that multiple events (activate, die, proliferate) will
-occur to a single latent cell in a single (active cell) generation.
-See \code{vignette('run_wavess')} for more details about the simulator and input
+Simulate within-host evolution. Please note that the default arguments were
+set with the the HIV ENV gp120 gene in mind. If you'd like to simulate
+something else, you will likely have to modify certain parameters. Also, the
+parameters for latent probabilities are assumed to be small, such that it is
+unlikely that multiple events (activate, die, proliferate) will occur to a
+single latent cell in a single (active cell) generation. See
+\code{vignette('run_wavess')} for more details about the simulator and input
 arguments.
 }
 \examples{

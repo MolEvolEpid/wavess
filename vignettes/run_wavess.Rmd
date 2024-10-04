@@ -92,7 +92,9 @@ ref_founder_map <- map_ref_founder(gp120,
   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
   founder = "B.US.2011.DEMB11US006.KC473833"
 )
-epitope_locations <- sample_epitopes(epi_probs, ref_founder_map = ref_founder_map)
+epitope_locations <- sample_epitopes(epi_probs,
+  ref_founder_map = ref_founder_map
+)
 ```
 
 ## Simplest way to `run_wavess()`

@@ -5,16 +5,15 @@
 \alias{hxb2_cons_founder}
 \title{HXB2, consensus, and founder alignment}
 \format{
-\subsection{\code{hxb2_cons_founder}}{
+\subsection{\code{hxb2_cons_founder} An \code{ape} DNAbin object with 3 DNA sequences of}{
 
-An \code{ape} DNAbin object with 3 DNA sequences of length 1563 including the
-full-genome sequence for hxb2, the consensus sequence, and DEMB11US006 (founder)
+length 1563 including the full-genome sequence for hxb2, the consensus
+sequence, and DEMB11US006 (founder)
 }
 }
 \source{
 HXB2 and consensus (1st 2 sequences):
-\url{https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html}
-Founder:
+\url{https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html} Founder:
 \url{https://www.sciencedirect.com/science/article/pii/S0022175914000143?via\%3Dihub}
 \url{https://www.hiv.lanl.gov/components/sequence/HIV/asearch/query_one.comp?se_id=KC473833}
 }

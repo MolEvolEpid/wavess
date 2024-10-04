@@ -4,9 +4,14 @@
 #'
 #' @return error if inputs are incorrect
 #' @noRd
-check_generate_pop_samp_inputs <- function(curve_type, gN, K, n0, g50, sampling_frequency, max_samp) {
-  check_is_pos(gN, "gN")
-  check_is_pos(K, "K")
+check_generate_pop_samp_inputs <- function(curve_type,
+                                           n_gen,
+                                           carry_cap,
+                                           n0,
+                                           g50,
+                                           sampling_frequency, max_samp) {
+  check_is_pos(n_gen, "n_gen")
+  check_is_pos(carry_cap, "carry_cap")
   check_is_numeric(n0, "n0")
   check_is_numeric(g50, "g50")
   if (!curve_type %in% c("logistic", "constant")) {
@@ -14,15 +19,18 @@ check_generate_pop_samp_inputs <- function(curve_type, gN, K, n0, g50, sampling_
       "`curve_type` must be logistic or constant. You provided: ",
       curve_type
     )
-  } else if (n0 > K) {
-    stop("n0 must be a number \u2264K, but is ", n0)
-  } else if (g50 > gN) {
-    stop("g50 must be a number \u2264gN, but is ", g50)
+  } else if (n0 > carry_cap) {
+    stop("n0 must be a number \u2264carry_cap, but is ", n0)
+  } else if (g50 > n_gen) {
+    stop("g50 must be a number \u2264n_gen, but is ", g50)
   }
   check_is_pos(sampling_frequency, "sampling_frequency")
   check_is_pos(max_samp, "max_samp")
-  if (sampling_frequency > gN) {
-    stop("sampling_frequency must be a number \u2264maximum generation, but is ", sampling_frequency)
+  if (sampling_frequency > n_gen) {
+    stop(
+      "sampling_frequency must be a number \u2264maximum generation, but is ",
+      sampling_frequency
+    )
   }
 }
 
@@ -60,7 +68,7 @@ check_map_ref_founder_inputs <- function(aln, ref, founder) {
 check_find_consensus_inputs <- function(aln, founder, ref, founder_aln) {
   check_is_dnabin(aln, "aln")
   check_is_string(founder, "founder")
-  if (is.null(ref) & is.null(founder_aln)) {
+  if (is.null(ref) && is.null(founder_aln)) {
     check_name_in_alignment(aln, founder, "aln", "founder")
   } else if (!is.null(ref)) {
     check_is_string(ref, "ref")
@@ -73,7 +81,7 @@ check_find_consensus_inputs <- function(aln, founder, ref, founder_aln) {
       stop("When `founder_aln` is specified, `ref` must also be specified")
     }
   }
-  if (!is.null(ref) & !is.null(founder_aln)) {
+  if (!is.null(ref) && !is.null(founder_aln)) {
     check_name_in_alignment(aln, ref, "aln", "ref")
     check_name_in_alignment(founder_aln, ref, "founder_aln", "ref")
     check_name_in_alignment(founder_aln, founder, "founder_aln", "founder")
@@ -86,11 +94,11 @@ check_find_consensus_inputs <- function(aln, founder, ref, founder_aln) {
 #'
 #' @return error if inputs are incorrect
 #' @noRd
-check_identify_conserved_sites_inputs <- function(aln, founder, thresh, ref,
-                                                  founder_aln) {
+check_conserved_sites_inputs <- function(aln, founder, thresh, ref,
+                                         founder_aln) {
   check_find_consensus_inputs(aln, founder, ref, founder_aln)
   check_is_numeric(thresh)
-  if (thresh < 0 | thresh > 1) {
+  if (thresh < 0 || thresh > 1) {
     stop("`thresh` must be a number between 0 and 1 inclusive")
   }
 }
@@ -111,7 +119,10 @@ check_name_in_alignment <- function(aln, name, aln_name, name_name) {
   # added this because of a weird issue with devtools::check()...
   aln <- ape::as.matrix.DNAbin(aln)
   if (!name %in% labels(aln)) {
-    stop(name_name, " must be the name of a sequence in ", aln_name, ", but is ", name)
+    stop(
+      name_name, " must be the name of a sequence in ", aln_name, ", but is ",
+      name
+    )
   }
 }
 
@@ -184,7 +195,7 @@ check_is_string <- function(x, var_name) {
 #' @noRd
 check_is_0to1 <- function(x, var_name) {
   check_is_numeric(x, var_name)
-  if (x < 0 | x > 1) {
+  if (x < 0 || x > 1) {
     stop(var_name, " must be in the range [0,1], but is ", x)
   }
 }
@@ -201,7 +212,8 @@ check_is_dnabin <- function(x, var_name) {
   if (!class_x == "DNAbin") {
     stop(
       var_name,
-      " must be of the `ape` class `DNAbin` (e.g. an alignment read in using `ape::read.FASTA()` or `ape::read.dna()` but is ",
+      " must be of the `ape` class `DNAbin` (e.g. an alignment read in using ",
+      "`ape::read.FASTA()` or `ape::read.dna()` but is ",
       class_x
     )
   }
@@ -220,25 +232,31 @@ check_is_phylo <- function(x, var_name) {
   if (!class_x == "phylo") {
     stop(
       var_name,
-      " must be of the `ape` class `phylo` (e.g. an tree read in using `ape::read.tree()` but is ",
+      " must be of the `ape` class `phylo` (e.g. an tree read in using ",
+      "`ape::read.tree()` but is ",
       class_x
     )
   }
 }
 
-check_sample_epitopes_inputs <- function(epitope_probabilities, start_aa_pos, end_aa_pos,
+check_sample_epitopes_inputs <- function(epitope_probabilities,
+                                         start_aa_pos, end_aa_pos,
                                          num_epitopes, aa_epitope_length,
                                          max_fit_cost, cost_type,
                                          max_resamples, ref_founder_map) {
   check_is_df(epitope_probabilities)
-  if (!all(c("aa_position", "epitope_probability") %in% colnames(epitope_probabilities))) {
+  if (!all(c("aa_position", "epitope_probability") %in%
+    colnames(epitope_probabilities))) {
     stop("The following columns must be included in `epitope_probabilities`:
          `aa_position`, `epitope_probability`. See `sample_epitopes()`
          documentation for more details")
   }
   check_is_string(cost_type)
   if (!cost_type %in% c("linear", "random")) {
-    stop('Cost type must be either "linear" or "random", but you supplied: ', cost_type)
+    stop(
+      'Cost type must be either "linear" or "random", but you supplied: ',
+      cost_type
+    )
   }
   check_is_pos(start_aa_pos, "start_aa_pos")
   if (!is.null(end_aa_pos)) {
@@ -256,7 +274,10 @@ check_sample_epitopes_inputs <- function(epitope_probabilities, start_aa_pos, en
          documentation for more details")
     } else {
       check_is_numeric(ref_founder_map$ref_pos, "ref_pos in ref_founder_map")
-      check_is_numeric(ref_founder_map$founder_pos, "founder_pos in ref_founder_map")
+      check_is_numeric(
+        ref_founder_map$founder_pos,
+        "founder_pos in ref_founder_map"
+      )
     }
   }
 }
@@ -273,7 +294,8 @@ check_is_phylo <- function(x, var_name) {
   if (!class_x == "phylo") {
     stop(
       var_name,
-      " must be of the `ape` class `phylo` (e.g. an tree read in using `ape::read.tree()` but is ",
+      " must be of the `ape` class `phylo` (e.g. an tree read in using ",
+      "`ape::read.tree()` but is ",
       class_x
     )
   }
@@ -294,7 +316,8 @@ check_calc_nt_sub_probs_inputs <- function(aln, tr, model, rearrangement) {
   check_is_string(rearrangement, "rearrangement")
   if (!rearrangement %in% c("none", "NNI", "stochastic", "ratchet")) {
     stop(
-      'Rearrangement must be one of "none", "NNI", "stochastic" or "ratchet", but is ',
+      'Rearrangement must be one of "none", "NNI", "stochastic" or "ratchet", ",
+      "but is ',
       rearrangement
     )
   }
@@ -310,7 +333,10 @@ check_calc_nt_sub_probs_inputs <- function(aln, tr, model, rearrangement) {
 #' @noRd
 check_seq <- function(seq, chars, seq_type) {
   if (!all(strsplit(seq, "")[[1]] %in% chars)) {
-    stop(seq_type, " must only contain the characters ", paste0(chars, collapse = ""))
+    stop(
+      seq_type, " must only contain the characters ",
+      paste0(chars, collapse = "")
+    )
   }
 }
 
@@ -330,8 +356,12 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
                                     prob_lat_prolif, prob_lat_die,
                                     seed) {
   check_is_df(pop_samp, "pop_samp")
-  if (!all(c("generation", "active_cell_count", "n_sample_active") %in% colnames(pop_samp))) {
-    stop("pop_samp must contain the columns generation, active_cell_count, n_sample_active")
+  if (!all(c("generation", "active_cell_count", "n_sample_active") %in%
+    colnames(pop_samp))) {
+    stop(
+      "pop_samp must contain the columns ",
+      "generation, active_cell_count, n_sample_active"
+    )
   }
   check_is_pos(pop_samp$generation, "pop_samp$generation", TRUE)
   check_is_pos(pop_samp$active_cell_count, "pop_samp$active_cell_count", TRUE)
@@ -339,34 +369,52 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
     stop("you must sample at least one generation")
   }
   check_is_pos(pop_samp$n_sample_active, "pop_samp$n_sample_active", TRUE)
-  if (!all(pop_samp$generation == 1:nrow(pop_samp) - 1)) {
-    stop("pop_samp$generation must be consecutive numbers from 0 to the number of rows in the data")
+  if (!all(pop_samp$generation == seq_len(nrow(pop_samp)) - 1)) {
+    stop(
+      "pop_samp$generation must be consecutive numbers from 0 to ",
+      "the number of rows in the data"
+    )
   }
   if (!all(pop_samp$active_cell_count >= pop_samp$n_sample_active)) {
-    stop("pop_samp$active_cell_count must always be >= pop_samp$n_sample_active")
+    stop(
+      "pop_samp$active_cell_count must always be ",
+      ">= pop_samp$n_sample_active"
+    )
   }
   check_is_string(founder_seqs, "founder_seqs")
-  lapply(as.list(founder_seqs), function(x) check_seq(toupper(x), c("A", "C", "G", "T"), "founder_seqs"))
+  lapply(as.list(founder_seqs), function(x) {
+    check_seq(toupper(x), c("A", "C", "G", "T"), "founder_seqs")
+  })
   if (length(unique(sapply(as.list(founder_seqs), nchar))) != 1) {
     stop("All founder sequences must be the same length")
   }
   check_is_df(nt_sub_probs, "nt_sub_probs")
-  if (!all(rownames(nt_sub_probs) %in% c("A", "C", "G", "T")) |
+  if (!all(rownames(nt_sub_probs) %in% c("A", "C", "G", "T")) ||
     !all(c("A", "C", "G", "T") %in% rownames(nt_sub_probs))) {
     stop("nt_sub_probs must have rownames A,C,G,T")
   }
-  if (!all(colnames(nt_sub_probs) %in% c("A", "C", "G", "T")) |
+  if (!all(colnames(nt_sub_probs) %in% c("A", "C", "G", "T")) ||
     !all(c("A", "C", "G", "T") %in% colnames(nt_sub_probs))) {
     stop("nt_sub_probs must have colnames A,C,G,T")
   }
   if (!all(rownames(nt_sub_probs) == colnames(nt_sub_probs))) {
-    stop("nt_sub_probs must have the same rownames and colnames in the same order")
+    stop(
+      "nt_sub_probs must have the same rownames and colnames ",
+      "in the same order"
+    )
   }
-  sapply(nt_sub_probs, function(x) lapply(x, function(y) check_is_0to1(y, "nt_sub_probs")))
+  sapply(nt_sub_probs, function(x) {
+    lapply(x, function(y) {
+      check_is_0to1(y, "nt_sub_probs")
+    })
+  })
   if (!is.null(conserved_sites)) {
     check_is_pos(conserved_sites, "conserved_sites")
     if (max(conserved_sites) > nchar(as.list(founder_seqs)[[1]])) {
-      stop("the maximum value of conserved_sites is greater than the length of the founder sequence")
+      stop(
+        "the maximum value of conserved_sites is greater than ",
+        "the length of the founder sequence"
+      )
     }
     check_is_0to1(conserved_cost, "conserved_cost")
   }
@@ -380,12 +428,22 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
   }
   if (!is.null(epitope_locations)) {
     check_is_df(epitope_locations, "epitope_locations")
-    if (!all(c("epi_start_nt", "epi_end_nt", "max_fitness_cost") %in% colnames(epitope_locations))) {
-      stop("epitope_locations must contain the columns epi_start_nt, epi_end_nt, max_fitness_cost")
+    if (!all(c("epi_start_nt", "epi_end_nt", "max_fitness_cost") %in%
+      colnames(epitope_locations))) {
+      stop(
+        "epitope_locations must contain the columns ",
+        "epi_start_nt, epi_end_nt, max_fitness_cost"
+      )
     }
-    lapply(epitope_locations$epi_start_nt, function(x) check_is_pos(x, "epitope_locations$epi_start_nt", TRUE))
-    lapply(epitope_locations$epi_end_nt, function(x) check_is_pos(x, "epitope_locations$epi_end_nt", FALSE))
-    lapply(epitope_locations$max_fitness_cost, function(x) check_is_0to1(x, "epitope_locations$max_fitness_cost"))
+    lapply(epitope_locations$epi_start_nt, function(x) {
+      check_is_pos(x, "epitope_locations$epi_start_nt", TRUE)
+    })
+    lapply(epitope_locations$epi_end_nt, function(x) {
+      check_is_pos(x, "epitope_locations$epi_end_nt", FALSE)
+    })
+    lapply(epitope_locations$max_fitness_cost, function(x) {
+      check_is_0to1(x, "epitope_locations$max_fitness_cost")
+    })
     check_is_pos(seroconversion_time, "seroconversion_time", TRUE)
     check_is_0to1(prop_for_imm, "prop_for_imm")
     check_is_pos(gen_full_potency, "gen_full_potency", TRUE)

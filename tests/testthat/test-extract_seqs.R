@@ -9,7 +9,10 @@ test_that("extract_seqs works", {
     list(founder = "GAGGAATTGGCAACACTT", ref = NULL)
   )
   expect_equal(
-    extract_seqs(gp120, "B.US.2011.DEMB11US006.KC473833", "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", start = 1, end = 20),
+    extract_seqs(gp120, "B.US.2011.DEMB11US006.KC473833",
+      "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+      start = 1, end = 20
+    ),
     list(founder = "ATGAGAGCGATGGGGATCAT", ref = "ATGAGAGTGAAGG-------")
   )
   expect_error(
@@ -40,7 +43,10 @@ test_that("slice_aln works", {
     c(3, 20)
   )
   expect_equal(
-    dim(slice_aln(hxb2_cons_founder, start = 1, end = 20, "B.US.2011.DEMB11US006.KC473833")),
+    dim(slice_aln(hxb2_cons_founder,
+      start = 1, end = 20,
+      "B.US.2011.DEMB11US006.KC473833"
+    )),
     c(1, 20)
   )
 })

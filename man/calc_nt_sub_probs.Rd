@@ -21,7 +21,8 @@ Matrix of nucleotide substitution probabilities.
 Columns are from and rows are to.
 }
 \description{
-Fr this, you should probably use a set of within-host sequences for the genome region of interest.
+For this, you should probably use a set of within-host sequences for the
+genome region of interest.
 }
 \examples{
 # NOTE: This is just an example.

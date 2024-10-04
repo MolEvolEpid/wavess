@@ -1,55 +1,59 @@
 #' Run wavess
 #'
-#' Simulate within-host evolution.
-#' Please note that the default arguments were set with the the HIV ENV gp120 gene
-#' in mind. If you'd like to simulate something else, you will likely
-#' have to modify certain parameters.
-#' Also, the parameters for latent probabilities are assumed to be small, such
-#' that it is unlikely that multiple events (activate, die, proliferate) will
-#' occur to a single latent cell in a single (active cell) generation.
-#' See `vignette('run_wavess')` for more details about the simulator and input
+#' Simulate within-host evolution. Please note that the default arguments were
+#' set with the the HIV ENV gp120 gene in mind. If you'd like to simulate
+#' something else, you will likely have to modify certain parameters. Also, the
+#' parameters for latent probabilities are assumed to be small, such that it is
+#' unlikely that multiple events (activate, die, proliferate) will occur to a
+#' single latent cell in a single (active cell) generation. See
+#' `vignette('run_wavess')` for more details about the simulator and input
 #' arguments.
 #'
-#' @param pop_samp Tibble with columns generation, active_cell_count, n_sample_active.
-#' Can be generated using the [generate_pop_samp()] functions.
+#' @param pop_samp Tibble with columns generation, active_cell_count,
+#'   n_sample_active. Can be generated using the [generate_pop_samp()]
+#'   functions.
 #' @param founder_seqs Founder sequence(s) as a character string or a vector of
-#' character strings, for example 'ACATG'. The founder sequence(s) may only contain
-#' the characters ACGT, and no gaps are allowed.
+#'   character strings, for example 'ACATG'. The founder sequence(s) may only
+#'   contain the characters ACGT, and no gaps are allowed.
 #' @param nt_sub_probs Named matrix of nucleotide substitution probabilities.
-#' Rows are from, columns are to. Can be generated using the [calc_nt_sub_probs()] function.
-#' @param conserved_sites Vector of conserved sites.
-#' This can be generated using the [identify_conserved_sites()] function
-#' (default: NULL, i.e. no conserved sites fitness costs)
+#'   Rows are from, columns are to. Can be generated using the
+#'   [calc_nt_sub_probs()] function.
+#' @param conserved_sites Vector of conserved sites. This can be generated using
+#'   the [identify_conserved_sites()] function (default: NULL, i.e. no conserved
+#'   sites fitness costs)
 #' @param conserved_cost Cost of mutation at conserved site (default: 0.99)
-#' @param ref_seq Reference sequence as a character string. A consensus sequence,
-#' that can be used as the reference sequence, can be generated using the function
-#' [identify_conserved_sites()] (default: NULL, i.e. no fitness cost relative to a reference sequence)
-#' @param rep_exp Replicative fitness exponent, only relevant when ref_seq is not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL DEFINITION
-#' @param epitope_locations Tibble of epitope locations and maximum fitness costs with columns
-#' epi_start_nt, epi_end_nt, max_fitness_cost.
-#' This can be generated using the functions [get_epitope_frequencies()] and [sample_epitopes()]
-#' (default: NULL, i.e. no immune fitness costs)
+#' @param ref_seq Reference sequence as a character string. A consensus
+#'   sequence, that can be used as the reference sequence, can be generated
+#'   using the function [identify_conserved_sites()] (default: NULL, i.e. no
+#'   fitness cost relative to a reference sequence)
+#' @param rep_exp Replicative fitness exponent, only relevant when ref_seq is
+#'   not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL
+#'   DEFINITION
+#' @param epitope_locations Tibble of epitope locations and maximum fitness
+#'   costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. This can be
+#'   generated using the functions [get_epitope_frequencies()] and
+#'   [sample_epitopes()] (default: NULL, i.e. no immune fitness costs)
 #' @param seroconversion_time Generation at which seroconversion occurs, only
-#' relevant when epitope_locations is not NULL (default: 30).
-#' @param prop_for_imm Proportion of all infected cells that must be infected with
-#' a given sequence for that sequence to be recognized by the immune system, only
-#' relevant when epitope_locations is not NULL (default: 0.01).
+#'   relevant when epitope_locations is not NULL (default: 30).
+#' @param prop_for_imm Proportion of all infected cells that must be infected
+#'   with a given sequence for that sequence to be recognized by the immune
+#'   system, only relevant when epitope_locations is not NULL (default: 0.01).
 #' @param gen_full_potency Number of generations it takes for an immune response
-#' to an epitope to reach full potency, only relevant when epitope_locations is
-#' not NULL (default: 90).
+#'   to an epitope to reach full potency, only relevant when epitope_locations
+#'   is not NULL (default: 90).
 #' @param prob_mut Probability of a mutation at one site in one generation
-#' (default: 3.5e-5)
+#'   (default: 3.5e-5)
 #' @param prob_recomb Probability of a recombination event at a given site in
-#' one generation (default: 1.4e-5)
+#'   one generation (default: 1.4e-5)
 #' @param prob_act_to_lat Probability that an active cell becomes latent in a
-#' generation (default: 0.001). Set this to 0 if you don't want to model
-#' latent cell dynamics.
+#'   generation (default: 0.001). Set this to 0 if you don't want to model
+#'   latent cell dynamics.
 #' @param prob_lat_to_act Probability that a latent cell becomes active in a
-#' generation (default: 0.01)
+#'   generation (default: 0.01)
 #' @param prob_lat_prolif Probability that a latent cell proliferates in a
-#' generation (default: 0.01)
-#' @param prob_lat_die Probability that a latent cell dies in a
-#' generation (default: 0.01)
+#'   generation (default: 0.01)
+#' @param prob_lat_die Probability that a latent cell dies in a generation
+#'   (default: 0.01)
 #' @param seed Optional seed (default: NULL)
 #'
 #' @return List including: tibble of counts, and alignment of sampled sequences
@@ -112,7 +116,8 @@ run_wavess <- function(pop_samp,
     replicative_fitness <- 1
     ref_seq <- toupper(ref_seq)
     if (!is.null(conserved_sites)) {
-      # mask conserved sites so they aren't included in replicative fitness computation
+      # mask conserved sites so they aren't included in replicative fitness
+      # computation
       ref_seq_str <- strsplit(ref_seq, "")[[1]]
       ref_seq_str[conserved_sites] <- "-"
       ref_seq <- paste0(ref_seq_str, collapse = "")
@@ -137,7 +142,9 @@ run_wavess <- function(pop_samp,
 
   conserved_sites <- as.list(conserved_sites)
   if (!is.null(epitope_locations)) {
-    epitope_locations <- apply(epitope_locations, 1, function(x) agents$create_epitope(x[1], x[2], x[3]))
+    epitope_locations <- apply(epitope_locations, 1, function(x) {
+      agents$create_epitope(x[1], x[2], x[3])
+    })
   }
 
 
@@ -146,7 +153,10 @@ run_wavess <- function(pop_samp,
 
   # Get nucleotide substitution probabilities in right format
   nucleotides_order <- rownames(nt_sub_probs)
-  substitution_probabilities <- unname(lapply(data.frame(t(nt_sub_probs)), function(x) x))
+  substitution_probabilities <- unname(lapply(
+    data.frame(t(nt_sub_probs)),
+    function(x) x
+  ))
 
   # Create host environment and initialize infected cells
   host <- agents$create_host_env(
@@ -177,33 +187,42 @@ run_wavess <- function(pop_samp,
   # put founders at top of file
   founders <- strsplit(founder_seqs, "")
   seqs <- ape::as.DNAbin(strsplit(founder_seqs, ""))
-  names(seqs) <- paste0("founder", 1:length(founders))
+  names(seqs) <- paste0("founder", seq_along(founders))
 
   if (pop_samp$n_sample_active[1] != 0) {
     # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
     latent_nums <- c(0, 0, 0, 0)
     # n_mut, number_recombination
     var_nums <- c(0, 0)
-    # mean_fitness_active, mean_conserved_cost_active, mean_immune_cost_active, mean_replicative_cost_active
+    # mean_fitness_active, mean_conserved_cost_active, mean_immune_cost_active,
+    # mean_replicative_cost_active
     fitness <- unlist(reticulate::py_to_r(host$summarize_fitness()))
     counts <- record_counts(counts, 0, host, latent_nums, var_nums, fitness)
-    seqs <- c(seqs, sample_viral_sequences(0, host, pop_samp$n_sample_active[1]))
+    seqs <- c(seqs, sample_viral_sequences(
+      0, host,
+      pop_samp$n_sample_active[1]
+    ))
   }
 
   # Looping through generations until we sample everything we want
   for (t in 1:last_sampled_gen) {
-    # Latent reservoir dynamics
-    # only get latent cell dynamics if modeling latency (ALSO CHANGE THIS IN MAIN.PY?)
+    # Latent reservoir dynamics only get latent cell dynamics if modeling
+    # latency (ALSO CHANGE THIS IN MAIN.PY?)
     if (latent) {
       # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
-      latent_nums <- unlist(reticulate::py_to_r(host$get_next_gen_latent(prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif, generator)))
+      latent_nums <- unlist(reticulate::py_to_r(
+        host$get_next_gen_latent(
+          prob_act_to_lat, prob_lat_to_act,
+          prob_lat_die, prob_lat_prolif, generator
+        )
+      ))
     }
     # Productively infected cell dynamics
     # n_mut, number_recombination
     var_nums <- unlist(reticulate::py_to_r(host$get_next_gen_active(
       prob_mut, prob_recomb, pop_samp$active_cell_count[t + 1], t,
-      seroconversion_time, nucleotides_order, substitution_probabilities, conserved_sites,
-      gen_full_potency, conserved_cost, ref_seq,
+      seroconversion_time, nucleotides_order, substitution_probabilities,
+      conserved_sites, gen_full_potency, conserved_cost, ref_seq,
       prop_for_imm, epitope_locations,
       immune_fitness, conserved_fitness, replicative_fitness, rep_exp, generator
     )))
@@ -211,7 +230,10 @@ run_wavess <- function(pop_samp,
     if (pop_samp$n_sample_active[t + 1] != 0) {
       fitness <- unlist(reticulate::py_to_r(host$summarize_fitness()))
       counts <- record_counts(counts, t, host, latent_nums, var_nums, fitness)
-      seqs <- c(seqs, sample_viral_sequences(t, host, pop_samp$n_sample_active[t + 1]))
+      seqs <- c(seqs, sample_viral_sequences(
+        t, host,
+        pop_samp$n_sample_active[t + 1]
+      ))
     }
   }
 
@@ -223,13 +245,17 @@ run_wavess <- function(pop_samp,
 #' @param counts Empty tibble or previous counts
 #' @param generation Generation
 #' @param host Host environment (python)
-#' @param latent_nums Numbers related to latency (num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate)
+#' @param latent_nums Numbers related to latency (num_to_make_latent,
+#'   num_to_activate, num_to_die, num_to_proliferate)
 #' @param var_nums Numbers related to variation (n_mut, number_recombination)
-#' @param fitness Numbers related to fitness (mean_fitness_active, mean_conserved_cost_active, mean_immune_cost_active, mean_replicative_cost_active)
+#' @param fitness Numbers related to fitness (mean_fitness_active,
+#'   mean_conserved_cost_active, mean_immune_cost_active,
+#'   mean_replicative_cost_active)
 #'
 #' @return Updated counts tibble with additional row added for generation
 #' @noRd
-record_counts <- function(counts, generation, host, latent_nums, var_nums, fitness) {
+record_counts <- function(counts, generation, host, latent_nums, var_nums,
+                          fitness) {
   counts |>
     tibble::add_row(
       generation = generation,
@@ -243,7 +269,8 @@ record_counts <- function(counts, generation, host, latent_nums, var_nums, fitne
       # n_mut, number_recombination
       number_mutations = var_nums[1],
       number_dual_inf = var_nums[2],
-      # mean_fitness_active, mean_conserved_cost_active, mean_immune_cost_active, mean_replicative_cost_active
+      # mean_fitness_active, mean_conserved_cost_active,
+      # mean_immune_cost_active, mean_replicative_cost_active
       mean_fitness_active = fitness[1],
       mean_conserved_cost_active = fitness[2],
       mean_immune_cost_active = fitness[3],
@@ -262,9 +289,12 @@ record_counts <- function(counts, generation, host, latent_nums, var_nums, fitne
 #' Sampled sequences in [ape::DNAbin] format.
 #' @noRd
 sample_viral_sequences <- function(generation, host, n_to_samp) {
-  sampled_cells <- sample(1:length(host$C), n_to_samp) - 1 # because python indexes at 0
+  # subtract 1 because python indexes at 0
+  sampled_cells <- sample(seq_along(host$C), n_to_samp) - 1
   seqs <- lapply(sampled_cells, function(x) {
-    strsplit(reticulate::py_to_r(host$C[[x]]$infecting_virus$nuc_sequence), split = "")[[1]]
+    strsplit(reticulate::py_to_r(host$C[[x]]$infecting_virus$nuc_sequence),
+      split = ""
+    )[[1]]
   })
   names(seqs) <- lapply(sampled_cells, function(x) {
     paste0(

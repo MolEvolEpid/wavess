@@ -14,9 +14,9 @@ identify_conserved_sites(
 }
 \arguments{
 \item{aln}{Alignment in \link[ape:DNAbin]{ape::DNAbin} format (e.g. read in with
-\code{\link[ape:read.dna]{ape::read.dna()}} or \code{\link[ape:read.dna]{ape::read.FASTA()}}) that includes the founder sequence or
-a reference sequence, plus a representative set of sequences for your genome
-region of interest}
+\code{\link[ape:read.dna]{ape::read.dna()}} or \code{\link[ape:read.dna]{ape::read.FASTA()}}) that includes the founder
+sequence or a reference sequence, plus a representative set of sequences
+for your genome region of interest}
 
 \item{founder}{Name of the founder sequence in the input alignment or in the
 optional founder-specific alignment (\code{founder_aln})}
@@ -37,7 +37,8 @@ Tibble including the following columns:
 \item \code{founder_pos}: founder position
 \item \code{founder_base}: founder base
 \item \code{consensus_base}: consensus base
-\item \code{consensus_prop}: proportion of sequences that had that base at that position
+\item \code{consensus_prop}: proportion of sequences that had that base at that
+position
 \item \code{conserved}: whether or not the position is conserved (Yes means conserved,
 No means not conserved, NA means the conserved position is a gap ('-'))
 When using a reference, \code{NA} in the consensus columns indicates that that
@@ -45,15 +46,19 @@ position was an insertion relative to the reference
 }
 }
 \description{
-Identify conserved sites relative to the founder sequence.
-Note that the positions returned assume that the start of the alignment
-is also the start of the founder sequence in the simulation.
+Identify conserved sites relative to the founder sequence. Note that the
+positions returned assume that the start of the alignment is also the start
+of the founder sequence in the simulation.
 }
 \examples{
 hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, start = 1, end = 2517)
 hxb2_cons_founder <- slice_aln(hxb2_cons_founder, start = 6225, end = 7757)
-identify_conserved_sites(hiv_gp120_flt_2021, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455")
-identify_conserved_sites(hiv_gp120_flt_2021, "B.US.2011.DEMB11US006.KC473833",
+identify_conserved_sites(
+  hiv_gp120_flt_2021,
+  "B.FR.83.HXB2_LAI_IIIB_BRU.K03455"
+)
+identify_conserved_sites(hiv_gp120_flt_2021,
+  "B.US.2011.DEMB11US006.KC473833",
   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", founder_aln = hxb2_cons_founder
 )
 }

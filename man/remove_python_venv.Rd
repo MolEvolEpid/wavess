@@ -7,7 +7,8 @@
 remove_python_venv(confirm = interactive())
 }
 \arguments{
-\item{confirm}{logical; confirm before uninstalling wavess virtual environment?}
+\item{confirm}{logical; confirm before uninstalling wavess virtual
+environment?}
 }
 \description{
 Removes the virtual environment created by create_python_venv()

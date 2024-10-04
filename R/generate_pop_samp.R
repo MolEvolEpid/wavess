@@ -3,10 +3,10 @@
 #' @param curve_type type of growth, one of:
 #' `constant_pop` (constant population size),
 #' `logistic` (logistic growth; default)
-#' @param gN final sampling generation (default: 3000)
-#' @param K carrying capacity (default: 2000)
+#' @param n_gen final sampling generation (default: 3000)
+#' @param carry_cap carrying capacity (default: 2000)
 #' @param n0 starting population size (default: 1; used for logistic)
-#' @param g50 generation at which the population size reaches 50% of K
+#' @param g50 generation at which the population size reaches 50% of carry_cap
 #' (default: 25; used for logistic)
 #' @param sampling_frequency frequency in generations at which to record
 #' sequences (and counts) (default: 300 generations)
@@ -22,14 +22,17 @@
 #' @examples
 #' generate_pop_samp()
 generate_pop_samp <- function(curve_type = "logistic",
-                              gN = 3000,
-                              K = 2000,
+                              n_gen = 3000,
+                              carry_cap = 2000,
                               n0 = 1,
                               g50 = 25,
                               sampling_frequency = 300,
                               max_samp = 20) {
-  check_generate_pop_samp_inputs(curve_type, gN, K, n0, g50, sampling_frequency, max_samp)
-  define_growth_curve(curve_type, gN, K, n0, g50, 0.5) |>
+  check_generate_pop_samp_inputs(
+    curve_type, n_gen, carry_cap, n0, g50,
+    sampling_frequency, max_samp
+  )
+  define_growth_curve(curve_type, n_gen, carry_cap, n0, g50, 0.5) |>
     define_sampling_scheme(sampling_frequency, max_samp)
 }
 
@@ -37,31 +40,34 @@ generate_pop_samp <- function(curve_type = "logistic",
 
 #' Define growth curve
 #'
-#' @param gpK generation at which the population size reaches pK of K
-#' (default: 25; used for logistic)
-#' @param pK proportion of carrying capacity population size at gpK
-#' (default: 0.5; used for logistic)
+#' @param gen_prop_carry_cap generation at which the population size reaches
+#'   prop_carry_cap of carry_cap (default: 25; used for logistic)
+#' @param prop_carry_cap proportion of carrying capacity population size at
+#'   gen_prop_carry_cap (default: 0.5; used for logistic)
 #' @inheritParams generate_pop_samp
 #'
 #' @return tibble with two columns: generation and active cell count
 #' @noRd
 define_growth_curve <- function(curve_type = "logistic",
-                                gN = 3000,
-                                K = 2000,
+                                n_gen = 3000,
+                                carry_cap = 2000,
                                 n0 = 1,
-                                gpK = 25,
-                                pK = 0.5) {
+                                gen_prop_carry_cap = 25,
+                                prop_carry_cap = 0.5) {
   if (curve_type == "logistic") {
     gen_df <- tibble::tibble(
-      generation = 0:gN,
+      generation = 0:n_gen,
       # infected cell population size over time
-      active_cell_count = get_logistic_curve(n0, K, gpK, pK, gN)
+      active_cell_count = get_logistic_curve(
+        n0, carry_cap, gen_prop_carry_cap,
+        prop_carry_cap, n_gen
+      )
     )
   } else if (curve_type == "constant") {
     gen_df <- tibble::tibble(
-      generation = 0:gN,
+      generation = 0:n_gen,
       # infected cell population size over time
-      active_cell_count = K
+      active_cell_count = carry_cap
     )
   }
   return(gen_df)
@@ -69,28 +75,30 @@ define_growth_curve <- function(curve_type = "logistic",
 
 #' Get logistic growth curve
 #'
-#' Note: to get the equations used in this function, I solved for the
-#' growth rate and midpoint based on n0, K, gpK, and pK.
+#' Note: to get the equations used in this function, I solved for the growth
+#' rate and midpoint based on n0, carry_cap, gen_prop_carry_cap, and
+#' prop_carry_cap.
 #'
-#' @param gpK generation at which the population size reaches pK of K
-#' (default: 25; used for logistic)
-#' @param pK proportion of carrying capacity population size at gpK
-#' (default: 0.5; used for logistic)
+#' @param gen_prop_carry_cap generation at which the population size reaches pK
+#'   of carry_cap (default: 25; used for logistic)
+#' @param prop_carry_cap proportion of carrying capacity population size at
+#'   gen_prop_carry_cap (default: 0.5; used for logistic)
 #' @inheritParams generate_pop_samp
 #'
 #' @return Population size at each generation
 #' @noRd
-get_logistic_curve <- function(n0, K, gpK, pK, gN) {
+get_logistic_curve <- function(n0, carry_cap, gen_prop_carry_cap,
+                               prop_carry_cap, n_gen) {
   # number of cells at seroconversion generation
-  nS <- K * pK
+  n_s <- carry_cap * prop_carry_cap
   # useful constants
-  c0 <- log(K / n0 - 1)
-  cS <- log(K / nS - 1)
+  c0 <- log(carry_cap / n0 - 1)
+  c_s <- log(carry_cap / n_s - 1)
   # get growth rate
-  k <- -(cS - c0) / gpK
+  k <- -(c_s - c0) / gen_prop_carry_cap
   # get midpoint
-  xM <- c0 / k
-  return(floor(sapply(0:gN, function(x) logistic_fn(x, K, k, xM))))
+  x_m <- c0 / k
+  return(floor(sapply(0:n_gen, function(x) logistic_fn(x, carry_cap, k, x_m))))
 }
 
 #' Get y value of logistic curve
@@ -106,18 +114,19 @@ get_logistic_curve <- function(n0, K, gpK, pK, gN) {
 #'
 #' @inheritParams generate_pop_samp
 #' @noRd
-logistic_fn <- function(x, K, growth_rate, midpoint) {
-  K / (1 + exp(-growth_rate * (x - midpoint)))
+logistic_fn <- function(x, carry_cap, growth_rate, midpoint) {
+  carry_cap / (1 + exp(-growth_rate * (x - midpoint)))
 }
 
 #' Define sampling scheme
 #'
-#' @param growth_curve output from [define_growth_curve()], or customized
-#' growth curve with columns named `generation` and `active_cell_count`
+#' @param growth_curve output from [define_growth_curve()], or customized growth
+#'   curve with columns named `generation` and `active_cell_count`
 #' @inheritParams generate_pop_samp
 #'
-#' @return input growth curve tibble with one additional column (`n_sample_active`)
-#' containing the number of sequences from active cells to samples
+#' @return input growth curve tibble with one additional column
+#'   (`n_sample_active`) containing the number of sequences from active cells to
+#'   samples
 #' @noRd
 define_sampling_scheme <- function(growth_curve,
                                    sampling_frequency = 300,
@@ -125,8 +134,9 @@ define_sampling_scheme <- function(growth_curve,
   ss <- growth_curve |>
     dplyr::rowwise() |>
     # sample up to max_samp sequences every sampling_frequency generations
-    dplyr::mutate(n_sample_active = ifelse(.data$generation %% sampling_frequency == 0,
-      min(max_samp, .data$active_cell_count), 0
+    dplyr::mutate(n_sample_active = ifelse(.data$generation %%
+      sampling_frequency == 0,
+    min(max_samp, .data$active_cell_count), 0
     )) |>
     dplyr::ungroup()
   return(ss)

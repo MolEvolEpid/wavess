@@ -6,7 +6,10 @@ test_that("get_seq_pos works", {
 })
 
 test_that("map_ref_founder works", {
-  dnamat <- matrix(c("a", "t", "c", "-", "a", "-", "c", "g"), nrow = 2, byrow = TRUE)
+  dnamat <- matrix(c("a", "t", "c", "-", "a", "-", "c", "g"),
+    nrow = 2,
+    byrow = TRUE
+  )
   rownames(dnamat) <- c("seq1", "seq2")
   aln <- ape::as.DNAbin(dnamat)
   map <- map_ref_founder(aln, "seq1", "seq2")
@@ -18,7 +21,9 @@ test_that("map_ref_founder works", {
 })
 
 test_that("find_consensus works", {
-  dnamat <- matrix(c("-", "a", "t", "c", "-", "a", "a", "-", "c", "g"), nrow = 2, byrow = TRUE)
+  dnamat <- matrix(c("-", "a", "t", "c", "-", "a", "a", "-", "c", "g"),
+    nrow = 2, byrow = TRUE
+  )
   rownames(dnamat) <- c("seq1", "seq2")
   aln <- ape::as.DNAbin(dnamat)
   cons <- find_consensus(aln, "seq1")
@@ -26,7 +31,9 @@ test_that("find_consensus works", {
   expect_equal(cons$founder_base, c("a", "t", "c"))
   expect_equal(cons$consensus_base, c("a", "-", "c"))
   expect_equal(cons$consensus_prop, c(1, 0.5, 1))
-  dnamat2 <- matrix(c("a", "-", "t", "c", "-", "a", "a", "t", "c", "g"), nrow = 2, byrow = TRUE)
+  dnamat2 <- matrix(c("a", "-", "t", "c", "-", "a", "a", "t", "c", "g"),
+    nrow = 2, byrow = TRUE
+  )
   rownames(dnamat2) <- c("seq1", "seq3")
   aln2 <- ape::as.DNAbin(dnamat2)
   cons <- find_consensus(aln, "seq3", "seq1", aln2)
@@ -37,9 +44,17 @@ test_that("find_consensus works", {
 })
 
 test_that("identify_conserved_sites works", {
-  dnamat <- matrix(c("-", "a", "-", "t", "a", "a", "a", "c", "-", "g"), nrow = 2, byrow = TRUE)
+  dnamat <- matrix(c("-", "a", "-", "t", "a", "a", "a", "c", "-", "g"),
+    nrow = 2, byrow = TRUE
+  )
   rownames(dnamat) <- c("seq1", "seq2")
   aln <- ape::as.DNAbin(dnamat)
-  expect_equal(identify_conserved_sites(aln, "seq1")$conserved, c("Yes", "No", "No"))
-  expect_equal(identify_conserved_sites(aln, "seq1", thresh = 0.3)$conserved, c("Yes", NA, "Yes"))
+  expect_equal(
+    identify_conserved_sites(aln, "seq1")$conserved,
+    c("Yes", "No", "No")
+  )
+  expect_equal(
+    identify_conserved_sites(aln, "seq1", thresh = 0.3)$conserved,
+    c("Yes", NA, "Yes")
+  )
 })
