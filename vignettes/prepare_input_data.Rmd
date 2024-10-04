@@ -495,7 +495,7 @@ data frame that must contain columns for the amino acid position
 
 If possible, we recommend determining epitope probabilities based on
 some sort of known antibody contact/binding/neutralization maps. For HIV
-ENV, we used the features from the LANL HIV immunology database:
+ENV gp120, we used the features from the LANL HIV immunology database:
 
 ```{r}
 env_features
