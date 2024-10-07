@@ -25,6 +25,6 @@ Conserved sites (indexed at 1) for the gp120 DEMB11US006 sequence, which is
 used as an example founder sequence throughout the package. These sites were
 identified using the \code{identify_conserved_sites()} function with the full
 HIV ENV filtered alignment from the LANL HIV database.
-See \code{hiv_env_flt_2021} for more details and the link to the entire alignment.
+See \code{hiv_env_flt_2022} for more details and the link to the entire alignment.
 }
 \keyword{datasets}

@@ -4,11 +4,11 @@ test_that("run_wavess works", {
   ))) {
     skip("wavess python module not available for testing")
   }
-  hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
+  hiv_env_flt_2022 <- ape::as.matrix.DNAbin(hiv_env_flt_2022)
   samp_scheme <- define_sampling_scheme(define_growth_curve(n_gen = 100),
     sampling_frequency = 50
   )
-  capture.output(probs <- calc_nt_sub_probs(hiv_env_flt_2021[1:3, ]),
+  capture.output(probs <- calc_nt_sub_probs(hiv_env_flt_2022[1:3, ]),
     file = nullfile()
   )
   out <- run_wavess(samp_scheme, c("ATCG", "ATTT"), probs)

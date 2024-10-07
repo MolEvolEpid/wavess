@@ -32,13 +32,13 @@
 #' @export
 #'
 #' @examples
-#' hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, start = 1, end = 2517)
+#' hiv_gp120_flt_2022 <- slice_aln(hiv_env_flt_2022, start = 1, end = 2517)
 #' hxb2_cons_founder <- slice_aln(hxb2_cons_founder, start = 6225, end = 7757)
 #' identify_conserved_sites(
-#'   hiv_gp120_flt_2021,
+#'   hiv_gp120_flt_2022,
 #'   "B.FR.83.HXB2_LAI_IIIB_BRU.K03455"
 #' )
-#' identify_conserved_sites(hiv_gp120_flt_2021,
+#' identify_conserved_sites(hiv_gp120_flt_2022,
 #'   "B.US.2011.DEMB11US006.KC473833",
 #'   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", founder_aln = hxb2_cons_founder
 #' )

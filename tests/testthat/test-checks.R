@@ -115,13 +115,13 @@ test_that("check_name_in_alignment works", {
 })
 
 test_that("check_conserved_sites_inputs works", {
-  expect_no_error(check_conserved_sites_inputs(hiv_env_flt_2021,
+  expect_no_error(check_conserved_sites_inputs(hiv_env_flt_2022,
     "B.US.2011.DEMB11US006.KC473833",
     thresh = 0.99,
     ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", founder_aln = hxb2_cons_founder
   ))
   expect_error(
-    check_conserved_sites_inputs(hiv_env_flt_2021,
+    check_conserved_sites_inputs(hiv_env_flt_2022,
       "B.US.2011.DEMB11US006.KC473833",
       thresh = 0.99,
       ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", founder_aln = NULL
@@ -129,7 +129,7 @@ test_that("check_conserved_sites_inputs works", {
     "When `ref` is specified, `founder_aln` must also be specified"
   )
   expect_error(
-    check_conserved_sites_inputs(hiv_env_flt_2021,
+    check_conserved_sites_inputs(hiv_env_flt_2022,
       "B.US.2011.DEMB11US006.KC473833",
       thresh = 0.99,
       ref = NULL, founder_aln = hxb2_cons_founder
@@ -137,7 +137,7 @@ test_that("check_conserved_sites_inputs works", {
     "When `founder_aln` is specified, `ref` must also be specified"
   )
   expect_error(
-    check_conserved_sites_inputs(hiv_env_flt_2021,
+    check_conserved_sites_inputs(hiv_env_flt_2022,
       "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
       thresh = 2,
       ref = NULL, founder_aln = NULL
@@ -241,34 +241,34 @@ test_that("check_sample_epitopes_inputs works", {
 
 test_that("check_calc_nt_sub_probs_inputs works", {
   expect_no_error(check_calc_nt_sub_probs_inputs(
-    hiv_env_flt_2021, ape::rtree(3), "GTR+I+R(4)", "none"
+    hiv_env_flt_2022, ape::rtree(3), "GTR+I+R(4)", "none"
   ))
   expect_error(
     check_calc_nt_sub_probs_inputs(
-      "hiv_env_flt_2021", ape::rtree(3), "GTR+I+R(4)", "none"
+      "hiv_env_flt_2022", ape::rtree(3), "GTR+I+R(4)", "none"
     ),
     "aln must be of the "
   )
   expect_error(
     check_calc_nt_sub_probs_inputs(
-      hiv_env_flt_2021, "ape::rtree(3)", "GTR+I+R(4)", "none"
+      hiv_env_flt_2022, "ape::rtree(3)", "GTR+I+R(4)", "none"
     ),
     "tr must be of the "
   )
   expect_error(
-    check_calc_nt_sub_probs_inputs(hiv_env_flt_2021, ape::rtree(3), 0, "none"),
+    check_calc_nt_sub_probs_inputs(hiv_env_flt_2022, ape::rtree(3), 0, "none"),
     "model must be a string, but is a numeric"
   )
   expect_error(
     check_calc_nt_sub_probs_inputs(
-      hiv_env_flt_2021, ape::rtree(3), "GTR+I+R(4)", "wrong"
+      hiv_env_flt_2022, ape::rtree(3), "GTR+I+R(4)", "wrong"
     ),
     "Rearrangement must be one of "
   )
 })
 
 test_that("check_run_wavess_inputs works", {
-  # hiv_env_flt_2021 <- ape::as.matrix.DNAbin(hiv_env_flt_2021)
+  # hiv_env_flt_2022 <- ape::as.matrix.DNAbin(hiv_env_flt_2022)
   ps <- define_sampling_scheme(define_growth_curve(n_gen = 100),
     sampling_frequency = 50
   )
@@ -277,7 +277,7 @@ test_that("check_run_wavess_inputs works", {
     get_epitope_frequencies(env_features$position)
   ))
   capture.output(ntsp <- calc_nt_sub_probs(
-    hiv_env_flt_2021[1:3, ]
+    hiv_env_flt_2022[1:3, ]
   ), file = nullfile())
   expect_no_error(check_run_wavess_inputs(
     ps, fs, ntsp,

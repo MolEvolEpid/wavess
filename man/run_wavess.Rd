@@ -119,7 +119,7 @@ arguments.
 \dontrun{
 run_wavess(
   generate_pop_samp(n_gen = 300), "ATCG",
-  calc_nt_sub_probs(hiv_env_flt_2021)
+  calc_nt_sub_probs(hiv_env_flt_2022)
 )
 }
 }

@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{hxb2_cons_founder} An \code{ape} DNAbin object with 3 DNA sequences of}{
 
-length 1563 including the full-genome sequence for hxb2, the consensus
+length 1563 including the full-genome sequence for HXB2, the consensus
 sequence, and DEMB11US006 (founder)
 }
 }

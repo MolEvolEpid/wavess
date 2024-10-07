@@ -68,7 +68,7 @@ In particular, we include the following example data in the package:
 - `hxb2_cons_founder`: an alignment in `ape::DNAbin` format that includes
   the HIV full-genome sequence for the HXB2 reference sequence, the consensus 
   sequence, and an example founder sequence.
-- `hiv_env_flt_2021`: the first 10 sequences from the filtered HIV ENV alignment 
+- `hiv_env_flt_2022`: the first 10 sequences from the filtered HIV ENV alignment 
 downloaded from the [LANL HIV sequence
   database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html),
   in `ape::DNAbin` format. Feel free to download the entire alignment if you'd like.
@@ -191,10 +191,10 @@ alignment positions correspond to these HXB2 coordinates:
 ```{r}
 gp120_start <- which(cumsum(as.character(
   hxb2_cons_founder["B.FR.83.HXB2_LAI_IIIB_BRU.K03455", ]
-) != "-") == 6225)
+) != "-") == 6225)[1]
 gp120_end <- which(cumsum(as.character(
   hxb2_cons_founder["B.FR.83.HXB2_LAI_IIIB_BRU.K03455", ]
-) != "-") == 7757)
+) != "-") == 7757)[1]
 ```
 
 Then we can use these start and end positions to extract gp120 for our founder 
@@ -221,7 +221,7 @@ the "from" nucleotide and the columns are the "to" nucleotide.
 **TODO: ADD AN EXAMPLE WITHIN-HOST ALIGNMENT**
 
 ```{r, calc_nt_sub_probs}
-calc_nt_sub_probs(as.matrix(hiv_env_flt_2021))
+calc_nt_sub_probs(as.matrix(hiv_env_flt_2022))
 ```
 
 By default, a neighbor joining tree is created using
@@ -392,7 +392,7 @@ of the founder sequence that you want to simulate (i.e., the beginning of the
 alignment is the beginning of the founder sequence that you want to simulate,
 and the end of the alignment is the end of the sequence you want to simulate).
 
-We will be using the built-in `hiv_env_flt_2021` alignment as an example.
+We will be using the built-in `hiv_env_flt_2022` alignment as an example.
 However, this contains only 10 sequences. **In reality, you should use many more 
 sequences.** For HIV, you can download the entire filtered alignment for each 
 gene or for the entire genome from the [LANL HIV sequence
@@ -411,16 +411,16 @@ len_hxb2_gp120 <- nchar(extract_seqs(hxb2_cons_founder,
   "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
   start = gp120_start, end = gp120_end
 )$founder)
-flt_gp120_end <- which(cumsum(as.character(hiv_env_flt_2021[1, ]) != "-") ==
+flt_gp120_end <- which(cumsum(as.character(hiv_env_flt_2022[1, ]) != "-") ==
   len_hxb2_gp120)
 # subset to only gp120 section
-hiv_gp120_flt_2021 <- slice_aln(hiv_env_flt_2021, 1, flt_gp120_end)
+hiv_gp120_flt_2022 <- slice_aln(hiv_env_flt_2022, 1, flt_gp120_end)
 ```
 
 Then we can use this sliced alignment to identify conserved sites:
 
 ```{r, conserved}
-identify_conserved_sites(hiv_gp120_flt_2021, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455")
+identify_conserved_sites(hiv_gp120_flt_2022, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455")
 ```
 
 Alternatively, if you have two alignments with a shared reference, one
@@ -430,7 +430,7 @@ common reference, and the function will return the conserved sites
 relative to the founder sequence:
 
 ```{r, conserved2}
-(founder_conserved_df <- identify_conserved_sites(hiv_gp120_flt_2021,
+(founder_conserved_df <- identify_conserved_sites(hiv_gp120_flt_2022,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
   founder_aln = gp120
