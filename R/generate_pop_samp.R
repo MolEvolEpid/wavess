@@ -1,8 +1,5 @@
 #' Generate population growth curve and sampling scheme
 #'
-#' @param curve_type type of growth, one of:
-#' `constant_pop` (constant population size),
-#' `logistic` (logistic growth; default)
 #' @param n_gen final sampling generation (default: 3000)
 #' @param carry_cap carrying capacity (default: 2000)
 #' @param n0 starting population size (default: 1; used for logistic)
@@ -21,18 +18,17 @@
 #'
 #' @examples
 #' generate_pop_samp()
-generate_pop_samp <- function(curve_type = "logistic",
-                              n_gen = 3000,
+generate_pop_samp <- function(n_gen = 3000,
                               carry_cap = 2000,
                               n0 = 1,
                               g50 = 25,
                               sampling_frequency = 300,
                               max_samp = 20) {
   check_generate_pop_samp_inputs(
-    curve_type, n_gen, carry_cap, n0, g50,
+    n_gen, carry_cap, n0, g50,
     sampling_frequency, max_samp
   )
-  define_growth_curve(curve_type, n_gen, carry_cap, n0, g50, 0.5) |>
+  define_growth_curve(n_gen, carry_cap, n0, g50, 0.5) |>
     define_sampling_scheme(sampling_frequency, max_samp)
 }
 
@@ -48,13 +44,11 @@ generate_pop_samp <- function(curve_type = "logistic",
 #'
 #' @return tibble with two columns: generation and active cell count
 #' @noRd
-define_growth_curve <- function(curve_type = "logistic",
-                                n_gen = 3000,
+define_growth_curve <- function(n_gen = 3000,
                                 carry_cap = 2000,
                                 n0 = 1,
                                 gen_prop_carry_cap = 25,
                                 prop_carry_cap = 0.5) {
-  if (curve_type == "logistic") {
     gen_df <- tibble::tibble(
       generation = 0:n_gen,
       # infected cell population size over time
@@ -63,13 +57,6 @@ define_growth_curve <- function(curve_type = "logistic",
         prop_carry_cap, n_gen
       )
     )
-  } else if (curve_type == "constant") {
-    gen_df <- tibble::tibble(
-      generation = 0:n_gen,
-      # infected cell population size over time
-      active_cell_count = carry_cap
-    )
-  }
   return(gen_df)
 }
 

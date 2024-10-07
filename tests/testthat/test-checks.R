@@ -1,9 +1,5 @@
 test_that("check_generate_pop_samp_inputs works", {
   expect_error(
-    generate_pop_samp("not_a_curve"),
-    "`curve_type` must be logistic or constant. You provided: not_a_curve"
-  )
-  expect_error(
     generate_pop_samp(n_gen = "a"),
     "n_gen must be numeric, but is a character"
   )

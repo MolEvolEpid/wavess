@@ -4,8 +4,7 @@
 #'
 #' @return error if inputs are incorrect
 #' @noRd
-check_generate_pop_samp_inputs <- function(curve_type,
-                                           n_gen,
+check_generate_pop_samp_inputs <- function(n_gen,
                                            carry_cap,
                                            n0,
                                            g50,
@@ -14,12 +13,7 @@ check_generate_pop_samp_inputs <- function(curve_type,
   check_is_pos(carry_cap, "carry_cap")
   check_is_numeric(n0, "n0")
   check_is_numeric(g50, "g50")
-  if (!curve_type %in% c("logistic", "constant")) {
-    stop(
-      "`curve_type` must be logistic or constant. You provided: ",
-      curve_type
-    )
-  } else if (n0 > carry_cap) {
+  if (n0 > carry_cap) {
     stop("n0 must be a number \u2264carry_cap, but is ", n0)
   } else if (g50 > n_gen) {
     stop("g50 must be a number \u2264n_gen, but is ", g50)

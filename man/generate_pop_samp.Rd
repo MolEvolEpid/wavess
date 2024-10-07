@@ -5,7 +5,6 @@
 \title{Generate population growth curve and sampling scheme}
 \usage{
 generate_pop_samp(
-  curve_type = "logistic",
   n_gen = 3000,
   carry_cap = 2000,
   n0 = 1,
@@ -15,10 +14,6 @@ generate_pop_samp(
 )
 }
 \arguments{
-\item{curve_type}{type of growth, one of:
-\code{constant_pop} (constant population size),
-\code{logistic} (logistic growth; default)}
-
 \item{n_gen}{final sampling generation (default: 3000)}
 
 \item{carry_cap}{carrying capacity (default: 2000)}

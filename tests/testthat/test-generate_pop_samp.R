@@ -8,10 +8,6 @@ test_that("generate_pop_samp works", {
   expect_equal(ps$generation, 0:3000)
   expect_equal(ps$active_cell_count[1], 1)
   expect_equal(round(ps$active_cell_count[26] / 2000, 1), 0.5)
-  expect_equal(
-    generate_pop_samp(curve_type = "constant")$active_cell_count,
-    rep(2000, 3001)
-  )
 })
 
 test_that("define_growth_curve works", {
@@ -21,10 +17,6 @@ test_that("define_growth_curve works", {
   expect_equal(gc$generation, 0:3000)
   expect_equal(gc$active_cell_count[1], 1)
   expect_equal(round(gc$active_cell_count[26] / 2000, 1), 0.5)
-  expect_equal(
-    define_growth_curve(curve_type = "constant")$active_cell_count,
-    rep(2000, 3001)
-  )
 })
 
 test_that("define_sampling_scheme() works", {
