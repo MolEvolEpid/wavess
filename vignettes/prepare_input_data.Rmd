@@ -165,10 +165,17 @@ gaps.
 We provide the function `extract_seqs()` to extract a founder
 sequence from an alignment in `ape::DNAbin` format and convert it into a
 character vector. The alignment can be read in using `ape::read.FASTA()`
-or `ape::read.dna()`. NOTE: We do not recommend using this function to extract
+or `ape::read.dna()`. 
+
+NOTE: We do not recommend using this function to extract
 more than one founder sequence to initiate a single simulation because
 if any gaps are present then the founder sequences will not be the same
-length, which will lead to an error.
+length, which will lead to an error. Rather, if you would like to simulate
+multiple founders, we recommend aligning all the founder sequences and then
+stripping gaps such that the alignment remains codon-aligned, especially if
+you plan to simulate immune fitness because epitopes are translated to amino
+acids to caclulate immune fitness costs.
+
 
 This alignment is of the entire HIV genome, but we're only interested in the
 ENV gp120 gene, which we can subset to using the `start` and `end` arguments.
@@ -497,8 +504,8 @@ computing fitness relative to the reference.
 
 Immune fitness in `wavess` is defined by epitope locations in the
 sequence, each of which can have a maximum fitness cost between 0 and 1.
-These are defined at the amino acid level, so they must be within a nucleotide
-sequence that is translated to a protein. 
+These are defined at the amino acid level, so they must both be within a nucleotide
+sequence that is translated to a protein and in the correct reading frame. 
 
 While you can define your own epitope locations, we provide the function
 `sample_epitopes()` that, given epitope probabilities for each *amino acid* 

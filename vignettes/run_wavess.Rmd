@@ -62,15 +62,14 @@ create_python_venv()
 
 ## Prepare input data
 
-Next, we must generate the input data. If you're interested in learning more about 
-how to prepare the input data,
-please see the corresponding vignette (see `vignette("prepare_input_data")`). 
+Next, we must generate the input data. If you're interested in learning more
+about how to prepare the input data, please see the corresponding vignette (see
+`vignette("prepare_input_data")`).
 
 We will only simulate 300 generations with sampling every 100 generations so
 the simulation doesn't take too long to run. 
 
 **TODO: FIX nt_sub_probs ONCE INCLUDE EXAMPLE WITHIN-HOST ALIGNMENT**
-**TODO: CHANGE TO INTERNAL CONSERVED SITES VECTOR ONCE INCLUDED**
 
 ```{r setup}
 pop_samp <- generate_pop_samp(n_gen = 300, sampling_frequency = 100)
@@ -107,6 +106,11 @@ required_args_only <- run_wavess(
   nt_sub_probs = nt_sub_probs
 )
 ```
+
+Here, we simulate one founder sequence. You may simulate more, but you will have
+to ensure that they are the same length, do not include gaps, and are
+codon-algined. You will also have to modify the input growth curve to start with
+more than 1 cell. See `vignette('prepare_input_data')` for a few more details.
 
 The output format of `run_wavess()` is always the same: a list of length two 
 containing a tibble of various count and the sampled DNA sequences:
@@ -224,13 +228,14 @@ ref_fitness$counts$mean_replicative_cost_active
 
 ### Immune fitness
 
-Active immunity can be modeled by defining B-cell epitopes locations that can be 
-recognized by the immune system. Epitopes are recognized only after the 
-seroconversion time (`seroconversion_time` argument, default: 30 generations),
-and when the epitope is present in at least 1% of the total viral population
-(`prop_for_imm` argument). Once an epitope is recognized, it undergoes affinity
-maturation for 90 generations (`gen_full_potency`), at which time it reaches
-full potency. Epitopes are also cross-reactive.
+Active immunity can be modeled by defining B-cell epitopes locations that can be
+recognized by the immune system. Nucleotide epitopes are translated into amino
+acids before immune fitness costs are calculated.Epitopes are recognized only
+after the seroconversion time (`seroconversion_time` argument, default: 30
+generations), and when the epitope is present in at least 1% of the total viral
+population (`prop_for_imm` argument). Once an epitope is recognized, it
+undergoes affinity maturation for 90 generations (`gen_full_potency`), at which
+time it reaches full potency. Epitopes are also cross-reactive.
 
 ```{r}
 immune_fitness <- run_wavess(
@@ -257,15 +262,15 @@ the arguments described above.
 
 ## Events defined by probabilities
 
-There are several events that can occur during within-host evolution that are 
-defined by probabilities of occurrence. These include the probability of a 
-mutation occurring at a site in a generation (`prob_mut`), the probability of
-a recombination event occurring between two adjacent sites in a generation
+There are several events that can occur during within-host evolution that are
+defined by probabilities of occurrence. These include the probability of a
+mutation occurring at a site in a generation (`prob_mut`), the probability of a
+recombination event occurring between two adjacent sites in a generation
 (`prob_recomb`), and various probabilities related to latent cell dynamics
-(`prob_act_to_lat`, `prob_lat_to_act`, `prob_lat_prolif`, `prob_lat_die`).
-Each of these can be turned off by setting the respective probability value to 0.
-The simulation starts with 0 latent cells, so setting `prob_act_to_lat` will
-turn latent cell dynamics off. 
+(`prob_act_to_lat`, `prob_lat_to_act`, `prob_lat_prolif`, `prob_lat_die`). Each
+of these can be turned off by setting the respective probability value to 0. The
+simulation starts with 0 latent cells, so setting `prob_act_to_lat` will turn
+latent cell dynamics off.
 
 ## Seed
 

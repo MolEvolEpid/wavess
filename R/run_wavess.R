@@ -1,22 +1,29 @@
 #' Run wavess
 #'
-#' Simulate within-host evolution. Please note that the default arguments were
-#' set with the the HIV ENV gp120 gene in mind. If you'd like to simulate
-#' something else, you will likely have to modify certain parameters. However,
-#' if you are interested in this gene in particular, you can probably use most
-#' of the defaults including the founder and reference sequences provided as
-#' examples. Also, the parameters for latent probabilities are assumed to be
-#' small, such that it is unlikely that multiple events (activate, die,
-#' proliferate) will occur to a single latent cell in a single (active cell)
-#' generation. See `vignette('run_wavess')` for more details about the simulator
-#' and input arguments.
+#' Simulate within-host evolution optionally including recombination (default:
+#' on), latency (default: on), and fitness costs (default: off). The three
+#' fitness costs that can be simulated are conserved sites, fitness relative to
+#' a reference sequence, and antibody-based immune fitness costs. Please note
+#' that the default arguments were set with the the HIV ENV gp120 gene in mind.
+#' If you'd like to simulate something else, you will likely have to modify
+#' certain parameters. However, if you are interested in this gene in
+#' particular, you can probably use most of the defaults including the founder
+#' and reference sequences provided as examples. However, by default no fitness
+#' costs are modeled. To model these, you can use the pre-processing functions
+#' (see `vignette('prepare_input_data')`) to generate the relevant inputs. Also,
+#' the parameters for latent probabilities are assumed to be small, such that it
+#' is unlikely that multiple events (activate, die, proliferate) will occur to a
+#' single latent cell in a single (active cell) generation. See
+#' `vignette('run_wavess')` for more details about the simulator and input
+#' arguments.
 #'
 #' @param pop_samp Tibble with columns generation, active_cell_count,
 #'   n_sample_active. Can be generated using the [generate_pop_samp()]
 #'   functions.
 #' @param founder_seqs Founder sequence(s) as a character string or a vector of
 #'   character strings, for example 'ACATG'. The founder sequence(s) may only
-#'   contain the characters ACGT, and no gaps are allowed.
+#'   contain the characters ACGT, and no gaps are allowed. When modeling
+#'   immune fitness, they are expected to be codon-aligned.
 #' @param nt_sub_probs Named matrix of nucleotide substitution probabilities.
 #'   Rows are from, columns are to. Can be generated using the
 #'   [calc_nt_sub_probs()] function.
@@ -32,9 +39,12 @@
 #'   not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL
 #'   DEFINITION
 #' @param epitope_locations Tibble of epitope locations and maximum fitness
-#'   costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. This can be
-#'   generated using the functions [get_epitope_frequencies()] and
-#'   [sample_epitopes()] (default: NULL, i.e. no immune fitness costs)
+#'   costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These
+#'   epitopes are expected to be in a protein in the correct reading frame, as
+#'   the nucleotide sequences are translated to amino acids to calculate the
+#'   immune fitness cost. This epitope location tibble can be generated using
+#'   the functions [get_epitope_frequencies()] and [sample_epitopes()].
+#'   (default: NULL, i.e. no immune fitness costs)
 #' @param seroconversion_time Generation at which seroconversion occurs, only
 #'   relevant when epitope_locations is not NULL (default: 30).
 #' @param prop_for_imm Proportion of all infected cells that must be infected
