@@ -218,10 +218,11 @@ check_is_dnabin <- function(x, var_name) {
 #'
 #' @param x variable to check
 #' @param var_name name of variable
+#' @param rooted whether the tree must be rooted
 #'
 #' @return error if variable is not a DNAbin object
 #' @noRd
-check_is_phylo <- function(x, var_name) {
+check_is_phylo <- function(x, var_name, rooted = FALSE) {
   class_x <- class(x)
   if (!class_x == "phylo") {
     stop(
@@ -230,6 +231,11 @@ check_is_phylo <- function(x, var_name) {
       "`ape::read.tree()` but is ",
       class_x
     )
+  }
+  if(rooted){
+    if(!ape::is.rooted(x)){
+      stop(var_name, " must be rooted")
+    }
   }
 }
 
@@ -273,25 +279,6 @@ check_sample_epitopes_inputs <- function(epitope_probabilities,
         "founder_pos in ref_founder_map"
       )
     }
-  }
-}
-
-#' Check if a variable is a phylo object
-#'
-#' @param x variable to check
-#' @param var_name name of variable
-#'
-#' @return error if variable is not a phylo object
-#' @noRd
-check_is_phylo <- function(x, var_name) {
-  class_x <- class(x)
-  if (!class_x == "phylo") {
-    stop(
-      var_name,
-      " must be of the `ape` class `phylo` (e.g. an tree read in using ",
-      "`ape::read.tree()` but is ",
-      class_x
-    )
   }
 }
 

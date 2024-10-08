@@ -9,14 +9,16 @@ calc_tr_summary_stats(tr, timepoints)
 \arguments{
 \item{tr}{Phylogeny}
 
-\item{timepoints}{Vector of time points named by tree tip label}
+\item{timepoints}{Vector of time points named by tree tip label. All tip
+lables must be included in this vector. If you want to exclude certain tips,
+you must drop them from the tree prior to using this function.}
 }
 \value{
 Tibble including 3 tree summary statistics:
 \itemize{
-\item Sackin index normalized by the number of tree tips
-\item Mean internal over external branch length ratio
-\item Mean percent of lineages that survived from one time point to the next
+\item Sackin index (\code{\link[treebalance:sackinI]{treebalance::sackinI()}})
+\item Mean internal over external branch length ratio (\code{\link[=calc_int_over_ext]{calc_int_over_ext()}})
+\item Timepoint parsimony score (\code{\link[=calc_parsimony]{calc_parsimony()}})
 }
 }
 \description{

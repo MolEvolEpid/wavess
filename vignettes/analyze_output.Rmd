@@ -14,9 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-In this vignette, we'll provide various ways to analyze the output of `run_wavess()`.
-Note that many of these functions can also be used to analyze real-world
-empirical data. 
+In this vignette, we'll provide various ways to analyze the output of
+`run_wavess()`. Note that many of these functions can also be used to analyze
+real-world empirical data.
 
 For simulated data, we highly recommend comparing the output to empirical data,
 or at least using your domain knowledge to determine whether the output seems
@@ -45,7 +45,7 @@ library(ape)
 library(phangorn)
 library(ggtree)
 
-set.seed(12345)
+set.seed(1234)
 
 theme_set(theme_classic() +
   theme(strip.background = element_rect(color = "white")))
@@ -61,7 +61,7 @@ founder_ref <- extract_seqs(hxb2_cons_founder,
   ref = "CON_B(1295)",
   start = 6225, end = 7787
 )
-nt_sub_probs <- calc_nt_sub_probs(as.matrix(hiv_env_flt_2021))
+nt_sub_probs <- calc_nt_sub_probs(as.matrix(hiv_env_flt_2022))
 gp120 <- slice_aln(hxb2_cons_founder, 6225, 7787)
 epi_probs <- get_epitope_frequencies(env_features$position)
 ref_founder_map <- map_ref_founder(gp120,
@@ -80,11 +80,13 @@ wavess_out <- run_wavess(
   conserved_sites = conserved_sites,
   ref_seq = founder_ref$ref,
   epitope_locations = epitope_locations,
-  seed = 12345
+  seed = 1234
 )
 ```
 
 ## Plotting counts
+
+Here are various counts plotted over time:
 
 ```{r}
 wavess_out$counts |>
@@ -128,13 +130,14 @@ R using `ape` to generate a neighbor-joining tree and `phangorn` to estimate
 branch lengths using maximum likelihood:
 
 ```{r}
-pml_out <- phangorn::pml_bb(wavess_out$seqs,
+pml_out <- pml_bb(wavess_out$seqs,
   start = bionj(dist.dna(wavess_out$seqs, model = "TN93")),
   model = "GTR+R(4)+I", rearrangement = "none"
 )
 
-tr <- root(pml_out$tree, "founder1")
+tr <- root(pml_out$tree, "founder1", resolve.root = TRUE)
 gens <- gsub("gen_|_cell.*", "", tr$tip.label)
+names(gens) <- tr$tip.label
 ggtree(tr) +
   geom_tippoint(aes(col = c(gens, rep(NA, Nnode(tr))))) +
   scale_color_brewer(palette = "Set1") +
@@ -147,22 +150,23 @@ ggtree(tr) +
 Using the tree generated above, we provide the functionality to compute three
 relevant summary statistics:
 
-- The [Sackin index](https://treebalance.wordpress.com/sackin-index/) normalized 
-by the number of tree tips (to be able to compare values across trees of different sizes).
+- The [Sackin index](https://treebalance.wordpress.com/sackin-index/) normalized
+by the number of tree tips (to be able to compare values across trees of
+different sizes).
 - The ratio between the mean internal branch length and the mean external branch
 length.
-- The mean proportion of lineages that survived from one generation to the next.
-**CHECK WITH THOMAS TO SEE IF WE SHOULD JUST KEEP THE CURRENT AND PREVIOUS GENERATION IN THE CALCULATION**
-
-Many other tree statistics can be calculated using the 
+- The parsimony score of the phylogeny with the tips labeled as timepoints.
+Many other tree statistics can be calculated using the
 [`treebalance`](https://treebalance.wordpress.com/) package.
 
+**Note that these summary statistics can only be compared for trees that are
+derived from the same sampling scheme, i.e. the same number of samples taken
+at the same time points post-infection.**
+
 ```{r}
-gens_numeric <- as.numeric(gens)
-names(gens_numeric) <- tr$tip.label
-gens_numeric <- gens_numeric[!is.na(gens_numeric)]
-calc_tr_summary_stats(tr, gens_numeric)
+calc_tr_summary_stats(tr, gens)
 ```
 
 Each of these can also individually be computed using the following functions:
-`calc_sackin_norm()`, `calc_int_over_ext()`, and `calc_prop_survived()`.
+`calc_sackin()`, `calc_int_over_ext()`, and `calc_parsimony()`.
+
