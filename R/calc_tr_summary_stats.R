@@ -19,7 +19,7 @@
 #' names(times) <- tr$tip.label
 #' calc_tr_summary_stats(tr, times)
 calc_tr_summary_stats <- function(tr, timepoints) {
-  check_is_phylo(tr, 'tr', rooted = TRUE)
+  check_is_phylo(tr, "tr", rooted = TRUE)
   tibble::tibble(
     stat_name = c("sackin", "int_over_ext", "parsimony_score"),
     stat_value = c(
@@ -41,7 +41,7 @@ calc_tr_summary_stats <- function(tr, timepoints) {
 #' tr <- ape::rtree(100)
 #' calc_int_over_ext(tr)
 calc_int_over_ext <- function(tr) {
-  check_is_phylo(tr, 'tr')
+  check_is_phylo(tr, "tr")
   int_bl <- mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)])
   ext_bl <- mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)])
   int_bl / ext_bl
@@ -60,11 +60,15 @@ calc_int_over_ext <- function(tr) {
 #' names(times) <- tr$tip.label
 #' calc_parsimony(tr, times)
 calc_parsimony <- function(tr, timepoints) {
-  check_is_phylo(tr, 'tr', rooted = TRUE)
-  if(is.null(names(timepoints)) | !all(names(timepoints) %in% tr$tip.label)){
-    stop('timepoints must be a vector named by tr tip labels, ',
-         'and must contain all tip labels.')
+  check_is_phylo(tr, "tr", rooted = TRUE)
+  if (is.null(names(timepoints)) | !all(names(timepoints) %in% tr$tip.label)) {
+    stop(
+      "timepoints must be a vector named by tr tip labels, ",
+      "and must contain all tip labels."
+    )
   }
-  phangorn::parsimony(tr,
-                      phangorn::phyDat(factor(timepoints), type = 'USER'))
+  phangorn::parsimony(
+    tr,
+    phangorn::phyDat(factor(timepoints), type = "USER")
+  )
 }

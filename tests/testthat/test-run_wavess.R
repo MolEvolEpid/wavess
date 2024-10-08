@@ -11,8 +11,10 @@ test_that("run_wavess works", {
   capture.output(probs <- calc_nt_sub_probs(hiv_env_flt_2022[1:3, ]),
     file = nullfile()
   )
-  expect_error(run_wavess(samp_scheme, c("ATCG", "ATTT"), probs),
-               "Initial population size must equal the number of founder sequences")
+  expect_error(
+    run_wavess(samp_scheme, c("ATCG", "ATTT"), probs),
+    "Initial population size must equal the number of founder sequences"
+  )
   out <- run_wavess(samp_scheme, "ATCG", probs)
   expect_equal(out$counts$generation, c(0, 50, 100))
   expect_equal(out$counts$active_cell_count, c(1, 1998, 1999))
