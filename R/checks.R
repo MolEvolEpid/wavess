@@ -376,6 +376,9 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
     )
   }
   check_is_string(founder_seqs, "founder_seqs")
+  if(pop_samp$active_cell_count[1] != length(founder_seqs)){
+    stop('Initial population size must equal the number of founder sequences')
+  }
   lapply(as.list(founder_seqs), function(x) {
     check_seq(toupper(x), c("A", "C", "G", "T"), "founder_seqs")
   })

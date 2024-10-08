@@ -272,7 +272,7 @@ test_that("check_run_wavess_inputs works", {
   ps <- define_sampling_scheme(define_growth_curve(n_gen = 100),
     sampling_frequency = 50
   )
-  fs <- c("ACGT", "ATTT")
+  fs <- "ACGT"
   suppressMessages(el <- sample_epitopes(
     get_epitope_frequencies(env_features$position)
   ))
@@ -342,16 +342,6 @@ test_that("check_run_wavess_inputs works", {
       0.001, 0.01, 0.01, 0.01, NULL
     ),
     "founder_seqs must only contain the characters ACGT"
-  )
-  expect_error(
-    check_run_wavess_inputs(
-      ps, c("AG", "ATAA"), ntsp,
-      3.5e-5, 1.4e-5,
-      NULL, 0.99, NULL, 1,
-      NULL, 30, 0.01, 90,
-      0.001, 0.01, 0.01, 0.01, NULL
-    ),
-    "All founder sequences must be the same length"
   )
   expect_error(
     check_run_wavess_inputs(
@@ -499,6 +489,17 @@ test_that("check_run_wavess_inputs works", {
       0.001, 0.01, 0.01, 0.01, NULL
     ),
     "pop_samp"
+  )
+  ps$active_cell_count[1] <- 2
+  expect_error(
+    check_run_wavess_inputs(
+      ps, c("AG", "ATAA"), ntsp,
+      3.5e-5, 1.4e-5,
+      NULL, 0.99, NULL, 1,
+      NULL, 30, 0.01, 90,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "All founder sequences must be the same length"
   )
 })
 

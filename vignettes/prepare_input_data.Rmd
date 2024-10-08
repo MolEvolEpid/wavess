@@ -135,11 +135,12 @@ sampling and more samples taken at each sampling event:
 
 A couple notes:
 
-- Assuming everything else remains the same, the maximum population size simulated 
-greatly influences the simulation output. 
-- The default starts with 1 active cell in generation 0, which means 
-that no multiple infections can occur. If multiple founders are provided, one
-would be randomly chosen to start the simulation.
+- Assuming everything else remains the same, the maximum population size simulated
+greatly influences the simulation output.
+- The default starts with 1 active cell in generation 0, which means
+that no multiple infections can occur. If multiple founders are provided, you
+must provide the correct number for the initial population size. However, also
+note that you may stochastically lose founder sequences after generation 0.
 
 You can visualize the active cell dynamics over time using the following
 code, where the black line is the effective population size and the 
@@ -182,9 +183,9 @@ ENV gp120 gene, which we can subset to using the `start` and `end` arguments.
 
 To do this, we first have to know what the start and end positions of gp120 are
 in the alignment. We know the start and end positions of gp120 in HXB2 from
-[here](https://www.hiv.lanl.gov/content/sequence/HIV/MAP/landmark.html) (6225 and 7757).
-To get the start and end positions in our alignment, we can therefore find what
-alignment positions correspond to these HXB2 coordinates:
+[here](https://www.hiv.lanl.gov/content/sequence/HIV/MAP/landmark.html) (6225
+and 7757). To get the start and end positions in our alignment, we can therefore
+find what alignment positions correspond to these HXB2 coordinates:
 
 **(MAKE THIS INTO A FUNCTION?)**
 

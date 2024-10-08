@@ -11,11 +11,13 @@ test_that("run_wavess works", {
   capture.output(probs <- calc_nt_sub_probs(hiv_env_flt_2022[1:3, ]),
     file = nullfile()
   )
-  out <- run_wavess(samp_scheme, c("ATCG", "ATTT"), probs)
+  expect_error(run_wavess(samp_scheme, c("ATCG", "ATTT"), probs),
+               "Initial population size must equal the number of founder sequences")
+  out <- run_wavess(samp_scheme, "ATCG", probs)
   expect_equal(out$counts$generation, c(0, 50, 100))
   expect_equal(out$counts$active_cell_count, c(1, 1998, 1999))
   expect_equal(dim(out$counts), c(3, 13))
-  expect_equal(length(out$seqs), 43)
+  expect_equal(length(out$seqs), 42)
   no_lat <- run_wavess(samp_scheme, "ATCG", probs, prob_act_to_lat = 0)
   expect_equal(unique(no_lat$counts$latent_cell_count), 0)
   expect_equal(unique(no_lat$counts$active_turned_latent), 0)
@@ -25,30 +27,32 @@ test_that("run_wavess works", {
   expect_no_error(run_wavess(samp_scheme, "ATCG", probs))
   expect_no_error(run_wavess(samp_scheme, "atcg", probs))
   expect_no_error(run_wavess(samp_scheme, "atcg", ref_seq = "aaaa", probs))
-  expect_error(
-    run_wavess(samp_scheme, c("ATCG", "A"), probs),
-    "All founder sequences must be the same length"
-  )
-  expect_no_error(run_wavess(samp_scheme, c("ATCG", "ATTT"), probs,
+  expect_no_error(run_wavess(samp_scheme, "ATCG", probs,
     ref_seq = "AAAA"
   ))
-  expect_no_error(run_wavess(samp_scheme, c("ATCG", "ATTT"), probs,
+  expect_no_error(run_wavess(samp_scheme, "ATCG", probs,
     ref_seq = "AAAA"
   ))
   expect_error(
-    run_wavess(samp_scheme, c("ATCG", "ATTT"), probs, conserved_sites = 0),
+    run_wavess(samp_scheme, "ATCG", probs, conserved_sites = 0),
     "conserved_sites must be a positive number"
   )
-  expect_no_error(run_wavess(samp_scheme, c("ATCG", "ATTT"), probs,
+  expect_no_error(run_wavess(samp_scheme, "ATCG", probs,
     ref_seq = "AAAA", conserved_sites = 1
   ))
-  expect_no_error(run_wavess(samp_scheme, c("ATCG", "ATTT"), probs,
+  expect_no_error(run_wavess(samp_scheme, "ATCG", probs,
     conserved_sites = c(1, 2)
   ))
-  expect_no_error(run_wavess(samp_scheme, c("ATCG", "ATTT"), probs,
+  expect_no_error(run_wavess(samp_scheme, "ATCG", probs,
     epitope_locations = tibble::tibble(
       epi_start_nt = 1, epi_end_nt = 4,
       max_fitness_cost = 0.4
     )
   ))
+  samp_scheme$active_cell_count[1] <- 2
+  expect_no_error(run_wavess(samp_scheme, c("ATCG", "AAAA"), probs))
+  expect_error(
+    run_wavess(samp_scheme, c("ATCG", "A"), probs),
+    "All founder sequences must be the same length"
+  )
 })

@@ -110,7 +110,8 @@ required_args_only <- run_wavess(
 Here, we simulate one founder sequence. You may simulate more, but you will have
 to ensure that they are the same length, do not include gaps, and are
 codon-algined. You will also have to modify the input growth curve to start with
-more than 1 cell. See `vignette('prepare_input_data')` for a few more details.
+the correct number of cells. See `vignette('prepare_input_data')` for a few more 
+details.
 
 The output format of `run_wavess()` is always the same: a list of length two 
 containing a tibble of various count and the sampled DNA sequences:

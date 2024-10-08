@@ -18,8 +18,10 @@
 #' arguments.
 #'
 #' @param pop_samp Tibble with columns generation, active_cell_count,
-#'   n_sample_active. Can be generated using the [generate_pop_samp()]
-#'   functions.
+#'   n_sample_active. Note that the initial active cell population size in the
+#'   first generation must be the same as the number of input founder sequences
+#'   (because it simply _is_ the input founder sequences). Can be generated
+#'   using the [generate_pop_samp()] function.
 #' @param founder_seqs Founder sequence(s) as a character string or a vector of
 #'   character strings, for example 'ACATG'. The founder sequence(s) may only
 #'   contain the characters ACGT, and no gaps are allowed. When modeling

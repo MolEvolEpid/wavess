@@ -11,7 +11,9 @@
 #' given generation (default: 20 sequences)
 #'
 #' @return tibble with two columns:
-#' - `generation`: Each generation to be simulated
+#' - `generation`: Each generation to be simulated. Here, we consider generation 0 to
+#' be the first generation. In the simulation, this generation will consists of
+#' the input founder sequences.
 #' - `active_cell_count`: Number of active cells in each generation
 #' - `n_sample_active` Number of sequences to sample in each generation
 #' @export

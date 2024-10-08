@@ -208,8 +208,9 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         self.epitope_variants_translated = defaultdict(lambda: '') # store epitope translations 
         
         # Create NC actively proliferating infected cells
-        self.C = [InfectedCD4(deepcopy(choice(founder_viruses)), True) for i in range(NC)]
-        #self.C = [InfectedCD4(deepcopy(founder_viruses), True) for i in range(NC)]
+        #self.C = [InfectedCD4(deepcopy(choice(founder_viruses)), True) for i in range(NC)]
+        assert NC == len(founder_viruses), 'Initial population size must equal the number of founder sequences'
+        self.C = [InfectedCD4(founder, True) for founder in founder_viruses]
 
         # Initiate latent infected cells
         self.L = list()

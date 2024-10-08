@@ -32,7 +32,9 @@ given generation (default: 20 sequences)}
 \value{
 tibble with two columns:
 \itemize{
-\item \code{generation}: Each generation to be simulated
+\item \code{generation}: Each generation to be simulated. Here, we consider generation 0 to
+be the first generation. In the simulation, this generation will consists of
+the input founder sequences.
 \item \code{active_cell_count}: Number of active cells in each generation
 \item \code{n_sample_active} Number of sequences to sample in each generation
 }
