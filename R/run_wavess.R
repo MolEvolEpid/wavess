@@ -149,9 +149,10 @@ run_wavess <- function(pop_samp,
     immune_fitness <- 0
   } else {
     immune_fitness <- 1
-    # change indexing to 0 because underlying functions are in python
+    # change start indexing to 0 because underlying functions are in python (but
+    # don't change end because Python doesn't include the last position in the
+    # slice)
     epitope_locations$epi_start_nt <- epitope_locations$epi_start_nt - 1
-    epitope_locations$epi_end_nt <- epitope_locations$epi_end_nt - 1
   }
 
   conserved_sites <- as.list(conserved_sites)

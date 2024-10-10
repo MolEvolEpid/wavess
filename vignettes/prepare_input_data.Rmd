@@ -368,13 +368,13 @@ We will use this alignment below.
 
 ### Identify conserved sites
 
-In `run_wavess()` you can provide a vector of conserved sites
-(`conserved_sites` argument). Mutations in conserved sites have a
-fitness cost defined by the `conserved_cost` argument.
+In `run_wavess()` you can provide a vector of conserved sites (`conserved_sites`
+argument). Mutations in conserved sites have a fitness cost defined by the
+`conserved_cost` argument.
 
-To generate a vector of conserved sites from an alignment, you can use
-the function `identify_conserved_sites()`, which outputs a data frame
-with 5 columns:
+To generate a vector of conserved sites from an alignment, you can use the
+function `identify_conserved_sites()`, which outputs a data frame with 5
+columns:
 
 - `founder_pos`: the position in the founder
 - `founder_base`: the base in the founder sequence
@@ -384,10 +384,9 @@ with 5 columns:
   conserved, based on the threshold value defined by the `thresh`
   argument (default: 0.99)
 
-You can use this function in two ways. If you have an alignment that
-includes the founder sequence of interest, all you need to provide is
-the alignment in `ape::DNAbin` format and the name of the founder
-sequence in the alignment.
+You can use this function in two ways. If you have an alignment that includes
+the founder sequence of interest, all you need to provide is the alignment in
+`ape::DNAbin` format and the name of the founder sequence in the alignment.
 Note that the function assumes that the alignment consists of only the segment
 of the founder sequence that you want to simulate (i.e., the beginning of the 
 alignment is the beginning of the founder sequence that you want to simulate,
@@ -413,7 +412,7 @@ len_hxb2_gp120 <- nchar(extract_seqs(hxb2_cons_founder,
   start = gp120_start, end = gp120_end
 )$founder)
 flt_gp120_end <- which(cumsum(as.character(hiv_env_flt_2022[1, ]) != "-") ==
-  len_hxb2_gp120)
+  len_hxb2_gp120)[1]
 # subset to only gp120 section
 hiv_gp120_flt_2022 <- slice_aln(hiv_env_flt_2022, 1, flt_gp120_end)
 ```
@@ -424,11 +423,12 @@ Then we can use this sliced alignment to identify conserved sites:
 identify_conserved_sites(hiv_gp120_flt_2022, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455")
 ```
 
-Alternatively, if you have two alignments with a shared reference, one
-from which you'd like to calculate conserved sites, and the other that
-contains the founder, you can provide both alignments, as well as the
-common reference, and the function will return the conserved sites
-relative to the founder sequence:
+Alternatively, if you have two alignments with a shared reference, one from
+which you'd like to calculate conserved sites, and the other that contains the
+founder, you can provide both alignments, as well as the common reference, and
+the function will return the conserved sites relative to the founder sequence.
+In this case, the shared reference sequence is assumed to have the same start
+position in each alignment.
 
 ```{r, conserved2}
 (founder_conserved_df <- identify_conserved_sites(hiv_gp120_flt_2022,
@@ -503,37 +503,41 @@ computing fitness relative to the reference.
 
 ### Sample epitopes
 
-Immune fitness in `wavess` is defined by epitope locations in the
-sequence, each of which can have a maximum fitness cost between 0 and 1.
-These are defined at the amino acid level, so they must both be within a nucleotide
-sequence that is translated to a protein and in the correct reading frame. 
+Immune fitness in `wavess` is defined by epitope locations in the sequence, each
+of which can have a maximum fitness cost between 0 and 1. These are defined at
+the amino acid level, so they must both be within a nucleotide sequence that is
+translated to a protein and in the correct reading frame.
 
 While you can define your own epitope locations, we provide the function
-`sample_epitopes()` that, given epitope probabilities for each *amino acid* 
-position of interest, will return randomly sampled epitope
-locations based on the probability of an epitope occurring at that
-location. Therefore, the function `sample_epitopes()` takes as input a
-data frame that must contain columns for the amino acid position
-(`aa_position`) and the epitope probability at that position
-(`epitope_probability`)
+`sample_epitopes()` that, given epitope probabilities for each *amino acid*
+position of interest, will return randomly sampled *nucleoitde* epitope
+locations based on the probability of an epitope occurring at that location.
+Therefore, the function `sample_epitopes()` takes as input a data frame that
+must contain columns for the amino acid position (`aa_position`) and the epitope
+probability at that position (`epitope_probability`). The amino acid positions
+must only include those corresponding to the nucleotide sequence to be
+simulated, and must be indexed in such a way that amino acid position 1 
+corresponds to nucleotide position 1 in the founder sequence. In our example,
+this is gp120. We have already filtered the built-in package data to only
+include this subset.
 
-If possible, we recommend determining epitope probabilities based on
-some sort of known antibody contact/binding/neutralization maps. For HIV
-ENV gp120, we used the features from the LANL HIV immunology database:
+If possible, we recommend determining epitope probabilities based on some sort
+of known antibody contact/binding/neutralization maps. For HIV ENV gp120, we
+used the features from the LANL HIV immunology database:
 
 ```{r}
 env_features
 ```
 
-All we need is the positions column, but we provide the rest of the
-information for reference.
+All we need is the positions column, but we provide the rest of the information
+for reference.
 
-If you don't have this information, you can use uniformly distributed probabilities,
-or some other informed guess as to where the probabilities for epitopes binding
-is higher. 
+If you don't have this information, you can use uniformly distributed
+probabilities, or some other informed guess as to where the probabilities for
+epitopes binding is higher.
 
-We can put the positions into the `get_epitope_frequencies()` function,
-which returns a tibble with three columns:
+We can put the positions into the `get_epitope_frequencies()` function, which
+returns a tibble with three columns:
 
 - `aa_pos`: amino acid position
 - `n_features`: the number of features at that position
@@ -544,9 +548,9 @@ which returns a tibble with three columns:
 (epi_probs <- get_epitope_frequencies(env_features$position))
 ```
 
-This information can be used as input to the `sample_epitopes()`
-function. Note that the output of this function is different each time
-it's run, since the locations are selected randomly each time.
+This information can be used as input to the `sample_epitopes()` function. Note
+that the output of this function is different each time it's run, since the
+locations are selected randomly each time.
 
 ```{r}
 sample_epitopes(epi_probs)
@@ -555,23 +559,22 @@ sample_epitopes(epi_probs)
 The function returns start and end *nucleotide* positions for each epitope,
 relative to the input amino acid positions. 
 
-There are many ways to customize the output of this function. You can
-provide the starting (`start_aa_pos`) and ending (`end_aa_pos`) amino
-acid positions to consider for epitope sampling (here we've pre-subset to only 
-gp120 features), the number of epitopes to sample (`num_epitopes`), the amino 
-acid epitope length (`aa_epitope_length`), the maximum fitness cost of the epitope
-(`max_fit_cost`), and the cost type (linear or random, see documentation for
-details). 
+There are many ways to customize the output of this function. You can provide
+the starting (`start_aa_pos`) and ending (`end_aa_pos`) amino acid positions to
+consider for epitope sampling (here we've pre-subset to only gp120 features),
+the number of epitopes to sample (`num_epitopes`), the amino acid epitope length
+(`aa_epitope_length`), the maximum fitness cost of the epitope (`max_fit_cost`),
+and the cost type (linear or random, see documentation for details).
 
-If the amino acid positions are relative to a community reference sequence,
-then you will also need to create a map between the community reference and your
-founder sequence so that the data can be re-indexed to the founder sequence.
-In this case, the amino acid positions we used are from HXB2, so we want to
-map them to our founder sequence.
-You should use the alignment that contains the exact founder sequence you plan
-to simulate (no longer and no shorter). Once you have this alignment (e.g.
-using the `slice_aln()` function described above), you can the `map_ref_founder()` 
-function, which returns reference and founder positions mapped to each other:
+If the amino acid positions are relative to a community reference sequence, then
+you will also need to create a map between the community reference and your
+founder sequence so that the data can be re-indexed to the founder sequence. In
+this case, the amino acid positions we used are from HXB2, so we want to map
+them to our founder sequence. You should use an alignment that contains the
+exact founder sequence you plan to simulate (no longer and no shorter). Once you
+have this alignment (e.g. using the `slice_aln()` function described above), you
+can use the `map_ref_founder()` function, which returns reference and founder
+positions mapped to each other:
 
 ```{r}
 (ref_founder_map <- map_ref_founder(gp120,

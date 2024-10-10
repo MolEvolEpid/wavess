@@ -45,7 +45,7 @@ test_that("run_wavess works", {
   ))
   expect_no_error(run_wavess(samp_scheme, "ATCG", probs,
     epitope_locations = tibble::tibble(
-      epi_start_nt = 1, epi_end_nt = 4,
+      epi_start_nt = 1, epi_end_nt = 3,
       max_fitness_cost = 0.4
     )
   ))

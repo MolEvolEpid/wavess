@@ -29,7 +29,9 @@ base (default: 0.99)}
 the founder sequence is not in \code{aln} (default: \code{NULL})}
 
 \item{founder_aln}{Alignment including the reference and founder sequences,
-required if the founder is not present in \code{aln} (default: \code{NULL})}
+required if the founder is not present in \code{aln}. \strong{NOTE:} This alignment
+and \code{aln} are assumed to begin at the same position in the reference
+sequence (default: \code{NULL})}
 }
 \value{
 Tibble including the following columns:
@@ -51,14 +53,15 @@ positions returned assume that the start of the alignment is also the start
 of the founder sequence in the simulation.
 }
 \examples{
-hiv_gp120_flt_2022 <- slice_aln(hiv_env_flt_2022, start = 1, end = 2517)
-hxb2_cons_founder <- slice_aln(hxb2_cons_founder, start = 6225, end = 7757)
+gp120_flt_2022 <- slice_aln(hiv_env_flt_2022, start = 1, end = 2517)
+gp120_hxb2_cons_founder <- slice_aln(hxb2_cons_founder, start = 6225, end = 7757)
 identify_conserved_sites(
-  hiv_gp120_flt_2022,
+  gp120_flt_2022,
   "B.FR.83.HXB2_LAI_IIIB_BRU.K03455"
 )
-identify_conserved_sites(hiv_gp120_flt_2022,
+identify_conserved_sites(gp120_flt_2022,
   "B.US.2011.DEMB11US006.KC473833",
-  ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455", founder_aln = hxb2_cons_founder
+  ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+  founder_aln = gp120_hxb2_cons_founder
 )
 }

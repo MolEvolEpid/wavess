@@ -2,7 +2,8 @@
 #'
 #' Sample epitopes based on epitope probabilities. Note that the positions
 #' returned assume that the start of the amino acid sequence is also the start
-#' of the founder sequence in the simulation.
+#' of the founder sequence in the simulation. We also assume that there are no
+#' frameshift mutations in the founder sequence.
 #'
 #' @param epitope_probabilities Epitope probability tibble as output by
 #'   [get_epitope_frequencies()], including columns `aa_position` and
@@ -23,8 +24,13 @@
 #'   uniform distribution between 0 and `max_fit_cost` (default: "linear")
 #' @param max_resamples Maximum number of resampling events to attempt; this is
 #'   to prevent an infinite loop (default: 100)
-#' @param ref_founder_map Output from [map_ref_founder()], including reference
-#'   and founder positions (`ref_pos` and `founder_pos`).
+#' @param ref_founder_map Output from [map_ref_founder()], including
+#'   *nucleotide* reference and founder positions (`ref_pos` and `founder_pos`).
+#'   **NOTE:** The reference positions here, if they were converted to amino
+#'   acid positions, are expected to match with the reference positions in
+#'   `epitope_probabilities`. Further, we assume that the founder indices align
+#'   with the founder sequence positions to be used in the simulation (default:
+#'   NULL)
 #'
 #' @return tibble with the `num_epitopes` rows and the following columns:
 #' - `epi_start_nt`: nucleotide epitope start position
@@ -96,13 +102,17 @@ sample_epitopes <- function(epitope_probabilities,
       message(n_resamples, " resamples required")
     }
   }
-  epitopes <- tibble::tibble(
-    epi_start_nt = start_pos * 3,
-    epi_end_nt = (start_pos + 10) * 3,
-    max_fitness_cost = max_fit_costs
-  )
-  if (!is.null(ref_founder_map)) {
-    epitopes <- convert_ref_to_found_epitopes(epitopes, ref_founder_map)
+  if (is.null(ref_founder_map)) {
+    epitopes <- tibble::tibble(
+      # multiply by 3 and subtract 2 to get start of amino acid (indexed at 1)
+      epi_start_nt = start_pos * 3 - 2,
+      # subtract 1 because index at 1
+      epi_end_nt = (start_pos + aa_epitope_length - 1) * 3,
+      max_fitness_cost = max_fit_costs
+    )
+  }else{
+    epitopes <- reindex_epitopes(start_pos, aa_epitope_length, max_fit_costs,
+                                 ref_founder_map)
   }
   return(epitopes)
 }
@@ -141,29 +151,39 @@ get_epitope_frequencies <- function(epitope_positions) {
 
 #' Convert reference epitope locations to founder epitope locations
 #'
-#' @param ref_epitopes Output from [sample_epitopes()], including start and end
-#' nt positions of the epitopes (`epi_start_nt` and `epi_end_nt`)
+#' @param start_pos Vector of starting amino acid positions of the epitopes
+#' @param max_fit_costs Vector of maximum fitness cost for each epitope
 #' @inheritParams sample_epitopes
 #'
 #' @return Tibble with epitope positions relative to the founder, with the
 #' same columns as output by [sample_epitopes()]
 #' @noRd
-convert_ref_to_found_epitopes <- function(ref_epitopes, ref_founder_map) {
-  # internal function so don't include checks right now...
-  ref_epitopes |>
-    dplyr::rename(
-      ref_pos_start = "epi_start_nt",
-      ref_pos_end = "epi_end_nt"
-    ) |>
-    dplyr::left_join(
-      ref_founder_map |>
-        # if there is a deletion in the HXB2 sequence,
-        # call it the nearest previous position
-        tidyr::fill("founder_pos", .direction = "down"),
-      by = c("ref_pos_start" = "ref_pos")
-    ) |>
-    dplyr::rename(epi_start_nt = "founder_pos") |>
-    dplyr::mutate(epi_end_nt = .data$epi_start_nt +
-      (.data$ref_pos_end - .data$ref_pos_start)) |>
+reindex_epitopes <- function(start_pos, aa_epitope_length, max_fit_costs,
+                             ref_founder_map) {
+  end_pos <- start_pos * 3
+  not_in_map <- c(start_pos[!((start_pos * 3)-2) %in% ref_founder_map$ref_pos],
+                  end_pos[!end_pos %in% ref_founder_map$ref_pos])
+  if(length(not_in_map)){
+    stop('Not all reference epitope start and end positions are in ",
+         "ref_founder_map: ',
+         paste0(not_in_map, collapse = ','))
+  }
+  tibble::tibble(ref_start_pos = start_pos) |>
+    dplyr::left_join(ref_founder_map |>
+                # convert to amino acid positions
+                dplyr::mutate(ref_start_pos = ceiling(.data$ref_pos/3),
+                              founder_start_pos = ceiling(.data$founder_pos/3)) |>
+                # if there is a deletion in the HXB2 sequence,
+                # call it the nearest previous position
+                tidyr::fill("founder_start_pos", .direction = "down") |>
+                dplyr::select("ref_start_pos", "founder_start_pos") |>
+                dplyr::distinct() |>
+                dplyr::group_by(.data$ref_start_pos) |>
+                dplyr::slice_min(.data$founder_start_pos),
+              by = 'ref_start_pos') |>
+    # multiply by 3 and subtract 2 to get start of amino acid (indexed at 1)
+    dplyr::mutate(epi_start_nt = .data$founder_start_pos * 3 - 2,
+                  epi_end_nt = (.data$founder_start_pos + aa_epitope_length - 1) * 3,
+                  max_fitness_cost = max_fit_costs) |>
     dplyr::select("epi_start_nt", "epi_end_nt", "max_fitness_cost")
 }

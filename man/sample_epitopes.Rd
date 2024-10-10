@@ -44,8 +44,13 @@ uniform distribution between 0 and \code{max_fit_cost} (default: "linear")}
 \item{max_resamples}{Maximum number of resampling events to attempt; this is
 to prevent an infinite loop (default: 100)}
 
-\item{ref_founder_map}{Output from \code{\link[=map_ref_founder]{map_ref_founder()}}, including reference
-and founder positions (\code{ref_pos} and \code{founder_pos}).}
+\item{ref_founder_map}{Output from \code{\link[=map_ref_founder]{map_ref_founder()}}, including
+\emph{nucleotide} reference and founder positions (\code{ref_pos} and \code{founder_pos}).
+\strong{NOTE:} The reference positions here, if they were converted to amino
+acid positions, are expected to match with the reference positions in
+\code{epitope_probabilities}. Further, we assume that the founder indices align
+with the founder sequence positions to be used in the simulation (default:
+NULL)}
 }
 \value{
 tibble with the \code{num_epitopes} rows and the following columns:
@@ -58,7 +63,8 @@ tibble with the \code{num_epitopes} rows and the following columns:
 \description{
 Sample epitopes based on epitope probabilities. Note that the positions
 returned assume that the start of the amino acid sequence is also the start
-of the founder sequence in the simulation.
+of the founder sequence in the simulation. We also assume that there are no
+frameshift mutations in the founder sequence.
 }
 \examples{
 sample_epitopes(get_epitope_frequencies(env_features$position))
