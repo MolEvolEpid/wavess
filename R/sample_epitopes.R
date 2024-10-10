@@ -110,9 +110,11 @@ sample_epitopes <- function(epitope_probabilities,
       epi_end_nt = (start_pos + aa_epitope_length - 1) * 3,
       max_fitness_cost = max_fit_costs
     )
-  }else{
-    epitopes <- reindex_epitopes(start_pos, aa_epitope_length, max_fit_costs,
-                                 ref_founder_map)
+  } else {
+    epitopes <- reindex_epitopes(
+      start_pos, aa_epitope_length, max_fit_costs,
+      ref_founder_map
+    )
   }
   return(epitopes)
 }
@@ -161,29 +163,39 @@ get_epitope_frequencies <- function(epitope_positions) {
 reindex_epitopes <- function(start_pos, aa_epitope_length, max_fit_costs,
                              ref_founder_map) {
   end_pos <- start_pos * 3
-  not_in_map <- c(start_pos[!((start_pos * 3)-2) %in% ref_founder_map$ref_pos],
-                  end_pos[!end_pos %in% ref_founder_map$ref_pos])
-  if(length(not_in_map)){
-    stop('Not all reference epitope start and end positions are in ",
+  not_in_map <- c(
+    start_pos[!((start_pos * 3) - 2) %in% ref_founder_map$ref_pos],
+    end_pos[!end_pos %in% ref_founder_map$ref_pos]
+  )
+  if (length(not_in_map)) {
+    stop(
+      'Not all reference epitope start and end positions are in ",
          "ref_founder_map: ',
-         paste0(not_in_map, collapse = ','))
+      paste0(not_in_map, collapse = ",")
+    )
   }
   tibble::tibble(ref_start_pos = start_pos) |>
-    dplyr::left_join(ref_founder_map |>
-                # convert to amino acid positions
-                dplyr::mutate(ref_start_pos = ceiling(.data$ref_pos/3),
-                              founder_start_pos = ceiling(.data$founder_pos/3)) |>
-                # if there is a deletion in the HXB2 sequence,
-                # call it the nearest previous position
-                tidyr::fill("founder_start_pos", .direction = "down") |>
-                dplyr::select("ref_start_pos", "founder_start_pos") |>
-                dplyr::distinct() |>
-                dplyr::group_by(.data$ref_start_pos) |>
-                dplyr::slice_min(.data$founder_start_pos),
-              by = 'ref_start_pos') |>
+    dplyr::left_join(
+      ref_founder_map |>
+        # convert to amino acid positions
+        dplyr::mutate(
+          ref_start_pos = ceiling(.data$ref_pos / 3),
+          founder_start_pos = ceiling(.data$founder_pos / 3)
+        ) |>
+        # if there is a deletion in the HXB2 sequence,
+        # call it the nearest previous position
+        tidyr::fill("founder_start_pos", .direction = "down") |>
+        dplyr::select("ref_start_pos", "founder_start_pos") |>
+        dplyr::distinct() |>
+        dplyr::group_by(.data$ref_start_pos) |>
+        dplyr::slice_min(.data$founder_start_pos),
+      by = "ref_start_pos"
+    ) |>
     # multiply by 3 and subtract 2 to get start of amino acid (indexed at 1)
-    dplyr::mutate(epi_start_nt = .data$founder_start_pos * 3 - 2,
-                  epi_end_nt = (.data$founder_start_pos + aa_epitope_length - 1) * 3,
-                  max_fitness_cost = max_fit_costs) |>
+    dplyr::mutate(
+      epi_start_nt = .data$founder_start_pos * 3 - 2,
+      epi_end_nt = (.data$founder_start_pos + aa_epitope_length - 1) * 3,
+      max_fitness_cost = max_fit_costs
+    ) |>
     dplyr::select("epi_start_nt", "epi_end_nt", "max_fitness_cost")
 }

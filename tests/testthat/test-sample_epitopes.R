@@ -9,10 +9,14 @@ test_that("sample_epitopes works", {
   )
   expect_equal(sum(is.na(epitopes$epi_start_nt)), 0)
   expect_equal(sum(is.na(epitopes$epi_end_nt)), 0)
-  expect_equal(epitopes$epi_start_nt,
-               c(829, 238, 958, 1357, 394, 922, 502, 172, 541, 340))
-  expect_equal(epitopes$epi_end_nt,
-               c(829, 238, 958, 1357, 394, 922, 502, 172, 541, 340) + 30-1)
+  expect_equal(
+    epitopes$epi_start_nt,
+    c(829, 238, 958, 1357, 394, 922, 502, 172, 541, 340)
+  )
+  expect_equal(
+    epitopes$epi_end_nt,
+    c(829, 238, 958, 1357, 394, 922, 502, 172, 541, 340) + 30 - 1
+  )
   expect_equal(
     epitopes$max_fitness_cost,
     c(0.040, 0.080, 0.120, 0.160, 0.200, 0.240, 0.280, 0.320, 0.360, 0.400)
@@ -51,7 +55,8 @@ test_that("get_epitope_frequencies works", {
 
 test_that("reindex_epitopes works", {
   expect_equal(
-    reindex_epitopes(1, 2, 0.1,
+    reindex_epitopes(
+      1, 2, 0.1,
       tibble::tibble(
         ref_pos = 1:10,
         founder_pos = 1:10
@@ -64,11 +69,12 @@ test_that("reindex_epitopes works", {
     )
   )
   expect_equal(
-    reindex_epitopes(2, 3, 0.1,
-                     tibble::tibble(
-                       ref_pos = 1:10,
-                       founder_pos = c(1:3,NA,NA,4:8)
-                     )
+    reindex_epitopes(
+      2, 3, 0.1,
+      tibble::tibble(
+        ref_pos = 1:10,
+        founder_pos = c(1:3, NA, NA, 4:8)
+      )
     ),
     tibble::tibble(
       epi_start_nt = 1,
@@ -77,11 +83,12 @@ test_that("reindex_epitopes works", {
     )
   )
   expect_equal(
-    reindex_epitopes(3, 1, 0.1,
-                     tibble::tibble(
-                       ref_pos = 1:10,
-                       founder_pos = c(1:3,NA,NA,4:8)
-                     )
+    reindex_epitopes(
+      3, 1, 0.1,
+      tibble::tibble(
+        ref_pos = 1:10,
+        founder_pos = c(1:3, NA, NA, 4:8)
+      )
     ),
     tibble::tibble(
       epi_start_nt = 4,
@@ -89,10 +96,14 @@ test_that("reindex_epitopes works", {
       max_fitness_cost = 0.1
     )
   )
-  expect_error(reindex_epitopes(5, 1, 0.1,
-                   tibble::tibble(
-                     ref_pos = 1:10,
-                     founder_pos = c(1:3,NA,NA,4:8)
-                   )),
-               "Not all reference epitope start and end positions are in ")
+  expect_error(
+    reindex_epitopes(
+      5, 1, 0.1,
+      tibble::tibble(
+        ref_pos = 1:10,
+        founder_pos = c(1:3, NA, NA, 4:8)
+      )
+    ),
+    "Not all reference epitope start and end positions are in "
+  )
 })
