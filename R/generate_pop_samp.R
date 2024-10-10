@@ -51,14 +51,14 @@ define_growth_curve <- function(n_gen = 3000,
                                 n0 = 1,
                                 gen_prop_carry_cap = 25,
                                 prop_carry_cap = 0.5) {
-    gen_df <- tibble::tibble(
-      generation = 0:n_gen,
-      # infected cell population size over time
-      active_cell_count = get_logistic_curve(
-        n0, carry_cap, gen_prop_carry_cap,
-        prop_carry_cap, n_gen
-      )
+  gen_df <- tibble::tibble(
+    generation = 0:n_gen,
+    # infected cell population size over time
+    active_cell_count = get_logistic_curve(
+      n0, carry_cap, gen_prop_carry_cap,
+      prop_carry_cap, n_gen
     )
+  )
   return(gen_df)
 }
 
