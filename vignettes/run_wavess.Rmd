@@ -209,10 +209,8 @@ reference sequence to compare each simulated sequence to.
 The strength of this fitness can be altered using the `rep_exp` argument.
 
 **TODO: ADD MORE DETAILS ABOUT THE EXACT WAY FITNESS IS CALCULATED ONCE WE'VE DECIDED**
-**TODO: DON'T INCLUDE CONSENSUS WITH N'S**
 
 ```{r}
-founder_ref$ref <- gsub("N", "-", founder_ref$ref)
 ref_fitness <- run_wavess(
   pop_samp = pop_samp,
   founder_seqs = founder_ref$founder,
