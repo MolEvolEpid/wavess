@@ -110,9 +110,11 @@ sample_epitopes <- function(epitope_probabilities,
       epi_end_nt = (start_pos + aa_epitope_length) * 3,
       max_fitness_cost = max_fit_costs
     )
-  }else{
-    epitopes <- reindex_epitopes(start_pos, aa_epitope_length, max_fit_costs,
-                                 ref_founder_map)
+  } else {
+    epitopes <- reindex_epitopes(
+      start_pos, aa_epitope_length, max_fit_costs,
+      ref_founder_map
+    )
   }
   return(epitopes)
 }
@@ -166,7 +168,8 @@ reindex_epitopes <- function(start_pos, aa_epitope_length, max_fit_costs,
   if(length(not_in_map)){
     stop('Not all reference epitope start and end positions are in ",
          "ref_founder_map: ',
-         paste0(not_in_map, collapse = ','))
+      paste0(not_in_map, collapse = ",")
+    )
   }
   tibble::tibble(ref_start_pos = start_pos) |>
     dplyr::left_join(ref_founder_map |>
