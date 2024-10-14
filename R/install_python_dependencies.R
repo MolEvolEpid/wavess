@@ -131,6 +131,7 @@ remove_python_venv <- function(confirm = interactive()) {
 #' @param x dependency to check
 #'
 #' @return boolean whether dependency is installed
+#' @noRd
 py_check_installed <- function(x) {
   if (is.null(x)) {
     return(FALSE)
