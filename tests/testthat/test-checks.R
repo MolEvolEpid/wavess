@@ -161,7 +161,7 @@ test_that("check_map_ref_founder_inputs works", {
 
 test_that("check_sample_epitopes_inputs works", {
   expect_no_error(check_sample_epitopes_inputs(
-    get_epitope_frequencies(env_features$position),
+    get_epitope_frequencies(env_features$Position-1),
     start_aa_pos = 1,
     end_aa_pos = NULL,
     num_epitopes = 10,
@@ -185,7 +185,7 @@ test_that("check_sample_epitopes_inputs works", {
     "The following columns must be included in "
   )
   expect_error(
-    check_sample_epitopes_inputs(get_epitope_frequencies(env_features$position),
+    check_sample_epitopes_inputs(get_epitope_frequencies(env_features$Position-1),
       start_aa_pos = 1,
       end_aa_pos = NULL,
       num_epitopes = 10,
@@ -198,7 +198,7 @@ test_that("check_sample_epitopes_inputs works", {
     'Cost type must be either "linear" or "random", but you supplied: test'
   )
   expect_error(
-    check_sample_epitopes_inputs(get_epitope_frequencies(env_features$position),
+    check_sample_epitopes_inputs(get_epitope_frequencies(env_features$Position-1),
       start_aa_pos = 1,
       end_aa_pos = -1,
       num_epitopes = 10,
@@ -211,7 +211,7 @@ test_that("check_sample_epitopes_inputs works", {
     "end_aa_pos must be a positive number"
   )
   expect_error(
-    check_sample_epitopes_inputs(get_epitope_frequencies(env_features$position),
+    check_sample_epitopes_inputs(get_epitope_frequencies(env_features$Position-1),
       start_aa_pos = 1,
       end_aa_pos = NULL,
       num_epitopes = 10,
@@ -224,7 +224,7 @@ test_that("check_sample_epitopes_inputs works", {
     "The following columns must be included in "
   )
   expect_no_error(check_sample_epitopes_inputs(
-    get_epitope_frequencies(env_features$position),
+    get_epitope_frequencies(env_features$Position-1),
     start_aa_pos = 1,
     end_aa_pos = NULL,
     num_epitopes = 10,
@@ -274,7 +274,7 @@ test_that("check_run_wavess_inputs works", {
   )
   fs <- "ACGT"
   suppressMessages(el <- sample_epitopes(
-    get_epitope_frequencies(env_features$position)
+    get_epitope_frequencies(env_features$Position-1)
   ))
   capture.output(ntsp <- calc_nt_sub_probs(
     hiv_env_flt_2022[1:3, ]

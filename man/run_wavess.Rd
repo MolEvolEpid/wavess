@@ -34,8 +34,8 @@ using the \code{\link[=generate_pop_samp]{generate_pop_samp()}} function.}
 
 \item{founder_seqs}{Founder sequence(s) as a character string or a vector of
 character strings, for example 'ACATG'. The founder sequence(s) may only
-contain the characters ACGT, and no gaps are allowed. When modeling
-immune fitness, they are expected to be codon-aligned.}
+contain the characters ACGT, and no gaps are allowed. When modeling immune
+fitness, they are expected to be codon-aligned.}
 
 \item{nt_sub_probs}{Named matrix of nucleotide substitution probabilities.
 Rows are from, columns are to. Can be generated using the
@@ -60,9 +60,9 @@ generation (default: 0.01)}
 \item{prob_lat_die}{Probability that a latent cell dies in a generation
 (default: 0.01)}
 
-\item{conserved_sites}{Vector of conserved sites. This can be generated using
-the \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} function (default: NULL, i.e. no conserved
-sites fitness costs)}
+\item{conserved_sites}{Vector of conserved sites indexed at 0. This can be
+generated using the \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} function (default: NULL,
+i.e. no conserved sites fitness costs)}
 
 \item{conserved_cost}{Cost of mutation at conserved site (default: 0.99)}
 
@@ -77,11 +77,11 @@ DEFINITION}
 
 \item{epitope_locations}{Tibble of epitope locations and maximum fitness
 costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These
-epitopes are expected to be in a protein in the correct reading frame, as
-the nucleotide sequences are translated to amino acids to calculate the
-immune fitness cost. This epitope location tibble can be generated using
-the functions \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and \code{\link[=sample_epitopes]{sample_epitopes()}}.
-(default: NULL, i.e. no immune fitness costs)}
+epitopes are expected to be indexed at 0 and in a protein in the correct
+reading frame, as the nucleotide sequences are translated to amino acids to
+calculate the immune fitness cost. This epitope location tibble can be
+generated using the functions \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and
+\code{\link[=sample_epitopes]{sample_epitopes()}}. (default: NULL, i.e. no immune fitness costs)}
 
 \item{seroconversion_time}{Generation at which seroconversion occurs, only
 relevant when epitope_locations is not NULL (default: 30).}
@@ -103,10 +103,11 @@ List including: tibble of counts, and alignment of sampled sequences
 Simulate within-host evolution optionally including recombination (default:
 on), latency (default: on), and fitness costs (default: off). The three
 fitness costs that can be simulated are conserved sites, fitness relative to
-a reference sequence, and antibody-based immune fitness costs. Please note
-that the default arguments were set with the the HIV ENV gp120 gene in mind.
-If you'd like to simulate something else, you will likely have to modify
-certain parameters. However, if you are interested in this gene in
+a reference sequence, and antibody-based immune fitness costs. Nucleotide
+positions for conserved and immune fitness are expected to be indexed at 0.
+Please note that the default arguments were set with the the HIV ENV gp120
+gene in mind. If you'd like to simulate something else, you will likely have
+to modify certain parameters. However, if you are interested in this gene in
 particular, you can probably use most of the defaults including the founder
 and reference sequences provided as examples. However, by default no fitness
 costs are modeled. To model these, you can use the pre-processing functions

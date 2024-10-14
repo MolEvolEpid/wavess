@@ -575,3 +575,100 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 sum([x.infecting_virus.conserved_fitness_cost for x in self.C])/n_active, \
                 sum([x.infecting_virus.immune_fitness_cost for x in self.C])/n_active, \
                 sum([x.infecting_virus.replicative_fitness_cost for x in self.C])/n_active # MAYBE UPDATE THIS IF WE KEEP REPLICATIVE FITNESS AS (1-RFC)^EXP
+                
+    def record_counts(self, counts, generation, latent_nums, var_nums, fitness):
+        counts['generation'].append(generation)
+        counts['active_cell_count'].append(len(self.C))
+        counts['latent_cell_count'].append(len(self.L))
+        # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
+        counts['active_turned_latent'].append(latent_nums[0]),
+        counts['latent_turned_active'].append(latent_nums[1]),
+        counts['latent_died'].append(latent_nums[2]),
+        counts['latent_proliferated'].append(latent_nums[3]),
+        # n_mut, number_recombination
+        counts['number_mutations'].append(var_nums[0]),
+        counts['number_dual_inf'].append(var_nums[1]),
+        # mean_fitness_active, mean_conserved_cost_active,
+        # mean_immune_cost_active, mean_replicative_cost_active
+        counts['mean_fitness_active'].append(fitness[0]),
+        counts['mean_conserved_cost_active'].append(fitness[1]),
+        counts['mean_immune_cost_active'].append(fitness[2]),
+        counts['mean_replicative_cost_active'].append(fitness[3])
+        return counts
+      
+    def sample_viral_sequences(self, seqs, generation, n_to_samp):
+      c_sub = sample(self.C, int(n_to_samp))
+      for index, CD4 in enumerate(c_sub):
+        name = "gen_" + str(generation)
+        name += "_cell_" + str(index)
+        name += "_ic_" + str("%.4f" % CD4.infecting_virus.immune_fitness_cost)
+        name += "_cc_" + str("%.4f" % CD4.infecting_virus.conserved_fitness_cost)
+        name += "_rc_" + str("%.4f" % CD4.infecting_virus.replicative_fitness_cost)
+        name += "_f_" + str("%.4f" % CD4.infecting_virus.fitness)
+        seqs[name] = CD4.infecting_virus.nuc_sequence
+      return(seqs)
+                
+    def loop_through_generations(self, active_cell_count, n_sample_active, last_sampled_gen,
+        founder_seqs, nucleotides_order, substitution_probabilities,
+        prob_mut, prob_recomb, 
+        latent, prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif, 
+        conserved_sites, conserved_cost, ref_seq, rep_exp, 
+        epitope_locations, seroconversion_time, prop_for_imm, gen_full_potency, 
+        immune_fitness, conserved_fitness, replicative_fitness, generator):
+      # Initialize counts and sequence objects
+      counts = {
+        'generation': [],
+        'active_cell_count': [],
+        'latent_cell_count': [],
+        'active_turned_latent': [],
+        'latent_turned_active': [],
+        'latent_died': [],
+        'latent_proliferated': [],
+        'number_mutations': [],
+        'number_dual_inf': [],
+        'mean_fitness_active': [],
+        'mean_conserved_cost_active': [],
+        'mean_immune_cost_active': [],
+        'mean_replicative_cost_active': []
+      }
+  
+      # put founders at top of file
+      seqs = founder_seqs
+  
+      if n_sample_active[0] != 0:
+        # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
+        latent_nums = [0, 0, 0, 0]
+        # n_mut, number_recombination
+        var_nums = [0, 0]
+        # mean_fitness_active, mean_conserved_cost_active, mean_immune_cost_active,
+        # mean_replicative_cost_active
+        fitness = self.summarize_fitness()
+        counts = self.record_counts(counts, 0, latent_nums, var_nums, fitness)
+        seqs = self.sample_viral_sequences(seqs, 0, int(n_sample_active[0]))
+  
+      # Looping through generations until we sample everything we want
+      for t in range(1, last_sampled_gen+1):
+        # Only get latent reservoir dynamics if modeling
+        if latent:
+          # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
+          latent_nums = self.get_next_gen_latent(
+              prob_act_to_lat, prob_lat_to_act,
+              prob_lat_die, prob_lat_prolif, generator
+            )
+        # Productively infected cell dynamics
+        # n_mut, number_recombination
+        var_nums = self.get_next_gen_active(
+          prob_mut, prob_recomb, active_cell_count[t], t,
+          seroconversion_time, nucleotides_order, substitution_probabilities,
+          conserved_sites, gen_full_potency, conserved_cost, ref_seq,
+          prop_for_imm, epitope_locations,
+          immune_fitness, conserved_fitness, replicative_fitness, rep_exp, 
+          generator
+        )
+        # Record events
+        if n_sample_active[t] != 0:
+          fitness = self.summarize_fitness()
+          counts = self.record_counts(counts, t, latent_nums, var_nums, fitness)
+          seqs = self.sample_viral_sequences(seqs, t, n_sample_active[t])
+          
+      return counts, seqs

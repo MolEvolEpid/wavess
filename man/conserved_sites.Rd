@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{conserved_sites} Vector of conserved nucleotide sites for the}{
 
-gp120 gene of DEMB11US006 (founder)
+gp120 gene of DEMB11US006 (founder) indexed at 0
 }
 }
 \source{

@@ -7,11 +7,12 @@
 #'
 #' @param epitope_probabilities Epitope probability tibble as output by
 #'   [get_epitope_frequencies()], including columns `aa_position` and
-#'   `epitope_probability`
-#' @param start_aa_pos Starting amino acid position to consider for epitopes
-#'   (default: 1)
-#' @param end_aa_pos Ending amino acid position to consider for epitopes
-#'   (default: NULL, i.e. all positions)
+#'   `epitope_probability`. `aa_position` should be indexed at 0
+#' @param start_aa_pos Starting amino acid position to consider for epitopes,
+#' indexed at 0 (default: 0, i.e. the first position)
+#' @param end_aa_pos Ending amino acid position to consider for epitopes,
+#'   indexed at 0 (default: NULL, i.e. through the final position in
+#'   `epitope_probabilities$aa_position`)
 #' @param num_epitopes Number of epitopes to sample
 #' @param aa_epitope_length Amino acid epitope length
 #' @param max_fit_cost Maximum fitness cost of an epitope, must be between 0 and
@@ -39,9 +40,9 @@
 #' @export
 #'
 #' @examples
-#' sample_epitopes(get_epitope_frequencies(env_features$position))
+#' sample_epitopes(get_epitope_frequencies(env_features$Position-1))
 sample_epitopes <- function(epitope_probabilities,
-                            start_aa_pos = 1,
+                            start_aa_pos = 0,
                             end_aa_pos = NULL,
                             num_epitopes = 10,
                             aa_epitope_length = 10,
@@ -104,10 +105,9 @@ sample_epitopes <- function(epitope_probabilities,
   }
   if (is.null(ref_founder_map)) {
     epitopes <- tibble::tibble(
-      # multiply by 3 and subtract 2 to get start of amino acid (indexed at 1)
-      epi_start_nt = start_pos * 3 - 2,
-      # subtract 1 because index at 1
-      epi_end_nt = (start_pos + aa_epitope_length - 1) * 3,
+      # multiply by 3 to get start of amino acid (indexed at 0)
+      epi_start_nt = start_pos * 3,
+      epi_end_nt = (start_pos + aa_epitope_length) * 3,
       max_fitness_cost = max_fit_costs
     )
   }else{
@@ -130,9 +130,9 @@ sample_epitopes <- function(epitope_probabilities,
 #' @export
 #'
 #' @examples
-#' get_epitope_frequencies(env_features$position)
+#' get_epitope_frequencies(env_features$Position-1) # subtract 1 to index at 0
 get_epitope_frequencies <- function(epitope_positions) {
-  check_is_pos(epitope_positions)
+  check_is_pos(epitope_positions, 'epitope_positions', ok0 = TRUE)
   # get epitope probability for each site
   tibble::tibble(aa_position = min(epitope_positions):max(epitope_positions)) |>
     dplyr::left_join(tibble::enframe(epitope_positions) |>
@@ -161,7 +161,7 @@ get_epitope_frequencies <- function(epitope_positions) {
 reindex_epitopes <- function(start_pos, aa_epitope_length, max_fit_costs,
                              ref_founder_map) {
   end_pos <- start_pos * 3
-  not_in_map <- c(start_pos[!((start_pos * 3)-2) %in% ref_founder_map$ref_pos],
+  not_in_map <- c(start_pos[!(start_pos * 3) %in% ref_founder_map$ref_pos],
                   end_pos[!end_pos %in% ref_founder_map$ref_pos])
   if(length(not_in_map)){
     stop('Not all reference epitope start and end positions are in ",
@@ -181,9 +181,9 @@ reindex_epitopes <- function(start_pos, aa_epitope_length, max_fit_costs,
                 dplyr::group_by(.data$ref_start_pos) |>
                 dplyr::slice_min(.data$founder_start_pos),
               by = 'ref_start_pos') |>
-    # multiply by 3 and subtract 2 to get start of amino acid (indexed at 1)
-    dplyr::mutate(epi_start_nt = .data$founder_start_pos * 3 - 2,
-                  epi_end_nt = (.data$founder_start_pos + aa_epitope_length - 1) * 3,
+    # multiply by 3 to get start of amino acid (indexed at 0)
+    dplyr::mutate(epi_start_nt = .data$founder_start_pos * 3,
+                  epi_end_nt = (.data$founder_start_pos + aa_epitope_length) * 3,
                   max_fitness_cost = max_fit_costs) |>
     dplyr::select("epi_start_nt", "epi_end_nt", "max_fitness_cost")
 }

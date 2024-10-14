@@ -29,7 +29,8 @@
 #' - `conserved`: whether or not the position is conserved (Yes means conserved,
 #'   No means not conserved, NA means the conserved position is a gap ('-'))
 #'   When using a reference, `NA` in the consensus columns indicates that that
-#'   position was an insertion relative to the reference
+#'   position was an insertion relative to the reference. All positions are
+#'   indexed at 0.
 #' @export
 #'
 #' @examples
@@ -151,6 +152,7 @@ find_consensus <- function(aln, founder, ref = NULL, founder_aln = NULL) {
 #' - Founder base position (`founder_pos`)
 #' - Reference base (`ref_base`)
 #' - Founder base (`founder_base`)
+#' All positions are indexed at 0.
 #'
 #' @export
 #'
@@ -173,15 +175,15 @@ map_ref_founder <- function(aln, ref, founder) {
     as.character() |>
     t() |>
     tibble::as_tibble() |>
-    # get alignment positions
-    dplyr::mutate(alignment_pos = dplyr::row_number()) |>
+    # get alignment positions indexed at 0
+    dplyr::mutate(alignment_pos = dplyr::row_number() - 1) |>
     # get sequence positions for reference
     get_seq_pos("ref") |>
     # get sequence positions for founder
     get_seq_pos("founder") |>
     # remove leading and trailing positions relative to founder sequence
-    dplyr::filter(cumsum(tidyr::replace_na(.data$founder_pos, 0)) > 0 &
-      rev(cumsum(tidyr::replace_na(rev(.data$founder_pos), 0))) > 0) |>
+    dplyr::filter(cumsum(!is.na(.data$founder_pos)) > 0 &
+      rev(cumsum(!is.na(rev(.data$founder_pos)))) > 0) |>
     # select columns of interest
     dplyr::select("alignment_pos", "ref_pos", "founder_pos",
       ref_base = "ref", founder_base = "founder"
@@ -198,7 +200,7 @@ map_ref_founder <- function(aln, ref, founder) {
 #'
 #' @return
 #' Original data frame with an additional column (the column name prepended to
-#' _pos) that indicates the position of that base in the sequence.
+#' _pos) that indicates the position of that base in the sequence indexed at 0.
 #' @noRd
 get_seq_pos <- function(aln_df, col_name) {
   check_get_seq_pos_inputs(aln_df, col_name)
@@ -208,7 +210,7 @@ get_seq_pos <- function(aln_df, col_name) {
     # get the sequence position
     dplyr::group_by(.data$gap) |>
     dplyr::mutate(
-      pos = dplyr::row_number(),
+      pos = dplyr::row_number() - 1,
       pos = ifelse(.data$gap, NA, .data$pos)
     ) |>
     dplyr::ungroup() |>

@@ -22,5 +22,5 @@ tibble with the following columns:
 Get epitope frequencies
 }
 \examples{
-get_epitope_frequencies(env_features$position)
+get_epitope_frequencies(env_features$Position-1) # subtract 1 to index at 0
 }

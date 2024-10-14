@@ -23,6 +23,7 @@ Tibble including columns for:
 \item Founder base position (\code{founder_pos})
 \item Reference base (\code{ref_base})
 \item Founder base (\code{founder_base})
+All positions are indexed at 0.
 }
 }
 \description{

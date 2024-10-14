@@ -44,7 +44,8 @@ position
 \item \code{conserved}: whether or not the position is conserved (Yes means conserved,
 No means not conserved, NA means the conserved position is a gap ('-'))
 When using a reference, \code{NA} in the consensus columns indicates that that
-position was an insertion relative to the reference
+position was an insertion relative to the reference. All positions are
+indexed at 0.
 }
 }
 \description{

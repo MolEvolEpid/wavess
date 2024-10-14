@@ -258,7 +258,7 @@ check_sample_epitopes_inputs <- function(epitope_probabilities,
       cost_type
     )
   }
-  check_is_pos(start_aa_pos, "start_aa_pos")
+  check_is_pos(start_aa_pos, "start_aa_pos", ok0 = TRUE)
   if (!is.null(end_aa_pos)) {
     check_is_pos(end_aa_pos, "end_aa_pos")
   }
@@ -393,7 +393,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
     })
   })
   if (!is.null(conserved_sites)) {
-    check_is_pos(conserved_sites, "conserved_sites")
+    check_is_pos(conserved_sites, "conserved_sites", ok0 = TRUE)
     if (max(conserved_sites) > nchar(as.list(founder_seqs)[[1]])) {
       stop(
         "the maximum value of conserved_sites is greater than ",

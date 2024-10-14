@@ -328,13 +328,13 @@ to generate the inputs for each of these selective pressures.
 
 **An important note about indexing and reference sequences before we jump in:**
 
-First, everything must be indexed relative to the start of the 
-founder sequence in the simulation. Even though the back-end is implemented in
-Python, for the `run_wavess()` R function we expect the indexing to begin at 1, 
-since this is more intuitive for R users (we account for this internally). If
-you would like to use these functions followed by the Python script, you will have
-to make sure to change the indexing to 0 for the conserved sites and epitopes
-(i.e. subtract 1 from all numbers). 
+First, all nucleotide positions must be indexed relative to the start of the 
+founder sequence in the simulation. Since the back-end is implemented in
+Python, we expect the indexing to begin at 0. This is because you can run wavess
+using the `run_wavess()` function in R, but also directly from Python (see 
+`vignette("python")` for details). This way, the inputs are the same regardless
+of what program you use to run wavess. This is relevant for conserved sites and
+epitopes. 
 
 Second, information of interest such as conserved sites or antibody contacts, 
 is often computed or provided relative to what is 
@@ -516,8 +516,8 @@ Therefore, the function `sample_epitopes()` takes as input a data frame that
 must contain columns for the amino acid position (`aa_position`) and the epitope
 probability at that position (`epitope_probability`). The amino acid positions
 must only include those corresponding to the nucleotide sequence to be
-simulated, and must be indexed in such a way that amino acid position 1 
-corresponds to nucleotide position 1 in the founder sequence. In our example,
+simulated, and must be indexed in such a way that the first amino acid position
+corresponds to the first nucleotide position in the founder sequence. In our example,
 this is gp120. We have already filtered the built-in package data to only
 include this subset.
 

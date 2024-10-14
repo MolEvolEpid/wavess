@@ -6,7 +6,7 @@
 \usage{
 sample_epitopes(
   epitope_probabilities,
-  start_aa_pos = 1,
+  start_aa_pos = 0,
   end_aa_pos = NULL,
   num_epitopes = 10,
   aa_epitope_length = 10,
@@ -19,13 +19,14 @@ sample_epitopes(
 \arguments{
 \item{epitope_probabilities}{Epitope probability tibble as output by
 \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}}, including columns \code{aa_position} and
-\code{epitope_probability}}
+\code{epitope_probability}. \code{aa_position} should be indexed at 0}
 
-\item{start_aa_pos}{Starting amino acid position to consider for epitopes
-(default: 1)}
+\item{start_aa_pos}{Starting amino acid position to consider for epitopes,
+indexed at 0 (default: 0, i.e. the first position)}
 
-\item{end_aa_pos}{Ending amino acid position to consider for epitopes
-(default: NULL, i.e. all positions)}
+\item{end_aa_pos}{Ending amino acid position to consider for epitopes,
+indexed at 0 (default: NULL, i.e. through the final position in
+\code{epitope_probabilities$aa_position})}
 
 \item{num_epitopes}{Number of epitopes to sample}
 
@@ -67,5 +68,5 @@ of the founder sequence in the simulation. We also assume that there are no
 frameshift mutations in the founder sequence.
 }
 \examples{
-sample_epitopes(get_epitope_frequencies(env_features$position))
+sample_epitopes(get_epitope_frequencies(env_features$Position-1))
 }

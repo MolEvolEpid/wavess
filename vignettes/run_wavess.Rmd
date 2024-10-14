@@ -153,7 +153,7 @@ required_args_only$seqs
 Each sequence is named as follows:
 
 - Founder sequences are named as "founderX" where X is the index of the founder
-sequence in the input vector
+sequence in the input vector (indexed at 0).
 - All other sequences are sampled and are named by the generation, the cell number,
 and then the immune fitness cost (ic), conserved fitness cost (cc), replicative
 fitness cost (rc), and overall fitness (f).
@@ -170,8 +170,9 @@ more about how to analyze the output, please checkout the post-processing vignet
 - Fitness relative to a "most fit" reference sequence
 - B-cell immunity
 
-Including these requires additional inputs, which are described in more detail
-in the prepare input data vignette (`vignette("prepare_input_data")`).
+Note that all nucleotide positions related to fitness are expected to be indexed
+at 0. Including these requires additional inputs, which are described in more
+detail in the prepare input data vignette (`vignette("prepare_input_data")`).
 
 For additional details on how each of these selective pressures is implemented,
 please see the manuscript [**ADD LINK WHEN WE HAVE IT**].
