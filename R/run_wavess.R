@@ -177,7 +177,7 @@ run_wavess <- function(pop_samp,
   last_sampled_gen <- max(pop_samp$generation[pop_samp$n_sample_active != 0])
 
   founder_seqs <- as.list(founder_seqs)
-  names(founder_seqs) <- paste0("founder", seq_along(founder_seqs)-1)
+  names(founder_seqs) <- paste0("founder", seq_along(founder_seqs) - 1)
 
   # Simulate within-host evolution
   out <- reticulate::py_to_r(host$loop_through_generations(
@@ -189,14 +189,14 @@ run_wavess <- function(pop_samp,
     latent, prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
     conserved_sites, conserved_cost, ref_seq, rep_exp,
     epitope_locations, seroconversion_time, prop_for_imm, gen_full_potency,
-    immune_fitness, conserved_fitness, replicative_fitness, generator))
+    immune_fitness, conserved_fitness, replicative_fitness, generator
+  ))
 
   # Fix up output
-  names(out) <- c('counts', 'seqs')
+  names(out) <- c("counts", "seqs")
   out$counts <- out$counts |> dplyr::bind_rows()
-  out$seqs <- ape::as.DNAbin(t(sapply(out$seqs, function(x) strsplit(x, split = '')[[1]])))
+  out$seqs <- ape::as.DNAbin(t(sapply(out$seqs, function(x) strsplit(x, split = "")[[1]])))
 
   # Return output
   return(out)
-
 }
