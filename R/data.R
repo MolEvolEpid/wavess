@@ -32,7 +32,7 @@
 #' See `hiv_env_flt_2022` for more details and the link to the entire alignment.
 #'
 #' @format ## `conserved_sites` Vector of conserved nucleotide sites for the
-#' gp120 gene of DEMB11US006 (founder)
+#' gp120 gene of DEMB11US006 (founder) indexed at 0
 #' @source Full alignment used:
 #' <https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html>
 #' Founder sequence:
@@ -49,7 +49,7 @@
 #' LANL HIV database. The full Env feature dataset was subsetted to include only
 #' binding, contact, and neutralization sites. The most relevant column for us
 #' is the "position" column. Other columns are included in case it is useful for
-#' specific use cases.
+#' specific use cases. This particular data was last updated on 2024-10-01.
 #' @source
 #' https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp
 "env_features"
