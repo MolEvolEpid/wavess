@@ -89,14 +89,16 @@ if __name__ == '__main__':
     # Read generation information, including cd4 counts and sampling times and numbers
     pop_samp = read_pop_samp(input_files['pop_samp'])
 
-    # Read details of reference sequence
-    reference_sequence = get_sequences(input_files['ref_seq'])[0]
-
     # Epitope start positions and max fitness cost.
     epitope_locations = read_b_epitopes(input_files['epitope_locations'])
 
     # Conserved sites.
     conserved_sites = get_conserved_sites(input_files['conserved_sites'])
+    
+    # Read details of reference sequence
+    reference_sequence = get_sequences(input_files['ref_seq'])[0]
+    # mask conserved sites so they aren't included in replicative fitness computation
+    ref_seq_str = "".join([x if i not in conserved_sites else "-" for i,x in enumerate(reference_sequence)])
     
     # Nucleotide substitution probabilities
     nucleotides_order, substitution_probabilities = \
