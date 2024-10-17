@@ -80,7 +80,7 @@ founder_ref <- extract_seqs(hxb2_cons_founder,
 )
 nt_sub_probs <- calc_nt_sub_probs(hiv_env_flt_2022)
 gp120 <- slice_aln(hxb2_cons_founder, 6225, 7787)
-epi_probs <- get_epitope_frequencies(env_features$position)
+epi_probs <- get_epitope_frequencies(env_features$Position)
 ref_founder_map <- map_ref_founder(gp120,
   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
   founder = "B.US.2011.DEMB11US006.KC473833"
