@@ -68,5 +68,5 @@ of the founder sequence in the simulation. We also assume that there are no
 frameshift mutations in the founder sequence.
 }
 \examples{
-sample_epitopes(get_epitope_frequencies(env_features$Position-1))
+sample_epitopes(get_epitope_frequencies(env_features$Position - 1))
 }
