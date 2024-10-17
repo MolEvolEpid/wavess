@@ -141,6 +141,12 @@ python main.py config.yaml wavess_output/
 If the slash is at the end, then there will be no prefix for the output files.
 If you want a prefix for the output files, then you can add that to the end.
 
+Two output files are generated: a csv file containing various counts for each
+sampled generation, and a fasta file containing the sampled sequences for each
+generation. See `vignette("run_wavess")` for more details about the outputs. 
+
+Example output files can be found in `inst/python/wavess_output/`.
+
 
 
 
