@@ -9,6 +9,7 @@ articles:
   - prepare_input_data
   - run_wavess
   - analyze_output
+  - python
 
 reference:
 - title: Pre-processing
