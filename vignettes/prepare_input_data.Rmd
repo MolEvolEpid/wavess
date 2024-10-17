@@ -503,10 +503,12 @@ head(founder_conserved_sites)
 tail(founder_conserved_sites)
 ```
 
-To write this to a file:
+To write this to a file (note that we use the internal conserved sites because
+it is more accurate for our example, rather than the example run above,
+which is not accurate since it was only run on a handful of genomes):
 
 ```{r, write_conserved}
-write_csv(tibble(founder_conserved_sites), 'input_data/conserved_sites.csv', col_names = FALSE)
+write_csv(tibble(conserved_sites), 'input_data/conserved_sites.csv', col_names = FALSE)
 ```
 
 
