@@ -4,8 +4,8 @@ test_that("calc_nt_sub_probs works", {
   capture.output(probs <- calc_nt_sub_probs(hiv_env_flt_2022[1:3, ]),
     file = nullfile()
   )
-  expect_equal(round(probs[1, 2], 2), 0.23)
-  expect_equal(round(probs[2, 1], 2), 0.43)
+  expect_equal(unname(unlist(round(probs[1, 3], 2))), 0.23)
+  expect_equal(unname(unlist(round(probs[2, 2], 2))), 0.43)
   expect_error(
     calc_nt_sub_probs("not_an_aln"),
     "aln must be of the"

@@ -39,5 +39,7 @@ calc_nt_sub_probs <- function(aln, tr = NULL, model = "GTR+R(4)+I",
   prob_mat <- q_mat / rowSums(q_mat)
   rownames(prob_mat) <- c("A", "C", "G", "T")
   colnames(prob_mat) <- c("A", "C", "G", "T")
-  return(data.frame(prob_mat))
+  prob_mat <- prob_mat |>
+    tibble::as_tibble(rownames = 'nt_from')
+  return(prob_mat)
 }
