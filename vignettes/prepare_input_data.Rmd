@@ -45,7 +45,7 @@ have to create thet directory before running the file saving commands. For
 example:
 
 ```{r, create_dir}
-dir.create('input_data')
+dir.create("input_data")
 ```
 
 In each relevant section, we also provide examples of how to visualize the data.
@@ -149,7 +149,7 @@ sampling and more samples taken at each sampling event:
 If you'd like to write this to a file:
 
 ```{r, write_pop_samp}
-write_csv(pop_samp, 'input_data/pop_samp.csv')
+write_csv(pop_samp, "input_data/pop_samp.csv")
 ```
 
 A couple notes:
@@ -233,10 +233,10 @@ The easiest way to save this sequence as a fasta file is to convert it into an
 `ape::DNAbin` object and then save it:
 
 ```{r, write_founder}
-strsplit(founder_seq, '')[[1]] |>
+strsplit(founder_seq, "")[[1]] |>
   as.DNAbin() |>
   as.matrix() |>
-  write.FASTA('input_data/founder.fasta')
+  write.FASTA("input_data/founder.fasta")
 ```
 
 
@@ -264,7 +264,7 @@ substitution (`model`) and no tree rearrangement (`rearrangement`).
 To save this to a file:
 
 ```{r, write_sub_probs}
-write_csv(nt_sub_probs, 'input_data/nt_sub_probs.csv')
+write_csv(nt_sub_probs, "input_data/nt_sub_probs.csv")
 ```
 
 
@@ -506,7 +506,7 @@ tail(founder_conserved_sites)
 To write this to a file:
 
 ```{r, write_conserved}
-write_csv(tibble(founder_conserved_sites), 'input_data/conserved_sites.csv', col_names = FALSE)
+write_csv(tibble(founder_conserved_sites), "input_data/conserved_sites.csv", col_names = FALSE)
 ```
 
 
@@ -548,10 +548,10 @@ To write this to a fasta file, you use a similar method as writing the founder
 to a fasta file:
 
 ```{r, write_ref}
-strsplit(founder_ref$ref, '')[[1]] |>
+strsplit(founder_ref$ref, "")[[1]] |>
   as.DNAbin() |>
   as.matrix() |>
-  write.FASTA('input_data/ref.fasta')
+  write.FASTA("input_data/ref.fasta")
 ```
 
 
@@ -664,7 +664,7 @@ epitope_locations %>%
 To write them to a file:
 
 ```{r, write_epi}
-write_csv(epitope_locations, 'input_data/epitope_locations.csv')
+write_csv(epitope_locations, "input_data/epitope_locations.csv")
 ```
 
 

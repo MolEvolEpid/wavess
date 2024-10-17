@@ -373,21 +373,21 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
     stop("All founder sequences must be the same length")
   }
   check_is_df(nt_sub_probs, "nt_sub_probs")
-  if (!all(nt_sub_probs[,1,drop=TRUE] %in% c("A", "C", "G", "T")) ||
-    !all(c("A", "C", "G", "T") %in% nt_sub_probs[,1,drop=TRUE])) {
+  if (!all(nt_sub_probs[, 1, drop = TRUE] %in% c("A", "C", "G", "T")) ||
+    !all(c("A", "C", "G", "T") %in% nt_sub_probs[, 1, drop = TRUE])) {
     stop("the first column of nt_sub_probs must have A,C,G,T")
   }
   if (!all(colnames(nt_sub_probs)[2:5] %in% c("A", "C", "G", "T")) ||
     !all(c("A", "C", "G", "T") %in% colnames(nt_sub_probs)[2:5])) {
     stop("nt_sub_probs must have colnames A,C,G,T")
   }
-  if (!all(nt_sub_probs[,1,drop=TRUE] == colnames(nt_sub_probs)[2:5])) {
+  if (!all(nt_sub_probs[, 1, drop = TRUE] == colnames(nt_sub_probs)[2:5])) {
     stop(
       "the first column of nt_sub_probs and the subsequent column names must be ",
       "in the same order"
     )
   }
-  sapply(nt_sub_probs[,2:5], function(x) {
+  sapply(nt_sub_probs[, 2:5], function(x) {
     lapply(x, function(y) {
       check_is_0to1(y, "nt_sub_probs")
     })
