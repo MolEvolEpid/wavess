@@ -1,0 +1,33 @@
+# Input file paths
+input_files:
+    pop_samp: ../extdata/pop_samp.csv
+    founder_seqs: ../extdata/founder.fasta
+    nt_sub_probs: ../extdata/nt_sub_probs.csv
+    conserved_sites: ../extdata/conserved_sites.csv
+    ref_seq: ../extdata/ref.fasta
+    epitope_locations: ../extdata/epitope_locations.csv
+
+# Parameters
+parameters:
+    # Parameters related to what type of fitness to model (1 means yes, 0 means no)
+    immune_fitness: 1 # Immune fitness due to antibody recognition
+    conserved_fitness: 1 # Conserved sites fitness
+    replicative_fitness: 1 # Replicative fitness (comparison to reference sequence)
+    # Parameters related to fitness
+    # Conserved sites
+    conserved_cost: 0.99 # Fitness cost per mutation in a conserved site
+    # Replicative
+    rep_exp: 1 # Exponent for replicative fitness function ((n_muts/n_sites)**rf_exp)
+    # Immune
+    seroconversion_time: 30 # Seroconversion time in generations; immunity considered only at this generation onward
+    immune_response_proportion: 0.01 # Proportion new viral antigen must reach to initiate immune response against corresponding epitope (0.001 - 0.1)
+    time_to_full_potency: 90 # Number of generations for a new immune response to reach full potency
+    # Parameters related to other biology
+    # Diversity-generating mechanisms
+    prob_mut: 3.50E-05 # Probability of a mutation event per site per generation
+    prob_recomb: 1.40E-05 # Probability of a recombination event per site per generation
+    # Latent cell dynamics
+    prob_act_to_lat: 0.001 # Probability of infected cell becoming latent
+    prob_lat_to_act: 0.01 # Probability that a latent cell will become active
+    prob_lat_prolif: 0.01 # Probability that a latent cell will proliferate (based on central memory cells)
+    prob_lat_die: 0.01 # Probability that a latent cell will die

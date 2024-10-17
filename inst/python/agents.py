@@ -21,7 +21,7 @@ def set_python_seed(s):
   return generator
 
 def create_host_env(founder_seqs, ref_seq, conserved_sites, rep_fit, rf_exp, initial_cell_count):
-  founder_viruses = [HIV(seq, ref_seq, conserved_sites, rep_fit, rf_exp) for seq in founder_seqs]
+  founder_viruses = [HIV(seq, ref_seq, conserved_sites, rep_fit, rf_exp) for seq in founder_seqs.values()]
   return HostEnv(founder_viruses, initial_cell_count)
 
 def create_epitope(start, end, max_fc):
@@ -146,7 +146,7 @@ class HIV:
     def __init__(self, nuc_seq, reference_sequence, conserved_sites, replicative_fitness, rf_exp):
         # Make sure values supplied are as expected
         assert isinstance(nuc_seq, str), "Nucleotide sequence needs to be a string"
-
+        
         # Initialize instance variables
         self.nuc_sequence = nuc_seq
         self.conserved_sites_mutated = set()
@@ -634,7 +634,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
   
       # put founders at top of file
       seqs = founder_seqs
-  
+
       if n_sample_active[0] != 0:
         # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
         latent_nums = [0, 0, 0, 0]

@@ -167,17 +167,18 @@ run_wavess <- function(pop_samp,
     function(x) x
   ))
 
+  # TODO - MAKE USER INPUT NAMED VECTOR?
+  founder_seqs <- as.list(founder_seqs)
+  names(founder_seqs) <- paste0("founder", seq_along(founder_seqs) - 1)
+
   # Create host environment and initialize infected cells
   host <- agents$create_host_env(
-    as.list(founder_seqs),
+    founder_seqs,
     ref_seq, conserved_sites, replicative_fitness, rep_exp,
     as.integer(pop_samp$active_cell_count[1])
   )
   # Last sampled generation (don't have to continue simulation after this)
   last_sampled_gen <- max(pop_samp$generation[pop_samp$n_sample_active != 0])
-
-  founder_seqs <- as.list(founder_seqs)
-  names(founder_seqs) <- paste0("founder", seq_along(founder_seqs) - 1)
 
   # Simulate within-host evolution
   out <- reticulate::py_to_r(host$loop_through_generations(
