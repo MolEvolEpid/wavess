@@ -149,7 +149,7 @@ sampling and more samples taken at each sampling event:
 If you'd like to write this to a file:
 
 ```{r, write_pop_samp}
-write_tsv(pop_samp, 'input_data/pop_samp.tsv')
+write_csv(pop_samp, 'input_data/pop_samp.csv')
 ```
 
 A couple notes:
@@ -235,6 +235,7 @@ The easiest way to save this sequence as a fasta file is to convert it into an
 ```{r, write_founder}
 strsplit(founder_seq, '')[[1]] |>
   as.DNAbin() |>
+  as.matrix() |>
   write.FASTA('input_data/founder.fasta')
 ```
 
@@ -536,7 +537,7 @@ to obtain both at once:
 (founder_ref <- extract_seqs(hxb2_cons_founder,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "CON_B(1295)",
-  start = 6225, end = 7757
+  start = gp120_start, end = gp120_end
 ))
 ```
 
@@ -549,6 +550,7 @@ to a fasta file:
 ```{r, write_ref}
 strsplit(founder_ref$ref, '')[[1]] |>
   as.DNAbin() |>
+  as.matrix() |>
   write.FASTA('input_data/ref.fasta')
 ```
 
