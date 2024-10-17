@@ -134,7 +134,8 @@ run_wavess <- function(pop_samp,
       # mask conserved sites so they aren't included in replicative fitness
       # computation
       ref_seq_str <- strsplit(ref_seq, "")[[1]]
-      ref_seq_str[conserved_sites] <- "-"
+      # add one to index at 1
+      ref_seq_str[conserved_sites+1] <- "-"
       ref_seq <- paste0(ref_seq_str, collapse = "")
     }
   }
