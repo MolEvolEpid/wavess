@@ -89,12 +89,8 @@ def conserved_fitness_cost(num_mutations_in_conserved_sites, cost_per_mutation_i
     return 1 - pow((1 - cost_per_mutation_in_conserved_site), num_mutations_in_conserved_sites)
 
 # UPDATE THIS TO NOT TAKE EXPONENT IF WE END UP KEEPING IT THE WAY IT IS NOW
-def replicative_fitness_cost(s1, s2, conserved_sites, rf_exp):
+def replicative_fitness_cost(s1, s2, rf_exp):
     assert len(s1) == len(s2), "In replicative fitness, sequences are not of same length!"
-    # don't include conserved sites in calculation
-    # INSTEAD OF THIS, MASK SITES DIRECTLY IN FOUNDER SEQUENCE AT BEGINNING OF SIMULATION
-    #s1 = [s1[x] for x in range(len(s1)) if x not in conserved_sites]
-    #s2 = [s2[x] for x in range(len(s2)) if x not in conserved_sites]
     n_compare = len([1 for x in range(len(s2)) if s2[x] in ['A','T','C','G']])
     return (len([1 for x,y in zip(s1, s2) if x != y and y in ['A','T','C','G']])/n_compare) #**rf_exp
 
@@ -156,7 +152,7 @@ class HIV:
         self.conserved_fitness_cost = 0
         self.replicative_fitness_cost = 0
         if replicative_fitness:
-            self.replicative_fitness_cost = replicative_fitness_cost(self.nuc_sequence, reference_sequence, conserved_sites, rf_exp)
+            self.replicative_fitness_cost = replicative_fitness_cost(self.nuc_sequence, reference_sequence, rf_exp)
         self.fitness = 1
 
     def __repr__(self):
@@ -183,7 +179,7 @@ class HIV:
             ref_base = reference_sequence[position_to_mutate]
             prev_comp = old_nucleotide == ref_base
             if prev_comp != (ref_base == new_nucleotide):
-                self.replicative_fitness_cost = replicative_fitness_cost(self.nuc_sequence, reference_sequence, conserved_sites, rf_exp)
+                self.replicative_fitness_cost = replicative_fitness_cost(self.nuc_sequence, reference_sequence, rf_exp)
 
 
 class InfectedCD4:
@@ -207,9 +203,10 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
     def __init__(self, founder_viruses: HIV, NC: int): 
         self.epitope_variants_translated = defaultdict(lambda: '') # store epitope translations 
         
+        assert NC == len(founder_viruses), 'Initial population size must equal the number of founder sequences'
+        
         # Create NC actively proliferating infected cells
         #self.C = [InfectedCD4(deepcopy(choice(founder_viruses)), True) for i in range(NC)]
-        assert NC == len(founder_viruses), 'Initial population size must equal the number of founder sequences'
         self.C = [InfectedCD4(founder, True) for founder in founder_viruses]
 
         # Initiate latent infected cells
@@ -406,7 +403,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             # Update replicative fitness for recombined virus
             if replicative_fitness:
                 newly_infected[n_added].infecting_virus.replicative_fitness_cost = replicative_fitness_cost(
-                        newly_infected[n_added].infecting_virus.nuc_sequence, reference_sequence, conserved_sites, rf_exp)
+                        newly_infected[n_added].infecting_virus.nuc_sequence, reference_sequence, rf_exp)
 
             n_added +=1
 
