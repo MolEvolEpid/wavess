@@ -55,8 +55,9 @@ mamba activate swish
 ### Config file
 
 `main.py` requires a `config.yaml` file (example config file in `inst/python`)
-that defines various parameters and includes paths to the following file inputs
-(example data in `inst/extdata/`):
+that defines various parameters and includes paths to input files.
+
+**File inputs (example data in `inst/extdata/`):**
 
 - `pop_samp`: tsv with columns generation, active_cell_count, n_sample_active.
 Note that the initial active cell population size in the first generation must
@@ -71,29 +72,20 @@ Rows are from, columns are to. Can be generated using the [calc_nt_sub_probs()]
 function.
 - `conserved_sites`: tsv of conserved sites indexed at 0 where each row contains
 a conserved site. This can be generated using the [identify_conserved_sites()]
-function. If this isn't provided, then conserved fitness costs are not included.
-**TODO: DECIDE IF THIS IS HOW WE WANT TO DO IT**
+function. If this is an empty string, then conserved fitness costs are not included.
 - `ref_seq`: fasta file of the reference sequence. A consensus
 sequence, that can be used as the reference sequence, can be generated using the
-function [identify_conserved_sites()]. If this isn't provided, then fitness
-costs relative to a reference sequence are not included. **TODO: DECIDE IF THIS
-IS HOW WE WANT TO DO IT**
+function [identify_conserved_sites()]. If this is an empty string, then fitness
+costs relative to a reference sequence are not included. 
 - `epitope_locations`: tsv of epitope locations and maximum fitness
 costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These epitopes
 are expected to be indexed at 0 and in a protein in the correct reading frame,
 as the nucleotide sequences are translated to amino acids to calculate the
 immune fitness cost. This information can be generated using the functions
-[get_epitope_frequencies()] and [sample_epitopes()]. If this isn't provided,
-then immune fitness costs are not included. **TODO: DECIDE IF THIS IS HOW WE
-WANT TO DO IT**
+[get_epitope_frequencies()] and [sample_epitopes()]. If this is an empty string
+provided, then immune fitness costs are not included.
 
-The parameters that must be defined in the config file are:
-
-What fitness to use (0 is don't use, 1 is use): **TODO: DECIDE IF THIS IS HOW WE WANT TO DO IT**
-
-- `immune_fitness`: 1 # Immune fitness due to antibody recognition
-- `conserved_fitness`: 1 # Conserved sites fitness
-- `replicative_fitness`: 1 # Replicative fitness (comparison to reference sequence)
+**Parameters:**
 
 Diversity-generating mechanisms:
 
