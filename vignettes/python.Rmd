@@ -131,10 +131,10 @@ Immune fitness:
 - The prefix to the output files (including directories)
 - An optional number that is the seed to set for random number generation (to make your results reproducible)
 
-Here is an example:
+Here is an example (we set a seed so it will be reproducible, usually you don't want to do this):
 
 ```
-python main.py config.yaml wavess_output/ 
+python main.py config.yaml wavess_output/ 1234
 ```
 
 **Note that the path to the output file has to have at least one slash.**
