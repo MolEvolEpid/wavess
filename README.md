@@ -38,4 +38,5 @@ Please see the vignettes following vignettes for examples:
 
 - Preparing input data: `vignette("prepare_input_data")`
 - Running wavess: `vignette("run_wavess")`
-- Analyzing the output: `vignett("analyze_output")`
+- Analyzing the output: `vignette("analyze_output")`
+- Running the python script: `vignette("python")`
