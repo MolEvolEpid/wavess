@@ -20,9 +20,11 @@ import agents
 
 # Functions to read in data
 
+
 def read_pop_samp(filename):
-    pop_samp = read_csv(filename, index_col=['generation'])
+    pop_samp = read_csv(filename, index_col=["generation"])
     return pop_samp
+
 
 # Epitopes file has the following columns (tab-delimited)
 # col 1 -> epi_start
@@ -37,10 +39,14 @@ def read_b_epitopes(filename):
 
 
 def get_sequences(filename):
-    founder_virus_sequences = [str(fasta.seq).upper() for fasta in  SeqIO.parse(open(filename), 'fasta')]
+    founder_virus_sequences = [
+        str(fasta.seq).upper() for fasta in SeqIO.parse(open(filename), "fasta")
+    ]
     # The lengths of the founder sequences must be the same
     len_founder = len(founder_virus_sequences[0])
-    assert False not in [len(i) == len_founder for i in founder_virus_sequences], "Founder virus sequences must be of the same length"
+    assert False not in [
+        len(i) == len_founder for i in founder_virus_sequences
+    ], "Founder virus sequences must be of the same length"
     return founder_virus_sequences
 
 
@@ -50,22 +56,28 @@ def get_conserved_sites(conserved_sites_filename):
 
 def get_nucleotide_substitution_probabilities(substitution_probabilities_filename):
     # Read nucleotide substitution probabilities
-    substitution_probabilities_df = read_csv(substitution_probabilities_filename, index_col='nt_from')
+    substitution_probabilities_df = read_csv(
+        substitution_probabilities_filename, index_col="nt_from"
+    )
 
     # Make sure that the row and column labels are the same
     new_nucleotides_order = tuple(substitution_probabilities_df.columns)
     old_nucleotides_order = tuple(substitution_probabilities_df.index)
-    assert ''.join(old_nucleotides_order) == ''.join(
-        new_nucleotides_order), "Nucleotide substitution matrix row and column labels are different"
+    assert "".join(old_nucleotides_order) == "".join(
+        new_nucleotides_order
+    ), "Nucleotide substitution matrix row and column labels are different"
 
     # Get probabilities as a list of tuples
-    probabilities = list(substitution_probabilities_df.itertuples(index=False, name=None))
+    probabilities = list(
+        substitution_probabilities_df.itertuples(index=False, name=None)
+    )
 
     return new_nucleotides_order, probabilities
 
+
 # Run model
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(argv) != 3 and len(argv) != 4:
         print(len(argv))
         print("argv[1] = config file")
@@ -74,7 +86,7 @@ if __name__ == '__main__':
         exit(1)
 
     start = time()
-    
+
     s = None
     if len(argv) == 4:
         s = argv[3]
@@ -84,88 +96,128 @@ if __name__ == '__main__':
     config = safe_load(open(argv[1]))
 
     ### Read in information ###
-    input_files = config['input_files']
+    input_files = config["input_files"]
 
     ## Required inputs ##
-    
+
     # Generation information, including cd4 counts and sampling times and numbers
-    pop_samp = read_pop_samp(input_files['pop_samp'])
-    
-    # Founder virus 
-    founder_virus_sequences = get_sequences(input_files['founder_seqs'])
-    
+    pop_samp = read_pop_samp(input_files["pop_samp"])
+
+    # Founder virus
+    founder_virus_sequences = get_sequences(input_files["founder_seqs"])
+
     # Nucleotide substitution probabilities
-    nucleotides_order, substitution_probabilities = \
-            get_nucleotide_substitution_probabilities(input_files['nt_sub_probs'])
+    nucleotides_order, substitution_probabilities = (
+        get_nucleotide_substitution_probabilities(input_files["nt_sub_probs"])
+    )
 
     ## Optional inputs related to selection ##
 
     # Conserved sites
     conserved_sites = []
-    if input_files['conserved_sites'] != "":
-        conserved_sites = get_conserved_sites(input_files['conserved_sites'])
-    
+    if input_files["conserved_sites"] != "":
+        conserved_sites = get_conserved_sites(input_files["conserved_sites"])
+
     # Reference sequence
     reference_sequence = ""
-    if input_files['ref_seq'] != "":
-        reference_sequence = get_sequences(input_files['ref_seq'])[0]
+    if input_files["ref_seq"] != "":
+        reference_sequence = get_sequences(input_files["ref_seq"])[0]
         if len(conserved_sites):
             # mask conserved sites so they aren't included in replicative fitness computation
-            reference_sequence = "".join([x if i not in conserved_sites else "-" for i,x in enumerate(reference_sequence)])
-    
-    # Epitope start positions and max fitness cost.
-    epitope_locations = None 
-    if input_files['epitope_locations'] != "":
-        epitope_locations = read_b_epitopes(input_files['epitope_locations'])
-        
-    # Initialize parameters
-    params = config['parameters']
+            reference_sequence = "".join(
+                [
+                    x if i not in conserved_sites else "-"
+                    for i, x in enumerate(reference_sequence)
+                ]
+            )
 
-    assert len(founder_virus_sequences) == pop_samp['active_cell_count'][0], "The number of founder sequences must equal the active cell count at generation 0."
+    # Epitope start positions and max fitness cost.
+    epitope_locations = None
+    if input_files["epitope_locations"] != "":
+        epitope_locations = read_b_epitopes(input_files["epitope_locations"])
+
+    # Initialize parameters
+    params = config["parameters"]
+
+    assert (
+        len(founder_virus_sequences) == pop_samp["active_cell_count"][0]
+    ), "The number of founder sequences must equal the active cell count at generation 0."
 
     # Create founder viruses
     founder_viruses = {}
-    for i,v in enumerate(founder_virus_sequences):
-      founder_viruses['founder' + str(i)] = v
+    for i, v in enumerate(founder_virus_sequences):
+        founder_viruses["founder" + str(i)] = v
 
     # Create host environment and add to viral sequences counter
-    host = agents.create_host_env(founder_viruses, reference_sequence, float(params['rep_exp']), int(pop_samp.loc[0]['active_cell_count']))
+    host = agents.create_host_env(
+        founder_viruses,
+        reference_sequence,
+        float(params["rep_exp"]),
+        int(pop_samp.loc[0]["active_cell_count"]),
+    )
 
     # Active cell counts for each generation
-    active_cell_count = pop_samp['active_cell_count']
+    active_cell_count = pop_samp["active_cell_count"]
     # Number of cells to sample for each generation
-    n_to_samp = pop_samp['n_sample_active']
+    n_to_samp = pop_samp["n_sample_active"]
     # Last sampled generation (don't have to continue simulation after this)
     last_sampled_gen = [index for index, item in enumerate(n_to_samp) if item != 0][-1]
-    
+
     # Loop through generations
-    counts, seqs = host.loop_through_generations(active_cell_count, n_to_samp, last_sampled_gen,
-        founder_viruses, nucleotides_order, substitution_probabilities,
-        params['prob_mut'], params['prob_recomb'], 
-        params['prob_act_to_lat'], params['prob_lat_to_act'], params['prob_lat_die'], params['prob_lat_prolif'], 
-        conserved_sites, params['conserved_cost'], reference_sequence, float(params['rep_exp']), 
-        epitope_locations, params['seroconversion_time'], params['immune_response_proportion'], params['time_to_full_potency'], 
-        generator)
-        
+    counts, seqs = host.loop_through_generations(
+        active_cell_count,
+        n_to_samp,
+        last_sampled_gen,
+        founder_viruses,
+        nucleotides_order,
+        substitution_probabilities,
+        params["prob_mut"],
+        params["prob_recomb"],
+        params["prob_act_to_lat"],
+        params["prob_lat_to_act"],
+        params["prob_lat_die"],
+        params["prob_lat_prolif"],
+        conserved_sites,
+        params["conserved_cost"],
+        reference_sequence,
+        float(params["rep_exp"]),
+        epitope_locations,
+        params["seroconversion_time"],
+        params["immune_response_proportion"],
+        params["time_to_full_potency"],
+        generator,
+    )
+
     # Make directories if they don't exist
     directory = dirname(argv[2])
-    makedirs(directory, exist_ok=True)    
-    
+    makedirs(directory, exist_ok=True)
+
     # Write counts to csv
-    keys = ["generation", "active_cell_count", "latent_cell_count", "active_turned_latent", 
-            "latent_turned_active", "latent_died", "latent_proliferated", 
-            "number_mutations", "number_dual_inf", "mean_fitness_active", 
-            "mean_conserved_cost_active", "mean_immune_cost_active", "mean_replicative_cost_active"]
-    with open(argv[2] + 'counts.txt', "w") as outfile:
-       writer = writer(outfile)
-       writer.writerow(keys)
-       writer.writerows(zip(*[counts[key] for key in keys]))
-        
+    keys = [
+        "generation",
+        "active_cell_count",
+        "latent_cell_count",
+        "active_turned_latent",
+        "latent_turned_active",
+        "latent_died",
+        "latent_proliferated",
+        "number_mutations",
+        "number_dual_inf",
+        "mean_fitness_active",
+        "mean_conserved_cost_active",
+        "mean_immune_cost_active",
+        "mean_replicative_cost_active",
+    ]
+    with open(argv[2] + "counts.txt", "w") as outfile:
+        writer = writer(outfile)
+        writer.writerow(keys)
+        writer.writerows(zip(*[counts[key] for key in keys]))
+
     # Write sequences to fasta
-    with open(argv[2] + 'viral_seqs_active_CD4.fasta', "w") as outfile:
+    with open(argv[2] + "viral_seqs_active_CD4.fasta", "w") as outfile:
         for key, value in seqs.items():
-          outfile.write('>'+key+'\n')
-          outfile.write(value+'\n')
+            outfile.write(">" + key + "\n")
+            outfile.write(value + "\n")
 
     end = time()
     print("Execution time = ", end - start)
