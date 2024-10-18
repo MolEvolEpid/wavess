@@ -126,13 +126,6 @@ run_wavess <- function(pop_samp,
     function(x) x
   ))
 
-  latent <- TRUE
-  # no latent cells
-  if (prob_act_to_lat == 0) {
-    latent_nums <- c(0, 0, 0, 0)
-    latent <- FALSE
-  }
-
   if (is.null(conserved_sites)) {
     conserved_sites <- c()
   }
@@ -162,7 +155,7 @@ run_wavess <- function(pop_samp,
   # Create host environment and initialize infected cells
   host <- agents$create_host_env(
     founder_seqs,
-    ref_seq, conserved_sites, rep_exp,
+    ref_seq, rep_exp,
     as.integer(pop_samp$active_cell_count[1])
   )
   # Last sampled generation (don't have to continue simulation after this)
@@ -175,7 +168,7 @@ run_wavess <- function(pop_samp,
     last_sampled_gen,
     founder_seqs, nucleotides_order, substitution_probabilities,
     prob_mut, prob_recomb,
-    latent, prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
+    prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
     conserved_sites, conserved_cost, ref_seq, rep_exp,
     epitope_locations, seroconversion_time, prop_for_imm, gen_full_potency,
     generator

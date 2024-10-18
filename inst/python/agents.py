@@ -20,8 +20,8 @@ def set_python_seed(s):
     generator = default_rng()
   return generator
 
-def create_host_env(founder_seqs, ref_seq, conserved_sites, rf_exp, initial_cell_count):
-  founder_viruses = [HIV(seq, ref_seq, conserved_sites, rf_exp) for seq in founder_seqs.values()]
+def create_host_env(founder_seqs, ref_seq, rf_exp, initial_cell_count):
+  founder_viruses = [HIV(seq, ref_seq, rf_exp) for seq in founder_seqs.values()]
   return HostEnv(founder_viruses, initial_cell_count)
 
 def create_epitope(start, end, max_fc):
@@ -139,7 +139,7 @@ class Epitope:
 
 
 class HIV:
-    def __init__(self, nuc_seq, reference_sequence, conserved_sites, rf_exp):
+    def __init__(self, nuc_seq, reference_sequence, rf_exp):
         # Make sure values supplied are as expected
         assert isinstance(nuc_seq, str), "Nucleotide sequence needs to be a string"
         
@@ -200,7 +200,6 @@ class InfectedCD4:
 
 class HostEnv:  # This is the 'compartment' where the model dynamics take place
     def __init__(self, founder_viruses: HIV, NC: int): 
-        self.epitope_variants_translated = defaultdict(lambda: '') # store epitope translations 
         
         assert NC == len(founder_viruses), 'Initial population size must equal the number of founder sequences'
         
@@ -211,6 +210,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # Initiate latent infected cells
         self.L = list()
 
+        # Store epitope translations 
+        self.epitope_variants_translated = defaultdict(lambda: '') 
         # Track epitopes recognized by the immune system
         # key -> epitope sequence variant, value -> generation when it started being recognized
         self.epitopes_recognition_generation = defaultdict(lambda: 0)
@@ -607,7 +608,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
     def loop_through_generations(self, active_cell_count, n_sample_active, last_sampled_gen,
         founder_seqs, nucleotides_order, substitution_probabilities,
         prob_mut, prob_recomb, 
-        latent, prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif, 
+        prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif, 
         conserved_sites, conserved_cost, ref_seq, rep_exp, 
         epitope_locations, seroconversion_time, prop_for_imm, gen_full_potency, 
         generator):
@@ -645,7 +646,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
       # Looping through generations until we sample everything we want
       for t in range(1, last_sampled_gen+1):
         # Only get latent reservoir dynamics if modeling
-        if latent:
+        if prob_act_to_lat:
           # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
           latent_nums = self.get_next_gen_latent(
               prob_act_to_lat, prob_lat_to_act,

@@ -129,7 +129,7 @@ if __name__ == '__main__':
       founder_viruses['founder' + str(i)] = v
 
     # Create host environment and add to viral sequences counter
-    host = agents.create_host_env(founder_viruses, reference_sequence, conserved_sites, float(params['rep_exp']), int(pop_samp.loc[0]['active_cell_count']))
+    host = agents.create_host_env(founder_viruses, reference_sequence, float(params['rep_exp']), int(pop_samp.loc[0]['active_cell_count']))
 
     # Active cell counts for each generation
     active_cell_count = pop_samp['active_cell_count']
@@ -138,14 +138,11 @@ if __name__ == '__main__':
     # Last sampled generation (don't have to continue simulation after this)
     last_sampled_gen = [index for index, item in enumerate(n_to_samp) if item != 0][-1]
     
-    # Whether to include latent cells
-    latent = True
-    if params['prob_act_to_lat'] == 0:
-      latent = False
+    # Loop through generations
     counts, seqs = host.loop_through_generations(active_cell_count, n_to_samp, last_sampled_gen,
         founder_viruses, nucleotides_order, substitution_probabilities,
         params['prob_mut'], params['prob_recomb'], 
-        latent, params['prob_act_to_lat'], params['prob_lat_to_act'], params['prob_lat_die'], params['prob_lat_prolif'], 
+        params['prob_act_to_lat'], params['prob_lat_to_act'], params['prob_lat_die'], params['prob_lat_prolif'], 
         conserved_sites, params['conserved_cost'], reference_sequence, float(params['rep_exp']), 
         epitope_locations, params['seroconversion_time'], params['immune_response_proportion'], params['time_to_full_potency'], 
         generator)
