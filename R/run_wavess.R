@@ -134,16 +134,11 @@ run_wavess <- function(pop_samp,
   }
 
   if (is.null(conserved_sites)) {
-    conserved_fitness <- 0
     conserved_sites <- c()
-  } else {
-    conserved_fitness <- 1
   }
   if (is.null(ref_seq)) {
     ref_seq <- ""
-    replicative_fitness <- 0
   } else {
-    replicative_fitness <- 1
     ref_seq <- toupper(ref_seq)
     if (!is.null(conserved_sites)) {
       # mask conserved sites so they aren't included in replicative fitness
@@ -154,11 +149,7 @@ run_wavess <- function(pop_samp,
       ref_seq <- paste0(ref_seq_str, collapse = "")
     }
   }
-  if (is.null(epitope_locations)) {
-    immune_fitness <- 0
-
-  } else {
-    immune_fitness <- 1
+  if (!is.null(epitope_locations)) {
     epitope_locations <- apply(epitope_locations, 1, function(x) {
       agents$create_epitope(x[1], x[2], x[3])
     })
@@ -171,7 +162,7 @@ run_wavess <- function(pop_samp,
   # Create host environment and initialize infected cells
   host <- agents$create_host_env(
     founder_seqs,
-    ref_seq, conserved_sites, replicative_fitness, rep_exp,
+    ref_seq, conserved_sites, rep_exp,
     as.integer(pop_samp$active_cell_count[1])
   )
   # Last sampled generation (don't have to continue simulation after this)
@@ -187,7 +178,7 @@ run_wavess <- function(pop_samp,
     latent, prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
     conserved_sites, conserved_cost, ref_seq, rep_exp,
     epitope_locations, seroconversion_time, prop_for_imm, gen_full_potency,
-    immune_fitness, conserved_fitness, replicative_fitness, generator
+    generator
   ))
 
   # Fix up output

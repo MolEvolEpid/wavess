@@ -20,8 +20,8 @@ def set_python_seed(s):
     generator = default_rng()
   return generator
 
-def create_host_env(founder_seqs, ref_seq, conserved_sites, rep_fit, rf_exp, initial_cell_count):
-  founder_viruses = [HIV(seq, ref_seq, conserved_sites, rep_fit, rf_exp) for seq in founder_seqs.values()]
+def create_host_env(founder_seqs, ref_seq, conserved_sites, rf_exp, initial_cell_count):
+  founder_viruses = [HIV(seq, ref_seq, conserved_sites, rf_exp) for seq in founder_seqs.values()]
   return HostEnv(founder_viruses, initial_cell_count)
 
 def create_epitope(start, end, max_fc):
@@ -139,7 +139,7 @@ class Epitope:
 
 
 class HIV:
-    def __init__(self, nuc_seq, reference_sequence, conserved_sites, replicative_fitness, rf_exp):
+    def __init__(self, nuc_seq, reference_sequence, conserved_sites, rf_exp):
         # Make sure values supplied are as expected
         assert isinstance(nuc_seq, str), "Nucleotide sequence needs to be a string"
         
@@ -151,7 +151,7 @@ class HIV:
         self.immune_fitness_cost = 0
         self.conserved_fitness_cost = 0
         self.replicative_fitness_cost = 0
-        if replicative_fitness:
+        if len(reference_sequence):
             self.replicative_fitness_cost = replicative_fitness_cost(self.nuc_sequence, reference_sequence, rf_exp)
         self.fitness = 1
 
@@ -160,22 +160,21 @@ class HIV:
         return return_str
 
     def mutate(self, position_to_mutate, nucleotides_order, substitution_probabilities, conserved_sites, 
-            cost_per_mutation_in_conserved_site, reference_sequence, conserved_fitness, replicative_fitness, rf_exp):
+            cost_per_mutation_in_conserved_site, reference_sequence, rf_exp):
         # Figure out what the mutation is based on mutation probabilities
         old_nucleotide = self.nuc_sequence[position_to_mutate]
         new_nucleotide = get_substitution(old_nucleotide, nucleotides_order, substitution_probabilities)
         # Fastest way I can find to mutate - add part before to new nt to part after
         self.nuc_sequence = self.nuc_sequence[:position_to_mutate] + new_nucleotide + self.nuc_sequence[position_to_mutate+1:]
 
-        if conserved_fitness:
-            # If mutation is in a conserved site, update mutations in conserved sites and conserved sites fitness
-            # Note that we are not tracking whether there are multiple mutations at a single conserved site
-            if position_to_mutate in conserved_sites:
-                self.conserved_sites_mutated.add(position_to_mutate)
-                self.conserved_fitness_cost = conserved_fitness_cost(len(self.conserved_sites_mutated), cost_per_mutation_in_conserved_site)
+        # If mutation is in a conserved site, update mutations in conserved sites and conserved sites fitness
+        # Note that we are not tracking whether there are multiple mutations at a single conserved site
+        if position_to_mutate in conserved_sites:
+            self.conserved_sites_mutated.add(position_to_mutate)
+            self.conserved_fitness_cost = conserved_fitness_cost(len(self.conserved_sites_mutated), cost_per_mutation_in_conserved_site)
 
         # Update replicative fitness cost only if needed
-        if replicative_fitness:
+        if len(reference_sequence):
             ref_base = reference_sequence[position_to_mutate]
             prev_comp = old_nucleotide == ref_base
             if prev_comp != (ref_base == new_nucleotide):
@@ -363,7 +362,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
     def dually_infect_cd4(self, next_dually_infecting_viruses, cell_breakpoints, seq_len, 
             cost_per_mutation_in_conserved_site, reference_sequence, conserved_sites,
-            conserved_fitness, replicative_fitness, rf_exp):
+            rf_exp):
         # Create a new list with the newly infected cells
         newly_infected = [None]*int(len(next_dually_infecting_viruses)/2)
 
@@ -389,7 +388,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     self.C[index_of_cd4_with_virus2].infecting_virus.nuc_sequence,
                     breakpoints)
 
-            if conserved_fitness:
+            if len(conserved_sites):
                 # Get mutations in conserved sites for recombined virus
                 newly_infected[n_added].infecting_virus.conserved_sites_mutated = get_conserved_sites_mutated(
                         self.C[index_of_cd4_with_virus1].infecting_virus.conserved_sites_mutated,
@@ -401,7 +400,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                         cost_per_mutation_in_conserved_site)
 
             # Update replicative fitness for recombined virus
-            if replicative_fitness:
+            if len(reference_sequence):
                 newly_infected[n_added].infecting_virus.replicative_fitness_cost = replicative_fitness_cost(
                         newly_infected[n_added].infecting_virus.nuc_sequence, reference_sequence, rf_exp)
 
@@ -453,7 +452,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
     def mutate_virus_in_productive_CD4(self, positions_to_mutate, viral_sequence_length, 
             nucleotides_order, substitution_probabilities, conserved_sites, cost_per_mutation_in_conserved_site, reference_sequence,
-            conserved_fitness, replicative_fitness, rf_exp):
+            rf_exp):
         # Positions to mutate are given assuming all viral sequences are concatenated
         # We need to identify the right cell number and position within each viral sequence, and initiate the mutation
         for pos in positions_to_mutate:
@@ -461,7 +460,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             self.C[cell_number].infecting_virus.mutate(viral_seq_position, 
                     nucleotides_order, substitution_probabilities, 
                     conserved_sites, cost_per_mutation_in_conserved_site, reference_sequence,
-                    conserved_fitness, replicative_fitness, rf_exp)  # Initiate mutation
+                    rf_exp)  # Initiate mutation
 
     def get_next_gen_latent(self, prob_active_to_latent, prob_latent_to_active, prob_latent_die, prob_latent_proliferate, seed):
         # ***************************** Latent reservoir dynamics ***************************** 
@@ -521,7 +520,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
     def get_next_gen_active(self, prob_mutation, prob_recombination, n_active_next_gen, gen, seroconversion_time, 
             nucleotides_order, substitution_probabilities, conserved_sites, time_to_full_potency, cost_per_mutation_in_conserved_site, 
-            reference_sequence, immune_response_proportion, epitopes, immune_fitness, conserved_fitness, replicative_fitness, rf_exp, seed):
+            reference_sequence, immune_response_proportion, epitopes, rf_exp, seed):
         # ***************************** Productively infected cell dynamics ***************************** #
         # Get random number generator
         rng = default_rng(seed)
@@ -534,9 +533,9 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # Distribute the mutations across all possible positions
         positions_to_mutate = sample(range(total_nucleotides), n_mut)
         self.mutate_virus_in_productive_CD4(positions_to_mutate, seq_len, nucleotides_order, substitution_probabilities, 
-                conserved_sites, cost_per_mutation_in_conserved_site, reference_sequence, conserved_fitness, replicative_fitness, rf_exp)
+                conserved_sites, cost_per_mutation_in_conserved_site, reference_sequence, rf_exp)
 
-        if immune_fitness:
+        if epitopes is not None:
             # Update immune response
             if gen >= seroconversion_time:
                 # Epitope recognition
@@ -561,7 +560,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         self.C = (self.singly_infect_cd4(next_infecting_viruses[:int(n_active_next_gen-num_cells_recomb)]) +
         # Infect num_cells_recomb with two viruses and create recombinants
         self.dually_infect_cd4(next_infecting_viruses[int(n_active_next_gen-num_cells_recomb):], cell_breakpoints, seq_len, 
-                        cost_per_mutation_in_conserved_site, reference_sequence, conserved_sites, conserved_fitness, replicative_fitness, rf_exp))
+                        cost_per_mutation_in_conserved_site, reference_sequence, conserved_sites, rf_exp))
 
         return(n_mut, num_cells_recomb)
 
@@ -611,7 +610,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         latent, prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif, 
         conserved_sites, conserved_cost, ref_seq, rep_exp, 
         epitope_locations, seroconversion_time, prop_for_imm, gen_full_potency, 
-        immune_fitness, conserved_fitness, replicative_fitness, generator):
+        generator):
       # Initialize counts and sequence objects
       counts = {
         'generation': [],
@@ -659,7 +658,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
           seroconversion_time, nucleotides_order, substitution_probabilities,
           conserved_sites, gen_full_potency, conserved_cost, ref_seq,
           prop_for_imm, epitope_locations,
-          immune_fitness, conserved_fitness, replicative_fitness, rep_exp, 
+          rep_exp, 
           generator
         )
         # Record events

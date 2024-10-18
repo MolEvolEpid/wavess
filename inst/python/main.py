@@ -77,36 +77,47 @@ if __name__ == '__main__':
     
     s = None
     if len(argv) == 4:
-        s = argv[4]
+        s = argv[3]
     generator = agents.set_python_seed(s)
 
     # Read in config file
     config = safe_load(open(argv[1]))
 
-    # Read in information
+    ### Read in information ###
     input_files = config['input_files']
 
-    # Read generation information, including cd4 counts and sampling times and numbers
-    pop_samp = read_pop_samp(input_files['pop_samp'])
-
-    # Epitope start positions and max fitness cost.
-    epitope_locations = read_b_epitopes(input_files['epitope_locations'])
-
-    # Conserved sites.
-    conserved_sites = get_conserved_sites(input_files['conserved_sites'])
+    ## Required inputs ##
     
-    # Read details of reference sequence
-    reference_sequence = get_sequences(input_files['ref_seq'])[0]
-    # mask conserved sites so they aren't included in replicative fitness computation
-    ref_seq_str = "".join([x if i not in conserved_sites else "-" for i,x in enumerate(reference_sequence)])
+    # Generation information, including cd4 counts and sampling times and numbers
+    pop_samp = read_pop_samp(input_files['pop_samp'])
+    
+    # Founder virus 
+    founder_virus_sequences = get_sequences(input_files['founder_seqs'])
     
     # Nucleotide substitution probabilities
     nucleotides_order, substitution_probabilities = \
             get_nucleotide_substitution_probabilities(input_files['nt_sub_probs'])
 
-    # Read details about founder virus 
-    founder_virus_sequences = get_sequences(input_files['founder_seqs'])
+    ## Optional inputs related to selection ##
 
+    # Conserved sites
+    conserved_sites = []
+    if input_files['conserved_sites'] != "":
+        conserved_sites = get_conserved_sites(input_files['conserved_sites'])
+    
+    # Reference sequence
+    reference_sequence = ""
+    if input_files['ref_seq'] != "":
+        reference_sequence = get_sequences(input_files['ref_seq'])[0]
+        if len(conserved_sites):
+            # mask conserved sites so they aren't included in replicative fitness computation
+            reference_sequence = "".join([x if i not in conserved_sites else "-" for i,x in enumerate(reference_sequence)])
+    
+    # Epitope start positions and max fitness cost.
+    epitope_locations = None 
+    if input_files['epitope_locations'] != "":
+        epitope_locations = read_b_epitopes(input_files['epitope_locations'])
+        
     # Initialize parameters
     params = config['parameters']
 
@@ -118,7 +129,7 @@ if __name__ == '__main__':
       founder_viruses['founder' + str(i)] = v
 
     # Create host environment and add to viral sequences counter
-    host = agents.create_host_env(founder_viruses, reference_sequence, conserved_sites, params['replicative_fitness'], float(params['rep_exp']), int(pop_samp.loc[0]['active_cell_count']))
+    host = agents.create_host_env(founder_viruses, reference_sequence, conserved_sites, float(params['rep_exp']), int(pop_samp.loc[0]['active_cell_count']))
 
     # Active cell counts for each generation
     active_cell_count = pop_samp['active_cell_count']
@@ -137,7 +148,7 @@ if __name__ == '__main__':
         latent, params['prob_act_to_lat'], params['prob_lat_to_act'], params['prob_lat_die'], params['prob_lat_prolif'], 
         conserved_sites, params['conserved_cost'], reference_sequence, float(params['rep_exp']), 
         epitope_locations, params['seroconversion_time'], params['immune_response_proportion'], params['time_to_full_potency'], 
-        params['immune_fitness'], params['conserved_fitness'], params['replicative_fitness'], generator)
+        generator)
         
     # Make directories if they don't exist
     directory = dirname(argv[2])
