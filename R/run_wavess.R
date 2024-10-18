@@ -120,9 +120,9 @@ run_wavess <- function(pop_samp,
   names(founder_seqs) <- paste0("founder", seq_along(founder_seqs) - 1)
 
   # Get nucleotide substitution probabilities in right format
-  nucleotides_order <- nt_sub_probs[,1,drop=TRUE]
+  nucleotides_order <- nt_sub_probs[, 1, drop = TRUE]
   substitution_probabilities <- unname(lapply(
-    data.frame(t(nt_sub_probs[,2:5])),
+    data.frame(t(nt_sub_probs[, 2:5])),
     function(x) x
   ))
 
