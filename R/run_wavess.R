@@ -111,11 +111,20 @@ run_wavess <- function(pop_samp,
     seed
   )
 
-  # make sure founder sequences are all uppercase
-  founder_seqs <- toupper(founder_seqs)
-
   # initiate python virtual environment
   agents <- use_python_venv()
+
+  # make sure founder sequences are all uppercase and in list format
+  founder_seqs <- as.list(toupper(founder_seqs))
+  # TODO - MAKE USER INPUT NAMED VECTOR
+  names(founder_seqs) <- paste0("founder", seq_along(founder_seqs) - 1)
+
+  # Get nucleotide substitution probabilities in right format
+  nucleotides_order <- nt_sub_probs[,1,drop=TRUE]
+  substitution_probabilities <- unname(lapply(
+    data.frame(t(nt_sub_probs[,2:5])),
+    function(x) x
+  ))
 
   latent <- TRUE
   # no latent cells
@@ -124,6 +133,12 @@ run_wavess <- function(pop_samp,
     latent <- FALSE
   }
 
+  if (is.null(conserved_sites)) {
+    conserved_fitness <- 0
+    conserved_sites <- c()
+  } else {
+    conserved_fitness <- 1
+  }
   if (is.null(ref_seq)) {
     ref_seq <- ""
     replicative_fitness <- 0
@@ -139,38 +154,19 @@ run_wavess <- function(pop_samp,
       ref_seq <- paste0(ref_seq_str, collapse = "")
     }
   }
-  if (is.null(conserved_sites)) {
-    conserved_fitness <- 0
-    conserved_sites <- c()
-  } else {
-    conserved_fitness <- 1
-  }
   if (is.null(epitope_locations)) {
     immune_fitness <- 0
+
   } else {
     immune_fitness <- 1
-  }
-
-  conserved_sites <- as.list(conserved_sites)
-  if (!is.null(epitope_locations)) {
     epitope_locations <- apply(epitope_locations, 1, function(x) {
       agents$create_epitope(x[1], x[2], x[3])
     })
   }
+  conserved_sites <- as.list(conserved_sites)
 
   # Set seed
   generator <- agents$set_python_seed(seed)
-
-  # Get nucleotide substitution probabilities in right format
-  nucleotides_order <- nt_sub_probs[,1,drop=TRUE]
-  substitution_probabilities <- unname(lapply(
-    data.frame(t(nt_sub_probs[,2:5])),
-    function(x) x
-  ))
-
-  # TODO - MAKE USER INPUT NAMED VECTOR?
-  founder_seqs <- as.list(founder_seqs)
-  names(founder_seqs) <- paste0("founder", seq_along(founder_seqs) - 1)
 
   # Create host environment and initialize infected cells
   host <- agents$create_host_env(
