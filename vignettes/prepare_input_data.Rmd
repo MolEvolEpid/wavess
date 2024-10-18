@@ -24,15 +24,15 @@ may be necessary if your inputs require more customization than these
 functions provide. However, we expect these functions to be sufficient
 for most users. 
 
-| `run_wavess()` argument | `wavess` function to generate input | Description of input |
+| `run_wavess()` argument | `wavess` function to generate input | Description |
 |------------------------|------------------------|------------------------|
 | `pop_samp` | `generate_pop_samp()` | [Define active cell growth and sampling](#define-active-cell-growth-and-sampling) |
 | `founder_seqs` | `extract_seqs()` | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment) |
 | `nt_sub_probs` | `calc_nt_sub_probs()` | [Determine nucleotide substitution probabilities](#determine-nucleotide-substitution-probabilities) |
 | `prob_*` | `rate_to_prob()` | [Convert rate to probability](#convert-rate-to-probability) |
 | `conserved_sites` | `identify_conserved_sites()` | [Identify conserved sites](#identify-conserved-sites) |
-| `ref_seq` | `identify_conserved_sites()`, `extract_seqs()` | Reference sequence that is considered to be the best replicator |
-| `epitope_locations` | `get_epitope_frequencies()`, `sample_epitopes()` | Sample epitopes |
+| `ref_seq` | `identify_conserved_sites()`, `extract_seqs()` | [Get reference sequence that is considered to be the best replicator](#find-a-consensus-sequence) |
+| `epitope_locations` | `get_epitope_frequencies()`, `sample_epitopes()` | [Sample epitopes](#sample-epitopes) |
 
 Each of the sections below goes into more detail.
 
