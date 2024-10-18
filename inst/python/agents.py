@@ -591,32 +591,6 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # Return dually infected active cells
         return newly_infected
 
-    def record_viral_sequences(self, active_filename, latent_filename, n_to_samp):
-        with open(active_filename, "w") as active_f:
-            c_sub = sample(self.C, n_to_samp)
-            for index, CD4 in enumerate(c_sub):
-                name = str(index)
-                name += "_ic_" + str("%.4f" % CD4.infecting_virus.immune_fitness_cost)
-                name += "_cc_" + str(
-                    "%.4f" % CD4.infecting_virus.conserved_fitness_cost
-                )
-                name += "_rc_" + str(
-                    "%.4f" % CD4.infecting_virus.replicative_fitness_cost
-                )
-                name += "_f_" + str("%.4f" % CD4.infecting_virus.fitness)
-                active_f.write(">" + name + "\n")
-                active_f.write(CD4.infecting_virus.nuc_sequence + "\n")
-
-        # with open(latent_filename, 'w') as latent_f:
-        #    for index, CD4 in enumerate(self.L):
-        #        name = str(index)
-        #        name += "_ic_" + str("%.4f" % CD4.infecting_virus.immune_fitness_cost)
-        #        name += "_cc_" + str("%.4f" % CD4.infecting_virus.conserved_fitness_cost)
-        #        name += "_rc_" + str("%.4f" % CD4.infecting_virus.replicative_fitness_cost)
-        #        name += "_f_" + str("%.4f" % CD4.infecting_virus.fitness)
-        #        latent_f.write(">" + name + "\n")
-        #        latent_f.write(CD4.infecting_virus.nuc_sequence + "\n")
-
     def proliferate_latent_CD4(self, index_to_proliferate):
         assert index_to_proliferate < len(self.L), (
             "Index %s out of range for latent CD4 T cells" % index_to_proliferate
@@ -694,22 +668,6 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         for i in range(num_to_make_latent):
             index_to_make_latent = indices_to_make_latent[i] - i
             self.make_latent(index_to_make_latent)
-
-        # # Draw the number of cells that leave the latent reservoir by activation or death, or proliferate
-        # prob_event = prob_latent_to_active + prob_latent_die + prob_latent_proliferate
-        # num_latent_events = rng.binomial(n_latent_cd4, prob_event)
-        # num_to_activate, num_to_die, num_to_proliferate = rng.multinomial(num_latent_events,
-        #                                                     [prob_latent_to_active / prob_event,
-        #                                                      prob_latent_die / prob_event,
-        #                                                      prob_latent_proliferate / prob_event])
-        # assert num_to_activate + num_to_die + num_to_proliferate == num_latent_events, "Activation, death, and proliferation" \
-        #         "don't add up to number of cells leaving latent pool"
-        #
-        # # Get indices of cells that activate, die, or proliferate
-        # latent_event_indices = sample(range(n_latent_cd4), num_latent_events)
-        # to_active = latent_event_indices[:num_to_activate]
-        # to_die = latent_event_indices[num_to_activate:num_to_activate+num_to_die]
-        # to_proliferate = latent_event_indices[num_to_activate+num_to_die:]
 
         latent_indices = range(n_latent_cd4)
         to_active = where(rng.binomial(1, prob_latent_to_active, n_latent_cd4))[
