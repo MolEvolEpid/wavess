@@ -53,7 +53,7 @@ In each relevant section, we also provide examples of how to visualize the data.
 ## Install and load `wavess`
 
 First, you need to install (if needed) and load the `wavess` library, as
-well as a few others, and we will set the plotting theme:
+well as a few others, and we will set the plotting theme and a seed:
 
 ```{r load}
 # install.packages("remotes")
@@ -69,6 +69,9 @@ library(ggplot2)
 library(ape)
 
 theme_set(theme_classic())
+
+# set seed
+set.seed(1234)
 ```
 
 This will also load some example data that we will be using in this
