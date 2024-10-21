@@ -11,11 +11,11 @@ test_that("sample_epitopes works", {
   expect_equal(sum(is.na(epitopes$epi_end_nt)), 0)
   expect_equal(
     epitopes$epi_start_nt,
-    c(822, 1398, 957, 612, 684, 1086, 561, 480, 1326, 435)
+    c(822, 684, 1398, 561, 957, 435, 1326, 1086, 480, 612)
   )
   expect_equal(
     epitopes$epi_end_nt,
-    c(822, 1398, 957, 612, 684, 1086, 561, 480, 1326, 435) + 30
+    c(822, 684, 1398, 561, 957, 435, 1326, 1086, 480, 612) + 30
   )
   expect_equal(
     epitopes$max_fitness_cost,

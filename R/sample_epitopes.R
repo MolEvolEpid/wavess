@@ -103,6 +103,8 @@ sample_epitopes <- function(epitope_probabilities,
       message(n_resamples, " resamples required")
     }
   }
+  # randomize epitope start positions
+  start_pos <- sample(start_pos)
   if (is.null(ref_founder_map)) {
     epitopes <- tibble::tibble(
       # multiply by 3 to get start of amino acid (indexed at 0)
