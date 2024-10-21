@@ -138,7 +138,7 @@ run_wavess <- function(pop_samp,
       # computation
       ref_seq_str <- strsplit(ref_seq, "")[[1]]
       # add one to index at 1
-      ref_seq_str[conserved_sites+1] <- "-"
+      ref_seq_str[conserved_sites + 1] <- "-"
       ref_seq <- paste0(ref_seq_str, collapse = "")
     }
   }
