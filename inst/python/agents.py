@@ -695,7 +695,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 self.proliferate_latent_CD4(i)
                 n_to_proliferate += 1
 
-        return len(latent_event_indices), n_to_active, n_to_die, n_to_proliferate
+        return num_to_make_latent, n_to_active, n_to_die, n_to_proliferate
 
     def get_next_gen_active(
         self,
