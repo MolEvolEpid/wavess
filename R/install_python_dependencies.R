@@ -164,7 +164,7 @@ use_python_venv <- function() {
   )) {
     stop(
       "No wavess environment found. ",
-      "Use `install_python_dependencies()` to get started."
+      "Use `create_python_venv()` to get started."
     )
   }
 
@@ -173,7 +173,7 @@ use_python_venv <- function() {
   )$package) {
     stop(
       "numpy was not found in your environment. ",
-      "Use `install_python_dependencies()`",
+      "Use `create_python_venv()`",
       "to get started."
     )
   }
