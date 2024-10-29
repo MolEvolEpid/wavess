@@ -7,9 +7,9 @@
 run_wavess(
   pop_samp,
   founder_seqs,
-  nt_sub_probs,
-  prob_mut = 3.5e-05,
-  prob_recomb = 1.4e-05,
+  mut_rate = 3.5e-05,
+  q = hiv_q_mat,
+  recomb_rate = 1.4e-05,
   prob_act_to_lat = 0.001,
   prob_lat_to_act = 0.01,
   prob_lat_prolif = 0.01,
@@ -37,15 +37,13 @@ character strings, for example 'ACATG'. The founder sequence(s) may only
 contain the characters ACGT, and no gaps are allowed. When modeling immune
 fitness, they are expected to be codon-aligned.}
 
-\item{nt_sub_probs}{Named matrix of nucleotide substitution probabilities.
-Rows are from, columns are to. Can be generated using the
-\code{\link[=calc_nt_sub_probs]{calc_nt_sub_probs()}} function.}
+\item{mut_rate}{Mutation rate per-site, per-generation (default: 3.5e-5)}
 
-\item{prob_mut}{Probability of a mutation at one site in one generation
-(default: 3.5e-5)}
+\item{q}{Nucleotide substitution rate matrix Q with rows and columns named as
+the nucleotides ACGT. Rows are from, columns are to. Can be generated using
+the \code{\link[=estimate_q]{estimate_q()}} function (default: \code{hiv_q_mat}).}
 
-\item{prob_recomb}{Probability of a recombination event at a given site in
-one generation (default: 1.4e-5)}
+\item{recomb_rate}{Recombination rate per-site, per-generation (default: 1.4e-5)}
 
 \item{prob_act_to_lat}{Probability that an active cell becomes latent in a
 generation (default: 0.001). Set this to 0 if you don't want to model
@@ -120,9 +118,6 @@ arguments.
 }
 \examples{
 \dontrun{
-run_wavess(
-  generate_pop_samp(n_gen = 300), "ATCG",
-  calc_nt_sub_probs(hiv_env_flt_2022)
-)
+run_wavess(generate_pop_samp(n_gen = 300), "ATCG")
 }
 }

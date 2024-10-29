@@ -67,8 +67,8 @@ function.
 - `founder_seqs`: fasta file of founder sequence(s). The founder sequence(s) may
 only contain the characters ACGT, and no gaps are allowed. When modeling immune
 fitness, they are expected to be codon-aligned.
-- `nt_sub_probs`: tsv that is a named matrix of nucleotide substitution probabilities.
-Rows are from, columns are to. Can be generated using the [calc_nt_sub_probs()]
+- `q`: csv that is a named Q matrix of nucleotide substitution rates. 
+Rows are from, columns are to. Can be generated using the [estimate_q()]
 function.
 - `conserved_sites`: tsv of conserved sites indexed at 0 where each row contains
 a conserved site. This can be generated using the [identify_conserved_sites()]
@@ -89,8 +89,8 @@ provided, then immune fitness costs are not included.
 
 Diversity-generating mechanisms:
 
-- `prob_mut`: probability of a mutation event per site per generation
-- `prob_recomb`: probability of a recombination event per site per generation
+- `mut_rate`: Mutation rate per site per generation
+- `recomb_rate``: Recombination rate per site per generation
 
 Latent cell dynamics:
 
@@ -115,9 +115,9 @@ Immune fitness:
 - `immune_response_proportion`: proportion new viral antigen must reach to initiate immune response against corresponding epitope
 - `time_to_full_potency`: number of generations for a new immune response to reach full potency
 
-### Running `main.py`
+### Running `run_wavess.py`
 
-`main.py` takes two required inputs and one optional input:
+`run_wavess.py` takes two required inputs and one optional input:
 
 - The config file, which contains information about input file paths and parameters
 - The prefix to the output files (including directories)
@@ -126,8 +126,10 @@ Immune fitness:
 Here is an example (we set a seed so it will be reproducible, usually you don't want to do this):
 
 ```
-python main.py config.yaml wavess_output/ 1234
+python run_wavess.py config.yaml wavess_output/ 1234
 ```
+
+**TODO THROW ERROR IF NO SLASH IN OUTPUT FILE**
 
 **Note that the path to the output file has to have at least one slash.**
 If the slash is at the end, then there will be no prefix for the output files.

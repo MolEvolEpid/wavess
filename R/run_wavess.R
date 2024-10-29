@@ -27,9 +27,9 @@
 #'   character strings, for example 'ACATG'. The founder sequence(s) may only
 #'   contain the characters ACGT, and no gaps are allowed. When modeling immune
 #'   fitness, they are expected to be codon-aligned.
-#' @param nt_sub_probs Named matrix of nucleotide substitution probabilities.
-#'   Rows are from, columns are to. Can be generated using the
-#'   [calc_nt_sub_probs()] function.
+#' @param q Nucleotide substitution rate matrix Q with rows and columns named as
+#'   the nucleotides ACGT. Rows are from, columns are to. Can be generated using
+#'   the [estimate_q()] function (default: `hiv_q_mat`).
 #' @param conserved_sites Vector of conserved sites indexed at 0. This can be
 #'   generated using the [identify_conserved_sites()] function (default: NULL,
 #'   i.e. no conserved sites fitness costs)
@@ -56,10 +56,8 @@
 #' @param gen_full_potency Number of generations it takes for an immune response
 #'   to an epitope to reach full potency, only relevant when epitope_locations
 #'   is not NULL (default: 90).
-#' @param prob_mut Probability of a mutation at one site in one generation
-#'   (default: 3.5e-5)
-#' @param prob_recomb Probability of a recombination event at a given site in
-#'   one generation (default: 1.4e-5)
+#' @param mut_rate Mutation rate per-site, per-generation (default: 3.5e-5)
+#' @param recomb_rate Recombination rate per-site, per-generation (default: 1.4e-5)
 #' @param prob_act_to_lat Probability that an active cell becomes latent in a
 #'   generation (default: 0.001). Set this to 0 if you don't want to model
 #'   latent cell dynamics.
@@ -76,16 +74,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' run_wavess(
-#'   generate_pop_samp(n_gen = 300), "ATCG",
-#'   calc_nt_sub_probs(hiv_env_flt_2022)
-#' )
+#' run_wavess(generate_pop_samp(n_gen = 300), "ATCG")
 #' }
 run_wavess <- function(pop_samp,
                        founder_seqs,
-                       nt_sub_probs,
-                       prob_mut = 3.5e-5,
-                       prob_recomb = 1.4e-5,
+                       mut_rate = 3.5e-5,
+                       q = hiv_q_mat,
+                       recomb_rate = 1.4e-5,
                        prob_act_to_lat = 0.001,
                        prob_lat_to_act = 0.01,
                        prob_lat_prolif = 0.01,
@@ -100,8 +95,8 @@ run_wavess <- function(pop_samp,
                        gen_full_potency = 90,
                        seed = NULL) {
   check_run_wavess_inputs(
-    pop_samp, founder_seqs, nt_sub_probs,
-    prob_mut, prob_recomb,
+    pop_samp, founder_seqs, q,
+    mut_rate, recomb_rate,
     conserved_sites, conserved_cost,
     ref_seq, rep_exp,
     epitope_locations, seroconversion_time,
@@ -114,15 +109,21 @@ run_wavess <- function(pop_samp,
   # initiate python virtual environment
   agents <- use_python_venv()
 
+  # convert rates to probabilities
+  prob_mut <- rate_to_probability(mut_rate)
+  prob_recomb <- rate_to_probability(recomb_rate)
+
   # make sure founder sequences are all uppercase and in list format
   founder_seqs <- as.list(toupper(founder_seqs))
   # TODO - MAKE USER INPUT NAMED VECTOR
   names(founder_seqs) <- paste0("founder", seq_along(founder_seqs) - 1)
 
+  # convert q matrix to substitution probabilities
+  nt_sub_probs <- calc_nt_sub_probs_from_q(q, mut_rate)
   # Get nucleotide substitution probabilities in right format
-  nucleotides_order <- nt_sub_probs[, 1, drop = TRUE]
+  nucleotides_order <- rownames(nt_sub_probs)
   substitution_probabilities <- unname(lapply(
-    data.frame(t(nt_sub_probs[, 2:5])),
+    data.frame(t(nt_sub_probs)),
     function(x) x
   ))
 

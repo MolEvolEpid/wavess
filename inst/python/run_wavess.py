@@ -14,6 +14,9 @@ from os.path import dirname
 from os import makedirs
 from yaml import safe_load
 from csv import writer
+from math import exp
+from scipy.linalg import expm
+import numpy as np
 
 # Import custom classes and functions
 import agents
@@ -54,23 +57,24 @@ def get_conserved_sites(conserved_sites_filename):
     return set(read_csv(conserved_sites_filename, header=None)[0])
 
 
-def get_nucleotide_substitution_probabilities(substitution_probabilities_filename):
+def get_nucleotide_substitution_probabilities(q_filename, mut_rate):
     # Read nucleotide substitution probabilities
-    substitution_probabilities_df = read_csv(
-        substitution_probabilities_filename, index_col="nt_from"
-    )
+    q = read_csv(q_filename, index_col="nt_from")
+    
+    # Convert to probabilities
+    sub_probs = expm(q*mut_rate)
+    np.fill_diagonal(sub_probs, 0)
+    sub_probs = sub_probs/np.sum(sub_probs,axis=1, keepdims = True)
 
     # Make sure that the row and column labels are the same
-    new_nucleotides_order = tuple(substitution_probabilities_df.columns)
-    old_nucleotides_order = tuple(substitution_probabilities_df.index)
+    new_nucleotides_order = tuple(q.columns)
+    old_nucleotides_order = tuple(q.index)
     assert "".join(old_nucleotides_order) == "".join(
         new_nucleotides_order
     ), "Nucleotide substitution matrix row and column labels are different"
 
     # Get probabilities as a list of tuples
-    probabilities = list(
-        substitution_probabilities_df.itertuples(index=False, name=None)
-    )
+    probabilities = sub_probs.tolist()
 
     return new_nucleotides_order, probabilities
 
@@ -97,6 +101,7 @@ if __name__ == "__main__":
 
     ### Read in information ###
     input_files = config["input_files"]
+    params = config["parameters"]
 
     ## Required inputs ##
 
@@ -108,7 +113,7 @@ if __name__ == "__main__":
 
     # Nucleotide substitution probabilities
     nucleotides_order, substitution_probabilities = (
-        get_nucleotide_substitution_probabilities(input_files["nt_sub_probs"])
+        get_nucleotide_substitution_probabilities(input_files["q"], params["mut_rate"])
     )
 
     ## Optional inputs related to selection ##
@@ -137,7 +142,6 @@ if __name__ == "__main__":
         epitope_locations = read_b_epitopes(input_files["epitope_locations"])
 
     # Initialize parameters
-    params = config["parameters"]
 
     assert (
         len(founder_virus_sequences) == pop_samp["active_cell_count"][0]
@@ -171,8 +175,8 @@ if __name__ == "__main__":
         founder_viruses,
         nucleotides_order,
         substitution_probabilities,
-        params["prob_mut"],
-        params["prob_recomb"],
+        1 - exp(-params["mut_rate"]),
+        1 - exp(-params["recomb_rate"]),
         params["prob_act_to_lat"],
         params["prob_lat_to_act"],
         params["prob_lat_die"],

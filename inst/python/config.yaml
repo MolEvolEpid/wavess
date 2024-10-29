@@ -3,7 +3,7 @@ input_files:
     # Required input files
     pop_samp: ../extdata/pop_samp.csv
     founder_seqs: ../extdata/founder.fasta
-    nt_sub_probs: ../extdata/nt_sub_probs.csv
+    q: ../extdata/hiv_q_mat.csv
     # Optional input files related to selection ("", i.e. empty string, = not modeled)
     conserved_sites: ../extdata/conserved_sites.csv
     ref_seq: ../extdata/ref.fasta
@@ -12,8 +12,8 @@ input_files:
 # Parameters
 parameters:
     # Diversity-generating mechanisms
-    prob_mut: 3.50E-05 # Probability of a mutation event per site per generation
-    prob_recomb: 1.40E-05 # Probability of a recombination event per site per generation
+    mut_rate: 3.50E-05 # Mutation rate per site per generation
+    recomb_rate: 1.40E-05 # Recombination rate per site per generation
     # Latent cell dynamics
     prob_act_to_lat: 0.001 # Probability of infected cell becoming latent
     prob_lat_to_act: 0.01 # Probability that a latent cell will become active

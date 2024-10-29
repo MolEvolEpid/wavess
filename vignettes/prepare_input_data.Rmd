@@ -28,7 +28,7 @@ for most users.
 |------------------------|------------------------|------------------------|
 | `pop_samp` | `generate_pop_samp()` | [Define active cell growth and sampling](#define-active-cell-growth-and-sampling) |
 | `founder_seqs` | `extract_seqs()` | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment) |
-| `nt_sub_probs` | `calc_nt_sub_probs()` | [Determine nucleotide substitution probabilities](#determine-nucleotide-substitution-probabilities) |
+| `q` | `estimate_q()` | [Determine nucleotide substitution probabilities](#estimate-q-matrix) |
 | `prob_*` | `rate_to_prob()` | [Convert rate to probability](#convert-rate-to-probability) |
 | `conserved_sites` | `identify_conserved_sites()` | [Identify conserved sites](#identify-conserved-sites) |
 | `ref_seq` | `identify_conserved_sites()`, `extract_seqs()` | [Get reference sequence that is considered to be the best replicator](#find-a-consensus-sequence) |
@@ -243,31 +243,61 @@ strsplit(founder_seq, "")[[1]] |>
 ```
 
 
-### Determine nucleotide substitution probabilities {#determine-nucleotide-substitution-probabilities}
+### Estimate Q matrix {#estimate-q-matrix}
 
-We provide the function `calc_nt_sub_probs()` to calculate nucleotide 
-substitution probabilities, which can be used as input for the `nt_sub_probs`
-argument in `run_wavess()`. Ideally, the input for this function would be an
-alignment of sequences from within-host evolution of a single
-representative person. It takes an alignment in `ape::DNAbin` format and
-outputs a data frame of substitution probabilities where the rows are
-the "from" nucleotide and the columns are the "to" nucleotide. 
-**TODO: ADD AN EXAMPLE WITHIN-HOST ALIGNMENT**
+The model requires as input a Q matrix (`q`), which defines the rates of nucleotide
+substitution for each possible transition between nucleotides. By default, the
+rate matrix is the HIV Q matrix we provide with the package: 
 
-```{r, calc_nt_sub_probs}
-(nt_sub_probs <- calc_nt_sub_probs(as.matrix(hiv_env_flt_2022)))
+```{r}
+hiv_q_mat
+```
+This matrix is based on the rates from [Zanini et al. 2017](https://doi.org/10.1093/ve/vex003),
+and is converted to a Q matrix by including base frequencies estimated from
+the [2022 HIV ENV filtered alignment](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html), 
+and the overall nucleotide substitution rate estimated by [Mansky 1996](https://doi.org/10.1089/aid.1996.12.307).
+
+**I JUST USED ENV BECAUSE IT WAS EASY, BUT MAYBE WE SHOULD USE FULL-GENOME SEQUENCES FOR THIS TO BE MORE GENERAL?**
+
+**If you are simulating an organism other than HIV, you will want to provide a
+Q matrix estimated for that organism.** Any phylogenetic tree building program
+will estimate a Q matrix. For instance, the Q matrix is returned when estimating
+a tree using [IQ-TREE](http://www.iqtree.org/) (in the .iqtree output file). We
+also provide the function `estimate_q()` to estimate Q from a multiple sequence
+alignment (in `ape::DNAbin` format) directly in R. Ideally, the input for this
+function would be an alignment of sequences from within-host evolution of a
+single representative person. However, we have found that the simulation output
+is relatively robust to variations in the Q matrix, so if you don't have a
+within-host alignment, then you can input an alignment with somewhat closely
+related sequences (e.g. from the same subtype). The function outputs a Q matrix
+where the rows are the "from" nucleotide and the columns are the "to"
+nucleotide.
+
+Here is an example (but this matrix isn't accurate because it's simly a random
+set of sequences, so use the built-in q matrix for HIV instead): 
+
+```{r, estimate_q}
+estimate_q(hiv_env_flt_2022)
 ```
 
 By default, a neighbor joining tree is created using
-`ape::bionj(ape::dist.dna(aln, model = 'TN93'))`. Instead, you can
-provide an input tree (`tr`). From this, the Q matrix is computed with
-`phangorn::pml_bb()` using by default a GTR+I+R4 model of nucleotide
-substitution (`model`) and no tree rearrangement (`rearrangement`).
+`ape::bionj(ape::dist.dna(aln, model = 'TN93'))`. Instead, you can provide an
+input tree (`tr`). From this, the Q matrix is computed with `phangorn::pml_bb()`
+using by default a GTR+I+R4 model of nucleotide substitution (`model`) and no
+tree rearrangement (`rearrangement`).
 
 To save this to a file:
 
 ```{r, write_sub_probs}
-write_csv(nt_sub_probs, "input_data/nt_sub_probs.csv")
+data.frame(hiv_q_mat)|>
+  rownames_to_column(var = 'nt_from') |>
+write_csv("input_data/hiv_q_mat.csv")
+```
+**Note:** to read this back into R and get it into matrix form, you can use
+this code:
+
+```{r}
+as.matrix(read.csv("input_data/hiv_q_mat.csv", row.names = 1))
 ```
 
 

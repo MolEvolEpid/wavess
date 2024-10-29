@@ -239,28 +239,28 @@ test_that("check_sample_epitopes_inputs works", {
   ))
 })
 
-test_that("check_calc_nt_sub_probs_inputs works", {
-  expect_no_error(check_calc_nt_sub_probs_inputs(
+test_that("check_estimate_q_inputs works", {
+  expect_no_error(check_estimate_q_inputs(
     hiv_env_flt_2022, ape::rtree(3), "GTR+I+R(4)", "none"
   ))
   expect_error(
-    check_calc_nt_sub_probs_inputs(
+    check_estimate_q_inputs(
       "hiv_env_flt_2022", ape::rtree(3), "GTR+I+R(4)", "none"
     ),
     "aln must be of the "
   )
   expect_error(
-    check_calc_nt_sub_probs_inputs(
+    check_estimate_q_inputs(
       hiv_env_flt_2022, "ape::rtree(3)", "GTR+I+R(4)", "none"
     ),
     "tr must be of the "
   )
   expect_error(
-    check_calc_nt_sub_probs_inputs(hiv_env_flt_2022, ape::rtree(3), 0, "none"),
+    check_estimate_q_inputs(hiv_env_flt_2022, ape::rtree(3), 0, "none"),
     "model must be a string, but is a numeric"
   )
   expect_error(
-    check_calc_nt_sub_probs_inputs(
+    check_estimate_q_inputs(
       hiv_env_flt_2022, ape::rtree(3), "GTR+I+R(4)", "wrong"
     ),
     "Rearrangement must be one of "
@@ -276,11 +276,8 @@ test_that("check_run_wavess_inputs works", {
   suppressMessages(el <- sample_epitopes(
     get_epitope_frequencies(env_features$Position - 1)
   ))
-  capture.output(ntsp <- calc_nt_sub_probs(
-    hiv_env_flt_2022[1:3, ]
-  ), file = nullfile())
   expect_no_error(check_run_wavess_inputs(
-    ps, fs, ntsp,
+    ps, fs, hiv_q_mat,
     3.5e-5, 1.4e-5,
     NULL, 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
@@ -288,7 +285,7 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      ps |> dplyr::mutate(n_sample_active = 0), fs, ntsp,
+      ps |> dplyr::mutate(n_sample_active = 0), fs, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -297,7 +294,7 @@ test_that("check_run_wavess_inputs works", {
     "you must sample at least one generation"
   )
   expect_error(check_run_wavess_inputs(
-    ps, fs, ntsp,
+    ps, fs, hiv_q_mat,
     3.5e-5, 1.4e-5,
     10000, 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
@@ -305,7 +302,7 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      "ps", fs, ntsp,
+      "ps", fs, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -315,7 +312,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps |> dplyr::rename(gen = generation), fs, ntsp,
+      ps |> dplyr::rename(gen = generation), fs, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -325,7 +322,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps |> dplyr::mutate(generation = sample(generation)), fs, ntsp,
+      ps |> dplyr::mutate(generation = sample(generation)), fs, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -335,7 +332,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ADAA", ntsp,
+      ps, "ADAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -345,45 +342,45 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", ntsp |> dplyr::select("nt_from", "A"),
+      ps, "ATAA", hiv_q_mat[1:2,],
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "nt_sub_probs must have colnames A,C,G,T"
+    "q must have rownames A,C,G,T"
+  )
+  hiv_q_mat_tmp <- hiv_q_mat
+  colnames(hiv_q_mat_tmp) <- rev(colnames(hiv_q_mat_tmp))
+  expect_error(
+    check_run_wavess_inputs(
+      ps, "ATAA", hiv_q_mat_tmp,
+      3.5e-5, 1.4e-5,
+      NULL, 0.99, NULL, 1,
+      NULL, 30, 0.01, 90,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "the row names and column names of q must be in the same order"
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", ntsp |>
-        dplyr::rename("tmp" = "A", "A" = "T") |>
-        dplyr::rename("T" = "tmp"),
+      ps, "ATAA", hiv_q_mat[1, ],
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "the first column of nt_sub_probs and the subsequent column names must be in the same order"
-  )
-  expect_error(
-    check_run_wavess_inputs(
-      ps, "ATAA", ntsp[1, ],
-      3.5e-5, 1.4e-5,
-      NULL, 0.99, NULL, 1,
-      NULL, 30, 0.01, 90,
-      0.001, 0.01, 0.01, 0.01, NULL
-    ),
-    "the first column of nt_sub_probs must have A,C,G,T"
+    "q must be a matrix, but is a numeric"
   )
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", ntsp,
+    ps, "ATAA", hiv_q_mat,
     3.5e-5, 1.4e-5,
     1, 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
     0.001, 0.01, 0.01, 0.01, NULL
   ))
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", ntsp,
+    ps, "ATAA", hiv_q_mat,
     3.5e-5, 1.4e-5,
     c(1, 2), 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
@@ -391,7 +388,7 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", ntsp,
+      ps, "ATAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
       "a", 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -401,7 +398,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", ntsp,
+      ps, "ATAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
       1, 10, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -410,7 +407,7 @@ test_that("check_run_wavess_inputs works", {
     "conserved_cost must be in the range"
   )
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", ntsp,
+    ps, "ATAA", hiv_q_mat,
     3.5e-5, 1.4e-5,
     NULL, 0.99, "ATTT", 1,
     NULL, 30, 0.01, 90,
@@ -418,7 +415,7 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", ntsp,
+      ps, "ATAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, "ATT", 1,
       NULL, 30, 0.01, 90,
@@ -427,7 +424,7 @@ test_that("check_run_wavess_inputs works", {
     "ref_seq must be the same length as the founder sequence"
   )
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", ntsp,
+    ps, "ATAA", hiv_q_mat,
     3.5e-5, 1.4e-5,
     NULL, 0.99, NULL, 1,
     el, 30, 0.01, 90,
@@ -435,7 +432,7 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", ntsp,
+      ps, "ATAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       el |> dplyr::select(epi_start_nt), 30, 0.01, 90,
@@ -445,17 +442,17 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", ntsp,
-      -1, 1.4e-5,
+      ps, "ATAA", hiv_q_mat[,1:2],
+      3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "prob_mut must be in the range"
+    "q must have colnames A,C,G,T"
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", ntsp,
+      ps, "ATAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       el, 30, 0.01, -1,
@@ -464,7 +461,7 @@ test_that("check_run_wavess_inputs works", {
     "gen_full_potency must be a number"
   )
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", ntsp,
+    ps, "ATAA", hiv_q_mat,
     3.5e-5, 1.4e-5,
     NULL, 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
@@ -472,7 +469,7 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", ntsp,
+      ps, "ATAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -482,7 +479,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps |> dplyr::mutate(n_sample_active = 10000), "ATAA", ntsp,
+      ps |> dplyr::mutate(n_sample_active = 10000), "ATAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -493,7 +490,7 @@ test_that("check_run_wavess_inputs works", {
   ps$active_cell_count[1] <- 2
   expect_error(
     check_run_wavess_inputs(
-      ps, c("AG", "ATAA"), ntsp,
+      ps, c("AG", "ATAA"), hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,

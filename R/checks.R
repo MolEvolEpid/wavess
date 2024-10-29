@@ -159,11 +159,24 @@ check_is_pos <- function(x, var_name, ok0 = FALSE) {
 #' @param x variable to check
 #' @param var_name name of variable
 #'
-#' @return error if variable is not numeric
+#' @return error if variable is not a dataframe
 #' @noRd
 check_is_df <- function(x, var_name) {
   if (!is.data.frame(x)) {
     stop(var_name, " must be a data frame or tibble, but is a ", class(x))
+  }
+}
+
+#' Check if a variable is a matrix
+#'
+#' @param x variable to check
+#' @param var_name name of variable
+#'
+#' @return error if variable is not a matrix
+#' @noRd
+check_is_matrix <- function(x, var_name) {
+  if (!is.matrix(x)) {
+    stop(var_name, " must be a matrix, but is a ", class(x))
   }
 }
 
@@ -282,13 +295,13 @@ check_sample_epitopes_inputs <- function(epitope_probabilities,
   }
 }
 
-#' Check calc_nt_sub_probs inputs
+#' Check estimate_q inputs
 #'
-#' @inheritParams calc_nt_sub_probs
+#' @inheritParams estimate_q
 #'
 #' @return error if inputs are incorrect
 #' @noRd
-check_calc_nt_sub_probs_inputs <- function(aln, tr, model, rearrangement) {
+check_estimate_q_inputs <- function(aln, tr, model, rearrangement) {
   check_is_dnabin(aln, "aln")
   if (!is.null(tr)) {
     check_is_phylo(tr, "tr")
@@ -327,8 +340,8 @@ check_seq <- function(seq, chars, seq_type) {
 #'
 #' @return error if wrong inputs
 #' @noRd
-check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
-                                    prob_mut, prob_recomb,
+check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
+                                    mut_rate, recomb_rate,
                                     conserved_sites, conserved_cost,
                                     ref_seq, rep_exp,
                                     epitope_locations, seroconversion_time,
@@ -372,24 +385,21 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
   if (length(unique(sapply(as.list(founder_seqs), nchar))) != 1) {
     stop("All founder sequences must be the same length")
   }
-  check_is_df(nt_sub_probs, "nt_sub_probs")
-  if (!all(nt_sub_probs[, 1, drop = TRUE] %in% c("A", "C", "G", "T")) ||
-    !all(c("A", "C", "G", "T") %in% nt_sub_probs[, 1, drop = TRUE])) {
-    stop("the first column of nt_sub_probs must have A,C,G,T")
+  check_is_matrix(q, "q")
+  if (!all(rownames(q) %in% c("A", "C", "G", "T")) ||
+    !all(c("A", "C", "G", "T") %in% rownames(q))) {
+    stop("q must have rownames A,C,G,T")
   }
-  if (!all(colnames(nt_sub_probs)[2:5] %in% c("A", "C", "G", "T")) ||
-    !all(c("A", "C", "G", "T") %in% colnames(nt_sub_probs)[2:5])) {
-    stop("nt_sub_probs must have colnames A,C,G,T")
+  if (!all(colnames(q) %in% c("A", "C", "G", "T")) ||
+    !all(c("A", "C", "G", "T") %in% colnames(q))) {
+    stop("q must have colnames A,C,G,T")
   }
-  if (!all(nt_sub_probs[, 1, drop = TRUE] == colnames(nt_sub_probs)[2:5])) {
-    stop(
-      "the first column of nt_sub_probs and the subsequent column names must be ",
-      "in the same order"
-    )
+  if (!all(rownames(q) == colnames(q))) {
+    stop("the row names and column names of q must be in the same order")
   }
-  sapply(nt_sub_probs[, 2:5], function(x) {
+  sapply(q, function(x) {
     lapply(x, function(y) {
-      check_is_0to1(y, "nt_sub_probs")
+      check_is_numeric(y, "q")
     })
   })
   if (!is.null(conserved_sites)) {
@@ -432,8 +442,8 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, nt_sub_probs,
     check_is_0to1(prop_for_imm, "prop_for_imm")
     check_is_pos(gen_full_potency, "gen_full_potency", TRUE)
   }
-  check_is_0to1(prob_mut, "prob_mut")
-  check_is_0to1(prob_recomb, "prob_recomb")
+  check_is_numeric(mut_rate, "mut_rate")
+  check_is_numeric(recomb_rate, "recomb_rate")
   check_is_0to1(prob_act_to_lat, "prob_act_to_lat")
   check_is_0to1(prob_lat_to_act, "prob_lat_to_act")
   check_is_0to1(prob_lat_prolif, "prob_lat_prolif")

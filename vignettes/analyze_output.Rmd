@@ -53,17 +53,18 @@ theme_set(theme_classic() +
 # if needed
 create_python_venv()
 
-pop_samp <- generate_pop_samp(n_gen = 300, sampling_frequency = 100) |>
-  # sample at generation 10 to see diversity and divergence earlier on
-  mutate(n_sample_active = ifelse(generation == 10, 20, n_sample_active))
+pop_samp <- generate_pop_samp(
+  n_gen = 500,
+  sampling_frequency = 30,
+  max_samp = 50
+)
 founder_ref <- extract_seqs(hxb2_cons_founder,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "CON_B(1295)",
   start = 6225, end = 7787
 )
-nt_sub_probs <- calc_nt_sub_probs(as.matrix(hiv_env_flt_2022))
 gp120 <- slice_aln(hxb2_cons_founder, 6225, 7787)
-epi_probs <- get_epitope_frequencies(env_features$position)
+epi_probs <- get_epitope_frequencies(env_features$Position)
 ref_founder_map <- map_ref_founder(gp120,
   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
   founder = "B.US.2011.DEMB11US006.KC473833"
@@ -72,11 +73,9 @@ epitope_locations <- sample_epitopes(epi_probs,
   ref_founder_map = ref_founder_map
 )
 
-founder_ref$ref <- gsub("N", "-", founder_ref$ref)
 wavess_out <- run_wavess(
-  pop_samp = pop_samp,
+  pop_samp = pop_samp, 
   founder_seqs = founder_ref$founder,
-  nt_sub_probs = nt_sub_probs,
   conserved_sites = conserved_sites,
   ref_seq = founder_ref$ref,
   epitope_locations = epitope_locations,
@@ -88,7 +87,7 @@ wavess_out <- run_wavess(
 
 Here are various counts plotted over time:
 
-```{r}
+```{r, plot_counts}
 wavess_out$counts |>
   pivot_longer(!generation) |>
   ggplot(aes(x = generation, y = value)) +
@@ -103,16 +102,16 @@ can be computed and plotted as follows
 (reference for calculations 
 [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004625)):
 
-```{r}
+```{r, get_div_mets}
 gens <- gsub("gen_|_cell.*", "", labels(wavess_out$seqs))
-(div_metrics <- calc_div_metrics(wavess_out$seqs, "founder1", gens))
+(div_metrics <- calc_div_metrics(wavess_out$seqs, "founder0", gens))
 ```
 
-As can be seen, the diversity of founder1 and generation 0 are NaN. This is because
+As can be seen, the diversity of founder0 and generation 0 are NaN. This is because
 there is only one sampled sequence at those timepoints, so diversity cannot be
 computed.
 
-```{r}
+```{r, plot_div}
 div_metrics |>
   mutate(gen = as.numeric(gen)) |>
   pivot_longer(!gen) |>
@@ -124,22 +123,28 @@ div_metrics |>
 
 ## Phylogeny
 
-While you may want to use a different tree-building algorithm outside of R such
-as [IQ-TREE](http://www.iqtree.org/), here is a way to quickly build a tree in 
+**We HIGHLY recommend using a maximum-likelihood (or Bayesian) tree-building 
+algorithm outside of R such as [IQ-TREE](http://www.iqtree.org/) for your
+tree-based analyses of the simulated sequences.** That being said, it is
+sometimes nice, like here, to build a quick tree to get a sense of what the
+output of your simulations looks like. Below is a way to quickly build a tree in
 R using `ape` to generate a neighbor-joining tree and `phangorn` to estimate
-branch lengths using maximum likelihood:
+branch lengths using maximum likelihood. (Note that you can also modify the
+below code to estimate a full maximum-likelihood tree in R by deleting 
+`rearrangement = "none"`, just be prepared for it to take a long time to run - 
+longer than it would take to run IQ-TREE.)
 
-```{r}
+```{r, plot_tree}
 pml_out <- pml_bb(wavess_out$seqs,
   start = bionj(dist.dna(wavess_out$seqs, model = "TN93")),
-  model = "GTR+R(4)+I", rearrangement = "none"
+  model = "GTR+I+R(4)", rearrangement = "none"
 )
 
-tr <- root(pml_out$tree, "founder1", resolve.root = TRUE)
+tr <- root(pml_out$tree, "founder0", resolve.root = TRUE)
 gens <- gsub("gen_|_cell.*", "", tr$tip.label)
 names(gens) <- tr$tip.label
 ggtree(tr) +
-  geom_tippoint(aes(col = c(gens, rep(NA, Nnode(tr))))) +
+  geom_tippoint(aes(col = factor(c(gens, rep(NA, Nnode(tr))), levels = c('founder0', sort(unique(as.numeric(gens))))))) +
   scale_color_brewer(palette = "Set1") +
   geom_treescale() +
   labs(col = "Generation")
@@ -163,7 +168,7 @@ Many other tree statistics can be calculated using the
 derived from the same sampling scheme, i.e. the same number of samples taken
 at the same time points post-infection.**
 
-```{r}
+```{r, tr_summary_stats}
 calc_tr_summary_stats(tr, gens)
 ```
 
