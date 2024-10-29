@@ -142,4 +142,15 @@ generation. See `vignette("run_wavess")` for more details about the outputs.
 Example output files can be found in `inst/python/wavess_output/`.
 
 
+### Python tests
+
+To run the tests for the Python part of the code, navigate to `inst/python` and 
+run:
+
+```
+pytest tests.py --cov --cov-report=html
+```
+
+You can then look at the coverage report in `htmlcov/index.html`.
+
 
