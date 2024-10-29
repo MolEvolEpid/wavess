@@ -13,7 +13,7 @@ from collections import Counter
 
 
 def set_python_seed(s):
-    if s != None:
+    if s is not None:
         # Set seed (need to set a seed for random and for numpy.random)
         seed(s)
         generator = default_rng(int(s))
@@ -23,7 +23,8 @@ def set_python_seed(s):
 
 
 def create_host_env(founder_seqs, ref_seq, rf_exp, initial_cell_count):
-    founder_viruses = [HIV(seq, ref_seq, rf_exp) for seq in founder_seqs.values()]
+    founder_viruses = [HIV(seq, ref_seq, rf_exp)
+                       for seq in founder_seqs.values()]
     return HostEnv(founder_viruses, initial_cell_count)
 
 
@@ -34,19 +35,23 @@ def create_epitope(start, end, max_fc):
 def get_substitution(old_nucleotide, new_nucleotides_order, probabilities):
     if old_nucleotide == "A":
         return choices(
-            new_nucleotides_order, probabilities[new_nucleotides_order.index("A")]
+            new_nucleotides_order, probabilities[new_nucleotides_order.index(
+                "A")]
         )[0]
     elif old_nucleotide == "C":
         return choices(
-            new_nucleotides_order, probabilities[new_nucleotides_order.index("C")]
+            new_nucleotides_order, probabilities[new_nucleotides_order.index(
+                "C")]
         )[0]
     elif old_nucleotide == "G":
         return choices(
-            new_nucleotides_order, probabilities[new_nucleotides_order.index("G")]
+            new_nucleotides_order, probabilities[new_nucleotides_order.index(
+                "G")]
         )[0]
     elif old_nucleotide == "T":
         return choices(
-            new_nucleotides_order, probabilities[new_nucleotides_order.index("T")]
+            new_nucleotides_order, probabilities[new_nucleotides_order.index(
+                "T")]
         )[0]
     else:
         raise Exception("Unknown nucleotide %s" % old_nucleotide)
@@ -111,7 +116,8 @@ def replicative_fitness_cost(s1, s2, rf_exp):
     assert len(s1) == len(
         s2
     ), "In replicative fitness, sequences are not of same length!"
-    n_compare = len([1 for x in range(len(s2)) if s2[x] in ["A", "T", "C", "G"]])
+    n_compare = len([1 for x in range(len(s2))
+                    if s2[x] in ["A", "T", "C", "G"]])
     return (
         len([1 for x, y in zip(s1, s2) if x != y and y in ["A", "T", "C", "G"]])
         / n_compare
@@ -127,7 +133,8 @@ def normalize(likelihoods):
     return norm
 
 
-def get_conserved_sites_mutated(v1_muts, v2_muts, cross_over_positions, seq_len):
+def get_conserved_sites_mutated(
+        v1_muts, v2_muts, cross_over_positions, seq_len):
     cross_over_positions = cross_over_positions + [seq_len]
     n_muts_conserved_virus1 = len(v1_muts)
     n_muts_conserved_virus2 = len(v2_muts)
@@ -139,12 +146,14 @@ def get_conserved_sites_mutated(v1_muts, v2_muts, cross_over_positions, seq_len)
             prev_pos = curr_pos
             curr_pos = cross_over_positions.pop(0)
             if next_strand == 1:
-                muts = set(x for x in v1_muts if x >= prev_pos and x < curr_pos)
+                muts = set(x for x in v1_muts if x >=
+                           prev_pos and x < curr_pos)
                 for x in muts:
                     muts_in_conserved.add(x)
                 next_strand = 2
             else:
-                muts = set(x for x in v2_muts if x >= prev_pos and x < curr_pos)
+                muts = set(x for x in v2_muts if x >=
+                           prev_pos and x < curr_pos)
                 for x in muts:
                     muts_in_conserved.add(x)
                 next_strand = 1
@@ -159,13 +168,15 @@ class Epitope:
         self.max_fitness = max_fitness
 
     def __repr__(self):
-        return "(%s to %s, maxfit: %s)" % (self.start, self.end, self.max_fitness)
+        return "(%s to %s, maxfit: %s)" % (
+            self.start, self.end, self.max_fitness)
 
 
 class HIV:
     def __init__(self, nuc_seq, reference_sequence, rf_exp):
         # Make sure values supplied are as expected
-        assert isinstance(nuc_seq, str), "Nucleotide sequence needs to be a string"
+        assert isinstance(
+            nuc_seq, str), "Nucleotide sequence needs to be a string"
 
         # Initialize instance variables
         self.nuc_sequence = nuc_seq
@@ -200,15 +211,17 @@ class HIV:
         new_nucleotide = get_substitution(
             old_nucleotide, nucleotides_order, substitution_probabilities
         )
-        # Fastest way I can find to mutate - add part before to new nt to part after
+        # Fastest way I can find to mutate - add part before to new nt to part
+        # after
         self.nuc_sequence = (
             self.nuc_sequence[:position_to_mutate]
             + new_nucleotide
-            + self.nuc_sequence[position_to_mutate + 1 :]
+            + self.nuc_sequence[position_to_mutate + 1:]
         )
 
         # If mutation is in a conserved site, update mutations in conserved sites and conserved sites fitness
-        # Note that we are not tracking whether there are multiple mutations at a single conserved site
+        # Note that we are not tracking whether there are multiple mutations at
+        # a single conserved site
         if position_to_mutate in conserved_sites:
             self.conserved_sites_mutated.add(position_to_mutate)
             self.conserved_fitness_cost = conserved_fitness_cost(
@@ -263,7 +276,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # Store epitope translations
         self.epitope_variants_translated = defaultdict(lambda: "")
         # Track epitopes recognized by the immune system
-        # key -> epitope sequence variant, value -> generation when it started being recognized
+        # key -> epitope sequence variant, value -> generation when it started
+        # being recognized
         self.epitopes_recognition_generation = defaultdict(lambda: 0)
         # Immune cost of epitopes
         self.cross_reactive_epitope_cost_frac = defaultdict(lambda: 0)
@@ -353,7 +367,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         ), "The nucleotide sequence length is not a multiple of 3"
         protein = ""
         for i in range(0, len(seq_to_translate), 3):
-            codon = seq_to_translate[i : i + 3]
+            codon = seq_to_translate[i: i + 3]
             protein += table[codon]
         return protein
 
@@ -382,14 +396,15 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         epitope_variants = defaultdict(lambda: 0)
         for seq, freq in seqs.items():
             for epi in epitopes:
-                epitope_variants[seq[epi.start : epi.end]] += freq
+                epitope_variants[seq[epi.start: epi.end]] += freq
 
         # Translate epitopes, get frequencies, and store translations
         aa_epitope_variants = defaultdict(lambda: 0)
         for variant, frequency in epitope_variants.items():
             # Translate and add to dictionary if new variant
             if variant not in self.epitope_variants_translated:
-                self.epitope_variants_translated[variant] = self.translate(variant)
+                self.epitope_variants_translated[variant] = self.translate(
+                    variant)
             # Add variant frequency to dictionary
             aa_epitope_variants[self.epitope_variants_translated[variant]] += frequency
 
@@ -404,11 +419,13 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     n_diff_min = len(variant)
                     for v in self.epitopes_recognition_generation:
                         if variant != v and len(variant) == len(v):
-                            n_diff = len([1 for x, y in zip(variant, v) if x != y])
+                            n_diff = len(
+                                [1 for x, y in zip(variant, v) if x != y])
                             if n_diff <= n_diff_min:
                                 n_diff_min = n_diff
                                 most_similar = v
-                    # EVENTUALLY UPDATE THIS TO BE HOWEVER WE WANT CROSS-REACTIVITY TO ACTUALLY WORK
+                    # EVENTUALLY UPDATE THIS TO BE HOWEVER WE WANT
+                    # CROSS-REACTIVITY TO ACTUALLY WORK
                     self.cross_reactive_epitope_cost_frac[
                         variant
                     ] = immune_strength_dict[most_similar] * rng.beta(
@@ -434,7 +451,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                             * time_to_full_potency
                         )
 
-    def update_immune_fitness(self, epitopes, current_generation, time_to_full_potency):
+    def update_immune_fitness(
+            self, epitopes, current_generation, time_to_full_potency):
         immune_strength_dict = {
             k: min((current_generation - v) / time_to_full_potency, 1)
             for k, v in self.epitopes_recognition_generation.items()
@@ -445,11 +463,12 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             for epi in epitopes:
                 # get translated epitope
                 epitope_sequence = self.epitope_variants_translated[
-                    self.C[CD4_index].infecting_virus.nuc_sequence[epi.start : epi.end]
+                    self.C[CD4_index].infecting_virus.nuc_sequence[epi.start: epi.end]
                 ]
                 if epitope_sequence in self.epitopes_recognition_generation:
                     timed_fitness = (
-                        epi.max_fitness * immune_strength_dict[epitope_sequence]
+                        epi.max_fitness *
+                        immune_strength_dict[epitope_sequence]
                     )
                     max_epitope_fitness_cost = max(
                         max_epitope_fitness_cost, timed_fitness
@@ -492,7 +511,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         newly_infected = [None] * len(next_singly_infecting_viruses)
 
         n_added = 0
-        # Count up the number of times each virus infects a cell in the next generation
+        # Count up the number of times each virus infects a cell in the next
+        # generation
         cd4_norecomb_counts = Counter(next_singly_infecting_viruses)
         # Create next generation of signly infected viruses
         for newly_infected_cd4 in cd4_norecomb_counts:
@@ -503,7 +523,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             n_cells_to_infect = cd4_norecomb_counts[newly_infected_cd4]
             if n_cells_to_infect > 1:
                 for i in range(n_cells_to_infect - 1):
-                    newly_infected[n_added] = deepcopy(self.C[newly_infected_cd4])
+                    newly_infected[n_added] = deepcopy(
+                        self.C[newly_infected_cd4])
                     n_added += 1
 
         # Return singly infected active cells
@@ -538,10 +559,13 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             newly_infected_index += 1
 
             # Append the cd4 with the infecting virus to newly_infected
-            # Deepcopy all of these since we don't know if any of them also singly-infected a cell
-            newly_infected[n_added] = deepcopy(self.C[index_of_cd4_with_virus1])
+            # Deepcopy all of these since we don't know if any of them also
+            # singly-infected a cell
+            newly_infected[n_added] = deepcopy(
+                self.C[index_of_cd4_with_virus1])
 
-            # Update viral sequence of newly appended cd4 with recombined sequence
+            # Update viral sequence of newly appended cd4 with recombined
+            # sequence
             newly_infected[n_added].infecting_virus.nuc_sequence, breakpoints = (
                 get_recombined_sequence(
                     self.C[index_of_cd4_with_virus1].infecting_virus.nuc_sequence,
@@ -629,7 +653,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         rf_exp,
     ):
         # Positions to mutate are given assuming all viral sequences are concatenated
-        # We need to identify the right cell number and position within each viral sequence, and initiate the mutation
+        # We need to identify the right cell number and position within each
+        # viral sequence, and initiate the mutation
         for pos in positions_to_mutate:
             cell_number, viral_seq_position = divmod(
                 pos, viral_sequence_length
@@ -652,7 +677,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         prob_latent_proliferate,
         seed,
     ):
-        # ***************************** Latent reservoir dynamics *****************************
+        # ***************************** Latent reservoir dynamics *************
         # Get random number generator
         rng = default_rng(seed)
 
@@ -662,9 +687,11 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
         # Move some productively infected cells to the latent pool
         num_to_make_latent = min(
-            rng.binomial(num_active_cd4, prob_active_to_latent), num_active_cd4 - 1
+            rng.binomial(
+                num_active_cd4, prob_active_to_latent), num_active_cd4 - 1
         )  # make it so not all cells can become latent
-        indices_to_make_latent = sample(range(num_active_cd4), num_to_make_latent)
+        indices_to_make_latent = sample(
+            range(num_active_cd4), num_to_make_latent)
         for i in range(num_to_make_latent):
             index_to_make_latent = indices_to_make_latent[i] - i
             self.make_latent(index_to_make_latent)
@@ -673,14 +700,19 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         to_active = where(rng.binomial(1, prob_latent_to_active, n_latent_cd4))[
             0
         ].tolist()
-        to_die = where(rng.binomial(1, prob_latent_die, n_latent_cd4))[0].tolist()
+        to_die = where(
+            rng.binomial(
+                1,
+                prob_latent_die,
+                n_latent_cd4))[0].tolist()
         to_proliferate = where(rng.binomial(1, prob_latent_proliferate, n_latent_cd4))[
             0
         ].tolist()
         latent_event_indices = set(to_active + to_die + to_proliferate)
 
         # Perform events
-        # Sort so that the highest indices are popped first (doesn't influence earlier indices)
+        # Sort so that the highest indices are popped first (doesn't influence
+        # earlier indices)
         n_to_active = 0
         n_to_die = 0
         n_to_proliferate = 0
@@ -769,15 +801,18 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         )
 
         # Infect n_active_next_gen - num_cells_recomb cells with a single virus. Here we will be reusing the same data structure (host.C)
-        # but replacing the virus. First n_active_next_gen - num_cells_recomb indices from the sampled next_infecting_virus will be used.
+        # but replacing the virus. First n_active_next_gen - num_cells_recomb
+        # indices from the sampled next_infecting_virus will be used.
         self.C = (
             self.singly_infect_cd4(
-                next_infecting_viruses[: int(n_active_next_gen - num_cells_recomb)]
+                next_infecting_viruses[: int(
+                    n_active_next_gen - num_cells_recomb)]
             )
             +
             # Infect num_cells_recomb with two viruses and create recombinants
             self.dually_infect_cd4(
-                next_infecting_viruses[int(n_active_next_gen - num_cells_recomb) :],
+                next_infecting_viruses[int(
+                    n_active_next_gen - num_cells_recomb):],
                 cell_breakpoints,
                 seq_len,
                 cost_per_mutation_in_conserved_site,
@@ -799,7 +834,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             / n_active,
         )  # MAYBE UPDATE THIS IF WE KEEP REPLICATIVE FITNESS AS (1-RFC)^EXP
 
-    def record_counts(self, counts, generation, latent_nums, var_nums, fitness):
+    def record_counts(self, counts, generation,
+                      latent_nums, var_nums, fitness):
         counts["generation"].append(generation)
         counts["active_cell_count"].append(len(self.C))
         counts["latent_cell_count"].append(len(self.L))
@@ -824,9 +860,12 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         for index, CD4 in enumerate(c_sub):
             name = "gen_" + str(generation)
             name += "_cell_" + str(index)
-            name += "_ic_" + str("%.4f" % CD4.infecting_virus.immune_fitness_cost)
-            name += "_cc_" + str("%.4f" % CD4.infecting_virus.conserved_fitness_cost)
-            name += "_rc_" + str("%.4f" % CD4.infecting_virus.replicative_fitness_cost)
+            name += "_ic_" + str("%.4f" %
+                                 CD4.infecting_virus.immune_fitness_cost)
+            name += "_cc_" + str("%.4f" %
+                                 CD4.infecting_virus.conserved_fitness_cost)
+            name += "_rc_" + str("%.4f" %
+                                 CD4.infecting_virus.replicative_fitness_cost)
             name += "_f_" + str("%.4f" % CD4.infecting_virus.fitness)
             seqs[name] = CD4.infecting_virus.nuc_sequence
         return seqs
@@ -883,8 +922,10 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             # mean_fitness_active, mean_conserved_cost_active, mean_immune_cost_active,
             # mean_replicative_cost_active
             fitness = self.summarize_fitness()
-            counts = self.record_counts(counts, 0, latent_nums, var_nums, fitness)
-            seqs = self.sample_viral_sequences(seqs, 0, int(n_sample_active[0]))
+            counts = self.record_counts(
+                counts, 0, latent_nums, var_nums, fitness)
+            seqs = self.sample_viral_sequences(
+                seqs, 0, int(n_sample_active[0]))
 
         # Looping through generations until we sample everything we want
         for t in range(1, last_sampled_gen + 1):
@@ -920,7 +961,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             # Record events
             if n_sample_active[t] != 0:
                 fitness = self.summarize_fitness()
-                counts = self.record_counts(counts, t, latent_nums, var_nums, fitness)
+                counts = self.record_counts(
+                    counts, t, latent_nums, var_nums, fitness)
                 seqs = self.sample_viral_sequences(seqs, t, n_sample_active[t])
 
         return counts, seqs

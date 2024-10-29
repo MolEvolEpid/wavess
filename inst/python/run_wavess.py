@@ -37,7 +37,8 @@ def read_b_epitopes(filename):
     epitopes_df = read_csv(filename)
     epitopes = []
     for row in epitopes_df.itertuples():
-        epitopes.append(agents.Epitope(int(row[1]), int(row[2]), float(row[3])))
+        epitopes.append(agents.Epitope(
+            int(row[1]), int(row[2]), float(row[3])))
     return epitopes
 
 
@@ -60,11 +61,11 @@ def get_conserved_sites(conserved_sites_filename):
 def get_nucleotide_substitution_probabilities(q_filename, mut_rate):
     # Read nucleotide substitution probabilities
     q = read_csv(q_filename, index_col="nt_from")
-    
+
     # Convert to probabilities
-    sub_probs = expm(q*mut_rate)
+    sub_probs = expm(q * mut_rate)
     np.fill_diagonal(sub_probs, 0)
-    sub_probs = sub_probs/np.sum(sub_probs,axis=1, keepdims = True)
+    sub_probs = sub_probs / np.sum(sub_probs, axis=1, keepdims=True)
 
     # Make sure that the row and column labels are the same
     new_nucleotides_order = tuple(q.columns)
@@ -105,7 +106,8 @@ if __name__ == "__main__":
 
     ## Required inputs ##
 
-    # Generation information, including cd4 counts and sampling times and numbers
+    # Generation information, including cd4 counts and sampling times and
+    # numbers
     pop_samp = read_pop_samp(input_files["pop_samp"])
 
     # Founder virus
@@ -113,7 +115,8 @@ if __name__ == "__main__":
 
     # Nucleotide substitution probabilities
     nucleotides_order, substitution_probabilities = (
-        get_nucleotide_substitution_probabilities(input_files["q"], params["mut_rate"])
+        get_nucleotide_substitution_probabilities(
+            input_files["q"], params["mut_rate"])
     )
 
     ## Optional inputs related to selection ##
@@ -128,7 +131,8 @@ if __name__ == "__main__":
     if input_files["ref_seq"] != "":
         reference_sequence = get_sequences(input_files["ref_seq"])[0]
         if len(conserved_sites):
-            # mask conserved sites so they aren't included in replicative fitness computation
+            # mask conserved sites so they aren't included in replicative
+            # fitness computation
             reference_sequence = "".join(
                 [
                     x if i not in conserved_sites else "-"
@@ -165,7 +169,8 @@ if __name__ == "__main__":
     # Number of cells to sample for each generation
     n_to_samp = pop_samp["n_sample_active"]
     # Last sampled generation (don't have to continue simulation after this)
-    last_sampled_gen = [index for index, item in enumerate(n_to_samp) if item != 0][-1]
+    last_sampled_gen = [index for index,
+                        item in enumerate(n_to_samp) if item != 0][-1]
 
     # Loop through generations
     counts, seqs = host.loop_through_generations(

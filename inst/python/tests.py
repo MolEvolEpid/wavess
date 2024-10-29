@@ -5,18 +5,19 @@ from numpy.random import default_rng
 from run_wavess import *
 from agents import *
 
-## Functions outside of any class
+# Functions outside of any class
 
 
 def test_set_python_seed():
-  assert isinstance(set_python_seed(None), np.random._generator.Generator)
-  g = set_python_seed(1)
-  assert sample(range(1000), 1) == [137]
-  assert g.binomial(1000, 0.1) == 100
-  
+    assert isinstance(set_python_seed(None), np.random._generator.Generator)
+    g = set_python_seed(1)
+    assert sample(range(1000), 1) == [137]
+    assert g.binomial(1000, 0.1) == 100
+
+
 def test_create_host_env():
     host = create_host_env({"founder0": "AAA"}, "AAA", 1, 1)
-    assert host.C[0].active 
+    assert host.C[0].active
     assert host.C[0].infecting_virus.nuc_sequence == "AAA"
     host = create_host_env({"founder0": "AAA", "founder1": "GGG"}, "AAA", 2, 2)
     assert host.C[0].infecting_virus.nuc_sequence == "AAA"
@@ -25,17 +26,23 @@ def test_create_host_env():
         create_host_env({"founder0": "AAA"}, "AAA", 1, 10)
     with pytest.raises(Exception):
         create_host_env({"founder0": "AAA", "founder2": "GGG"}, "AAA", 1, 1)
-      
+
+
 def test_create_epitope():
-  epitope = create_epitope(10, 20, 0.4)
-  assert vars(epitope) == {'start': 10, 'end': 20, 'max_fitness': 0.4}
+    epitope = create_epitope(10, 20, 0.4)
+    assert vars(epitope) == {'start': 10, 'end': 20, 'max_fitness': 0.4}
+
 
 def test_get_nucleotide_substitution_probabilities():
     nt_sub_probs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     assert nt_sub_probs[0] == ("A", "C", "G", "T")
-    assert nt_sub_probs[1][1] == [0.3656992970389363, 0.0, 0.024486666685793617, 0.60981403627527]
+    assert nt_sub_probs[1][1] == [
+        0.3656992970389363,
+        0.0,
+        0.024486666685793617,
+        0.60981403627527]
     with pytest.raises(Exception):
         get_nucleotide_substitution_probabilities("", 3.5e-5)
     with pytest.raises(Exception):
@@ -118,13 +125,14 @@ def test_get_conserved_sites_mutated():
     assert get_conserved_sites_mutated(set(), set([0]), [1], 3) == set()
     assert get_conserved_sites_mutated(set([2]), set(), [1], 3) == set()
     assert get_conserved_sites_mutated(set(), set([2]), [1], 3) == set([2])
-    assert get_conserved_sites_mutated(set([0]), set([2]), [1], 3) == set([0, 2])
+    assert get_conserved_sites_mutated(
+        set([0]), set([2]), [1], 3) == set([0, 2])
     assert get_conserved_sites_mutated(set([2]), set([0]), [1], 3) == set()
     assert get_conserved_sites_mutated(set([2]), set(), [1, 2], 3) == set([2])
     assert get_conserved_sites_mutated(set(), set([1]), [1, 2], 3) == set([1])
 
 
-## Epitopes class
+# Epitopes class
 
 
 def test_Epitopes():
@@ -133,7 +141,7 @@ def test_Epitopes():
     assert str(epitope) == "(0 to 3, maxfit: 0.3)"
 
 
-## HIV class
+# HIV class
 
 
 def test_HIV():
@@ -175,7 +183,8 @@ def test_mutate():
 
     hiv.mutate(1, new_nt_order, probs, [1], 0.99, reference_sequence, 1)
     assert hiv.nuc_sequence == "TAA"
-    assert hiv.conserved_sites_mutated == set([1])  # we don't check if it mutated back
+    assert hiv.conserved_sites_mutated == set(
+        [1])  # we don't check if it mutated back
     assert hiv.replicative_fitness_cost == 1 / 3
 
     hiv.mutate(1, new_nt_order, probs, set([1]), 0.99, reference_sequence, 1)
@@ -190,7 +199,7 @@ def test_mutate():
         hiv.mutate(1.4, 0.99, reference_sequence, 1)
 
 
-## InfectedCD4 class
+# InfectedCD4 class
 
 
 def test_InfectedCD4():
@@ -205,12 +214,13 @@ def test_InfectedCD4():
     assert inf_cell.active == True
 
 
-## HostEnv class
+# HostEnv class
 
 
 def test_HostEnv():
     reference_sequence = "AAA"
-    host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["AAA"] * 10], 10)
+    host = HostEnv([HIV(seq, reference_sequence, 1)
+                   for seq in ["AAA"] * 10], 10)
     assert (
         repr(host)
         == "Host has 10 active and 0 latent infected cells\n0 epitopes recognized"
@@ -224,7 +234,8 @@ def test_HostEnv():
     assert host.epitope_variants_translated == defaultdict(lambda: "")
     host.C[0].infecting_virus.nuc_sequence = "ATA"
     assert host.C[1].infecting_virus.nuc_sequence == "AAA"
-    host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["AAA", "TTT"] * 5], 10)
+    host = HostEnv([HIV(seq, reference_sequence, 1)
+                   for seq in ["AAA", "TTT"] * 5], 10)
     assert "AAA" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
     assert "TTT" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
 
@@ -242,18 +253,22 @@ def test_translate():
 def test_update_epitopes_recognized():
     rng = default_rng(1234)
     reference_sequence = "AAAAAAAAA"
-    host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["AAAAAAAAA"] * 11], 11)
+    host = HostEnv([HIV(seq, reference_sequence, 1)
+                   for seq in ["AAAAAAAAA"] * 11], 11)
     epi = [Epitope(0, 3, 0.3)]
     immune_response_proportion = 0.1
-    host.update_epitopes_recognized(10, epi, immune_response_proportion, 30, rng)
+    host.update_epitopes_recognized(
+        10, epi, immune_response_proportion, 30, rng)
     assert host.epitopes_recognition_generation == {"K": 10}
     assert host.epitope_variants_translated == {"AAA": "K"}
     host.C[0].infecting_virus.nuc_sequence = "ATAAAAAAA"
-    host.update_epitopes_recognized(15, epi, immune_response_proportion, 30, rng)
+    host.update_epitopes_recognized(
+        15, epi, immune_response_proportion, 30, rng)
     assert host.epitopes_recognition_generation == {"K": 10}
     assert host.epitope_variants_translated == {"AAA": "K", "ATA": "I"}
     host.C[1].infecting_virus.nuc_sequence = "ATAAAAAAA"
-    host.update_epitopes_recognized(20, epi, immune_response_proportion, 30, rng)
+    host.update_epitopes_recognized(
+        20, epi, immune_response_proportion, 30, rng)
     assert host.epitopes_recognition_generation == {
         "K": 10,
         "I": 16,
@@ -266,7 +281,8 @@ def test_update_immune_fitness():
     reference_sequence = "AAAAAAAAA"
     epi = [Epitope(0, 3, 0.2), Epitope(4, 7, 0.3)]
     time_to_full_potency = 90
-    host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["AAAAAAAAA"] * 11], 11)
+    host = HostEnv([HIV(seq, reference_sequence, 1)
+                   for seq in ["AAAAAAAAA"] * 11], 11)
     host.update_epitopes_recognized(10, epi, 0.1, time_to_full_potency, rng)
     host.update_immune_fitness(epi, 40, time_to_full_potency)
     assert (
@@ -283,7 +299,8 @@ def test_get_fitness_of_infecting_virus():
     )
     reference_sequence = ""
     hiv = HIV("AAA", reference_sequence, 1)
-    host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["AAA"] * 11], 11)
+    host = HostEnv([HIV(seq, reference_sequence, 1)
+                   for seq in ["AAA"] * 11], 11)
     immune_response_proportion = 0.1
     time_to_full_potency = 30
     cost_per_mutation_in_conserved_site = 0.99
@@ -293,7 +310,8 @@ def test_get_fitness_of_infecting_virus():
     host.C[0].infecting_virus.mutate(
         1, new_nt_order, probs, [1], 0.99, reference_sequence, 1
     )
-    assert host.get_fitness_of_infecting_virus(0, 1) == (1 - 0) * (1 - 0) * (1 - 0.99)
+    assert host.get_fitness_of_infecting_virus(
+        0, 1) == (1 - 0) * (1 - 0) * (1 - 0.99)
     assert host.C[0].infecting_virus.immune_fitness_cost == 0
     assert host.C[0].infecting_virus.replicative_fitness_cost == 0
     assert host.C[0].infecting_virus.conserved_fitness_cost == 0.99
@@ -306,7 +324,8 @@ def test_get_fitness_of_infecting_virus():
         1, epi, immune_response_proportion, time_to_full_potency, rng
     )
     host.update_immune_fitness(epi, 40, time_to_full_potency)
-    assert host.get_fitness_of_infecting_virus(0, 1) == (1 - 0) * (1 - 0) * (1 - 0.99)
+    assert host.get_fitness_of_infecting_virus(
+        0, 1) == (1 - 0) * (1 - 0) * (1 - 0.99)
     assert (
         host.get_fitness_of_infecting_virus(1, 1)
         == 1 - 0.3 * (40 - 10) / time_to_full_potency
@@ -374,7 +393,8 @@ def test_dually_infect_cd4():
 
 def test_latent_active_CD4():
     reference_sequence = "AAA"
-    host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["AAA"] * 10], 10)
+    host = HostEnv([HIV(seq, reference_sequence, 1)
+                   for seq in ["AAA"] * 10], 10)
     assert len(host.C) == 10
     assert len(host.L) == 0
     host.make_latent(0)
@@ -405,7 +425,8 @@ def test_mutate_virus_in_productive_CD4():
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     reference_sequence = "AAA"
-    host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["AAA"] * 10], 10)
+    host = HostEnv([HIV(seq, reference_sequence, 1)
+                   for seq in ["AAA"] * 10], 10)
     host.mutate_virus_in_productive_CD4(
         [1], 3, new_nt_order, probs, [1], 0.99, reference_sequence, 1
     )
@@ -423,7 +444,8 @@ def test_mutate_virus_in_productive_CD4():
     with pytest.raises(Exception):
         host.mutate_virus_in_productive_CD4(1, 3, new_nt_order, probs, [1], 1)
     with pytest.raises(Exception):
-        host.mutate_virus_in_productive_CD4([300000], 3, new_nt_order, probs, [1], 1)
+        host.mutate_virus_in_productive_CD4(
+            [300000], 3, new_nt_order, probs, [1], 1)
 
 
 def test_get_next_gen_latent():
@@ -484,8 +506,12 @@ def test_get_next_gen_active():
         1,
         rng,
     ) == (0, 0)
-    assert [host.C[i].infecting_virus.nuc_sequence for i in range(2)] == ["AGG", "AGG"]
-    assert [host.C[i].infecting_virus.fitness for i in range(2)] == [0.33333333333333337, 0.33333333333333337]
+    assert [host.C[i].infecting_virus.nuc_sequence for i in range(2)] == [
+        "AGG", "AGG"]
+    assert [
+        host.C[i].infecting_virus.fitness for i in range(2)] == [
+        0.33333333333333337,
+        0.33333333333333337]
     assert host.get_next_gen_active(
         0.5,
         0,
@@ -503,7 +529,8 @@ def test_get_next_gen_active():
         1,
         rng,
     ) == (5, 0)
-    assert [host.C[i].infecting_virus.nuc_sequence for i in range(1)] == ["GAA"]
+    assert [host.C[i].infecting_virus.nuc_sequence for i in range(1)] == [
+        "GAA"]
     assert host.get_next_gen_active(
         0.1,
         0.1,
@@ -531,7 +558,8 @@ def test_summarize_fitness():
     )
     reference_sequence = "AAA"
     epi = [Epitope(0, 3, 0.3)]
-    host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["GGG", "AAA"] * 2], 4)
+    host = HostEnv([HIV(seq, reference_sequence, 1)
+                   for seq in ["GGG", "AAA"] * 2], 4)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(len(host.C))] == [
         "GGG",
         "AAA",
@@ -543,7 +571,7 @@ def test_summarize_fitness():
     )
     assert [
         host.C[i].infecting_virus.replicative_fitness_cost for i in range(len(host.C))
-    ] == [1, 1/3, 1, 0]
+    ] == [1, 1 / 3, 1, 0]
     assert [
         host.C[i].infecting_virus.conserved_fitness_cost for i in range(len(host.C))
     ] == [0, 0.99, 0, 0]
@@ -553,48 +581,123 @@ def test_summarize_fitness():
     host.get_fitness(1)
     assert [host.C[i].infecting_virus.fitness for i in range(len(host.C))] == [
         0.0,
-        (1 - 0) * (1 - 1/3) * (1 - 0.99),
+        (1 - 0) * (1 - 1 / 3) * (1 - 0.99),
         0.0,
         1.0,
     ]
-    assert host.summarize_fitness() == (0.25166666666666665, 0.2475, 0.0, 0.5833333333333334)
-    
-    
+    assert host.summarize_fitness() == (
+        0.25166666666666665, 0.2475, 0.0, 0.5833333333333333)
+
+
 def test_record_counts():
-    counts = { 
-              "generation": [], 
-              "active_cell_count": [], 
-              "latent_cell_count": [], 
-              "active_turned_latent": [], 
-              "latent_turned_active": [], 
-              "latent_died": [], 
-              "latent_proliferated": [], 
-              "number_mutations": [], 
-              "number_dual_inf": [], 
-              "mean_fitness_active": [], 
-              "mean_conserved_cost_active": [], 
-              "mean_immune_cost_active": [], 
-              "mean_replicative_cost_active": [], 
-          }
+    counts = {
+        "generation": [],
+        "active_cell_count": [],
+        "latent_cell_count": [],
+        "active_turned_latent": [],
+        "latent_turned_active": [],
+        "latent_died": [],
+        "latent_proliferated": [],
+        "number_mutations": [],
+        "number_dual_inf": [],
+        "mean_fitness_active": [],
+        "mean_conserved_cost_active": [],
+        "mean_immune_cost_active": [],
+        "mean_replicative_cost_active": [],
+    }
     host = create_host_env({"founder0": "AAA"}, "AAA", 1, 1)
-    assert list(host.record_counts(counts, 1, (1,2,3,4), (5,6), (7,8,9,10)).values()) == [[1], [1], [0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10]]
-    assert list(host.record_counts(counts, 2, (11,12,13,14), (15,16), (17,18,19,20)).values()) == [[1, 2], [1, 1], [0, 0], [1, 11], [2, 12], [3, 13], [4, 14], [5, 15], [6, 16], [7, 17], [8, 18], [9, 19], [10, 20]]
+    assert list(
+        host.record_counts(
+            counts, 1, (1, 2, 3, 4), (5, 6), (7, 8, 9, 10)).values()) == [
+        [1], [1], [0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10]]
+    assert list(
+        host.record_counts(
+            counts, 2, (11, 12, 13, 14), (15, 16), (17, 18, 19, 20)).values()) == [
+        [
+            1, 2], [
+            1, 1], [
+            0, 0], [
+            1, 11], [
+            2, 12], [
+            3, 13], [
+            4, 14], [
+            5, 15], [
+            6, 16], [
+            7, 17], [
+            8, 18], [
+            9, 19], [
+            10, 20]]
 
 
 def test_sample_viral_sequences():
     seqs = {"founder0": "AAA"}
     host = create_host_env({"founder0": "AAA"}, "AAA", 1, 1)
-    assert host.sample_viral_sequences(seqs, 1, 1) == {'founder0': 'AAA', 'gen_1_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAA'}
-    assert host.sample_viral_sequences(seqs, 2, 1) == {'founder0': 'AAA', 'gen_1_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAA', 'gen_2_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAA'}
+    assert host.sample_viral_sequences(
+        seqs,
+        1,
+        1) == {
+        'founder0': 'AAA',
+        'gen_1_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAA'}
+    assert host.sample_viral_sequences(
+        seqs,
+        2,
+        1) == {
+        'founder0': 'AAA',
+        'gen_1_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAA',
+        'gen_2_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAA'}
 
 
 def test_loop_through_generations():
     g = set_python_seed(1)
     new_nt_order, probs = get_nucleotide_substitution_probabilities(
-          "../extdata/hiv_q_mat.csv", 3.5e-5
-      )
+        "../extdata/hiv_q_mat.csv", 3.5e-5
+    )
     host = create_host_env({"founder0": "AAA"}, "AAA", 1, 1)
-    out = host.loop_through_generations([1,2,3],[1,2,3],2,{"founder0": "AAA"},new_nt_order,probs,0.1,0,0.1,0,0,0,{1},0.99,"",1,None,30,0.1,90,g) 
-    assert out[0] == {'generation': [0, 1, 2], 'active_cell_count': [1, 2, 3], 'latent_cell_count': [0, 0, 0], 'active_turned_latent': [0, 0, 0], 'latent_turned_active': [0, 0, 0], 'latent_died': [0, 0, 0], 'latent_proliferated': [0, 0, 0], 'number_mutations': [0, 1, 2], 'number_dual_inf': [0, 0, 0], 'mean_fitness_active': [1.0, 1.0, 1.0], 'mean_conserved_cost_active': [0.0, 0.0, 0.0], 'mean_immune_cost_active': [0.0, 0.0, 0.0], 'mean_replicative_cost_active': [0.0, 0.0, 0.0]}
-    assert out[1] == {'founder0': 'AAA', 'gen_0_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAA', 'gen_1_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAG', 'gen_1_cell_1_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAG', 'gen_2_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAG', 'gen_2_cell_1_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAG', 'gen_2_cell_2_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'GAA'}
-    
+    out = host.loop_through_generations([1,
+                                         2,
+                                         3],
+                                        [1,
+                                         2,
+                                         3],
+                                        2,
+                                        {"founder0": "AAA"},
+                                        new_nt_order,
+                                        probs,
+                                        0.1,
+                                        0,
+                                        0.1,
+                                        0,
+                                        0,
+                                        0,
+                                        {1},
+                                        0.99,
+                                        "",
+                                        1,
+                                        None,
+                                        30,
+                                        0.1,
+                                        90,
+                                        g)
+    assert out[0] == {
+        'generation': [
+            0, 1, 2], 'active_cell_count': [
+            1, 2, 3], 'latent_cell_count': [
+                0, 0, 0], 'active_turned_latent': [
+                    0, 0, 0], 'latent_turned_active': [
+                        0, 0, 0], 'latent_died': [
+                            0, 0, 0], 'latent_proliferated': [
+                                0, 0, 0], 'number_mutations': [
+                                    0, 1, 2], 'number_dual_inf': [
+                                        0, 0, 0], 'mean_fitness_active': [
+                                            1.0, 1.0, 1.0], 'mean_conserved_cost_active': [
+                                                0.0, 0.0, 0.0], 'mean_immune_cost_active': [
+                                                    0.0, 0.0, 0.0], 'mean_replicative_cost_active': [
+                                                        0.0, 0.0, 0.0]}
+    assert out[1] == {
+        'founder0': 'AAA',
+        'gen_0_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAA',
+        'gen_1_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAG',
+        'gen_1_cell_1_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAG',
+        'gen_2_cell_0_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAG',
+        'gen_2_cell_1_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'AAG',
+        'gen_2_cell_2_ic_0.0000_cc_0.0000_rc_0.0000_f_1.0000': 'GAA'}
