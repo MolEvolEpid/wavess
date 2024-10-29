@@ -129,9 +129,7 @@ Here is an example (we set a seed so it will be reproducible, usually you don't 
 python run_wavess.py config.yaml wavess_output/ 1234
 ```
 
-**TODO THROW ERROR IF NO SLASH IN OUTPUT FILE**
-
-**Note that the path to the output file has to have at least one slash.**
+**Note that the path to the output file has to have at least one forward slash.**
 If the slash is at the end, then there will be no prefix for the output files.
 If you want a prefix for the output files, then you can add that to the end.
 

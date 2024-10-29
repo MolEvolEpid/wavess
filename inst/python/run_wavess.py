@@ -15,7 +15,6 @@ from os import makedirs
 from yaml import safe_load
 from csv import writer
 from math import exp
-from scipy.linalg import expm
 import numpy as np
 
 # Import custom classes and functions
@@ -61,23 +60,9 @@ def get_conserved_sites(conserved_sites_filename):
 def get_nucleotide_substitution_probabilities(q_filename, mut_rate):
     # Read nucleotide substitution probabilities
     q = read_csv(q_filename, index_col="nt_from")
-
-    # Convert to probabilities
-    sub_probs = expm(q * mut_rate)
-    np.fill_diagonal(sub_probs, 0)
-    sub_probs = sub_probs / np.sum(sub_probs, axis=1, keepdims=True)
-
-    # Make sure that the row and column labels are the same
-    new_nucleotides_order = tuple(q.columns)
-    old_nucleotides_order = tuple(q.index)
-    assert "".join(old_nucleotides_order) == "".join(
-        new_nucleotides_order
-    ), "Nucleotide substitution matrix row and column labels are different"
-
-    # Get probabilities as a list of tuples
-    probabilities = sub_probs.tolist()
-
-    return new_nucleotides_order, probabilities
+    nucleotides_order, substitution_probabilities = agents.calc_nt_sub_probs_from_q(q, mut_rate)
+    return nucleotides_order, substitution_probabilities
+    
 
 
 # Run model
@@ -91,6 +76,10 @@ if __name__ == "__main__":
         exit(1)
 
     start = time()
+    
+    # error if no slash in output file
+    if "/" not in argv[2]:
+      exit('Please provide a directory name that contains a / (e.g. wavess_output/)')
 
     s = None
     if len(argv) == 4:

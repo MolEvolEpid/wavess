@@ -1,15 +1,14 @@
 from copy import deepcopy
 from random import seed
-from random import choice
 from random import choices
 from random import sample
-from random import randrange
 from numpy.random import default_rng
-from numpy import arange
 from numpy import where
-from numpy import concatenate
+from scipy.linalg import expm
 from collections import defaultdict
 from collections import Counter
+from numpy import fill_diagonal
+from numpy import sum as npsum
 
 
 def set_python_seed(s):
@@ -20,6 +19,25 @@ def set_python_seed(s):
     else:
         generator = default_rng()
     return generator
+  
+  
+def calc_nt_sub_probs_from_q(q, mut_rate):
+    # Convert to probabilities
+    sub_probs = expm(q * mut_rate)
+    fill_diagonal(sub_probs, 0)
+    sub_probs = sub_probs / npsum(sub_probs, axis=1, keepdims=True)
+
+    # Make sure that the row and column labels are the same
+    new_nucleotides_order = tuple(q.columns)
+    old_nucleotides_order = tuple(q.index)
+    assert "".join(old_nucleotides_order) == "".join(
+        new_nucleotides_order
+    ), "Nucleotide substitution matrix row and column labels are different"
+
+    # Get probabilities as a list of tuples
+    probabilities = sub_probs.tolist()
+
+    return new_nucleotides_order, probabilities
 
 
 def create_host_env(founder_seqs, ref_seq, rf_exp, initial_cell_count):
@@ -267,7 +285,6 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         ), "Initial population size must equal the number of founder sequences"
 
         # Create NC actively proliferating infected cells
-        # self.C = [InfectedCD4(deepcopy(choice(founder_viruses)), True) for i in range(NC)]
         self.C = [InfectedCD4(founder, True) for founder in founder_viruses]
 
         # Initiate latent infected cells

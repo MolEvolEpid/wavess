@@ -119,6 +119,7 @@ run_wavess <- function(pop_samp,
   names(founder_seqs) <- paste0("founder", seq_along(founder_seqs) - 1)
 
   # convert q matrix to substitution probabilities
+  # TODO - CHANGE THIS TO BE PYTHON FUNCTION?
   nt_sub_probs <- calc_nt_sub_probs_from_q(q, mut_rate)
   # Get nucleotide substitution probabilities in right format
   nucleotides_order <- rownames(nt_sub_probs)
