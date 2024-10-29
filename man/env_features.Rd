@@ -15,7 +15,7 @@ specific use cases. This particular data was last updated on 2024-10-01.
 }
 }
 \source{
-https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp
+\url{https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp}
 }
 \usage{
 env_features
