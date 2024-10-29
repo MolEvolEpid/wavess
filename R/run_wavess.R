@@ -131,17 +131,16 @@ run_wavess <- function(pop_samp,
   if (is.null(conserved_sites)) {
     conserved_sites <- c()
   }
+  conserved_sites <- as.list(conserved_sites)
   if (is.null(ref_seq)) {
     ref_seq <- ""
   } else {
+    # TODO - CHANGE THIS TO BE PYTHON FUNCTION?
     ref_seq <- toupper(ref_seq)
     if (!is.null(conserved_sites)) {
-      # mask conserved sites so they aren't included in replicative fitness
-      # computation
-      ref_seq_str <- strsplit(ref_seq, "")[[1]]
-      # add one to index at 1
-      ref_seq_str[conserved_sites + 1] <- "-"
-      ref_seq <- paste0(ref_seq_str, collapse = "")
+      prep_out <- reticulate::py_to_r(agents$prep_ref_conserved(founder_seqs, ref_seq, conserved_sites))
+      ref_seq <- prep_out[[1]]
+      conserved_sites <- prep_out[[2]]
     }
   }
   if (!is.null(epitope_locations)) {
@@ -149,7 +148,6 @@ run_wavess <- function(pop_samp,
       agents$create_epitope(x[1], x[2], x[3])
     })
   }
-  conserved_sites <- as.list(conserved_sites)
 
   # Set seed
   generator <- agents$set_python_seed(seed)

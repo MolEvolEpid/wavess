@@ -15,6 +15,14 @@ def test_set_python_seed():
     assert g.binomial(1000, 0.1) == 100
 
 
+def test_prep_ref_conserved():
+  assert prep_ref_conserved(['AAA'],'AAA', set({})) == ('AAA', set())
+  assert prep_ref_conserved(['AAA'],'AAA', set({0})) == ('-AA', {0})
+  assert prep_ref_conserved(['TAA'],'AAA', set({0})) == ('AAA', set())
+  assert prep_ref_conserved(['TAA', 'TAA'],'AAA', set({0,2})) == ('AA-', {2})
+  assert prep_ref_conserved(['TAA', 'AAT'],'AAA', set({0,2})) == ('AAA', set())
+
+
 def test_create_host_env():
     host = create_host_env({"founder0": "AAA"}, "AAA", 1, 1)
     assert host.C[0].active

@@ -101,6 +101,13 @@ if __name__ == "__main__":
 
     # Founder virus
     founder_virus_sequences = get_sequences(input_files["founder_seqs"])
+    assert (
+        len(founder_virus_sequences) == pop_samp["active_cell_count"][0]
+    ), "The number of founder sequences must equal the active cell count at generation 0."
+    # Create founder viruses
+    founder_viruses = {}
+    for i, v in enumerate(founder_virus_sequences):
+        founder_viruses["founder" + str(i)] = v
 
     # Nucleotide substitution probabilities
     nucleotides_order, substitution_probabilities = (
@@ -120,30 +127,16 @@ if __name__ == "__main__":
     if input_files["ref_seq"] != "":
         reference_sequence = get_sequences(input_files["ref_seq"])[0]
         if len(conserved_sites):
-            # mask conserved sites so they aren't included in replicative
-            # fitness computation
-            reference_sequence = "".join(
-                [
-                    x if i not in conserved_sites else "-"
-                    for i, x in enumerate(reference_sequence)
-                ]
-            )
-
+          # remove conserved sites that are different between the reference and any founder,
+          # and mask any conserved sites with a - in the reference
+          reference_sequence, conserved_sites = agents.prep_ref_conserved(founder_viruses, reference_sequence, conserved_sites)
+          
     # Epitope start positions and max fitness cost.
     epitope_locations = None
     if input_files["epitope_locations"] != "":
         epitope_locations = read_b_epitopes(input_files["epitope_locations"])
 
     # Initialize parameters
-
-    assert (
-        len(founder_virus_sequences) == pop_samp["active_cell_count"][0]
-    ), "The number of founder sequences must equal the active cell count at generation 0."
-
-    # Create founder viruses
-    founder_viruses = {}
-    for i, v in enumerate(founder_virus_sequences):
-        founder_viruses["founder" + str(i)] = v
 
     # Create host environment and add to viral sequences counter
     host = agents.create_host_env(

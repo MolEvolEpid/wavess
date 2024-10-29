@@ -21,6 +21,19 @@ def set_python_seed(s):
     return generator
   
   
+def prep_ref_conserved(founder_viruses, reference_sequence, conserved_sites):
+    founder_virus_sequences = list(founder_viruses.values())
+    # remove any conserved sites that are variable in the founder sequence compared to the reference
+    diff_sites = set({})
+    for f in founder_virus_sequences:
+      diff_sites.update({i for i, (left, right) in enumerate(zip(reference_sequence,f)) if left != right})
+    conserved_sites = set(conserved_sites) - diff_sites
+    # mask conserved sites so they aren't included in replicative
+    # fitness computation
+    reference_sequence = "".join([x if i not in conserved_sites else "-" for i, x in enumerate(reference_sequence)])
+    return reference_sequence, conserved_sites
+  
+  
 def calc_nt_sub_probs_from_q(q, mut_rate):
     # Convert to probabilities
     sub_probs = expm(q * mut_rate)
@@ -945,7 +958,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 seqs, 0, int(n_sample_active[0]))
 
         # Looping through generations until we sample everything we want
-        for t in range(1, last_sampled_gen + 1):
+        for t in range(1, int(last_sampled_gen) + 1):
             # Only get latent reservoir dynamics if modeling
             if prob_act_to_lat:
                 # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate

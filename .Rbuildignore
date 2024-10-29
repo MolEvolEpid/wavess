@@ -9,3 +9,5 @@
 ^pkgdown$
 ^\.github$
 ^codecov\.yml$
+^inst/python/\.coverage$
+^inst/python/\.pytest_cache$
