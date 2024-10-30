@@ -38,7 +38,7 @@
 #'   sequence, that can be used as the reference sequence, can be generated
 #'   using the function [identify_conserved_sites()] (default: NULL, i.e. no
 #'   fitness cost relative to a reference sequence)
-#' @param rep_exp Replicative fitness exponent, only relevant when ref_seq is
+#' @param rf_cost Replicative fitness cost, only relevant when ref_seq is
 #'   not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL
 #'   DEFINITION
 #' @param epitope_locations Tibble of epitope locations and maximum fitness
@@ -88,7 +88,7 @@ run_wavess <- function(pop_samp,
                        conserved_sites = NULL,
                        conserved_cost = 0.99,
                        ref_seq = NULL,
-                       rep_exp = 1,
+                       rf_cost = 0.001,
                        epitope_locations = NULL,
                        seroconversion_time = 30,
                        prop_for_imm = 0.01,
@@ -98,7 +98,7 @@ run_wavess <- function(pop_samp,
     pop_samp, founder_seqs, q,
     mut_rate, recomb_rate,
     conserved_sites, conserved_cost,
-    ref_seq, rep_exp,
+    ref_seq, rf_cost,
     epitope_locations, seroconversion_time,
     prop_for_imm, gen_full_potency,
     prob_act_to_lat, prob_lat_to_act,
@@ -155,7 +155,7 @@ run_wavess <- function(pop_samp,
   # Create host environment and initialize infected cells
   host <- agents$create_host_env(
     founder_seqs,
-    ref_seq, rep_exp,
+    ref_seq, rf_cost,
     as.integer(pop_samp$active_cell_count[1])
   )
   # Last sampled generation (don't have to continue simulation after this)
@@ -169,7 +169,7 @@ run_wavess <- function(pop_samp,
     founder_seqs, nucleotides_order, substitution_probabilities,
     prob_mut, prob_recomb,
     prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
-    conserved_sites, conserved_cost, ref_seq, rep_exp,
+    conserved_sites, conserved_cost, ref_seq, rf_cost,
     epitope_locations, seroconversion_time, prop_for_imm, gen_full_potency,
     generator
   ))
