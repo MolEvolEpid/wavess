@@ -289,9 +289,9 @@ tree rearrangement (`rearrangement`).
 To save this to a file:
 
 ```{r, write_sub_probs}
-data.frame(hiv_q_mat)|>
-  rownames_to_column(var = 'nt_from') |>
-write_csv("input_data/hiv_q_mat.csv")
+data.frame(hiv_q_mat) |>
+  rownames_to_column(var = "nt_from") |>
+  write_csv("input_data/hiv_q_mat.csv")
 ```
 **Note:** to read this back into R and get it into matrix form, you can use
 this code:

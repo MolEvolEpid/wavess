@@ -338,7 +338,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat[1:2,],
+      ps, "ATAA", hiv_q_mat[1:2, ],
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -438,7 +438,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat[,1:2],
+      ps, "ATAA", hiv_q_mat[, 1:2],
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,

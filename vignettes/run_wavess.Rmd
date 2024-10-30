@@ -233,15 +233,19 @@ Cross-reactivity is sampled from a Beta distribution where alpha is 1 and
 beta is the square of the Hamming distance to the nearest recognized epitope:
 
 ```{r}
-lapply(1:5, function(x) tibble(n_muts=factor(x), 
-                               quantile=seq(0,1,1/1000), 
-                               val=dbeta(quantile, 1, x^2))) |>
+lapply(1:5, function(x) {
+  tibble(
+    n_muts = factor(x),
+    quantile = seq(0, 1, 1 / 1000),
+    val = dbeta(quantile, 1, x^2)
+  )
+}) |>
   bind_rows() |>
   ggplot(aes(x = quantile, y = val, col = n_muts)) +
   geom_line() +
-  scale_color_brewer(palette = 'Spectral') +
+  scale_color_brewer(palette = "Spectral") +
   theme_classic() +
-  labs(x = 'Quantile', y = 'Value', col = 'Hamming\ndistance')
+  labs(x = "Quantile", y = "Value", col = "Hamming\ndistance")
 ```
 
 ```{r}

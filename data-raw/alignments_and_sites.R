@@ -60,13 +60,13 @@ usethis::use_data(conserved_sites, compress = "xz", overwrite = TRUE)
 #   unitless Q matrix
 nt_freqs <- ape::base.freq(hiv_env_flt_2022_complete)
 names(nt_freqs) <- toupper(names(nt_freqs))
-hiv_q_mat <- as.matrix(data.frame(A=c(0,5e-6,1.6e-5,3e-6)*nt_freqs['A'],
-                            C=c(9e-7,0,1e-7,1e-5)*nt_freqs['C'],
-                            G=c(6e-6,5e-7,0,3e-6)*nt_freqs['G'],
-                            T=c(7e-7,1.2e-5,2e-6,0)*nt_freqs['T'])
-                       )*1.2/3.5e-5
+hiv_q_mat <- as.matrix(data.frame(
+  A = c(0, 5e-6, 1.6e-5, 3e-6) * nt_freqs["A"],
+  C = c(9e-7, 0, 1e-7, 1e-5) * nt_freqs["C"],
+  G = c(6e-6, 5e-7, 0, 3e-6) * nt_freqs["G"],
+  T = c(7e-7, 1.2e-5, 2e-6, 0) * nt_freqs["T"]
+)) * 1.2 / 3.5e-5
 diag(hiv_q_mat) <- -rowSums(hiv_q_mat)
 rownames(hiv_q_mat) <- colnames(hiv_q_mat)
 
 usethis::use_data(hiv_q_mat, overwrite = TRUE)
-
