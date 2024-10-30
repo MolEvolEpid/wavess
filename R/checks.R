@@ -7,17 +7,15 @@
 check_generate_pop_samp_inputs <- function(n_gen,
                                            carry_cap,
                                            n0,
-                                           g50,
+                                           max_growth_rate,
                                            sampling_frequency, max_samp) {
   check_is_pos(n_gen, "n_gen")
   check_is_pos(carry_cap, "carry_cap")
   check_is_numeric(n0, "n0")
-  check_is_numeric(g50, "g50")
   if (n0 > carry_cap) {
     stop("n0 must be a number \u2264carry_cap, but is ", n0)
-  } else if (g50 > n_gen) {
-    stop("g50 must be a number \u2264n_gen, but is ", g50)
   }
+  check_is_pos(max_growth_rate, "max_growth_rate")
   check_is_pos(sampling_frequency, "sampling_frequency")
   check_is_pos(max_samp, "max_samp")
   if (sampling_frequency > n_gen) {

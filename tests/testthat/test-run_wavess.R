@@ -14,7 +14,7 @@ test_that("run_wavess works", {
   )
   out <- run_wavess(samp_scheme, "ATCG")
   expect_equal(out$counts$generation, c(0, 50, 100))
-  expect_equal(out$counts$active_cell_count, c(1, 1998, 1999))
+  expect_equal(out$counts$active_cell_count, c(1, 2000, 2000))
   expect_equal(dim(out$counts), c(3, 13))
   expect_equal(dim(out$seqs), c(42, 4))
   no_lat <- run_wavess(samp_scheme, "ATCG", prob_act_to_lat = 0)

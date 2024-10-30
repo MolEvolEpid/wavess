@@ -21,12 +21,8 @@ test_that("check_generate_pop_samp_inputs works", {
     "n0 must be a number "
   )
   expect_error(
-    generate_pop_samp(g50 = "a"),
-    "g50 must be numeric, but is a character"
-  )
-  expect_error(
-    generate_pop_samp(g50 = 10000),
-    "g50 must be a number \u2264n_gen, but is 10000"
+    generate_pop_samp(max_growth_rate = "a"),
+    "max_growth_rate must be numeric, but is a character"
   )
   expect_error(
     generate_pop_samp(sampling_frequency = "a"),

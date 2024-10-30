@@ -3,8 +3,8 @@
 #' @param n_gen final sampling generation (default: 3000)
 #' @param carry_cap carrying capacity (default: 2000)
 #' @param n0 starting population size (default: 1; used for logistic)
-#' @param g50 generation at which the population size reaches 50% of carry_cap
-#' (default: 25; used for logistic)
+#' @param max_growth_rate maximum infected cell population growth rate
+#' (default: 0.35; used for logistic)
 #' @param sampling_frequency frequency in generations at which to record
 #' sequences (and counts) (default: 300 generations)
 #' @param max_samp maximum number of cells (and thus sequences) to sample in a
@@ -23,14 +23,14 @@
 generate_pop_samp <- function(n_gen = 3000,
                               carry_cap = 2000,
                               n0 = 1,
-                              g50 = 25,
+                              max_growth_rate = 0.35,
                               sampling_frequency = 300,
                               max_samp = 20) {
   check_generate_pop_samp_inputs(
-    n_gen, carry_cap, n0, g50,
+    n_gen, carry_cap, n0, max_growth_rate,
     sampling_frequency, max_samp
   )
-  define_growth_curve(n_gen, carry_cap, n0, g50, 0.5) |>
+  define_growth_curve(n_gen, n0, carry_cap, max_growth_rate) |>
     define_sampling_scheme(sampling_frequency, max_samp)
 }
 
@@ -38,73 +38,21 @@ generate_pop_samp <- function(n_gen = 3000,
 
 #' Define growth curve
 #'
-#' @param gen_prop_carry_cap generation at which the population size reaches
-#'   prop_carry_cap of carry_cap (default: 25; used for logistic)
-#' @param prop_carry_cap proportion of carrying capacity population size at
-#'   gen_prop_carry_cap (default: 0.5; used for logistic)
 #' @inheritParams generate_pop_samp
 #'
 #' @return tibble with two columns: generation and active cell count
 #' @noRd
-define_growth_curve <- function(n_gen = 3000,
-                                carry_cap = 2000,
-                                n0 = 1,
-                                gen_prop_carry_cap = 25,
-                                prop_carry_cap = 0.5) {
-  gen_df <- tibble::tibble(
-    generation = 0:n_gen,
-    # infected cell population size over time
-    active_cell_count = get_logistic_curve(
-      n0, carry_cap, gen_prop_carry_cap,
-      prop_carry_cap, n_gen
-    )
-  )
-  return(gen_df)
-}
-
-#' Get logistic growth curve
-#'
-#' Note: to get the equations used in this function, I solved for the growth
-#' rate and midpoint based on n0, carry_cap, gen_prop_carry_cap, and
-#' prop_carry_cap.
-#'
-#' @param gen_prop_carry_cap generation at which the population size reaches pK
-#'   of carry_cap (default: 25; used for logistic)
-#' @param prop_carry_cap proportion of carrying capacity population size at
-#'   gen_prop_carry_cap (default: 0.5; used for logistic)
-#' @inheritParams generate_pop_samp
-#'
-#' @return Population size at each generation
-#' @noRd
-get_logistic_curve <- function(n0, carry_cap, gen_prop_carry_cap,
-                               prop_carry_cap, n_gen) {
-  # number of cells at seroconversion generation
-  n_s <- carry_cap * prop_carry_cap
-  # useful constants
-  c0 <- log(carry_cap / n0 - 1)
-  c_s <- log(carry_cap / n_s - 1)
-  # get growth rate
-  k <- -(c_s - c0) / gen_prop_carry_cap
-  # get midpoint
-  x_m <- c0 / k
-  return(floor(sapply(0:n_gen, function(x) logistic_fn(x, carry_cap, k, x_m))))
-}
-
-#' Get y value of logistic curve
-#'
-#' Get the y value for a logistic function given the
-#' x value, carrying capacity, growth rate, and midpoint
-#'
-#' @param x x value of logistic function (generation)
-#' @param growth_rate growth rate
-#' @param midpoint midpoint of logistic curve
-#'
-#' @return y value of logistic curve
-#'
-#' @inheritParams generate_pop_samp
-#' @noRd
-logistic_fn <- function(x, carry_cap, growth_rate, midpoint) {
-  carry_cap / (1 + exp(-growth_rate * (x - midpoint)))
+define_growth_curve <- function(n_gen = 3000, n0 = 1, carry_cap = 2000, max_growth_rate = 1){
+  n <- n0
+  sapply(1:n_gen, function(x){
+    n <<- min(n + max_growth_rate*n*(carry_cap-n)/carry_cap, carry_cap)
+    return(c(x, n))
+  }) |> t() |>
+    tibble::as_tibble(.name_repair = "unique") |>
+    suppressMessages() |>
+    dplyr::rename(generation = "...1", active_cell_count = "...2") |>
+    tibble::add_row(generation = 0, active_cell_count = n0, .before = 1) |>
+    dplyr::mutate(active_cell_count = ceiling(.data$active_cell_count))
 }
 
 #' Define sampling scheme
