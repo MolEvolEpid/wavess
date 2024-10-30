@@ -142,7 +142,7 @@ if __name__ == "__main__":
     host = agents.create_host_env(
         founder_viruses,
         reference_sequence,
-        float(params["rep_exp"]),
+        float(params["rf_cost"]),
         int(pop_samp.loc[0]["active_cell_count"]),
     )
 
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         conserved_sites,
         params["conserved_cost"],
         reference_sequence,
-        float(params["rep_exp"]),
+        float(params["rf_cost"]),
         epitope_locations,
         params["seroconversion_time"],
         params["immune_response_proportion"],
@@ -195,9 +195,9 @@ if __name__ == "__main__":
         "number_mutations",
         "number_dual_inf",
         "mean_fitness_active",
-        "mean_conserved_cost_active",
-        "mean_immune_cost_active",
-        "mean_replicative_cost_active",
+        "mean_conserved_active",
+        "mean_immune_active",
+        "mean_replicative_active",
     ]
     with open(argv[2] + "counts.txt", "w") as outfile:
         writer = writer(outfile)
