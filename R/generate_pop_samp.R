@@ -42,12 +42,13 @@ generate_pop_samp <- function(n_gen = 3000,
 #'
 #' @return tibble with two columns: generation and active cell count
 #' @noRd
-define_growth_curve <- function(n_gen = 3000, n0 = 1, carry_cap = 2000, max_growth_rate = 1){
+define_growth_curve <- function(n_gen = 3000, n0 = 1, carry_cap = 2000, max_growth_rate = 1) {
   n <- n0
-  sapply(1:n_gen, function(x){
-    n <<- min(n + max_growth_rate*n*(carry_cap-n)/carry_cap, carry_cap)
+  sapply(1:n_gen, function(x) {
+    n <<- min(n + max_growth_rate * n * (carry_cap - n) / carry_cap, carry_cap)
     return(c(x, n))
-  }) |> t() |>
+  }) |>
+    t() |>
     tibble::as_tibble(.name_repair = "unique") |>
     suppressMessages() |>
     dplyr::rename(generation = "...1", active_cell_count = "...2") |>
