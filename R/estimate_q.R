@@ -19,28 +19,28 @@
 #' # (**TODO: ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
 #' estimate_q(hiv_env_flt_2022)
 estimate_q <- function(aln, tr = NULL, model = "GTR+R(4)+I",
-                              rearrangement = "none") {
+                       rearrangement = "none") {
   check_estimate_q_inputs(aln, tr, model, rearrangement)
-    if (is.null(tr)) {
-      tr <- ape::bionj(ape::dist.dna(aln, model = "TN93"))
-    }
-    fit <- phangorn::pml_bb(aln, model, start = tr, rearrangement = rearrangement)
-    # it appears that fit$Q isn't only the rates because it's symmetric,
-    # so have to multiply by the base frequencies to get the q matrix
-    rate_mat <- matrix(c(
-      0, fit$Q[1:3], fit$Q[1], 0, fit$Q[4:5], fit$Q[2], fit$Q[4],
-      0, fit$Q[6], fit$Q[3], fit$Q[5:6], 0
-    ), nrow = 4, ncol = 4)
-    bf_mat <- matrix(c(
-      fit$bf[1], rep(0, 4), fit$bf[2], rep(0, 4), fit$bf[3],
-      rep(0, 4), fit$bf[3]
-    ), nrow = 4, ncol = 4)
-    q <- rate_mat %*% bf_mat
-    rownames(q) <- c("A", "C", "G", "T")
-    colnames(q) <- c("A", "C", "G", "T")
-    diag(q) <- -rowSums(q)
-    # rate_mat <- rate_mat |>
-    #   tibble::as_tibble(rownames = "nt_from")
+  if (is.null(tr)) {
+    tr <- ape::bionj(ape::dist.dna(aln, model = "TN93"))
+  }
+  fit <- phangorn::pml_bb(aln, model, start = tr, rearrangement = rearrangement)
+  # it appears that fit$Q isn't only the rates because it's symmetric,
+  # so have to multiply by the base frequencies to get the q matrix
+  rate_mat <- matrix(c(
+    0, fit$Q[1:3], fit$Q[1], 0, fit$Q[4:5], fit$Q[2], fit$Q[4],
+    0, fit$Q[6], fit$Q[3], fit$Q[5:6], 0
+  ), nrow = 4, ncol = 4)
+  bf_mat <- matrix(c(
+    fit$bf[1], rep(0, 4), fit$bf[2], rep(0, 4), fit$bf[3],
+    rep(0, 4), fit$bf[3]
+  ), nrow = 4, ncol = 4)
+  q <- rate_mat %*% bf_mat
+  rownames(q) <- c("A", "C", "G", "T")
+  colnames(q) <- c("A", "C", "G", "T")
+  diag(q) <- -rowSums(q)
+  # rate_mat <- rate_mat |>
+  #   tibble::as_tibble(rownames = "nt_from")
   # }
   return(q)
 }
@@ -61,10 +61,10 @@ estimate_q <- function(aln, tr = NULL, model = "GTR+R(4)+I",
 #' Matrix of nucleotide substitution probabilities.
 #' Rows are from, columns are to.
 #' @noRd
-calc_nt_sub_probs_from_q <- function(q, mut_rate){
-  prob_mat <- ape::matexpo(mut_rate*q)
+calc_nt_sub_probs_from_q <- function(q, mut_rate) {
+  prob_mat <- ape::matexpo(mut_rate * q)
   diag(prob_mat) <- 0
-  prob_mat <- prob_mat/rowSums(prob_mat)
+  prob_mat <- prob_mat / rowSums(prob_mat)
   rownames(prob_mat) <- rownames(q)
   colnames(prob_mat) <- colnames(q)
   return(prob_mat)
