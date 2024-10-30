@@ -17,7 +17,7 @@ run_wavess(
   conserved_sites = NULL,
   conserved_cost = 0.99,
   ref_seq = NULL,
-  rep_exp = 1,
+  rf_cost = 0.001,
   epitope_locations = NULL,
   seroconversion_time = 30,
   prop_for_imm = 0.01,
@@ -69,7 +69,7 @@ sequence, that can be used as the reference sequence, can be generated
 using the function \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} (default: NULL, i.e. no
 fitness cost relative to a reference sequence)}
 
-\item{rep_exp}{Replicative fitness exponent, only relevant when ref_seq is
+\item{rf_cost}{Replicative fitness cost, only relevant when ref_seq is
 not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL
 DEFINITION}
 
