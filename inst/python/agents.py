@@ -877,20 +877,19 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         counts["mean_replicative_active"].append(fitness[3])
         return counts
 
-    def sample_viral_sequences(self, seqs, generation, n_to_samp):
+    def sample_viral_sequences(self, seqs, fitness, generation, n_to_samp):
         c_sub = sample(self.C, int(n_to_samp))
         for index, CD4 in enumerate(c_sub):
-            name = "gen_" + str(generation)
-            name += "_cell_" + str(index)
-            name += "_if_" + str("%.4f" %
-                                 CD4.infecting_virus.immune_fitness)
-            name += "_cf_" + str("%.4f" %
-                                 CD4.infecting_virus.conserved_fitness)
-            name += "_rf_" + str("%.4f" %
-                                 CD4.infecting_virus.replicative_fitness)
-            name += "_f_" + str("%.4f" % CD4.infecting_virus.fitness)
+            name = "gen" + str(generation)
+            name += "_" + str(index)
+            fitness["generation"].append(generation)
+            fitness["seq_id"].append(name)
+            fitness["immune"].append(float(CD4.infecting_virus.immune_fitness))
+            fitness["conserved"].append(float(CD4.infecting_virus.conserved_fitness))
+            fitness["replicative"].append(float(CD4.infecting_virus.replicative_fitness))
+            fitness["overall"].append(float(CD4.infecting_virus.fitness))
             seqs[name] = CD4.infecting_virus.nuc_sequence
-        return seqs
+        return seqs, fitness
 
     def loop_through_generations(
         self,
@@ -916,7 +915,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         gen_full_potency,
         generator,
     ):
-        # Initialize counts and sequence objects
+        # Initialize counts, fitness, and sequence objects
         counts = {
             "generation": [],
             "active_cell_count": [],
@@ -932,6 +931,15 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             "mean_immune_active": [],
             "mean_replicative_active": [],
         }
+        
+        fitness = {
+            "generation": [],
+            "seq_id": [],
+            "immune": [],
+            "conserved": [],
+            "replicative": [],
+            "overall": []
+        }
 
         # put founders at top of file
         seqs = founder_seqs
@@ -943,11 +951,10 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             var_nums = [0, 0]
             # mean_fitness_active, mean_conserved_active, mean_immune_active,
             # mean_replicative_active
-            fitness = self.summarize_fitness()
+            mean_fitness = self.summarize_fitness()
             counts = self.record_counts(
-                counts, 0, latent_nums, var_nums, fitness)
-            seqs = self.sample_viral_sequences(
-                seqs, 0, int(n_sample_active[0]))
+                counts, 0, latent_nums, var_nums, mean_fitness)
+            seqs, fitness = self.sample_viral_sequences(seqs, fitness, 0, int(n_sample_active[0]))
 
         # Looping through generations until we sample everything we want
         for t in range(1, int(last_sampled_gen) + 1):
@@ -982,9 +989,9 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             )
             # Record events
             if n_sample_active[t] != 0:
-                fitness = self.summarize_fitness()
+                mean_fitness = self.summarize_fitness()
                 counts = self.record_counts(
-                    counts, t, latent_nums, var_nums, fitness)
-                seqs = self.sample_viral_sequences(seqs, t, n_sample_active[t])
+                    counts, t, latent_nums, var_nums, mean_fitness)
+                seqs, fitness = self.sample_viral_sequences(seqs, fitness, t, n_sample_active[t])
 
-        return counts, seqs
+        return counts, fitness, seqs

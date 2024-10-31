@@ -107,8 +107,9 @@ codon-algined. You will also have to modify the input growth curve to start with
 the correct number of cells. See `vignette('prepare_input_data')` for a few more 
 details.
 
-The output format of `run_wavess()` is always the same: a list of length two 
-containing a tibble of various count and the sampled DNA sequences:
+The output format of `run_wavess()` is always the same: a list of length three 
+containing a tibble of various counts, the fitness of the sampled viruses,
+and the DNA sequences of the sampled viruses:
 
 ```{r}
 names(required_args_only)
@@ -126,9 +127,9 @@ The counts tibble contains the following columns:
 - `number_mutations`: total number of mutations across all sequences 
 - `number_dual_inf`: total number of dually infected cells
 - `mean_fitness_active`:  mean fitness of active cells
-- `mean_conserved_cost_active`: mean conserved sites fitness cost of active cells
-- `mean_immune_cost_active`: mean immune fitness cost of active cells
-- `mean_replicative_cost_active`: mean replicative fitness cost (comparison to `ref_seq`) 
+- `mean_conserved_active`: mean conserved sites fitness of active cells
+- `mean_immune_active`: mean immune fitness of active cells
+- `mean_replicative_active`: mean replicative fitness (comparison to `ref_seq`) 
 of active cells
 
 ```{r}
@@ -138,19 +139,39 @@ required_args_only$counts
 As you can see, the default values for `run_wavess()` include latency, mutations, 
 and dual infections (which lead to recombination), but no fitness costs. 
 
+The fitness tibble contains a row for each sampled sequence (all from the active
+pool) and the following columns:
+
+- `generation`: generation that the virus was sampled in
+- `seq_id`: sequence id (corresponds to the sequence name below). Note that the
+same value for different generations *does not* say anything about the ancestral 
+relationship between the viruses. 
+- `immune`: virus immune fitness
+- `conserved`: virus conserved fitness
+- `replicative`: virus replicative fitness (compared to a reference)
+- `overall`: overall fitness (the other three multiplied together)
+
+```{r}
+required_args_only$fitness
+```
+
+Again, the fitness is 1 for everything here because we didn't model fitness.
+
 The sequences are returned as well, in `ape::DNAbin` format:
 
 ```{r}
 required_args_only$seqs
 ```
 
+Note that all sequence are sampled from active cells (not latent). 
+
 Each sequence is named as follows:
 
 - Founder sequences are named as "founderX" where X is the index of the founder
 sequence in the input vector (indexed at 0).
-- All other sequences are sampled and are named by the generation, the cell number,
-and then the immune fitness cost (ic), conserved fitness cost (cc), replicative
-fitness cost (rc), and overall fitness (f).
+- All other sequences are sampled and are named by the generation, and a number.
+Note again that the same value for different generations *does not* say anything
+about the ancestral relationship between the viruses.
 
 These outputs can be plotted and analyzed in various ways. If you'd like to learn
 more about how to analyze the output, please checkout the post-processing vignette
@@ -188,12 +209,12 @@ conserved_fitness <- run_wavess(
 )
 ```
 
-If you look at the mean conserved cost of active cells, you'll see that it's not
-always 0 (although it may sometimes be 0 depending on the simulation, since
+If you look at the mean conserved fitness of active cells, you'll see that it's not
+always 1 (although it may sometimes be 1 depending on the simulation, since
 the output is stochastic). 
 
 ```{r}
-conserved_fitness$counts$mean_conserved_cost_active
+conserved_fitness$counts$mean_conserved_active
 ```
 
 ### Comparison to a reference
@@ -212,17 +233,17 @@ ref_fitness <- run_wavess(
 )
 ```
 
-Here, you can see that the mean replicative fitness cost is now non-zero:
+Here, you can see that the mean replicative fitness is now less than 1:
 
 ```{r}
-ref_fitness$counts$mean_replicative_cost_active
+ref_fitness$counts$mean_replicative_active
 ```
 
 ### Immune fitness
 
 Active immunity can be modeled by defining B-cell epitopes locations that can be
 recognized by the immune system. Nucleotide epitopes are translated into amino
-acids before immune fitness costs are calculated.Epitopes are recognized only
+acids before immune fitness costs are calculated. Epitopes are recognized only
 after the seroconversion time (`seroconversion_time` argument, default: 30
 generations), and when the epitope is present in at least 1% of the total viral
 population (`prop_for_imm` argument). Once an epitope is recognized, it
@@ -256,10 +277,10 @@ immune_fitness <- run_wavess(
 )
 ```
 
-The immune fitness cost here is non-zero:
+The immune fitness here is now less than 1 after the immune system kicks in:
 
 ```{r}
-immune_fitness$counts$mean_immune_cost_active
+immune_fitness$counts$mean_immune_active
 ```
 
 Please note that the model is very sensitive to the maximum immune fitness cost

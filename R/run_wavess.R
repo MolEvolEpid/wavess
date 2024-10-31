@@ -175,8 +175,9 @@ run_wavess <- function(pop_samp,
   ))
 
   # Fix up output
-  names(out) <- c("counts", "seqs")
+  names(out) <- c("counts", "fitness", "seqs")
   out$counts <- out$counts |> dplyr::bind_rows()
+  out$fitness <- out$fitness |> dplyr::bind_rows()
   out$seqs <- ape::as.DNAbin(t(sapply(out$seqs, function(x) strsplit(x, split = "")[[1]])))
 
   # Return output

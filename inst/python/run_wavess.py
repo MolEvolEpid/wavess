@@ -155,7 +155,7 @@ if __name__ == "__main__":
                         item in enumerate(n_to_samp) if item != 0][-1]
 
     # Loop through generations
-    counts, seqs = host.loop_through_generations(
+    counts, fitness, seqs = host.loop_through_generations(
         active_cell_count,
         n_to_samp,
         last_sampled_gen,
@@ -176,7 +176,7 @@ if __name__ == "__main__":
         params["seroconversion_time"],
         params["immune_response_proportion"],
         params["time_to_full_potency"],
-        generator,
+        generator
     )
 
     # Make directories if they don't exist
@@ -199,10 +199,24 @@ if __name__ == "__main__":
         "mean_immune_active",
         "mean_replicative_active",
     ]
-    with open(argv[2] + "counts.txt", "w") as outfile:
-        writer = writer(outfile)
-        writer.writerow(keys)
-        writer.writerows(zip(*[counts[key] for key in keys]))
+    with open(argv[2] + "counts.csv", "w") as outfile:
+        w = writer(outfile)
+        w.writerow(keys)
+        w.writerows(zip(*[counts[key] for key in keys]))
+    
+    # Write fitness to csv
+    keys = [
+        "generation",
+        "seq_id",
+        "immune",
+        "conserved",
+        "replicative",
+        "overall",
+    ]
+    with open(argv[2] + "fitness.csv", "w") as outfile:
+        w = writer(outfile)
+        w.writerow(keys)
+        w.writerows(zip(*[fitness[key] for key in keys]))
 
     # Write sequences to fasta
     with open(argv[2] + "viral_seqs_active_CD4.fasta", "w") as outfile:
