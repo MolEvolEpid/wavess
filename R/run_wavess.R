@@ -131,7 +131,7 @@ run_wavess <- function(pop_samp,
 
   if (is.null(conserved_sites)) {
     conserved_sites <- reticulate::dict()
-  }else{
+  } else {
     conserved_sites <- as.list(toupper(conserved_sites))
   }
   if (is.null(ref_seq)) {
