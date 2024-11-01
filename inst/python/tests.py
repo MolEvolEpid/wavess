@@ -638,19 +638,19 @@ def test_record_counts():
 def test_sample_viral_sequences():
     seqs = {"founder0": "AAA"}
     host = create_host_env({"founder0": "AAA"}, "AAA", 1, 1)
+    fitness = {
+            "generation": [],
+            "seq_id": [],
+            "immune": [],
+            "conserved": [],
+            "replicative": [],
+            "overall": []
+        }
     assert host.sample_viral_sequences(
         seqs,
+        fitness,
         1,
-        1) == {
-        'founder0': 'AAA',
-        'gen_1_cell_0_if_1.0000_cf_1.0000_rf_1.0000_f_1.0000': 'AAA'}
-    assert host.sample_viral_sequences(
-        seqs,
-        2,
-        1) == {
-        'founder0': 'AAA',
-        'gen_1_cell_0_if_1.0000_cf_1.0000_rf_1.0000_f_1.0000': 'AAA',
-        'gen_2_cell_0_if_1.0000_cf_1.0000_rf_1.0000_f_1.0000': 'AAA'}
+        1) == ({'founder0': 'AAA', 'gen1_0': 'AAA'}, {'generation': [1], 'seq_id': ['gen1_0'], 'immune': [1.0], 'conserved': [1.0], 'replicative': [1.0], 'overall': [1.0]})
 
 
 def test_loop_through_generations():
@@ -659,12 +659,8 @@ def test_loop_through_generations():
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     host = create_host_env({"founder0": "AAA"}, "AAA", 1, 1)
-    out = host.loop_through_generations([1,
-                                         2,
-                                         3],
-                                        [1,
-                                         2,
-                                         3],
+    out = host.loop_through_generations([1, 2, 3],
+                                        [1, 2, 3],
                                         2,
                                         {"founder0": "AAA"},
                                         new_nt_order,
@@ -699,11 +695,5 @@ def test_loop_through_generations():
                                                 1.0, 1.0, 1.0], 'mean_immune_active': [
                                                     1.0, 1.0, 1.0], 'mean_replicative_active': [
                                                         1.0, 1.0, 1.0]}
-    assert out[1] == {
-        'founder0': 'AAA',
-        'gen_0_cell_0_if_1.0000_cf_1.0000_rf_1.0000_f_1.0000': 'AAA',
-        'gen_1_cell_0_if_1.0000_cf_1.0000_rf_1.0000_f_1.0000': 'AAG',
-        'gen_1_cell_1_if_1.0000_cf_1.0000_rf_1.0000_f_1.0000': 'AAG',
-        'gen_2_cell_0_if_1.0000_cf_1.0000_rf_1.0000_f_1.0000': 'AAG',
-        'gen_2_cell_1_if_1.0000_cf_1.0000_rf_1.0000_f_1.0000': 'AAG',
-        'gen_2_cell_2_if_1.0000_cf_1.0000_rf_1.0000_f_1.0000': 'GAA'}
+    assert out[1] == {'generation': ['founder', 0, 1, 1, 2, 2, 2], 'seq_id': ['founder0', 'gen0_0', 'gen1_0', 'gen1_1', 'gen2_0', 'gen2_1', 'gen2_2'], 'immune': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'conserved': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'replicative': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'overall': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
+    assert out[2] == {'founder0': 'AAA', 'gen0_0': 'AAA', 'gen1_0': 'AAG', 'gen1_1': 'AAG', 'gen2_0': 'AAG', 'gen2_1': 'AAG', 'gen2_2': 'GAA'}

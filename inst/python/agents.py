@@ -908,7 +908,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         conserved_sites,
         conserved_cost,
         ref_seq,
-        rep_exp,
+        rf_cost,
         epitope_locations,
         seroconversion_time,
         prop_for_imm,
@@ -941,9 +941,21 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             "overall": []
         }
 
-        # put founders at top of file
+        # put founders at top of fasta and fitness
         seqs = founder_seqs
-
+        for fname, fseq in seqs.items():
+            fitness["generation"].append('founder')
+            fitness["seq_id"].append(fname)
+            fitness["immune"].append(float(1))
+            fitness["conserved"].append(float(1)) 
+            if len(ref_seq):
+                repfit = replicative_fitness(fseq, ref_seq, rf_cost)
+                fitness["replicative"].append(repfit)
+                fitness["overall"].append(repfit)
+            else:
+                fitness["replicative"].append(float(1))
+                fitness["overall"].append(float(1))
+            
         if n_sample_active[0] != 0:
             # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
             latent_nums = [0, 0, 0, 0]
@@ -984,7 +996,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 ref_seq,
                 prop_for_imm,
                 epitope_locations,
-                rep_exp,
+                rf_cost,
                 generator,
             )
             # Record events
