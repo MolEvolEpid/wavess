@@ -9,6 +9,8 @@
 #'
 #' @return Tibble including 3 tree summary statistics:
 #' - Sackin index ([treebalance::sackinI()])
+#' - Mean internal branch length ([calc_int_over_ext()])
+#' - Mean external branch length ([calc_int_over_ext()])
 #' - Mean internal over external branch length ratio ([calc_int_over_ext()])
 #' - Timepoint parsimony score ([calc_parsimony()])
 #' @export
@@ -21,7 +23,7 @@
 calc_tr_summary_stats <- function(tr, timepoints) {
   check_is_phylo(tr, "tr", rooted = TRUE)
   tibble::tibble(
-    stat_name = c("sackin", "int_over_ext", "parsimony_score"),
+    stat_name = c("sackin", "int_bl", "ext_bl", "int_over_ext", "parsimony_score"),
     stat_value = c(
       treebalance::sackinI(tr),
       calc_int_over_ext(tr),
@@ -34,7 +36,8 @@ calc_tr_summary_stats <- function(tr, timepoints) {
 #'
 #' @inheritParams calc_tr_summary_stats
 #'
-#' @return Mean internal/external branch length ratio
+#' @return Mean internal branch length, mean external branch length, and mean
+#'   internal/external branch length ratio
 #' @export
 #'
 #' @examples
@@ -44,7 +47,7 @@ calc_int_over_ext <- function(tr) {
   check_is_phylo(tr, "tr")
   int_bl <- mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)])
   ext_bl <- mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)])
-  int_bl / ext_bl
+  c(int_bl, ext_bl, int_bl / ext_bl)
 }
 
 #' Calculate tree parsimony score for sampling times

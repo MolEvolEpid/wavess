@@ -17,6 +17,8 @@ you must drop them from the tree prior to using this function.}
 Tibble including 3 tree summary statistics:
 \itemize{
 \item Sackin index (\code{\link[treebalance:sackinI]{treebalance::sackinI()}})
+\item Mean internal branch length (\code{\link[=calc_int_over_ext]{calc_int_over_ext()}})
+\item Mean external branch length (\code{\link[=calc_int_over_ext]{calc_int_over_ext()}})
 \item Mean internal over external branch length ratio (\code{\link[=calc_int_over_ext]{calc_int_over_ext()}})
 \item Timepoint parsimony score (\code{\link[=calc_parsimony]{calc_parsimony()}})
 }

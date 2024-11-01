@@ -159,7 +159,7 @@ relevant summary statistics:
 by the number of tree tips (to be able to compare values across trees of
 different sizes).
 - The ratio between the mean internal branch length and the mean external branch
-length.
+length (along with the actual mean internal and mean external branch lengths).
 - The parsimony score of the phylogeny with the tips labeled as timepoints.
 Many other tree statistics can be calculated using the
 [`treebalance`](https://treebalance.wordpress.com/) package.

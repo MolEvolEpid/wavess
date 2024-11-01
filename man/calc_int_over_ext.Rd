@@ -10,7 +10,8 @@ calc_int_over_ext(tr)
 \item{tr}{Phylogeny}
 }
 \value{
-Mean internal/external branch length ratio
+Mean internal branch length, mean external branch length, and mean
+internal/external branch length ratio
 }
 \description{
 Calculate mean internal/external branch length ratio

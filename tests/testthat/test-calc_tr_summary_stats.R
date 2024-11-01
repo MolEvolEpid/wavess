@@ -4,13 +4,13 @@ test_that("calc_tr_summary_stats works", {
     c("t1" = 1, "t2" = 2, "t3" = 2)
   )
   expect_equal(tss$stat_name, c(
-    "sackin", "int_over_ext",
+    "sackin", "int_bl", "ext_bl", "int_over_ext",
     "parsimony_score"
   ))
-  expect_equal(tss$stat_value, c(5, 1, 1))
+  expect_equal(tss$stat_value, c(5, 1, 1, 1, 1))
   expect_equal(
     calc_int_over_ext(ape::read.tree(text = "((t2:1,t1:1):1,t3:4);")),
-    0.5
+    c(1, 2, 0.5)
   )
   expect_equal(
     calc_parsimony(
