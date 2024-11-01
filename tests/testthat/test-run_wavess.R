@@ -29,14 +29,14 @@ test_that("run_wavess works", {
   expect_no_error(run_wavess(samp_scheme, "ATCG", ref_seq = "AAAA"))
   expect_no_error(run_wavess(samp_scheme, "ATCG", ref_seq = "AAAA"))
   expect_error(
-    run_wavess(samp_scheme, "ATCG", conserved_sites = c('-1'='a')),
+    run_wavess(samp_scheme, "ATCG", conserved_sites = c("-1" = "a")),
     "conserved_sites must be a number >= 0, but is -1"
   )
   expect_no_error(run_wavess(samp_scheme, "ATCG",
-    ref_seq = "AAAA", conserved_sites = c('1'='a')
+    ref_seq = "AAAA", conserved_sites = c("1" = "a")
   ))
   expect_no_error(run_wavess(samp_scheme, "ATCG",
-    conserved_sites = c('1'='a','2'='c')
+    conserved_sites = c("1" = "a", "2" = "c")
   ))
   expect_no_error(run_wavess(samp_scheme, "ATCG",
     epitope_locations = tibble::tibble(
