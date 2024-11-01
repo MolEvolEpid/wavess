@@ -54,7 +54,7 @@ def get_sequences(filename):
 
 
 def get_conserved_sites(conserved_sites_filename):
-    return set(read_csv(conserved_sites_filename, header=None)[0])
+    return read_csv(conserved_sites_filename,header=0).set_index("position")["nucleotide"].to_dict()
 
 
 def get_nucleotide_substitution_probabilities(q_filename, mut_rate):
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     ## Optional inputs related to selection ##
 
     # Conserved sites
-    conserved_sites = []
+    conserved_sites = {}
     if input_files["conserved_sites"] != "":
         conserved_sites = get_conserved_sites(input_files["conserved_sites"])
 

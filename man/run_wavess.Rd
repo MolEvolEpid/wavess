@@ -58,9 +58,10 @@ generation (default: 0.01)}
 \item{prob_lat_die}{Probability that a latent cell dies in a generation
 (default: 0.01)}
 
-\item{conserved_sites}{Vector of conserved sites indexed at 0. This can be
-generated using the \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} function (default: NULL,
-i.e. no conserved sites fitness costs)}
+\item{conserved_sites}{Vector of conserved bases named by position in the
+founder sequence (indexed at 0). This can be generated using the
+\code{\link[=identify_conserved_sites]{identify_conserved_sites()}} function (default: NULL, i.e. no conserved
+sites fitness costs)}
 
 \item{conserved_cost}{Cost of mutation at conserved site (default: 0.99)}
 

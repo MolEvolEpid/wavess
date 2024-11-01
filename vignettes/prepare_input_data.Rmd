@@ -530,7 +530,9 @@ generate this, you can run the following code:
 ```{r, prep_conserved}
 founder_conserved_sites <- founder_conserved_df |>
   filter(conserved == "Yes") |>
-  pull(founder_pos)
+  select(founder_pos, founder_base) |>
+  deframe() |>
+  toupper()
 
 head(founder_conserved_sites)
 tail(founder_conserved_sites)
@@ -541,7 +543,7 @@ it is more accurate for our example, rather than the example run above,
 which is not accurate since it was only run on a handful of genomes):
 
 ```{r, write_conserved}
-write_csv(tibble(conserved_sites), "input_data/conserved_sites.csv", col_names = FALSE)
+write_csv(enframe(conserved_sites, name = 'position', value = 'nucleotide'), "input_data/conserved_sites.csv")
 ```
 
 

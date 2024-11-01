@@ -30,9 +30,10 @@
 #' @param q Nucleotide substitution rate matrix Q with rows and columns named as
 #'   the nucleotides ACGT. Rows are from, columns are to. Can be generated using
 #'   the [estimate_q()] function (default: `hiv_q_mat`).
-#' @param conserved_sites Vector of conserved sites indexed at 0. This can be
-#'   generated using the [identify_conserved_sites()] function (default: NULL,
-#'   i.e. no conserved sites fitness costs)
+#' @param conserved_sites Vector of conserved bases named by position in the
+#'   founder sequence (indexed at 0). This can be generated using the
+#'   [identify_conserved_sites()] function (default: NULL, i.e. no conserved
+#'   sites fitness costs)
 #' @param conserved_cost Cost of mutation at conserved site (default: 0.99)
 #' @param ref_seq Reference sequence as a character string. A consensus
 #'   sequence, that can be used as the reference sequence, can be generated
@@ -129,13 +130,13 @@ run_wavess <- function(pop_samp,
   ))
 
   if (is.null(conserved_sites)) {
-    conserved_sites <- c()
+    conserved_sites <- reticulate::dict()
+  }else{
+    conserved_sites <- as.list(toupper(conserved_sites))
   }
-  conserved_sites <- as.list(conserved_sites)
   if (is.null(ref_seq)) {
     ref_seq <- ""
   } else {
-    # TODO - CHANGE THIS TO BE PYTHON FUNCTION?
     ref_seq <- toupper(ref_seq)
     if (!is.null(conserved_sites)) {
       prep_out <- reticulate::py_to_r(agents$prep_ref_conserved(founder_seqs, ref_seq, conserved_sites))

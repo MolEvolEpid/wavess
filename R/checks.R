@@ -401,8 +401,12 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
     })
   })
   if (!is.null(conserved_sites)) {
-    check_is_pos(conserved_sites, "conserved_sites", ok0 = TRUE)
-    if (max(conserved_sites) > nchar(as.list(founder_seqs)[[1]])) {
+    check_seq(paste0(toupper(conserved_sites), collapse = ''), c("A", "C", "G", "T"), "conserved_sites")
+    if(is.null(names(conserved_sites))){
+      stop("conserved_sites must be a named vector")
+    }
+    check_is_pos(as.numeric(names(conserved_sites)), "names of conserved_sites", ok0 = TRUE)
+    if (max(as.numeric(names(conserved_sites))) > nchar(as.list(founder_seqs)[[1]])) {
       stop(
         "the maximum value of conserved_sites is greater than ",
         "the length of the founder sequence"

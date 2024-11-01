@@ -31,8 +31,8 @@
 #' HIV ENV filtered alignment from the LANL HIV database.
 #' See `hiv_env_flt_2022` for more details and the link to the entire alignment.
 #'
-#' @format ## `conserved_sites` Vector of conserved nucleotide sites for the
-#' gp120 gene of DEMB11US006 (founder) indexed at 0
+#' @format ## `conserved_sites` Vector of conserved nucleotides for the
+#' gp120 gene of DEMB11US006 (founder), named by the sequence position (indexed at 0)
 #' @source Full alignment used:
 #' <https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html>
 #' Founder sequence:

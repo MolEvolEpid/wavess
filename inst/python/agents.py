@@ -29,7 +29,7 @@ def prep_ref_conserved(founder_viruses, reference_sequence, conserved_sites):
     diff_sites = set({})
     for f in founder_virus_sequences:
       diff_sites.update({i for i, (left, right) in enumerate(zip(reference_sequence,f)) if left != right})
-    conserved_sites = set(conserved_sites) - diff_sites
+    [conserved_sites.pop(x, None) for x in diff_sites]
     # mask conserved sites so they aren't included in replicative
     # fitness computation
     reference_sequence = "".join([x if i not in conserved_sites else "-" for i, x in enumerate(reference_sequence)])
@@ -138,13 +138,11 @@ def get_recombined_sequence(sequence1, sequence2, breakpoints):
     return recombined_sequence, breakpoints
 
 
-def conserved_fitness(num_mutations_in_conserved_sites, cost_per_mutation_in_conserved_site):
-    return pow((1 - cost_per_mutation_in_conserved_site), num_mutations_in_conserved_sites)
+def calc_seq_fitness(n_muts, cost):
+    return exp(-cost*n_muts)
 
-
-# UPDATE THIS TO NOT TAKE EXPONENT IF WE END UP KEEPING IT THE WAY IT IS NOW
-def replicative_fitness(nuc_sequence, ref_sequence, rf_cost):
-    return exp(-rf_cost*len([1 for x, y in zip(nuc_sequence, ref_sequence) if x != y and y in ["A", "T", "C", "G"]]))
+def muts_rel_ref(nuc_sequence, ref_sequence):
+    return len([1 for x, y in zip(nuc_sequence, ref_sequence) if x != y and y in ["A", "T", "C", "G"]])
 
 
 def normalize(likelihoods):
@@ -210,9 +208,7 @@ class HIV:
         self.conserved_fitness = 1
         self.replicative_fitness = 1
         if len(reference_sequence):
-            self.replicative_fitness = replicative_fitness(
-                self.nuc_sequence, reference_sequence, rf_cost
-            )
+            self.replicative_fitness = calc_seq_fitness(muts_rel_ref(self.nuc_sequence, reference_sequence), rf_cost)
         self.fitness = 1
 
     def __repr__(self):
@@ -241,24 +237,26 @@ class HIV:
             + new_nucleotide
             + self.nuc_sequence[position_to_mutate + 1:]
         )
-
+        # If the mutation is at a mutated conserved site, check to see if it reverted back to conserved base
+        if position_to_mutate in self.conserved_sites_mutated:
+            if new_nucleotide == conserved_sites[position_to_mutate]:
+                self.conserved_sites_mutated.remove(position_to_mutate)
+                self.conserved_fitness = calc_seq_fitness(
+                    len(self.conserved_sites_mutated), cost_per_mutation_in_conserved_site
+                )
         # If mutation is in a conserved site, update mutations in conserved sites and conserved sites fitness
-        # Note that we are not tracking whether there are multiple mutations at
-        # a single conserved site
-        if position_to_mutate in conserved_sites:
+        elif position_to_mutate in conserved_sites.keys():
             self.conserved_sites_mutated.add(position_to_mutate)
-            self.conserved_fitness = conserved_fitness(
+            self.conserved_fitness = calc_seq_fitness(
                 len(self.conserved_sites_mutated), cost_per_mutation_in_conserved_site
             )
-
+        
         # Update replicative fitness cost only if needed
         if len(reference_sequence):
             ref_base = reference_sequence[position_to_mutate]
             prev_comp = old_nucleotide == ref_base
             if prev_comp != (ref_base == new_nucleotide):
-                self.replicative_fitness = replicative_fitness(
-                    self.nuc_sequence, reference_sequence, rf_cost
-                )
+                self.replicative_fitness = calc_seq_fitness(muts_rel_ref(self.nuc_sequence, reference_sequence), rf_cost)
 
 
 class InfectedCD4:
@@ -612,7 +610,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 )
                 # Update conserved sites fitness for recombined virus
                 newly_infected[n_added].infecting_virus.conserved_fitness = (
-                    conserved_fitness(
+                    calc_seq_fitness(
                         len(
                             newly_infected[
                                 n_added
@@ -625,11 +623,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             # Update replicative fitness for recombined virus
             if len(reference_sequence):
                 newly_infected[n_added].infecting_virus.replicative_fitness = (
-                    replicative_fitness(
-                        newly_infected[n_added].infecting_virus.nuc_sequence,
-                        reference_sequence,
-                        rf_cost,
-                    )
+                   calc_seq_fitness(muts_rel_ref(newly_infected[n_added].infecting_virus.nuc_sequence, reference_sequence), rf_cost)
                 )
 
             n_added += 1
@@ -882,7 +876,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         for index, CD4 in enumerate(c_sub):
             name = "gen" + str(generation)
             name += "_" + str(index)
-            fitness["generation"].append(generation)
+            fitness["generation"].append(str(generation))
             fitness["seq_id"].append(name)
             fitness["immune"].append(float(CD4.infecting_virus.immune_fitness))
             fitness["conserved"].append(float(CD4.infecting_virus.conserved_fitness))
@@ -915,6 +909,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         gen_full_potency,
         generator,
     ):
+        conserved_sites = {int(k):v.upper() for k,v in conserved_sites.items()}
         # Initialize counts, fitness, and sequence objects
         counts = {
             "generation": [],
@@ -949,7 +944,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             fitness["immune"].append(float(1))
             fitness["conserved"].append(float(1)) 
             if len(ref_seq):
-                repfit = replicative_fitness(fseq, ref_seq, rf_cost)
+                repfit = calc_seq_fitness(muts_rel_ref(fseq, ref_seq), rf_cost)
                 fitness["replicative"].append(repfit)
                 fitness["overall"].append(repfit)
             else:

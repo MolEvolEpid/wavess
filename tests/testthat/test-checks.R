@@ -371,14 +371,14 @@ test_that("check_run_wavess_inputs works", {
   expect_no_error(check_run_wavess_inputs(
     ps, "ATAA", hiv_q_mat,
     3.5e-5, 1.4e-5,
-    1, 0.99, NULL, 1,
+    c('1'='a'), 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
     0.001, 0.01, 0.01, 0.01, NULL
   ))
   expect_no_error(check_run_wavess_inputs(
     ps, "ATAA", hiv_q_mat,
     3.5e-5, 1.4e-5,
-    c(1, 2), 0.99, NULL, 1,
+    c('1'='A', '2'='C'), 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
     0.001, 0.01, 0.01, 0.01, NULL
   ))
@@ -390,13 +390,13 @@ test_that("check_run_wavess_inputs works", {
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "conserved_sites must be numeric, but is a character"
+    "conserved_sites must be a named vector"
   )
   expect_error(
     check_run_wavess_inputs(
       ps, "ATAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
-      1, 10, NULL, 1,
+      c('1'='A', '2'='C'), 10, NULL, 1,
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),

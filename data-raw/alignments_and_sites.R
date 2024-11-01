@@ -43,7 +43,9 @@ conserved_sites <-
     founder_aln = hcf_gp120
   ) |>
   dplyr::filter(conserved == "Yes") |>
-  dplyr::pull(founder_pos)
+  dplyr::select(founder_pos, founder_base) |>
+  tibble::deframe() |>
+  toupper()
 
 usethis::use_data(conserved_sites, compress = "xz", overwrite = TRUE)
 
@@ -58,6 +60,7 @@ usethis::use_data(conserved_sites, compress = "xz", overwrite = TRUE)
 # - multiply by "to" nucleotide frequencies to get the Q matrix
 # - divide by the overall substitution rate per site per generation to get the
 #   unitless Q matrix
+# TODO - THINK ABOUT WHETHER THIS IS THE RIGHT WAY TO DO THIS
 nt_freqs <- ape::base.freq(hiv_env_flt_2022_complete)
 names(nt_freqs) <- toupper(names(nt_freqs))
 hiv_q_mat <- as.matrix(data.frame(

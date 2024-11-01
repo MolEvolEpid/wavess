@@ -59,7 +59,7 @@ that defines various parameters and includes paths to input files.
 
 **File inputs (example data in `inst/extdata/`):**
 
-- `pop_samp`: tsv with columns generation, active_cell_count, n_sample_active.
+- `pop_samp`: csv with columns generation, active_cell_count, n_sample_active.
 Note that the initial active cell population size in the first generation must
 be the same as the number of input founder sequences (because it simply _is_ the
 input founder sequences). Can be generated using the [generate_pop_samp()]
@@ -70,14 +70,16 @@ fitness, they are expected to be codon-aligned.
 - `q`: csv that is a named Q matrix of nucleotide substitution rates. 
 Rows are from, columns are to. Can be generated using the [estimate_q()]
 function.
-- `conserved_sites`: tsv of conserved sites indexed at 0 where each row contains
-a conserved site. This can be generated using the [identify_conserved_sites()]
-function. If this is an empty string, then conserved fitness costs are not included.
+- `conserved_sites`: csv of conserved sites indexed at 0 where each row contains
+a conserved site in a column called "position" and the conserved nucleotide
+found at that site in a column called "nucleotide". This can be generated using
+the [identify_conserved_sites()] function. If this is an empty string, then
+conserved fitness costs are not included.
 - `ref_seq`: fasta file of the reference sequence. A consensus
 sequence, that can be used as the reference sequence, can be generated using the
 function [identify_conserved_sites()]. If this is an empty string, then fitness
 costs relative to a reference sequence are not included. 
-- `epitope_locations`: tsv of epitope locations and maximum fitness
+- `epitope_locations`: csv of epitope locations and maximum fitness
 costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These epitopes
 are expected to be indexed at 0 and in a protein in the correct reading frame,
 as the nucleotide sequences are translated to amino acids to calculate the
