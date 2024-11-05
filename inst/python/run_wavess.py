@@ -54,19 +54,18 @@ def get_sequences(filename):
 
 
 def get_conserved_sites(conserved_sites_filename):
-    return read_csv(conserved_sites_filename,header=0).set_index("position")["nucleotide"].to_dict()
+    return read_csv(conserved_sites_filename, header=0).set_index("position")["nucleotide"].to_dict()
 
 
 def get_nucleotide_substitution_probabilities(q_filename, mut_rate):
     # Read nucleotide substitution probabilities
     q = read_csv(q_filename, index_col="nt_from")
-    nucleotides_order, substitution_probabilities = agents.calc_nt_sub_probs_from_q(q, mut_rate)
+    nucleotides_order, substitution_probabilities = agents.calc_nt_sub_probs_from_q(
+        q, mut_rate)
     return nucleotides_order, substitution_probabilities
-    
 
 
 # Run model
-
 if __name__ == "__main__":
     if len(argv) != 3 and len(argv) != 4:
         print(len(argv))
@@ -76,10 +75,10 @@ if __name__ == "__main__":
         exit(1)
 
     start = time()
-    
+
     # error if no slash in output file
     if "/" not in argv[2]:
-      exit('Please provide a directory name that contains a / (e.g. wavess_output/)')
+        exit('Please provide a directory name that contains a / (e.g. wavess_output/)')
 
     s = None
     if len(argv) == 4:
@@ -127,10 +126,11 @@ if __name__ == "__main__":
     if input_files["ref_seq"] != "":
         reference_sequence = get_sequences(input_files["ref_seq"])[0]
         if len(conserved_sites):
-          # remove conserved sites that are different between the reference and any founder,
-          # and mask any conserved sites with a - in the reference
-          reference_sequence, conserved_sites = agents.prep_ref_conserved(founder_viruses, reference_sequence, conserved_sites)
-          
+            # remove conserved sites that are different between the reference and any founder,
+            # and mask any conserved sites with a - in the reference
+            reference_sequence, conserved_sites = agents.prep_ref_conserved(
+                founder_viruses, reference_sequence, conserved_sites)
+
     # Epitope start positions and max fitness cost.
     epitope_locations = None
     if input_files["epitope_locations"] != "":
@@ -203,7 +203,7 @@ if __name__ == "__main__":
         w = writer(outfile)
         w.writerow(keys)
         w.writerows(zip(*[counts[key] for key in keys]))
-    
+
     # Write fitness to csv
     keys = [
         "generation",

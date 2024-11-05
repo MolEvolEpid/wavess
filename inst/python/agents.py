@@ -20,24 +20,26 @@ def set_python_seed(s):
     else:
         generator = default_rng()
     return generator
-  
-  
+
+
 def prep_ref_conserved(founder_viruses, reference_sequence, conserved_sites):
     founder_virus_sequences = list(founder_viruses.values())
     assert len(founder_virus_sequences[0]) == len(reference_sequence)
     # remove any conserved sites that are variable in the founder sequence compared to the reference
     diff_sites = set({})
     for f in founder_virus_sequences:
-      diff_sites.update({i for i, (left, right) in enumerate(zip(reference_sequence,f)) if left != right})
+        diff_sites.update({i for i, (left, right) in enumerate(
+            zip(reference_sequence, f)) if left != right})
     [conserved_sites.pop(x, None) for x in diff_sites]
     # mask conserved sites so they aren't included in replicative
     # fitness computation
-    reference_sequence = "".join([x if i not in conserved_sites else "-" for i, x in enumerate(reference_sequence)])
+    reference_sequence = "".join(
+        [x if i not in conserved_sites else "-" for i, x in enumerate(reference_sequence)])
     # number of sites to be compared for replicative fitness
-    #len_ref_compare = len([1 for x in range(len(reference_sequence)) if reference_sequence[x] in ["A", "T", "C", "G"]])
-    return reference_sequence, conserved_sites #, len_ref_compare
-  
-  
+    # len_ref_compare = len([1 for x in range(len(reference_sequence)) if reference_sequence[x] in ["A", "T", "C", "G"]])
+    return reference_sequence, conserved_sites  # , len_ref_compare
+
+
 def calc_nt_sub_probs_from_q(q, mut_rate):
     # Convert to probabilities
     sub_probs = expm(q * mut_rate)
@@ -141,6 +143,7 @@ def get_recombined_sequence(sequence1, sequence2, breakpoints):
 def calc_seq_fitness(n_muts, cost):
     return (1-cost)**n_muts
 
+
 def muts_rel_ref(nuc_sequence, ref_sequence):
     return sum(1 for x, y in zip(nuc_sequence, ref_sequence) if x != y and y in {"A", "T", "C", "G"})
 
@@ -208,7 +211,8 @@ class HIV:
         self.conserved_fitness = 1
         self.replicative_fitness = 1
         if len(reference_sequence):
-            self.replicative_fitness = calc_seq_fitness(muts_rel_ref(self.nuc_sequence, reference_sequence), replicative_cost)
+            self.replicative_fitness = calc_seq_fitness(muts_rel_ref(
+                self.nuc_sequence, reference_sequence), replicative_cost)
         self.fitness = 1
 
     def __repr__(self):
@@ -250,13 +254,14 @@ class HIV:
             self.conserved_fitness = calc_seq_fitness(
                 len(self.conserved_sites_mutated), cost_per_mutation_in_conserved_site
             )
-        
+
         # Update replicative fitness cost only if needed
         if len(reference_sequence):
             ref_base = reference_sequence[position_to_mutate]
             prev_comp = old_nucleotide == ref_base
             if prev_comp != (ref_base == new_nucleotide):
-                self.replicative_fitness = calc_seq_fitness(muts_rel_ref(self.nuc_sequence, reference_sequence), replicative_cost)
+                self.replicative_fitness = calc_seq_fitness(muts_rel_ref(
+                    self.nuc_sequence, reference_sequence), replicative_cost)
 
 
 class InfectedCD4:
@@ -400,7 +405,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     n_diff_min = len(variant)
                     for v in self.epitopes_recognition_generation:
                         if variant != v and len(variant) == len(v):
-                            n_diff = sum(1 for x, y in zip(variant, v) if x != y)
+                            n_diff = sum(1 for x, y in zip(
+                                variant, v) if x != y)
                             if n_diff <= n_diff_min:
                                 n_diff_min = n_diff
                                 most_similar = v
@@ -408,7 +414,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                         variant
                     ] = immune_strength_dict[most_similar] * rng.beta(
                         1, n_diff_min**2
-                    ) 
+                    )
 
         # Mark frequent epitopes as recognized
         for variant, frequency in aa_epitope_variants.items():
@@ -459,8 +465,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     max_epitope_fitness_cost = max(
                         max_epitope_fitness_cost, timed_fitness
                     )
-            self.C[CD4_index].infecting_virus.immune_fitness = 1 - max_epitope_fitness_cost
-            
+            self.C[CD4_index].infecting_virus.immune_fitness = 1 - \
+                max_epitope_fitness_cost
 
     def get_fitness_of_infecting_virus(self, CD4_index):
 
@@ -468,8 +474,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         viral_fitness = (
             self.C[CD4_index].infecting_virus.immune_fitness
             * self.C[CD4_index].infecting_virus.conserved_fitness
-            * self.C[CD4_index].infecting_virus.replicative_fitness 
-        )  
+            * self.C[CD4_index].infecting_virus.replicative_fitness
+        )
 
         # Update the virus object with the fitness costs
         self.C[CD4_index].infecting_virus.fitness = viral_fitness
@@ -580,7 +586,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             # Update replicative fitness for recombined virus
             if len(reference_sequence):
                 newly_infected[n_added].infecting_virus.replicative_fitness = (
-                   calc_seq_fitness(muts_rel_ref(newly_infected[n_added].infecting_virus.nuc_sequence, reference_sequence), replicative_cost)
+                    calc_seq_fitness(muts_rel_ref(
+                        newly_infected[n_added].infecting_virus.nuc_sequence, reference_sequence), replicative_cost)
                 )
 
             n_added += 1
@@ -836,8 +843,10 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             fitness["generation"].append(str(generation))
             fitness["seq_id"].append(name)
             fitness["immune"].append(float(CD4.infecting_virus.immune_fitness))
-            fitness["conserved"].append(float(CD4.infecting_virus.conserved_fitness))
-            fitness["replicative"].append(float(CD4.infecting_virus.replicative_fitness))
+            fitness["conserved"].append(
+                float(CD4.infecting_virus.conserved_fitness))
+            fitness["replicative"].append(
+                float(CD4.infecting_virus.replicative_fitness))
             fitness["overall"].append(float(CD4.infecting_virus.fitness))
             seqs[name] = CD4.infecting_virus.nuc_sequence
         return seqs, fitness
@@ -866,7 +875,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         gen_full_potency,
         generator,
     ):
-        conserved_sites = {int(k):v.upper() for k,v in conserved_sites.items()}
+        conserved_sites = {int(k): v.upper()
+                           for k, v in conserved_sites.items()}
         # Initialize counts, fitness, and sequence objects
         counts = {
             "generation": [],
@@ -883,7 +893,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             "mean_immune_active": [],
             "mean_replicative_active": [],
         }
-        
+
         fitness = {
             "generation": [],
             "seq_id": [],
@@ -899,15 +909,16 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             fitness["generation"].append('founder')
             fitness["seq_id"].append(fname)
             fitness["immune"].append(float(1))
-            fitness["conserved"].append(float(1)) 
+            fitness["conserved"].append(float(1))
             if len(ref_seq):
-                repfit = calc_seq_fitness(muts_rel_ref(fseq, ref_seq), replicative_cost)
+                repfit = calc_seq_fitness(muts_rel_ref(
+                    fseq, ref_seq), replicative_cost)
                 fitness["replicative"].append(repfit)
                 fitness["overall"].append(repfit)
             else:
                 fitness["replicative"].append(float(1))
                 fitness["overall"].append(float(1))
-            
+
         if n_sample_active[0] != 0:
             # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
             latent_nums = [0, 0, 0, 0]
@@ -918,7 +929,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             mean_fitness = self.summarize_fitness()
             counts = self.record_counts(
                 counts, 0, latent_nums, var_nums, mean_fitness)
-            seqs, fitness = self.sample_viral_sequences(seqs, fitness, 0, int(n_sample_active[0]))
+            seqs, fitness = self.sample_viral_sequences(
+                seqs, fitness, 0, int(n_sample_active[0]))
 
         # Looping through generations until we sample everything we want
         for t in range(1, int(last_sampled_gen) + 1):
@@ -956,6 +968,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 mean_fitness = self.summarize_fitness()
                 counts = self.record_counts(
                     counts, t, latent_nums, var_nums, mean_fitness)
-                seqs, fitness = self.sample_viral_sequences(seqs, fitness, t, n_sample_active[t])
+                seqs, fitness = self.sample_viral_sequences(
+                    seqs, fitness, t, n_sample_active[t])
 
         return counts, fitness, seqs
