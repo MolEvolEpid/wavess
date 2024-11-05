@@ -102,11 +102,11 @@ delimited files.
 
 ## Required `run_wavess()` inputs
 
-The three required inputs to `run_waves()` are a data frame of the infected 
-cell effective population size and sampling scheme per generation (`pop_samp`), a vector
-of the founder sequence(s) in character string format (`founder_seqs`), and a
-data frame of nucleotide substitution probabilities (`nt_sub_probs`). In this
-section, we will introduce functions that can help generate these inputs.
+The three required inputs to `run_waves()` are a data frame of the infected cell
+effective population size and sampling scheme per generation (`pop_samp`), a
+vector of the founder sequence(s) in character string format (`founder_seqs`),
+and a nucleotide substitution rate matrix Q (`q`). In this section, we will
+introduce functions that can help generate these inputs.
 
 ### Define active cell growth and sampling {#define-active-cell-growth-and-sampling}
 
@@ -128,15 +128,13 @@ All of the arguments in this function have defaults, so you can run:
 generate_pop_samp()
 ```
 
-This will generate an infected cell population size following a logistic
-growth curve. By default, the starting population size (`n0`) is 1, 
-the a carrying capacity (`carry_cap`) is 2000, the generation at which the 
-population size reaches 50% of carrying capacity (`g50`) us 25,
-the simulation is run for 3000 generations (`n_gen`), 
-and a maximum of 20 sequences (`max_samp`) are sampled every 300 generations 
-(`sampling_frequency`).
-All of these defaults can be changed by altering the input parameters of
-the function. 
+This will generate an infected cell population size following a logistic growth
+curve. By default, the starting population size (`n0`) is 1, the a carrying
+capacity (`carry_cap`) is 2000, the maximum growth rate (`max_growth_rate`) is
+0.35, the simulation is run for 3000 generations (`n_gen`), and a maximum of 20
+sequences (`max_samp`) are sampled every 300 generations (`sampling_frequency`).
+All of these defaults can be changed by altering the input parameters of the
+function.
 
 Here is an example where there are fewer generations, but more frequent
 sampling and more samples taken at each sampling event:
@@ -301,20 +299,20 @@ as.matrix(read.csv("input_data/hiv_q_mat.csv", row.names = 1))
 ```
 
 
-## Probabilities
+## Latent probabilities
 
-Many of the required inputs are probabilities that various events happen
-(e.g. mutation, recombination, latency events). All of these arguments have
-the prefix `prob_`. (Note that to "turn off" any 
-of these, all you have to do is set the probability equal to 0.)
+The required inputs related to latency are probabilities that these events
+happen to a cell in one generation. All of these arguments have the prefix
+`prob_`. (Note that to "turn off" any of these, all you have to do is set the
+probability equal to 0.)
 
 ### Convert rates to probabilities
 
-Much of the time, in the literature, values for events of interest are reported as
-*rates*, i.e. the number of events that happen in a given amount of time. 
-However, our simulations require *probabilities* of an event occurring in one 
-generation. Therefore, we provide a function to convert a per-generation rate
-to a per-generation probability:
+Much of the time, in the literature, values for events of interest are reported
+as *rates*, i.e. the number of events that happen in a given amount of time.
+However, our simulations require *probabilities* of an event occurring in one
+generation. Therefore, we provide a function to convert a per-generation rate to
+a per-generation probability:
 
 ```{r, rate_to_prob}
 rate_to_probability(0.001)
@@ -345,12 +343,12 @@ vignette.
 Below is example code you can use to plot the latent cell dynamics given
 certain probabilities. 
 
-**Please note that we assume the probabilities are small for all latency rates**,
+**Please note that we assume the probabilities are small for all latency parameters**,
 such that it is unlikely that multiple events (activate, die, proliferate) will
-occur to a single latent cell in a single [active cell] generation. 
-If multiple events occur to a single latent cell, then the first event in this ordered
-list will be chosen as the event that occurred to the cell in that generation:
-cell becomes active, cell dies, cell proliferates.
+occur to a single latent cell in a single [active cell] generation. If multiple
+events occur to a single latent cell, then the first event in this ordered list
+will be chosen as the event that occurred to the cell in that generation: cell
+becomes active, cell dies, cell proliferates.
 
 ```{r, viz_latent}
 # set parameters to get latent curve
@@ -426,9 +424,9 @@ consisting of the founder sequence, the community reference sequence
 start and end of the alignment are the start and end of the founder sequence
 to be used in the simulation. 
 
-If you have an alignment with sequences that are longer than
-the input sequence you want to simulate, you can use the `slice_aln()` function
-to slice out the desired section of the alignment. Here's an example:
+If you have an alignment with sequences that are longer than the input sequence
+you want to simulate, you can use the `slice_aln()` function to slice out the
+desired section of the alignment. Here's an example:
 
 ```{r, slice_aln}
 (gp120 <- slice_aln(hxb2_cons_founder, gp120_start, gp120_end))
@@ -516,16 +514,15 @@ founder_conserved_df |>
   geom_col()
 ```
 
-The blue sites are conserved, the red sites are not conserved, and the
-y-axis indicates the proportion of sequences in the alignment that
-contain the consensus base. **Note that this example only uses 10 sequences.
-We recommend using a large alignment with very diverse sequences to
-identify conserved sites to ensure that the identified
-sites are across many genetic backgrounds.** 
+The blue sites are conserved, the red sites are not conserved, and the y-axis
+indicates the proportion of sequences in the alignment that contain the
+consensus base. **Note that this example only uses 10 sequences. We recommend
+using a large alignment with very diverse sequences to identify conserved sites
+to ensure that the identified sites are across many genetic backgrounds.**
 
-While we provide information about each sequence in the output, the
-input of `run_wavess` only takes a vector of the conserved sites. To
-generate this, you can run the following code:
+While we provide information about each sequence in the output, the input of
+`run_wavess` only takes a vector of the conserved sites. To generate this, you
+can run the following code:
 
 ```{r, prep_conserved}
 founder_conserved_sites <- founder_conserved_df |>
