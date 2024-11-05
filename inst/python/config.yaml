@@ -25,6 +25,6 @@ parameters:
     # Replicative
     rf_cost: 0.001 # Fitness cost per difference from reference
     # Immune
-    seroconversion_time: 30 # Seroconversion time in generations; immunity considered only at this generation onward
+    seroconversion_time: 18 # Seroconversion time in generations; immunity considered only at this generation onward
     immune_response_proportion: 0.01 # Proportion new viral antigen must reach to initiate immune response against corresponding epitope (0.001 - 0.1)
     time_to_full_potency: 90 # Number of generations for a new immune response to reach full potency

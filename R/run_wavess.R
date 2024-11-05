@@ -52,7 +52,7 @@
 #'   generated using the functions [get_epitope_frequencies()] and
 #'   [sample_epitopes()]. (default: NULL, i.e. no immune fitness costs)
 #' @param seroconversion_time Generation at which seroconversion occurs, only
-#'   relevant when epitope_locations is not NULL (default: 30).
+#'   relevant when epitope_locations is not NULL (default: 18).
 #' @param prop_for_imm Proportion of all infected cells that must be infected
 #'   with a given sequence for that sequence to be recognized by the immune
 #'   system, only relevant when epitope_locations is not NULL (default: 0.01).
@@ -93,7 +93,7 @@ run_wavess <- function(pop_samp,
                        ref_seq = NULL,
                        replicative_cost = 0.001,
                        epitope_locations = NULL,
-                       seroconversion_time = 30,
+                       seroconversion_time = 18,
                        prop_for_imm = 0.01,
                        gen_full_potency = 90,
                        seed = NULL) {

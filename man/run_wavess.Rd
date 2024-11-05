@@ -19,7 +19,7 @@ run_wavess(
   ref_seq = NULL,
   replicative_cost = 0.001,
   epitope_locations = NULL,
-  seroconversion_time = 30,
+  seroconversion_time = 18,
   prop_for_imm = 0.01,
   gen_full_potency = 90,
   seed = NULL
@@ -85,7 +85,7 @@ generated using the functions \code{\link[=get_epitope_frequencies]{get_epitope_
 \code{\link[=sample_epitopes]{sample_epitopes()}}. (default: NULL, i.e. no immune fitness costs)}
 
 \item{seroconversion_time}{Generation at which seroconversion occurs, only
-relevant when epitope_locations is not NULL (default: 30).}
+relevant when epitope_locations is not NULL (default: 18).}
 
 \item{prop_for_imm}{Proportion of all infected cells that must be infected
 with a given sequence for that sequence to be recognized by the immune
