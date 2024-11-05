@@ -5,7 +5,7 @@ input_files:
     founder_seqs: ../extdata/founder.fasta
     q: ../extdata/hiv_q_mat.csv
     # Optional input files related to selection ("", i.e. empty string, = not modeled)
-    conserved_sites: ../extdata/conserved_sites.csv
+    conserved_sites: ../extdata/founder_conserved_sites.csv
     ref_seq: ../extdata/ref.fasta
     epitope_locations: ../extdata/epitope_locations.csv
 

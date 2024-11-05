@@ -76,7 +76,7 @@ epitope_locations <- sample_epitopes(epi_probs,
 wavess_out <- run_wavess(
   pop_samp = pop_samp,
   founder_seqs = founder_ref$founder,
-  conserved_sites = conserved_sites,
+  conserved_sites = founder_conserved_sites,
   ref_seq = founder_ref$ref,
   epitope_locations = epitope_locations,
   seed = 1234

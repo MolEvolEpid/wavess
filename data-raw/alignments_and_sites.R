@@ -36,7 +36,7 @@ flt_gp120_end <- which(cumsum(as.character(hiv_env_flt_2022_complete[1, ]) !=
 # subset to only gp120 section
 flt_gp120 <- slice_aln(hiv_env_flt_2022_complete, 1, flt_gp120_end)
 
-conserved_sites <-
+founder_conserved_sites <-
   identify_conserved_sites(flt_gp120,
     founder = "B.US.2011.DEMB11US006.KC473833",
     ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
@@ -47,7 +47,7 @@ conserved_sites <-
   tibble::deframe() |>
   toupper()
 
-usethis::use_data(conserved_sites, compress = "xz", overwrite = TRUE)
+usethis::use_data(founder_conserved_sites, compress = "xz", overwrite = TRUE)
 
 ## generate hiv q matrix
 

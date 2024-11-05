@@ -468,7 +468,7 @@ database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html).
 
 For the example founder gp120 sequence we use in the package 
 (B.US.2011.DEMB11US006.KC473833), we also provide a vector of conserved sites 
-for this founder sequence (`conserved_sites`) for ease of use.
+for this founder sequence (`founder_conserved_sites`) for ease of use.
 
 First, since the `hxb2_cons_founder` sequence is all of env, but we just want to 
 simulate gp120, we have to slice out that part of the alignment:
@@ -540,7 +540,7 @@ it is more accurate for our example, rather than the example run above,
 which is not accurate since it was only run on a handful of genomes):
 
 ```{r, write_conserved}
-write_csv(enframe(conserved_sites, name = "position", value = "nucleotide"), "input_data/conserved_sites.csv")
+write_csv(enframe(founder_conserved_sites, name = "position", value = "nucleotide"), "input_data/founder_conserved_sites.csv")
 ```
 
 

@@ -217,7 +217,7 @@ Here's an example of simulating evolution with conserved sites fitness:
 conserved_fitness <- run_wavess(
   pop_samp = pop_samp,
   founder_seqs = founder_ref$founder,
-  conserved_sites = conserved_sites
+  conserved_sites = founder_conserved_sites
 )
 ```
 
