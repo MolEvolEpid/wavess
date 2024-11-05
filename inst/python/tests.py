@@ -46,11 +46,7 @@ def test_get_nucleotide_substitution_probabilities():
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     assert nt_sub_probs[0] == ("A", "C", "G", "T")
-    assert nt_sub_probs[1][1] == [
-        0.3656992970389363,
-        0.0,
-        0.024486666685793617,
-        0.60981403627527]
+    assert nt_sub_probs[1][1] == [0.28571775123733556, 0.0, 0.02857647091712713, 0.6857057778455373]
     with pytest.raises(Exception):
         get_nucleotide_substitution_probabilities("", 3.5e-5)
     with pytest.raises(Exception):
@@ -314,18 +310,17 @@ def test_get_fitness_of_infecting_virus():
     time_to_full_potency = 30
     cost_per_mutation_in_conserved_site = 0.99
     epi = [Epitope(0, 3, 0.3)]
-    assert host.get_fitness_of_infecting_virus(0, 1) == 1
+    assert host.get_fitness_of_infecting_virus(0) == 1
     assert host.C[0].infecting_virus.fitness == 1
     host.C[0].infecting_virus.mutate(
         1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1
     )
-    assert host.get_fitness_of_infecting_virus(
-        0, 1) == (1 - 0) * (1 - 0) * (1-0.99)
+    assert host.get_fitness_of_infecting_virus(0) == (1 - 0) * (1 - 0) * (1-0.99)
     assert host.C[0].infecting_virus.immune_fitness == 1
     assert host.C[0].infecting_virus.replicative_fitness == 1
     assert host.C[0].infecting_virus.conserved_fitness == (1-0.99)
     assert host.C[0].infecting_virus.fitness == (1 - 0) * (1 - 0) * (1-0.99)
-    assert host.get_fitness_of_infecting_virus(1, 1) == 1
+    assert host.get_fitness_of_infecting_virus(1) == 1
     assert host.C[1].infecting_virus.immune_fitness == 1
     assert host.C[1].infecting_virus.replicative_fitness == 1
     assert host.C[1].infecting_virus.conserved_fitness == 1
@@ -333,16 +328,13 @@ def test_get_fitness_of_infecting_virus():
         1, epi, immune_response_proportion, time_to_full_potency, rng
     )
     host.update_immune_fitness(epi, 40, time_to_full_potency)
-    assert host.get_fitness_of_infecting_virus(
-        0, 1) == (1 - 0) * (1 - 0) * (1-0.99)
+    assert host.get_fitness_of_infecting_virus(0) == (1 - 0) * (1 - 0) * (1-0.99)
     assert (
-        host.get_fitness_of_infecting_virus(1, 1)
+        host.get_fitness_of_infecting_virus(1)
         == 1 - 0.3 * (40 - 10) / time_to_full_potency
     )
     with pytest.raises(Exception):
-        host.get_fitness_of_infecting_virus(20, 1)
-    # with pytest.raises(Exception):
-    #     host.get_fitness("10")
+        host.get_fitness_of_infecting_virus(20)
 
 
 def test_singly_infect_cd4():
@@ -585,7 +577,7 @@ def test_summarize_fitness():
     assert [
         host.C[i].infecting_virus.immune_fitness for i in range(len(host.C))
     ] == [1, 1, 1, 1]
-    host.get_fitness(1)
+    host.get_fitness()
     assert [host.C[i].infecting_virus.fitness for i in range(len(host.C))] == [
         (1-0.1)**3,
         (1 - 0) * (1-0.1)**1 * (1-0.99),

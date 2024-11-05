@@ -57,8 +57,8 @@ def calc_nt_sub_probs_from_q(q, mut_rate):
     return new_nucleotides_order, probabilities
 
 
-def create_host_env(founder_seqs, ref_seq, rf_cost, initial_cell_count):
-    founder_viruses = [HIV(seq, ref_seq, rf_cost)
+def create_host_env(founder_seqs, ref_seq, replicative_cost, initial_cell_count):
+    founder_viruses = [HIV(seq, ref_seq, replicative_cost)
                        for seq in founder_seqs.values()]
     return HostEnv(founder_viruses, initial_cell_count)
 
@@ -194,7 +194,7 @@ class Epitope:
 
 
 class HIV:
-    def __init__(self, nuc_seq, reference_sequence, rf_cost):
+    def __init__(self, nuc_seq, reference_sequence, replicative_cost):
         # Make sure values supplied are as expected
         assert isinstance(
             nuc_seq, str), "Nucleotide sequence needs to be a string"
@@ -208,7 +208,7 @@ class HIV:
         self.conserved_fitness = 1
         self.replicative_fitness = 1
         if len(reference_sequence):
-            self.replicative_fitness = calc_seq_fitness(muts_rel_ref(self.nuc_sequence, reference_sequence), rf_cost)
+            self.replicative_fitness = calc_seq_fitness(muts_rel_ref(self.nuc_sequence, reference_sequence), replicative_cost)
         self.fitness = 1
 
     def __repr__(self):
@@ -223,7 +223,7 @@ class HIV:
         conserved_sites,
         cost_per_mutation_in_conserved_site,
         reference_sequence,
-        rf_cost,
+        replicative_cost,
     ):
         # Figure out what the mutation is based on mutation probabilities
         old_nucleotide = self.nuc_sequence[position_to_mutate]
@@ -256,7 +256,7 @@ class HIV:
             ref_base = reference_sequence[position_to_mutate]
             prev_comp = old_nucleotide == ref_base
             if prev_comp != (ref_base == new_nucleotide):
-                self.replicative_fitness = calc_seq_fitness(muts_rel_ref(self.nuc_sequence, reference_sequence), rf_cost)
+                self.replicative_fitness = calc_seq_fitness(muts_rel_ref(self.nuc_sequence, reference_sequence), replicative_cost)
 
 
 class InfectedCD4:
@@ -317,68 +317,29 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
     # Modified from https://www.geeksforgeeks.org/dna-protein-python-3/
     def translate(self, seq_to_translate):
         table = {
-            "ATA": "I",
-            "ATC": "I",
-            "ATT": "I",
+            "ATA": "I", "ATC": "I", "ATT": "I",
             "ATG": "M",
-            "ACA": "T",
-            "ACC": "T",
-            "ACG": "T",
-            "ACT": "T",
-            "AAC": "N",
-            "AAT": "N",
-            "AAA": "K",
-            "AAG": "K",
-            "AGC": "S",
-            "AGT": "S",
-            "AGA": "R",
-            "AGG": "R",
-            "CTA": "L",
-            "CTC": "L",
-            "CTG": "L",
-            "CTT": "L",
-            "CCA": "P",
-            "CCC": "P",
-            "CCG": "P",
-            "CCT": "P",
-            "CAC": "H",
-            "CAT": "H",
-            "CAA": "Q",
-            "CAG": "Q",
-            "CGA": "R",
-            "CGC": "R",
-            "CGG": "R",
-            "CGT": "R",
-            "GTA": "V",
-            "GTC": "V",
-            "GTG": "V",
-            "GTT": "V",
-            "GCA": "A",
-            "GCC": "A",
-            "GCG": "A",
-            "GCT": "A",
-            "GAC": "D",
-            "GAT": "D",
-            "GAA": "E",
-            "GAG": "E",
-            "GGA": "G",
-            "GGC": "G",
-            "GGG": "G",
-            "GGT": "G",
-            "TCA": "S",
-            "TCC": "S",
-            "TCG": "S",
-            "TCT": "S",
-            "TTC": "F",
-            "TTT": "F",
-            "TTA": "L",
-            "TTG": "L",
-            "TAC": "Y",
-            "TAT": "Y",
-            "TAA": "_",
-            "TAG": "_",
-            "TGC": "C",
-            "TGT": "C",
+            "ACA": "T", "ACC": "T", "ACG": "T", "ACT": "T",
+            "AAC": "N", "AAT": "N",
+            "AAA": "K", "AAG": "K",
+            "AGC": "S", "AGT": "S",
+            "AGA": "R", "AGG": "R",
+            "CTA": "L", "CTC": "L", "CTG": "L", "CTT": "L",
+            "CCA": "P", "CCC": "P", "CCG": "P", "CCT": "P",
+            "CAC": "H", "CAT": "H",
+            "CAA": "Q", "CAG": "Q",
+            "CGA": "R", "CGC": "R", "CGG": "R", "CGT": "R",
+            "GTA": "V", "GTC": "V", "GTG": "V", "GTT": "V",
+            "GCA": "A", "GCC": "A", "GCG": "A", "GCT": "A",
+            "GAC": "D", "GAT": "D",
+            "GAA": "E", "GAG": "E",
+            "GGA": "G", "GGC": "G", "GGG": "G", "GGT": "G",
+            "TCA": "S", "TCC": "S", "TCG": "S", "TCT": "S",
+            "TTC": "F", "TTT": "F",
+            "TTA": "L", "TTG": "L",
+            "TAC": "Y", "TAT": "Y",
+            "TAA": "_", "TAG": "_",
+            "TGC": "C", "TGT": "C",
             "TGA": "_",
             "TGG": "W",
         }
@@ -439,18 +400,15 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     n_diff_min = len(variant)
                     for v in self.epitopes_recognition_generation:
                         if variant != v and len(variant) == len(v):
-                            n_diff = len(
-                                [1 for x, y in zip(variant, v) if x != y])
+                            n_diff = sum(1 for x, y in zip(variant, v) if x != y)
                             if n_diff <= n_diff_min:
                                 n_diff_min = n_diff
                                 most_similar = v
-                    # EVENTUALLY UPDATE THIS TO BE HOWEVER WE WANT
-                    # CROSS-REACTIVITY TO ACTUALLY WORK
                     self.cross_reactive_epitope_cost_frac[
                         variant
                     ] = immune_strength_dict[most_similar] * rng.beta(
                         1, n_diff_min**2
-                    )  # 0.5/n_diff_min
+                    ) 
 
         # Mark frequent epitopes as recognized
         for variant, frequency in aa_epitope_variants.items():
@@ -504,8 +462,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             self.C[CD4_index].infecting_virus.immune_fitness = 1 - max_epitope_fitness_cost
             
 
-    # GET RID OF RF_COST HERE IF WE DECIDE ON MULTIPLICATIVE FORMULATION
-    def get_fitness_of_infecting_virus(self, CD4_index, rf_cost):
+    def get_fitness_of_infecting_virus(self, CD4_index):
 
         # Compute overall fitness
         viral_fitness = (
@@ -519,10 +476,10 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
         return viral_fitness
 
-    def get_fitness(self, rf_cost):
+    def get_fitness(self):
         fitness = []
         for CD4_index in range(len(self.C)):
-            fit = self.get_fitness_of_infecting_virus(CD4_index, rf_cost)
+            fit = self.get_fitness_of_infecting_virus(CD4_index)
             fitness.append(fit)
         return fitness
 
@@ -558,7 +515,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         cost_per_mutation_in_conserved_site,
         reference_sequence,
         conserved_sites,
-        rf_cost,
+        replicative_cost,
     ):
         # Create a new list with the newly infected cells
         newly_infected = [None] * int(len(next_dually_infecting_viruses) / 2)
@@ -623,7 +580,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             # Update replicative fitness for recombined virus
             if len(reference_sequence):
                 newly_infected[n_added].infecting_virus.replicative_fitness = (
-                   calc_seq_fitness(muts_rel_ref(newly_infected[n_added].infecting_virus.nuc_sequence, reference_sequence), rf_cost)
+                   calc_seq_fitness(muts_rel_ref(newly_infected[n_added].infecting_virus.nuc_sequence, reference_sequence), replicative_cost)
                 )
 
             n_added += 1
@@ -666,7 +623,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         conserved_sites,
         cost_per_mutation_in_conserved_site,
         reference_sequence,
-        rf_cost,
+        replicative_cost,
     ):
         # Positions to mutate are given assuming all viral sequences are concatenated
         # We need to identify the right cell number and position within each
@@ -682,7 +639,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 conserved_sites,
                 cost_per_mutation_in_conserved_site,
                 reference_sequence,
-                rf_cost,
+                replicative_cost,
             )  # Initiate mutation
 
     def get_next_gen_latent(
@@ -760,7 +717,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         reference_sequence,
         immune_response_proportion,
         epitopes,
-        rf_cost,
+        replicative_cost,
         seed,
     ):
         # ***************************** Productively infected cell dynamics ***************************** #
@@ -782,7 +739,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             conserved_sites,
             cost_per_mutation_in_conserved_site,
             reference_sequence,
-            rf_cost,
+            replicative_cost,
         )
 
         if epitopes is not None:
@@ -800,7 +757,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 self.update_immune_fitness(epitopes, gen, time_to_full_potency)
 
         # Compute fitness
-        fitness = self.get_fitness(rf_cost)
+        fitness = self.get_fitness()
 
         # Determine number of dual infections with recombination
         num_cells_recomb, cell_breakpoints = get_recomb_breakpoints(
@@ -834,7 +791,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 cost_per_mutation_in_conserved_site,
                 reference_sequence,
                 conserved_sites,
-                rf_cost,
+                replicative_cost,
             )
         )
 
@@ -902,7 +859,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         conserved_sites,
         conserved_cost,
         ref_seq,
-        rf_cost,
+        replicative_cost,
         epitope_locations,
         seroconversion_time,
         prop_for_imm,
@@ -944,7 +901,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             fitness["immune"].append(float(1))
             fitness["conserved"].append(float(1)) 
             if len(ref_seq):
-                repfit = calc_seq_fitness(muts_rel_ref(fseq, ref_seq), rf_cost)
+                repfit = calc_seq_fitness(muts_rel_ref(fseq, ref_seq), replicative_cost)
                 fitness["replicative"].append(repfit)
                 fitness["overall"].append(repfit)
             else:
@@ -991,7 +948,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 ref_seq,
                 prop_for_imm,
                 epitope_locations,
-                rf_cost,
+                replicative_cost,
                 generator,
             )
             # Record events
