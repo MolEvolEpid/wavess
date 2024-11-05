@@ -106,17 +106,16 @@ def test_get_recombined_sequence():
 
 
 def test_calc_seq_fitness():
-    assert calc_seq_fitness(0, 1) == 1
-    assert calc_seq_fitness(1, 1) == exp(-1*1)
-    assert calc_seq_fitness(0, 1) == 1
-    assert calc_seq_fitness(0, 1) == 1
+    assert calc_seq_fitness(0, 0.99) == 1
+    assert calc_seq_fitness(1, 0.99) == (1-0.99)
+    assert calc_seq_fitness(2, 0.99) == (1-0.99)**2
 
 
 def test_replicative_fitness():
-    assert calc_seq_fitness(muts_rel_ref("AAA", "AAA"), 1) == 1
-    assert calc_seq_fitness(muts_rel_ref("AAA", "AAT"), 1) == exp(-1*1)
-    assert calc_seq_fitness(muts_rel_ref("AAA", "AAN"), 1) == 1
-    assert calc_seq_fitness(muts_rel_ref("AAA", "AA-"), 1) == 1
+    assert calc_seq_fitness(muts_rel_ref("AAA", "AAA"), 0.99) == 1
+    assert calc_seq_fitness(muts_rel_ref("AAA", "AAT"), 0.99) == (1-0.99)
+    assert calc_seq_fitness(muts_rel_ref("AAA", "AAN"), 0.99) == 1
+    assert calc_seq_fitness(muts_rel_ref("AAA", "AA-"), 0.99) == 1
 
 
 def test_normalize():
@@ -157,13 +156,13 @@ def test_Epitopes():
 
 def test_HIV():
     reference_sequence = "AAA"
-    hiv = HIV("AAT", reference_sequence, 1)
+    hiv = HIV("AAT", reference_sequence, 0.99)
     assert repr(hiv) == "HIV with sequence AAT"
     assert str(hiv) == "HIV with sequence AAT"
     assert hiv.conserved_sites_mutated == set()
     assert hiv.immune_fitness == 1
     assert hiv.conserved_fitness == 1
-    assert hiv.replicative_fitness == exp(-1*1)
+    assert hiv.replicative_fitness == 1-0.99
     assert hiv.fitness == 1
     hiv = HIV("AAT", "", 1)
     assert hiv.replicative_fitness == 1
@@ -181,26 +180,26 @@ def test_mutate():
     assert hiv.conserved_sites_mutated == set()
     assert hiv.replicative_fitness == 1
     reference_sequence = "AAA"
-    hiv.mutate(1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1)
+    hiv.mutate(1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 0.1)
     assert hiv.nuc_sequence == "CCA"
     assert hiv.conserved_sites_mutated == set([1])
     assert (
-        hiv.replicative_fitness == exp(-1*2)
+        hiv.replicative_fitness == (1-0.1)**2
     )  # don't account for conserved sites here, it's done in advance
-    hiv.mutate(0, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1)
+    hiv.mutate(0, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 0.1)
     assert hiv.nuc_sequence == "TCA"
     assert hiv.conserved_sites_mutated == set([1])
-    assert hiv.replicative_fitness == exp(-1*2)
+    assert hiv.replicative_fitness == (1-0.1)**2
 
-    hiv.mutate(1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1)
+    hiv.mutate(1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 0.1)
     assert hiv.nuc_sequence == "TAA"
     assert hiv.conserved_sites_mutated == set([]) #now allow it to mutate back
-    assert hiv.replicative_fitness == exp(-1*1)
+    assert hiv.replicative_fitness == (1-0.1)
 
-    hiv.mutate(1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1)
+    hiv.mutate(1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 0.1)
     assert hiv.nuc_sequence == "TGA"
     assert hiv.conserved_sites_mutated == set([1])
-    assert hiv.replicative_fitness == exp(-1*2)
+    assert hiv.replicative_fitness == (1-0.1)**2
     with pytest.raises(Exception):
         hiv.mutate(10, 0.99, reference_sequence, 1)
     with pytest.raises(Exception):
@@ -321,11 +320,11 @@ def test_get_fitness_of_infecting_virus():
         1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1
     )
     assert host.get_fitness_of_infecting_virus(
-        0, 1) == (1 - 0) * (1 - 0) * exp(-0.99)
+        0, 1) == (1 - 0) * (1 - 0) * (1-0.99)
     assert host.C[0].infecting_virus.immune_fitness == 1
     assert host.C[0].infecting_virus.replicative_fitness == 1
-    assert host.C[0].infecting_virus.conserved_fitness == exp(-0.99)
-    assert host.C[0].infecting_virus.fitness == (1 - 0) * (1 - 0) * exp(-0.99)
+    assert host.C[0].infecting_virus.conserved_fitness == (1-0.99)
+    assert host.C[0].infecting_virus.fitness == (1 - 0) * (1 - 0) * (1-0.99)
     assert host.get_fitness_of_infecting_virus(1, 1) == 1
     assert host.C[1].infecting_virus.immune_fitness == 1
     assert host.C[1].infecting_virus.replicative_fitness == 1
@@ -335,7 +334,7 @@ def test_get_fitness_of_infecting_virus():
     )
     host.update_immune_fitness(epi, 40, time_to_full_potency)
     assert host.get_fitness_of_infecting_virus(
-        0, 1) == (1 - 0) * (1 - 0) * exp(-0.99)
+        0, 1) == (1 - 0) * (1 - 0) * (1-0.99)
     assert (
         host.get_fitness_of_infecting_virus(1, 1)
         == 1 - 0.3 * (40 - 10) / time_to_full_potency
@@ -384,10 +383,10 @@ def test_dually_infect_cd4():
     host.C[1].infecting_virus.nuc_sequence = "TTT"
     host.C[0].infecting_virus.conserved_sites_mutated = set([2])
     newly_infected = host.dually_infect_cd4(
-        [0, 1, 0, 2], [[1], [1, 2]], 3, 0.99, reference_sequence, set([2]), 1
+        [0, 1, 0, 2], [[1], [1, 2]], 3, 0.99, reference_sequence, set([2]), 0.1
     )
     host.C[0].infecting_virus.mutate(
-        0, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1
+        0, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 0.1
     )
     assert [newly_infected[i].infecting_virus.nuc_sequence for i in range(2)] == [
         "GTT",
@@ -395,10 +394,10 @@ def test_dually_infect_cd4():
     ]
     assert [
         newly_infected[i].infecting_virus.conserved_fitness for i in range(2)
-    ] == [1, exp(-0.99)]
+    ] == [1, (1-0.99)]
     assert [
         newly_infected[i].infecting_virus.replicative_fitness for i in range(2)
-    ] == [exp(-1*3), exp(-1*2)]
+    ] == [(1-0.1)**3, (1-0.1)**2]
 
 
 def test_latent_active_CD4():
@@ -494,10 +493,10 @@ def test_get_next_gen_active():
     epi = [Epitope(0, 3, 0.3)]
     host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["GGG"] * 3], 3)
     host.C[0].infecting_virus.mutate(
-        0, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1
+        0, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 0.1
     )
     host.C[1].infecting_virus.mutate(
-        0, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1
+        0, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 0.1
     )
     assert host.get_next_gen_active(
         0,
@@ -513,13 +512,13 @@ def test_get_next_gen_active():
         reference_sequence,
         0.2,
         epi,
-        1,
+        0.1,
         rng,
     ) == (0, 0)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(2)] == [
-        "TGG", "GGG"]
+        "AGG", "AGG"]
     assert [
-        host.C[i].infecting_virus.fitness for i in range(2)] == [exp(-1*3), exp(-1*3)]
+        host.C[i].infecting_virus.fitness for i in range(2)] == [(1-0.1)**2, (1-0.1)**2]
     assert host.get_next_gen_active(
         0.5,
         0,
@@ -534,11 +533,11 @@ def test_get_next_gen_active():
         reference_sequence,
         0.2,
         epi,
-        1,
+        0.1,
         rng,
     ) == (5, 0)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(1)] == [
-        "AAA"]
+        "GAA"]
     assert host.get_next_gen_active(
         0.1,
         0.1,
@@ -553,10 +552,10 @@ def test_get_next_gen_active():
         reference_sequence,
         0.2,
         epi,
-        1,
+        0.1,
         rng,
-    ) == (1, 1)
-    assert "AAA" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
+    ) == (2, 2)
+    assert "GAA" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
 
 
 def test_summarize_fitness():
@@ -566,7 +565,7 @@ def test_summarize_fitness():
     )
     reference_sequence = "AAA"
     epi = [Epitope(0, 3, 0.3)]
-    host = HostEnv([HIV(seq, reference_sequence, 1)
+    host = HostEnv([HIV(seq, reference_sequence, 0.1)
                    for seq in ["GGG", "AAA"] * 2], 4)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(len(host.C))] == [
         "GGG",
@@ -575,25 +574,25 @@ def test_summarize_fitness():
         "AAA",
     ]
     host.C[1].infecting_virus.mutate(
-        1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 1
+        1, new_nt_order, probs, {1:'A'}, 0.99, reference_sequence, 0.1
     )
     assert [
         host.C[i].infecting_virus.replicative_fitness for i in range(len(host.C))
-    ] == [exp(-1*3), exp(-1*1), exp(-1*3), 1]
+    ] == [(1-0.1)**3, (1-0.1)**1, (1-0.1)**3, 1]
     assert [
         host.C[i].infecting_virus.conserved_fitness for i in range(len(host.C))
-    ] == [1, exp(-0.99), 1, 1]
+    ] == [1, (1-0.99), 1, 1]
     assert [
         host.C[i].infecting_virus.immune_fitness for i in range(len(host.C))
     ] == [1, 1, 1, 1]
     host.get_fitness(1)
     assert [host.C[i].infecting_virus.fitness for i in range(len(host.C))] == [
-        exp(-1*3),
-        (1 - 0) * exp(-1*1) * exp(-0.99),
-        exp(-1*3),
+        (1-0.1)**3,
+        (1 - 0) * (1-0.1)**1 * (1-0.99),
+        (1-0.1)**3,
         1.0,
     ]
-    assert host.summarize_fitness() == (0.30906739054531296, 0.8428941727555115, 1.0, 0.36686339447679256)
+    assert host.summarize_fitness() == (0.61675, 0.7525, 1.0, 0.8395)
 
 
 def test_record_counts():

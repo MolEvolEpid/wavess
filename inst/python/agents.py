@@ -139,9 +139,8 @@ def get_recombined_sequence(sequence1, sequence2, breakpoints):
 
 
 def calc_seq_fitness(n_muts, cost):
-    return exp(-cost*n_muts)
+    return (1-cost)**n_muts
 
-import numpy as np
 def muts_rel_ref(nuc_sequence, ref_sequence):
     return sum(1 for x, y in zip(nuc_sequence, ref_sequence) if x != y and y in {"A", "T", "C", "G"})
 

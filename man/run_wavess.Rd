@@ -8,7 +8,7 @@ run_wavess(
   pop_samp,
   founder_seqs,
   mut_rate = 3.5e-05,
-  q = hiv_q_mat,
+  q = wavess::hiv_q_mat,
   recomb_rate = 1.4e-05,
   prob_act_to_lat = 0.001,
   prob_lat_to_act = 0.01,
@@ -17,7 +17,7 @@ run_wavess(
   conserved_sites = NULL,
   conserved_cost = 0.99,
   ref_seq = NULL,
-  rf_cost = 0.001,
+  replicative_cost = 0.001,
   epitope_locations = NULL,
   seroconversion_time = 30,
   prop_for_imm = 0.01,
@@ -63,16 +63,18 @@ founder sequence (indexed at 0). This can be generated using the
 \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} function (default: NULL, i.e. no conserved
 sites fitness costs)}
 
-\item{conserved_cost}{Cost of mutation at conserved site (default: 0.99)}
+\item{conserved_cost}{Cost of mutation at conserved site, must be in the
+range 0-1 where 0 indicates no cost and 1 indicates no ability to survive
+(default: 0.99)}
 
 \item{ref_seq}{Reference sequence as a character string. A consensus
 sequence, that can be used as the reference sequence, can be generated
 using the function \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} (default: NULL, i.e. no
 fitness cost relative to a reference sequence)}
 
-\item{rf_cost}{Replicative fitness cost, only relevant when ref_seq is
-not NULL (default: 1) # MAKE THIS CLEARER ONCE WE DECIDE ON A FINAL
-DEFINITION}
+\item{replicative_cost}{Replicative fitness cost, only relevant when ref_seq
+is not NULL, must be in the range 0-1 where 0 indicates no cost and 1
+indicates no ability to survive (default: 0.001)}
 
 \item{epitope_locations}{Tibble of epitope locations and maximum fitness
 costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These

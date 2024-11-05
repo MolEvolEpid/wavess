@@ -341,7 +341,7 @@ check_seq <- function(seq, chars, seq_type) {
 check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
                                     mut_rate, recomb_rate,
                                     conserved_sites, conserved_cost,
-                                    ref_seq, rep_exp,
+                                    ref_seq, replicative_cost,
                                     epitope_locations, seroconversion_time,
                                     prop_for_imm, gen_full_potency,
                                     prob_act_to_lat, prob_lat_to_act,
@@ -420,7 +420,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
     if (nchar(as.list(founder_seqs)[1]) != nchar(ref_seq)) {
       stop("ref_seq must be the same length as the founder sequence(s)")
     }
-    check_is_numeric(rep_exp, "rep_exp")
+    check_is_0to1(replicative_cost, "replicative_cost")
   }
   if (!is.null(epitope_locations)) {
     check_is_df(epitope_locations, "epitope_locations")

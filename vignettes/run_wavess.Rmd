@@ -189,6 +189,18 @@ Note that all nucleotide positions related to fitness are expected to be indexed
 at 0. Including these requires additional inputs, which are described in more
 detail in the prepare input data vignette (`vignette("prepare_input_data")`).
 
+Both conserved sites fitness and replicative fitness (comparison to a reference)
+are modeled using a multiplicative fitness landscape with the equation:
+
+```
+fitness = (1 - cost) ** n_mut
+```
+
+The fitness cost must be between 0 and 1, where 0 indicates no fitness cost
+and 1 indicates no ability to survive. `n_mut` is the number of mutations in
+conserved sites or the number of nucleotides different from the reference 
+sequence. 
+
 For additional details on how each of these selective pressures is implemented,
 please see the manuscript [**ADD LINK WHEN WE HAVE IT**].
 
@@ -221,9 +233,7 @@ conserved_fitness$counts$mean_conserved_active
 
 To simulate fitness compared to a reference, you must provide a "most fit" 
 reference sequence to compare each simulated sequence to. 
-The strength of this fitness can be altered using the `rep_exp` argument.
-
-**TODO: ADD MORE DETAILS ABOUT THE EXACT WAY FITNESS IS CALCULATED ONCE WE'VE DECIDED**
+The strength of this fitness can be altered using the `replicative_cost` argument.
 
 ```{r}
 ref_fitness <- run_wavess(
