@@ -54,9 +54,11 @@
 #' <https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp>
 "env_features"
 
-#' HIV Q matrix
+#' HIV instantaneous rate matrix estimated from approximately neutral sites
 #'
-#' Q matrix containing relative rates of change between nucleotides.
+#' Approximate Q matrix for HIV containing relative rates of change between
+#' nucleotides, from the nucleotide substitution rates estimated in
+#' Zanini et al. 2017.
 #'
 #' @format ## `hiv_q_mat`
 #' A matrix containing relative rates of change between nucleotides, where the

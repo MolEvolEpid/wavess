@@ -55,17 +55,16 @@ usethis::use_data(conserved_sites, compress = "xz", overwrite = TRUE)
 # Fabio Zanini, Vadim Puller, Johanna Brodin, Jan Albert, Richard A. Neher,
 # In vivo mutation rates and the landscape of fitness costs of HIV-1, Virus Evolution,
 # Volume 3, Issue 1, January 2017, vex003, https://doi.org/10.1093/ve/vex003
-# need to:
-# - convert per-site per-day rates to per-site per-generation (1.2 days) rates
-# - divide by the overall substitution rate per site per generation at
-# approximately neutral sites to get the unitless Q matrix
+# divide by the overall substitution rate at approximately neutral sites to get
+# the unitless "Q" matrix
 hiv_q_mat <- as.matrix(data.frame(
   A = c(0, 5e-6, 1.6e-5, 3e-6),
   C = c(9e-7, 0, 1e-7, 1e-5),
   G = c(6e-6, 5e-7, 0, 3e-6),
   T = c(7e-7, 1.2e-5, 2e-6, 0)
-)) * 1.2 / 1.2e-5
+)) / 1.2e-5
 diag(hiv_q_mat) <- -rowSums(hiv_q_mat)
 rownames(hiv_q_mat) <- colnames(hiv_q_mat)
 
 usethis::use_data(hiv_q_mat, overwrite = TRUE)
+

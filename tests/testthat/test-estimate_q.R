@@ -18,6 +18,6 @@ test_that("estimate_q works", {
 
 test_that("calc_nt_sub_probs_from_q works", {
   probs <- calc_nt_sub_probs_from_q(hiv_q_mat, 3.5e-5)
-  expect_equal(round(probs[1, 3], 2), 0.81)
+  expect_equal(round(probs[1, 3], 2), 0.79)
   expect_equal(round(probs[2, 2], 2), 0)
 })

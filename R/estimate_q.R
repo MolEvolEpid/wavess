@@ -16,7 +16,6 @@
 #'
 #' @examples
 #' # NOTE: This is just an example.
-#' # (**TODO: ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
 #' estimate_q(hiv_env_flt_2022)
 estimate_q <- function(aln, tr = NULL, model = "GTR+R(4)+I",
                        rearrangement = "none") {
@@ -39,9 +38,6 @@ estimate_q <- function(aln, tr = NULL, model = "GTR+R(4)+I",
   rownames(q) <- c("A", "C", "G", "T")
   colnames(q) <- c("A", "C", "G", "T")
   diag(q) <- -rowSums(q)
-  # rate_mat <- rate_mat |>
-  #   tibble::as_tibble(rownames = "nt_from")
-  # }
   return(q)
 }
 

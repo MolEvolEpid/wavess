@@ -245,19 +245,18 @@ strsplit(founder_seq, "")[[1]] |>
 
 ### Estimate Q matrix {#estimate-q-matrix}
 
-The model requires as input a Q matrix (`q`), which defines the rates of nucleotide
-substitution for each possible transition between nucleotides. By default, the
-rate matrix is the HIV Q matrix we provide with the package: 
+The model requires as input a Q matrix (`q`), which defines the rates of
+nucleotide substitution for each possible transition between nucleotides. By
+default, this matrix is the HIV "Q" matrix we provide with the package, which is
+estimated from approximately neutral sites:
 
 ```{r}
 hiv_q_mat
 ```
-This matrix is based on the rates from [Zanini et al. 2017](https://doi.org/10.1093/ve/vex003),
-and is converted to a Q matrix by including base frequencies estimated from
-the [2022 HIV ENV filtered alignment](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html), 
-and the overall nucleotide substitution rate estimated by [Mansky 1996](https://doi.org/10.1089/aid.1996.12.307).
 
-**I JUST USED ENV BECAUSE IT WAS EASY, BUT MAYBE WE SHOULD USE FULL-GENOME SEQUENCES FOR THIS TO BE MORE GENERAL?**
+This matrix is based on the rates from [Zanini et al.
+2017](https://doi.org/10.1093/ve/vex003), and is converted to an approximate Q
+matrix by dividing by the estimated overall nucleotide substitution rate.
 
 **If you are simulating an organism other than HIV, you will want to provide a
 Q matrix estimated for that organism.** Any phylogenetic tree building program
@@ -273,8 +272,8 @@ related sequences (e.g. from the same subtype). The function outputs a Q matrix
 where the rows are the "from" nucleotide and the columns are the "to"
 nucleotide.
 
-Here is an example (but this matrix isn't accurate because it's simly a random
-set of sequences, so use the built-in q matrix for HIV instead): 
+Here is an example (but note that this matrix isn't accurate because it's simply
+a random set of sequences):
 
 ```{r, estimate_q}
 estimate_q(hiv_env_flt_2022)
@@ -293,6 +292,7 @@ data.frame(hiv_q_mat) |>
   rownames_to_column(var = "nt_from") |>
   write_csv("input_data/hiv_q_mat.csv")
 ```
+
 **Note:** to read this back into R and get it into matrix form, you can use
 this code:
 

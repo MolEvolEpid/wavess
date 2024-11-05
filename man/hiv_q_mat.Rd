@@ -9,18 +9,11 @@
 
 A matrix containing relative rates of change between nucleotides, where the
 rows are the "from" nucleotide and the columns are the "to" nucleotide.
-To compute this we used:
-\itemize{
-\item Individual substitution rates from Zanini et al. 2017
-\item Base frequencies from the LANL 2022 HIV ENV filtered alignment
-\item The overall substitution rate from Mansky 1996.
-}
+To compute this we used substitution rates from Zanini et al. 2017
 }
 }
 \source{
 Zanini et al. 2017: \url{https://doi.org/10.1093/ve/vex003}
-HIV ENV filtered alignment: \url{https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html}
-Mansky 1996: \url{https://doi.org/10.1089/aid.1996.12.307}
 }
 \usage{
 hiv_q_mat
