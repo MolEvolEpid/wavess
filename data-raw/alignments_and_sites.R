@@ -51,24 +51,20 @@ usethis::use_data(conserved_sites, compress = "xz", overwrite = TRUE)
 
 ## generate hiv q matrix
 
-# rates from Fig 1C in manuscript:
+# rates based on approximately neutral sites from Fig 1C in manuscript:
 # Fabio Zanini, Vadim Puller, Johanna Brodin, Jan Albert, Richard A. Neher,
 # In vivo mutation rates and the landscape of fitness costs of HIV-1, Virus Evolution,
 # Volume 3, Issue 1, January 2017, vex003, https://doi.org/10.1093/ve/vex003
 # need to:
 # - convert per-site per-day rates to per-site per-generation (1.2 days) rates
-# - multiply by "to" nucleotide frequencies to get the Q matrix
-# - divide by the overall substitution rate per site per generation to get the
-#   unitless Q matrix
-# TODO - THINK ABOUT WHETHER THIS IS THE RIGHT WAY TO DO THIS
-nt_freqs <- ape::base.freq(hiv_env_flt_2022_complete)
-names(nt_freqs) <- toupper(names(nt_freqs))
+# - divide by the overall substitution rate per site per generation at
+# approximately neutral sites to get the unitless Q matrix
 hiv_q_mat <- as.matrix(data.frame(
-  A = c(0, 5e-6, 1.6e-5, 3e-6) * nt_freqs["A"],
-  C = c(9e-7, 0, 1e-7, 1e-5) * nt_freqs["C"],
-  G = c(6e-6, 5e-7, 0, 3e-6) * nt_freqs["G"],
-  T = c(7e-7, 1.2e-5, 2e-6, 0) * nt_freqs["T"]
-)) * 1.2 / 3.5e-5
+  A = c(0, 5e-6, 1.6e-5, 3e-6),
+  C = c(9e-7, 0, 1e-7, 1e-5),
+  G = c(6e-6, 5e-7, 0, 3e-6),
+  T = c(7e-7, 1.2e-5, 2e-6, 0)
+)) * 1.2 / 1.2e-5
 diag(hiv_q_mat) <- -rowSums(hiv_q_mat)
 rownames(hiv_q_mat) <- colnames(hiv_q_mat)
 

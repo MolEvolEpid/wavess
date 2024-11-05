@@ -61,12 +61,7 @@
 #' @format ## `hiv_q_mat`
 #' A matrix containing relative rates of change between nucleotides, where the
 #' rows are the "from" nucleotide and the columns are the "to" nucleotide.
-#' To compute this we used:
-#' - Individual substitution rates from Zanini et al. 2017
-#' - Base frequencies from the LANL 2022 HIV ENV filtered alignment
-#' - The overall substitution rate from Mansky 1996.
+#' To compute this we used substitution rates from Zanini et al. 2017
 #' @source
 #' Zanini et al. 2017: <https://doi.org/10.1093/ve/vex003>
-#' HIV ENV filtered alignment: <https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html>
-#' Mansky 1996: <https://doi.org/10.1089/aid.1996.12.307>
 "hiv_q_mat"
