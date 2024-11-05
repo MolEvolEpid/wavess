@@ -142,7 +142,7 @@ if __name__ == "__main__":
     host = agents.create_host_env(
         founder_viruses,
         reference_sequence,
-        float(params["rf_cost"]),
+        float(params["replicative_cost"]),
         int(pop_samp.loc[0]["active_cell_count"]),
     )
 
@@ -171,7 +171,7 @@ if __name__ == "__main__":
         conserved_sites,
         params["conserved_cost"],
         reference_sequence,
-        float(params["rf_cost"]),
+        float(params["replicative_cost"]),
         epitope_locations,
         params["seroconversion_time"],
         params["immune_response_proportion"],

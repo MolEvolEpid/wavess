@@ -23,7 +23,7 @@ parameters:
     # Conserved sites
     conserved_cost: 0.99 # Fitness cost per mutation in a conserved site
     # Replicative
-    rf_cost: 0.001 # Fitness cost per difference from reference
+    replicative_cost: 0.001 # Fitness cost per difference from reference
     # Immune
     seroconversion_time: 18 # Seroconversion time in generations; immunity considered only at this generation onward
     immune_response_proportion: 0.01 # Proportion new viral antigen must reach to initiate immune response against corresponding epitope (0.001 - 0.1)
