@@ -3,7 +3,7 @@
 \docType{data}
 \name{hiv_q_mat}
 \alias{hiv_q_mat}
-\title{HIV Q matrix}
+\title{HIV instantaneous rate matrix estimated from approximately neutral sites}
 \format{
 \subsection{\code{hiv_q_mat}}{
 
@@ -19,6 +19,8 @@ Zanini et al. 2017: \url{https://doi.org/10.1093/ve/vex003}
 hiv_q_mat
 }
 \description{
-Q matrix containing relative rates of change between nucleotides.
+Approximate Q matrix for HIV containing relative rates of change between
+nucleotides, from the nucleotide substitution rates estimated in
+Zanini et al. 2017.
 }
 \keyword{datasets}
