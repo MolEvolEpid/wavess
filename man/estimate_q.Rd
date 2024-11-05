@@ -26,6 +26,5 @@ genome region of interest.
 }
 \examples{
 # NOTE: This is just an example.
-# (**TODO: ADD AN ACTUAL WITHIN-HOST HIV ENV ALIGNMENT AS AN EXAMPLE?**)
 estimate_q(hiv_env_flt_2022)
 }
