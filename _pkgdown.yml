@@ -17,7 +17,7 @@ reference:
   - generate_pop_samp
   - slice_aln
   - extract_seqs
-  - calc_nt_sub_probs
+  - estimate_q
   - rate_to_probability
   - identify_conserved_sites
   - get_epitope_frequencies
@@ -39,6 +39,7 @@ reference:
 - title: Data
   contents:
   - hxb2_cons_founder
+  - hiv_q_mat
+  - founder_conserved_sites
   - hiv_env_flt_2022
-  - conserved_sites
   - env_features
