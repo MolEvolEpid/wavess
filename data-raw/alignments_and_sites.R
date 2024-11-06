@@ -67,4 +67,3 @@ diag(hiv_q_mat) <- -rowSums(hiv_q_mat)
 rownames(hiv_q_mat) <- colnames(hiv_q_mat)
 
 usethis::use_data(hiv_q_mat, overwrite = TRUE)
-
