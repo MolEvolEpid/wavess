@@ -122,7 +122,8 @@ def test_normalize():
     nums = [1, 2, 3, 4]
     assert normalize(nums) == [0.1, 0.2, 0.3, 0.4]
     assert normalize([1]) == [1]
-    assert normalize([0]) == [1]
+    with pytest.raises(ValueError):
+        normalize([0])
     with pytest.raises(Exception):
         normalize(1)
     with pytest.raises(Exception):

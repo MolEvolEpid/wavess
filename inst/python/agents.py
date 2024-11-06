@@ -150,10 +150,9 @@ def muts_rel_ref(nuc_sequence, ref_sequence):
 
 def normalize(likelihoods):
     total = sum(likelihoods)
-    if total != 0:
-        norm = [likelihood / total for likelihood in likelihoods]
-    else:
-        norm = [1 for likelihood in likelihoods]
+    if total == 0:
+        raise ValueError("All virus fitnesses are 0")
+    norm = [likelihood / total for likelihood in likelihoods]
     return norm
 
 
