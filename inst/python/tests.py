@@ -50,8 +50,7 @@ def test_get_nucleotide_substitution_probabilities():
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     assert nt_sub_probs[0] == ("A", "C", "G", "T")
-    assert nt_sub_probs[1][1] == [0.28571775123733556,
-                                  0.0, 0.02857647091712713, 0.6857057778455373]
+    assert nt_sub_probs[1][1] == [0.28570164890645106, 0.0, 0.028552030139711436, 0.6857463209538375]
     with pytest.raises(Exception):
         get_nucleotide_substitution_probabilities("", 3.5e-5)
     with pytest.raises(Exception):

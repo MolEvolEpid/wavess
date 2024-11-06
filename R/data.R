@@ -54,16 +54,23 @@
 #' <https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp>
 "env_features"
 
-#' HIV instantaneous rate matrix estimated from approximately neutral sites
+#' HIV Q matrix estimated from approximately neutral sites
 #'
-#' Approximate Q matrix for HIV containing relative rates of change between
+#' Q matrix for HIV containing relative rates of change between
 #' nucleotides, from the nucleotide substitution rates estimated in
 #' Zanini et al. 2017.
+#' Method for computing Q matrix:
+#' - convert rates per day to rates per generation
+#' - convert rates per generation to probabilities per generation
+#' - make diagonal such that rows of probability matrix p sum to 1
+#' - convert to q matrix, assuming a substitution rate t of 3.5e-5
+#'   substitutions/site/generation (Mansky 1996), by solving for q in the
+#'   equation p = exp(qt)
 #'
 #' @format ## `hiv_q_mat`
-#' A matrix containing relative rates of change between nucleotides, where the
+#' A Q matrix containing relative rates of change between nucleotides, where the
 #' rows are the "from" nucleotide and the columns are the "to" nucleotide.
-#' To compute this we used substitution rates from Zanini et al. 2017
 #' @source
 #' Zanini et al. 2017: <https://doi.org/10.1093/ve/vex003>
+#' Mansky 1996: <https://doi.org/10.1089/aid.1996.12.307>
 "hiv_q_mat"
