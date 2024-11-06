@@ -164,7 +164,7 @@ def test_HIV():
     assert hiv.immune_fitness == 1
     assert hiv.conserved_fitness == 1
     assert hiv.replicative_fitness == 1-0.99
-    assert hiv.fitness == 1
+    assert hiv.fitness == 1-0.99
     hiv = HIV("AAT", "", 1)
     assert hiv.replicative_fitness == 1
 

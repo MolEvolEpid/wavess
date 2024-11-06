@@ -157,8 +157,7 @@ def normalize(likelihoods):
     return norm
 
 
-def get_conserved_sites_mutated(
-        v1_muts, v2_muts, cross_over_positions, seq_len):
+def get_conserved_sites_mutated(v1_muts, v2_muts, cross_over_positions, seq_len):
     cross_over_positions = cross_over_positions + [seq_len]
     n_muts_conserved_virus1 = len(v1_muts)
     n_muts_conserved_virus2 = len(v2_muts)
@@ -170,14 +169,12 @@ def get_conserved_sites_mutated(
             prev_pos = curr_pos
             curr_pos = cross_over_positions.pop(0)
             if next_strand == 1:
-                muts = set(x for x in v1_muts if x >=
-                           prev_pos and x < curr_pos)
+                muts = set(x for x in v1_muts if x >= prev_pos and x < curr_pos)
                 for x in muts:
                     muts_in_conserved.add(x)
                 next_strand = 2
             else:
-                muts = set(x for x in v2_muts if x >=
-                           prev_pos and x < curr_pos)
+                muts = set(x for x in v2_muts if x >= prev_pos and x < curr_pos)
                 for x in muts:
                     muts_in_conserved.add(x)
                 next_strand = 1
@@ -210,10 +207,12 @@ class HIV:
         self.immune_fitness = 1
         self.conserved_fitness = 1
         self.replicative_fitness = 1
+        self.fitness = 1
         if len(reference_sequence):
             self.replicative_fitness = calc_seq_fitness(muts_rel_ref(
                 self.nuc_sequence, reference_sequence), replicative_cost)
-        self.fitness = 1
+            self.fitness = self.replicative_fitness
+       
 
     def __repr__(self):
         return_str = "HIV with sequence %s" % self.nuc_sequence
@@ -780,7 +779,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             k=(int(n_active_next_gen + num_cells_recomb)),
         )
 
-        # Infect n_active_next_gen - num_cells_recomb cells with a single virus. Here we will be reusing the same data structure (host.C)
+        # Infect n_active_next_gen - num_cells_recomb cells with a single virus. 
+        # Here we will be reusing the same data structure (host.C)
         # but replacing the virus. First n_active_next_gen - num_cells_recomb
         # indices from the sampled next_infecting_virus will be used.
         self.C = (
