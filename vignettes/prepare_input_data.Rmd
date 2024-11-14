@@ -267,8 +267,8 @@ will estimate a Q matrix. For instance, the Q matrix is returned when estimating
 a tree using [IQ-TREE](http://www.iqtree.org/) (in the .iqtree output file). We
 also provide the function `estimate_q()` to estimate Q from a multiple sequence
 alignment (in `ape::DNAbin` format) directly in R. Ideally, the input for this
-function would be an alignment of sequences from within-host evolution of a
-single representative person. However, we have found that the simulation output
+function would be an alignment of sequences from within-host evolution of a 
+representative person. However, we have found that the simulation output
 is relatively robust to variations in the Q matrix, so if you don't have a
 within-host alignment, then you can input an alignment with somewhat closely
 related sequences (e.g. from the same subtype). The function outputs a Q matrix
@@ -394,9 +394,15 @@ active_latent_counts |>
 
 ## Selection
 
-`wavess` can simulate three types of selection: conserved sites, fitness relative
-to a reference sequence, and B-cell immune selection at user-defined epitopes. 
-By default, no selection is included in the simulations. 
+`wavess` can simulate three types of selection: conserved sites, replicative
+fitness relative to a reference sequence, and B-cell immune selection at
+user-defined epitopes. By default, no selection is included in the simulations.
+However, we recommend including selection to obtain realistic model outputs.
+
+Below, we describe how to generate the inputs for each of these selective
+pressures.
+
+### Fitness costs
 
 Each of the different forms of selection has a fitness cost associated with it.
 The fitness cost can be in the range [0,1), where 0 indicates no cost. 1, which
@@ -406,10 +412,51 @@ somewhat viable. However, using a very high fitness cost, e.g. of 0.99,
 effectively simulates purifying selection due to the compounding nature of the
 fitness cost over many generations.
 
-Here, we describe how to generate the inputs for each of these selective
-pressures.
+The fitness, F, of a virus is defined by the product of the fitness of each component:
 
-**An important note about indexing and reference sequences before we jump in:**
+
+$$F=F_C*F_R*F_I$$
+where $F_C$ is the conserved fitness cost, $F_R$ is the replicative fitness cost,
+and $F_I$ is the immune fitness cost.
+
+The equation used to compute $F_C$ and $F_R$ is:
+
+$$F_{C/R} = (1-c)^n$$
+Where $c$ is either the conserved fitness cost or the replicative fitness cost,
+and $n$ is the number of mutations at conserved sites or the number of sites
+that differ from the reference sequence, respectively.
+
+When both forms of fitness are used, if the position is considered to be a
+conserved site, then it is not considered for replicative fitness.
+
+Here is a plot of how the cost and number of mutations influences overall fitness:
+
+```{r}
+costs <- c(0, 0.001, 0.01, 0.05, 0.1, 0.5, 0.99)
+n_muts <- 0:100
+tibble(n_mut=sort(rep(n_muts, length(costs))), cost=rep(costs, length(n_muts))) %>% 
+  mutate(fitness = (1-cost)**n_mut) %>% 
+  ggplot(aes(x = n_mut, y = fitness, col = factor(cost))) +
+  geom_line() +
+  geom_point() +
+  labs(x = 'Number of mutations', y = 'Fitness', col = 'Cost per mutation')
+
+```
+
+
+The calculation of immune fitness is a bit more involved, but the result is that
+it is computed as the largest fitness cost across all immune-recognized
+epitopes:
+
+$$F_I = max(c_{epitope})$$
+Where $c_{epitope}$ is a vector of the costs of each epitope recognized by the
+immune system. Note that this cost changes over generations. Please refer to the
+manuscript for more details.
+
+In the next sections, we will discuss how to identify conserved sites, create
+a reference sequence, and generate epitopes. 
+
+### An important note about indexing and reference sequences
 
 First, all nucleotide positions must be indexed relative to the start of the 
 founder sequence in the simulation. Since the back-end is implemented in
