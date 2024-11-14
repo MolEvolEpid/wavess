@@ -391,8 +391,18 @@ active_latent_counts |>
 
 `wavess` can simulate three types of selection: conserved sites, fitness relative
 to a reference sequence, and B-cell immune selection at user-defined epitopes. 
-By default, no selection is included in the simulations. Here, we describe how
-to generate the inputs for each of these selective pressures.
+By default, no selection is included in the simulations. 
+
+Each of the different forms of selection has a fitness cost associated with it.
+The fitness cost can be in the range [0,1), where 0 indicates no cost. 1, which
+indicates no ability to survive, is not allowed as we assume that we are only
+simulating scenarios where infection is established and the viruses are at least
+somewhat viable. However, using a very high fitness cost, e.g. of 0.99,
+effectively simulates purifying selection due to the compounding nature of the
+fitness cost over many generations.
+
+Here, we describe how to generate the inputs for each of these selective
+pressures.
 
 **An important note about indexing and reference sequences before we jump in:**
 

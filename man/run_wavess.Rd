@@ -43,7 +43,8 @@ fitness, they are expected to be codon-aligned.}
 the nucleotides ACGT. Rows are from, columns are to. Can be generated using
 the \code{\link[=estimate_q]{estimate_q()}} function (default: \code{hiv_q_mat}).}
 
-\item{recomb_rate}{Recombination rate per-site, per-generation (default: 1.4e-5)}
+\item{recomb_rate}{Recombination rate per-site, per-generation (default:
+1.4e-5)}
 
 \item{prob_act_to_lat}{Probability that an active cell becomes latent in a
 generation (default: 0.001). Set this to 0 if you don't want to model
@@ -64,8 +65,8 @@ founder sequence (indexed at 0). This can be generated using the
 sites fitness costs)}
 
 \item{conserved_cost}{Cost of mutation at conserved site, must be in the
-range 0-1 where 0 indicates no cost and 1 indicates no ability to survive
-(default: 0.99)}
+range [0,1) where 0 indicates no cost. 1, which indicates no ability to
+survive, is not allowed (default: 0.99)}
 
 \item{ref_seq}{Reference sequence as a character string. A consensus
 sequence, that can be used as the reference sequence, can be generated
@@ -73,16 +74,18 @@ using the function \code{\link[=identify_conserved_sites]{identify_conserved_sit
 fitness cost relative to a reference sequence)}
 
 \item{replicative_cost}{Replicative fitness cost, only relevant when ref_seq
-is not NULL, must be in the range 0-1 where 0 indicates no cost and 1
-indicates no ability to survive (default: 0.001)}
+is not NULL, must be in the range [0,1) where 0 indicates no cost. 1, which
+indicates no ability to survive, is not allowed (default: 0.001)}
 
 \item{epitope_locations}{Tibble of epitope locations and maximum fitness
 costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These
 epitopes are expected to be indexed at 0 and in a protein in the correct
 reading frame, as the nucleotide sequences are translated to amino acids to
-calculate the immune fitness cost. This epitope location tibble can be
-generated using the functions \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and
-\code{\link[=sample_epitopes]{sample_epitopes()}}. (default: NULL, i.e. no immune fitness costs)}
+calculate the immune fitness cost. The maximum fitness cost must be in the
+range [0,1) where 0 indicates no cost. 1, which indicates no ability to
+survive. This epitope location tibble can be generated using the functions
+\code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and \code{\link[=sample_epitopes]{sample_epitopes()}}. (default: NULL, i.e.
+no immune fitness costs)}
 
 \item{seroconversion_time}{Generation at which seroconversion occurs, only
 relevant when epitope_locations is not NULL (default: 18).}

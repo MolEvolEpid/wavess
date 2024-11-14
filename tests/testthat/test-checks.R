@@ -405,15 +405,24 @@ test_that("check_run_wavess_inputs works", {
   expect_no_error(check_run_wavess_inputs(
     ps, "ATAA", hiv_q_mat,
     3.5e-5, 1.4e-5,
-    NULL, 0.99, "ATTT", 1,
+    NULL, 0.99, "ATTT", 0.99,
     NULL, 30, 0.01, 90,
     0.001, 0.01, 0.01, 0.01, NULL
   ))
+
+  expect_error(check_run_wavess_inputs(
+    ps, "ATAA", hiv_q_mat,
+    3.5e-5, 1.4e-5,
+    NULL, 0.99, "ATTT", 1,
+    NULL, 30, 0.01, 90,
+    0.001, 0.01, 0.01, 0.01, NULL
+  ), "replicative_cost must be in the range")
+
   expect_error(
     check_run_wavess_inputs(
       ps, "ATAA", hiv_q_mat,
       3.5e-5, 1.4e-5,
-      NULL, 0.99, "ATT", 1,
+      NULL, 0.99, "ATT", 0.99,
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),

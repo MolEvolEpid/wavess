@@ -198,10 +198,14 @@ check_is_string <- function(x, var_name) {
 #'
 #' @return error if variable is not between 0 and 1 inclusive
 #' @noRd
-check_is_0to1 <- function(x, var_name) {
+check_is_0to1 <- function(x, var_name, ok1 = TRUE) {
   check_is_numeric(x, var_name)
-  if (x < 0 || x > 1) {
-    stop(var_name, " must be in the range [0,1], but is ", x)
+  check_bool <- x < 0 || x > 1
+  if(!ok1){
+    check_bool <- x < 0 || x >= 1
+  }
+  if (check_bool) {
+    stop(var_name, " must be in the range [0,1), but is ", x)
   }
 }
 
@@ -275,7 +279,7 @@ check_sample_epitopes_inputs <- function(epitope_probabilities,
   }
   check_is_pos(num_epitopes, "num_epitopes")
   check_is_pos(aa_epitope_length, "aa_epitope_length")
-  check_is_0to1(max_fit_cost, "max_fit_cost")
+  check_is_0to1(max_fit_cost, "max_fit_cost", ok1 = FALSE)
   check_is_pos(max_resamples, "max_resamples")
   if (!is.null(ref_founder_map)) {
     check_is_df(ref_founder_map)
@@ -412,7 +416,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
         "the length of the founder sequence"
       )
     }
-    check_is_0to1(conserved_cost, "conserved_cost")
+    check_is_0to1(conserved_cost, "conserved_cost", ok1 = FALSE)
   }
   if (!is.null(ref_seq)) {
     check_is_string(ref_seq, "ref_seq")
@@ -420,7 +424,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
     if (nchar(as.list(founder_seqs)[1]) != nchar(ref_seq)) {
       stop("ref_seq must be the same length as the founder sequence(s)")
     }
-    check_is_0to1(replicative_cost, "replicative_cost")
+    check_is_0to1(replicative_cost, "replicative_cost", ok1 = FALSE)
   }
   if (!is.null(epitope_locations)) {
     check_is_df(epitope_locations, "epitope_locations")
@@ -438,7 +442,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
       check_is_pos(x, "epitope_locations$epi_end_nt", FALSE)
     })
     lapply(epitope_locations$max_fitness_cost, function(x) {
-      check_is_0to1(x, "epitope_locations$max_fitness_cost")
+      check_is_0to1(x, "epitope_locations$max_fitness_cost", ok1 = FALSE)
     })
     check_is_pos(seroconversion_time, "seroconversion_time", TRUE)
     check_is_0to1(prop_for_imm, "prop_for_imm")

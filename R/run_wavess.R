@@ -35,22 +35,24 @@
 #'   [identify_conserved_sites()] function (default: NULL, i.e. no conserved
 #'   sites fitness costs)
 #' @param conserved_cost Cost of mutation at conserved site, must be in the
-#'   range 0-1 where 0 indicates no cost and 1 indicates no ability to survive
-#'   (default: 0.99)
+#'   range [0,1) where 0 indicates no cost. 1, which indicates no ability to
+#'   survive, is not allowed (default: 0.99)
 #' @param ref_seq Reference sequence as a character string. A consensus
 #'   sequence, that can be used as the reference sequence, can be generated
 #'   using the function [identify_conserved_sites()] (default: NULL, i.e. no
 #'   fitness cost relative to a reference sequence)
 #' @param replicative_cost Replicative fitness cost, only relevant when ref_seq
-#'   is not NULL, must be in the range 0-1 where 0 indicates no cost and 1
-#'   indicates no ability to survive (default: 0.001)
+#'   is not NULL, must be in the range [0,1) where 0 indicates no cost. 1, which
+#'   indicates no ability to survive, is not allowed (default: 0.001)
 #' @param epitope_locations Tibble of epitope locations and maximum fitness
 #'   costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These
 #'   epitopes are expected to be indexed at 0 and in a protein in the correct
 #'   reading frame, as the nucleotide sequences are translated to amino acids to
-#'   calculate the immune fitness cost. This epitope location tibble can be
-#'   generated using the functions [get_epitope_frequencies()] and
-#'   [sample_epitopes()]. (default: NULL, i.e. no immune fitness costs)
+#'   calculate the immune fitness cost. The maximum fitness cost must be in the
+#'   range [0,1) where 0 indicates no cost. 1, which indicates no ability to
+#'   survive. This epitope location tibble can be generated using the functions
+#'   [get_epitope_frequencies()] and [sample_epitopes()]. (default: NULL, i.e.
+#'   no immune fitness costs)
 #' @param seroconversion_time Generation at which seroconversion occurs, only
 #'   relevant when epitope_locations is not NULL (default: 18).
 #' @param prop_for_imm Proportion of all infected cells that must be infected
@@ -60,7 +62,8 @@
 #'   to an epitope to reach full potency, only relevant when epitope_locations
 #'   is not NULL (default: 90).
 #' @param mut_rate Mutation rate per-site, per-generation (default: 3.5e-5)
-#' @param recomb_rate Recombination rate per-site, per-generation (default: 1.4e-5)
+#' @param recomb_rate Recombination rate per-site, per-generation (default:
+#'   1.4e-5)
 #' @param prob_act_to_lat Probability that an active cell becomes latent in a
 #'   generation (default: 0.001). Set this to 0 if you don't want to model
 #'   latent cell dynamics.

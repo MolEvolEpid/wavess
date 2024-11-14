@@ -9,14 +9,15 @@
 #'   [get_epitope_frequencies()], including columns `aa_position` and
 #'   `epitope_probability`. `aa_position` should be indexed at 0
 #' @param start_aa_pos Starting amino acid position to consider for epitopes,
-#' indexed at 0 (default: 0, i.e. the first position)
+#'   indexed at 0 (default: 0, i.e. the first position)
 #' @param end_aa_pos Ending amino acid position to consider for epitopes,
 #'   indexed at 0 (default: NULL, i.e. through the final position in
 #'   `epitope_probabilities$aa_position`)
 #' @param num_epitopes Number of epitopes to sample
 #' @param aa_epitope_length Amino acid epitope length
-#' @param max_fit_cost Maximum fitness cost of an epitope, must be between 0 and
-#'   1 (default: 0.4)
+#' @param max_fit_cost Maximum fitness cost of an epitope, must be in the range
+#'   [0,1) where 0 indicates no cost. 1, which indicates no ability to
+#'   survive, is not allowed (default: 0.4)
 #' **note that the model output is very sensitive to this parameter**
 #' @param cost_type "linear" or "random"; linear returns max fitness costs
 #'   distributed linearly between 0 and `max_fit_cost` (not including 0, but

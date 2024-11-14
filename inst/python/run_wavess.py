@@ -36,6 +36,8 @@ def read_b_epitopes(filename):
     epitopes_df = read_csv(filename)
     epitopes = []
     for row in epitopes_df.itertuples():
+        if float(row[3]) < 0 or float(row[3]) >= 1:
+            raise ValueError("maximum immune fitness cost must be in the range [0,1)")
         epitopes.append(agents.Epitope(
             int(row[1]), int(row[2]), float(row[3])))
     return epitopes
@@ -137,6 +139,12 @@ if __name__ == "__main__":
         epitope_locations = read_b_epitopes(input_files["epitope_locations"])
 
     # Initialize parameters
+    
+    # Check that fitness parameters are in the range [0,1)
+    if float(params["conserved_cost"]) < 0 or float(params["conserved_cost"]) >= 1:
+      raise ValueError("conserved fitness cost must be in the range [0,1)")
+    if float(params["replicative_cost"]) < 0 or float(params["replicative_cost"]) >= 1:
+      raise ValueError("replicative fitness cost must be in the range [0,1)")
 
     # Create host environment and add to viral sequences counter
     host = agents.create_host_env(
@@ -162,8 +170,8 @@ if __name__ == "__main__":
         founder_viruses,
         nucleotides_order,
         substitution_probabilities,
-        1 - exp(-params["mut_rate"]),
-        1 - exp(-params["recomb_rate"]),
+        1 - exp(-params["mut_rate"]), # change to probability
+        1 - exp(-params["recomb_rate"]), # change to probability
         params["prob_act_to_lat"],
         params["prob_lat_to_act"],
         params["prob_lat_die"],

@@ -17,16 +17,23 @@ knitr::opts_chunk$set(
 We provide the R function `run_wavess()` as a convenience function to run the
 simulator from R, but since the underlying functions are all written in Python,
 you can also run wavess with Python using a command-line script. We provide an
-example Python script `main.py` (in `inst/python/`) to make this easy to do. The
-script takes a config file (`inst/python/config.yaml`) that includes paths to
-input files and defines various input arguments such as what selective pressures
-to model, as well as an output file path/prefix.
+example Python script `run_wavess.py` (in `inst/python/`) to make this easy to
+do. The script takes a config file (`inst/python/config.yaml`) that includes
+paths to input files and defines various input arguments such as what selective
+pressures to model, as well as an output file path/prefix.
 
-We provide example input files in **XXXXXXX**. You can generate the input files
-on your own, or using the functions provided in this package. See
+**Please note that the python script does not check the inputs as comprehensively
+as the R function. If you need to troubleshoot an error you are getting with the
+Python script, it is probably worth testing it out in the R function to see if
+you get a more informative error message.**
+
+**SHOULD WE ADD BETTER INPUT CHECKING TO THE PYTHON SCRIPT?**
+
+We provide example input files in `inst/extdata`. You can generate the input
+files on your own, or using the functions provided in this package. See
 `vignette("prepare_input_data")` for details on how to create and save the
 required input files. Here, we briefly outline what goes in the config file and
-how to run `main.py` itself.
+how to run `run_wavess.py` itself.
 
 ### Installing dependencies
 
@@ -49,12 +56,12 @@ mamba env create -f env.yaml
 Next, activate the wavess environment (you have to do this once per session):
 
 ```
-mamba activate swish
+mamba activate wavess
 ```
 
 ### Config file
 
-`main.py` requires a `config.yaml` file (example config file in `inst/python`)
+`run_wavess.py` requires a `config.yaml` file (example config file in `inst/python`)
 that defines various parameters and includes paths to input files.
 
 **File inputs (example data in `inst/extdata/`):**
