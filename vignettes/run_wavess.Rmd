@@ -14,6 +14,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+wavess is a agent-based discrete-time within-host evolution simulator. We assume
+that all virus life cycles within the infection are synchronized into
+generations. Each generation is one full virus life cycle, from infecting a cell
+to exiting the cell.
+
 In this vignette, we focus on how to simulate within-host evolution using the
 `run_wavess()` function. We will be using the HIV ENV gp120 gene as an example.
 Please note that the default arguments were set with this particular organism

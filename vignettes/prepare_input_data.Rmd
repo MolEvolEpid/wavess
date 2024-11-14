@@ -17,6 +17,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+wavess is a agent-based discrete-time within-host evolution simulator. We assume
+that all virus life cycles within the infection are synchronized into
+generations. Each generation is one full virus life cycle, from infecting a cell
+to exiting the cell.
+
 This vignette describes how to generate input data for running wavess
 using functions from the package, as summarized in the table below.
 Please note that you may also generate the input data on your own, which
