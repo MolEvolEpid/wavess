@@ -48,4 +48,3 @@ founder_conserved_sites <-
   toupper()
 
 usethis::use_data(founder_conserved_sites, compress = "xz", overwrite = TRUE)
-
