@@ -201,7 +201,7 @@ check_is_string <- function(x, var_name) {
 check_is_0to1 <- function(x, var_name, ok1 = TRUE) {
   check_is_numeric(x, var_name)
   check_bool <- x < 0 || x > 1
-  if(!ok1){
+  if (!ok1) {
     check_bool <- x < 0 || x >= 1
   }
   if (check_bool) {
