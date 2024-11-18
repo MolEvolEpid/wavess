@@ -20,10 +20,6 @@ test_that("calc_tr_summary_stats works", {
     3
   )
   expect_error(
-    calc_tr_summary_stats(ape::unroot(ape::read.tree(text = "((t2:1,t1:1):1,t3:1);"))),
-    "tr must be rooted"
-  )
-  expect_error(
     calc_parsimony(
       ape::read.tree(text = "((t2:1,t1:1):1,t3:1);"),
       c(1, "t2" = 2, "t3" = 2, "t4" = 3, "t5" = 3)

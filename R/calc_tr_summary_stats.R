@@ -21,7 +21,7 @@
 #' names(times) <- tr$tip.label
 #' calc_tr_summary_stats(tr, times)
 calc_tr_summary_stats <- function(tr, timepoints) {
-  check_is_phylo(tr, "tr", rooted = TRUE)
+  check_is_phylo(tr, "tr")
   tibble::tibble(
     stat_name = c("sackin", "int_bl", "ext_bl", "int_over_ext", "parsimony_score"),
     stat_value = c(
@@ -63,7 +63,7 @@ calc_int_over_ext <- function(tr) {
 #' names(times) <- tr$tip.label
 #' calc_parsimony(tr, times)
 calc_parsimony <- function(tr, timepoints) {
-  check_is_phylo(tr, "tr", rooted = TRUE)
+  check_is_phylo(tr, "tr")
   if (is.null(names(timepoints)) | !all(names(timepoints) %in% tr$tip.label)) {
     stop(
       "timepoints must be a vector named by tr tip labels, ",
