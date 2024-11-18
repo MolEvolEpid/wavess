@@ -68,10 +68,11 @@ sites fitness costs)}
 range [0,1) where 0 indicates no cost. 1, which indicates no ability to
 survive, is not allowed (default: 0.99)}
 
-\item{ref_seq}{Reference sequence as a character string. A consensus
-sequence, that can be used as the reference sequence, can be generated
-using the function \code{\link[=identify_conserved_sites]{identify_conserved_sites()}} (default: NULL, i.e. no
-fitness cost relative to a reference sequence)}
+\item{ref_seq}{Reference sequence as a character string, which denotes the
+"most fit" virus from a replicative perspective. A consensus sequence, that
+can be used as the reference sequence, can be generated using the function
+\code{\link[=identify_conserved_sites]{identify_conserved_sites()}} (default: NULL, i.e. no fitness cost relative
+to a reference sequence)}
 
 \item{replicative_cost}{Replicative fitness cost, only relevant when ref_seq
 is not NULL, must be in the range [0,1) where 0 indicates no cost. 1, which
@@ -114,10 +115,11 @@ gene in mind. If you'd like to simulate something else, you will likely have
 to modify certain parameters. However, if you are interested in this gene in
 particular, you can probably use most of the defaults including the founder
 and reference sequences provided as examples. However, by default no fitness
-costs are modeled. To model these, you can use the pre-processing functions
-(see \code{vignette('prepare_input_data')}) to generate the relevant inputs. Also,
-the parameters for latent probabilities are assumed to be small, such that it
-is unlikely that multiple events (activate, die, proliferate) will occur to a
+costs are modeled. We recommend including fitness to get a realistic model
+output. To model these, you can use the pre-processing functions (see
+\code{vignette('prepare_input_data')}) to generate the relevant inputs. Also, the
+parameters for latent probabilities are assumed to be small, such that it is
+unlikely that multiple events (activate, die, proliferate) will occur to a
 single latent cell in a single (active cell) generation. See
 \code{vignette('run_wavess')} for more details about the simulator and input
 arguments.
