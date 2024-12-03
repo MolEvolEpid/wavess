@@ -89,15 +89,15 @@ calc_parsimony <- function(tr, timepoints) {
 #' @examples
 #' tr <- ape::rtree(100)
 #' calc_tr_dists(tr)
-calc_tr_dists <- function(tr){
+calc_tr_dists <- function(tr) {
   check_is_phylo(tr, "tr")
   ntip <- length(tr$tip.label)
-  root_node <- ntip+1
+  root_node <- ntip + 1
   d <- ape::dist.nodes(tr)
   # mean root-to-tip distance
-  dv <- mean(d[1:ntip,root_node])
+  dv <- mean(d[1:ntip, root_node])
   # mean tip-to-tip distance
-  d <- d[1:ntip,1:ntip]
+  d <- d[1:ntip, 1:ntip]
   ds <- mean(d[upper.tri(d)])
   return(c(dv, ds))
 }
