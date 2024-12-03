@@ -5,9 +5,9 @@ test_that("calc_tr_summary_stats works", {
   )
   expect_equal(tss$stat_name, c(
     "sackin", "int_bl", "ext_bl", "int_over_ext",
-    "parsimony_score"
+    "parsimony_score", "root_to_tip", "tip_to_tip"
   ))
-  expect_equal(tss$stat_value, c(5, 1, 1, 1, 1))
+  expect_equal(tss$stat_value, c(5, 1, 1, 1, 1, 5/3, 8/3))
   expect_equal(
     calc_int_over_ext(ape::read.tree(text = "((t2:1,t1:1):1,t3:4);")),
     c(1, 2, 0.5)
@@ -27,3 +27,4 @@ test_that("calc_tr_summary_stats works", {
     "timepoints must be a vector named by tr tip labels, and must "
   )
 })
+

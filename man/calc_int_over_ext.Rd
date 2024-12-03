@@ -7,7 +7,7 @@
 calc_int_over_ext(tr)
 }
 \arguments{
-\item{tr}{Phylogeny}
+\item{tr}{Rooted phylogeny}
 }
 \value{
 Mean internal branch length, mean external branch length, and mean

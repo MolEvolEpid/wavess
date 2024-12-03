@@ -3,6 +3,7 @@
 export(calc_div_metrics)
 export(calc_int_over_ext)
 export(calc_parsimony)
+export(calc_tr_dists)
 export(calc_tr_summary_stats)
 export(create_python_venv)
 export(estimate_q)

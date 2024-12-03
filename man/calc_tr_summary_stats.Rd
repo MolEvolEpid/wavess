@@ -7,7 +7,7 @@
 calc_tr_summary_stats(tr, timepoints)
 }
 \arguments{
-\item{tr}{Phylogeny}
+\item{tr}{Rooted phylogeny}
 
 \item{timepoints}{Vector of time points named by tree tip label. All tip
 lables must be included in this vector. If you want to exclude certain tips,
@@ -21,6 +21,8 @@ Tibble including 3 tree summary statistics:
 \item Mean external branch length (\code{\link[=calc_int_over_ext]{calc_int_over_ext()}})
 \item Mean internal over external branch length ratio (\code{\link[=calc_int_over_ext]{calc_int_over_ext()}})
 \item Timepoint parsimony score (\code{\link[=calc_parsimony]{calc_parsimony()}})
+\item Mean root-to-tip distance (\code{\link[=calc_tr_dists]{calc_tr_dists()}})
+\item Mean tip-to-tip distance (\code{\link[=calc_tr_dists]{calc_tr_dists()}})
 }
 }
 \description{

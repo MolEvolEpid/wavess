@@ -163,6 +163,7 @@ length (along with the actual mean internal and mean external branch lengths).
 - The parsimony score of the phylogeny with the tips labeled as timepoints.
 Many other tree statistics can be calculated using the
 [`treebalance`](https://treebalance.wordpress.com/) package.
+- The mean root-to-tip distance and mean tip-to-tip distance. 
 
 **Note that these summary statistics can only be compared for trees that are
 derived from the same sampling scheme, i.e. the same number of samples taken
@@ -173,5 +174,5 @@ calc_tr_summary_stats(tr, gens)
 ```
 
 Each of these can also individually be computed using the following functions:
-`calc_sackin()`, `calc_int_over_ext()`, and `calc_parsimony()`.
+`calc_sackin()`, `calc_int_over_ext()`, `calc_parsimony()`, and `calc_tr_dists()`.
 

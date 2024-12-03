@@ -7,7 +7,7 @@
 calc_parsimony(tr, timepoints)
 }
 \arguments{
-\item{tr}{Phylogeny}
+\item{tr}{Rooted phylogeny}
 
 \item{timepoints}{Vector of time points named by tree tip label. All tip
 lables must be included in this vector. If you want to exclude certain tips,

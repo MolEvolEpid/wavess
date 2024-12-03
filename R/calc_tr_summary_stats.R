@@ -2,7 +2,7 @@
 #'
 #' See `vignette('analyze_output')` for more details.
 #'
-#' @param tr Phylogeny
+#' @param tr Rooted phylogeny
 #' @param timepoints Vector of time points named by tree tip label. All tip
 #' lables must be included in this vector. If you want to exclude certain tips,
 #' you must drop them from the tree prior to using this function.
@@ -13,6 +13,8 @@
 #' - Mean external branch length ([calc_int_over_ext()])
 #' - Mean internal over external branch length ratio ([calc_int_over_ext()])
 #' - Timepoint parsimony score ([calc_parsimony()])
+#' - Mean root-to-tip distance ([calc_tr_dists()])
+#' - Mean tip-to-tip distance ([calc_tr_dists()])
 #' @export
 #'
 #' @examples
@@ -23,11 +25,12 @@
 calc_tr_summary_stats <- function(tr, timepoints) {
   check_is_phylo(tr, "tr")
   tibble::tibble(
-    stat_name = c("sackin", "int_bl", "ext_bl", "int_over_ext", "parsimony_score"),
+    stat_name = c("sackin", "int_bl", "ext_bl", "int_over_ext", "parsimony_score", "root_to_tip", "tip_to_tip"),
     stat_value = c(
       treebalance::sackinI(tr),
       calc_int_over_ext(tr),
-      calc_parsimony(tr, timepoints)
+      calc_parsimony(tr, timepoints),
+      calc_tr_dists(tr)
     )
   )
 }
@@ -74,4 +77,27 @@ calc_parsimony <- function(tr, timepoints) {
     tr,
     phangorn::phyDat(factor(timepoints), type = "USER")
   )
+}
+
+#' Calculate tree distances (root-to-tip and tip-to-tip)
+#'
+#' @inheritParams calc_tr_summary_stats
+#'
+#' @return Mean root-to-tip distance and mean tip-to-tip distance
+#' @export
+#'
+#' @examples
+#' tr <- ape::rtree(100)
+#' calc_tr_dists(tr)
+calc_tr_dists <- function(tr){
+  check_is_phylo(tr, "tr")
+  ntip <- length(tr$tip.label)
+  root_node <- ntip+1
+  d <- ape::dist.nodes(tr)
+  # mean root-to-tip distance
+  dv <- mean(d[1:ntip,root_node])
+  # mean tip-to-tip distance
+  d <- d[1:ntip,1:ntip]
+  ds <- mean(d[upper.tri(d)])
+  return(c(dv, ds))
 }
