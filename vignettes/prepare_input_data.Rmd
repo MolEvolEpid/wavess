@@ -416,8 +416,8 @@ The fitness, F, of a virus is defined by the product of the fitness of each comp
 
 
 $$F=F_C*F_R*F_I$$
-where $F_C$ is the conserved fitness cost, $F_R$ is the replicative fitness cost,
-and $F_I$ is the immune fitness cost.
+where $F_C$ is the conserved fitness, $F_R$ is the replicative fitness,
+and $F_I$ is the immune fitness.
 
 The equation used to compute $F_C$ and $F_R$ is:
 
@@ -587,14 +587,14 @@ While we provide information about each sequence in the output, the input of
 can run the following code:
 
 ```{r, prep_conserved}
-founder_conserved_sites <- founder_conserved_df |>
+founder_conserved_sites_example <- founder_conserved_df |>
   filter(conserved == "Yes") |>
   select(founder_pos, founder_base) |>
   deframe() |>
   toupper()
 
-head(founder_conserved_sites)
-tail(founder_conserved_sites)
+head(founder_conserved_sites_example)
+tail(founder_conserved_sites_example)
 ```
 
 To write this to a file (note that we use the internal conserved sites because
@@ -698,6 +698,16 @@ returns a tibble with three columns:
 (epi_probs <- get_epitope_frequencies(env_features$Position))
 ```
 
+We can visualize it as follows:
+
+```{r}
+epi_probs %>% 
+  ggplot(aes(x = aa_position, y = epitope_probability)) +
+  geom_col() +
+  labs(x = 'HXB2 amino acid position', y = 'Epitope probability')
+```
+
+
 This information can be used as input to the `sample_epitopes()` function. Note
 that the output of this function is different each time it's run, since the
 locations are selected randomly each time.
@@ -713,8 +723,7 @@ There are many ways to customize the output of this function. You can provide
 the starting (`start_aa_pos`) and ending (`end_aa_pos`) amino acid positions to
 consider for epitope sampling (here we've pre-subset to only gp120 features),
 the number of epitopes to sample (`num_epitopes`), the amino acid epitope length
-(`aa_epitope_length`), the maximum fitness cost of the epitope (`max_fit_cost`),
-and the cost type (linear or random, see documentation for details).
+(`aa_epitope_length`), and the maximum fitness cost of an epitope (`max_fit_cost`).
 
 If the amino acid positions are relative to a community reference sequence, then
 you will also need to create a map between the community reference and your
@@ -768,3 +777,32 @@ write_csv(epitope_locations, "input_data/epitope_locations.csv")
 
 Next, check out `vignette("run_wavess")` to see how to use all these inputs
 to simulate within-host evolution. 
+
+
+```{r}
+founder_ref$conserved <- founder_conserved_sites %>% enframe() %>% mutate(name = as.numeric(name) + 1) %>% complete(name = seq(min(name), max(name), 1L), fill = list(value='-')) %>% pull(value) %>% paste0(., collapse = '')
+
+founder_ref$aln_cons <- identify_conserved_sites(flt_gp120,
+    founder = "B.US.2011.DEMB11US006.KC473833",
+    ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+    founder_aln = hcf_gp120
+  ) |>
+  select(founder_pos, consensus_base) |>
+  deframe() |>
+  toupper() %>% enframe() %>% mutate(name = as.numeric(name) + 1) %>% complete(name = seq(min(name), max(name), 1L), fill = list(value='-')) %>% pull(value) %>% paste0(., collapse = '')
+
+founder_ref$aln_cons_b <- identify_conserved_sites(
+  flt_gp120[grepl('^B', labels(flt_gp120)),],
+    founder = "B.US.2011.DEMB11US006.KC473833",
+    ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+    founder_aln = hcf_gp120
+  ) |>
+  select(founder_pos, consensus_base) |>
+  deframe() |>
+  toupper() %>% enframe() %>% mutate(name = as.numeric(name) + 1) %>% complete(name = seq(min(name), max(name), 1L), fill = list(value='-')) %>% pull(value) %>% paste0(., collapse = '')
+
+lapply(names(founder_ref), function(x) enframe(strsplit(founder_ref[[x]], '')[[1]]) %>% mutate(seq=x)) %>% bind_rows() %>% 
+  pivot_wider(names_from = seq, values_from = value) %>% #View()
+  filter(ref != aln_cons_b & conserved != '-')
+```
+
