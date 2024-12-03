@@ -43,7 +43,7 @@ founder_conserved_sites <-
     founder_aln = hcf_gp120
   ) |>
   dplyr::filter(conserved == "Yes") |>
-  dplyr::select(founder_pos, founder_base) |>
+  dplyr::select(founder_pos, consensus_base) |>
   tibble::deframe() |>
   toupper()
 

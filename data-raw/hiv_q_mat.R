@@ -23,3 +23,4 @@ hiv_q_mat <- expm::logm(probs_per_gen)/3.5e-5
 rownames(hiv_q_mat) <- colnames(hiv_q_mat) <- c('A', 'C', 'G', 'T')
 usethis::use_data(hiv_q_mat, overwrite = TRUE)
 
+
