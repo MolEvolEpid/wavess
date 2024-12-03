@@ -18,9 +18,7 @@ rates_per_day <- as.matrix(data.frame(
 ))
 rates_per_gen <- rates_per_day * 1.2
 probs_per_gen <- rate_to_probability(rates_per_gen)
-diag(probs_per_gen) <- 1-rowSums(probs_per_gen)
-hiv_q_mat <- expm::logm(probs_per_gen)/3.5e-5
-rownames(hiv_q_mat) <- colnames(hiv_q_mat) <- c('A', 'C', 'G', 'T')
+diag(probs_per_gen) <- 1 - rowSums(probs_per_gen)
+hiv_q_mat <- expm::logm(probs_per_gen) / 3.5e-5
+rownames(hiv_q_mat) <- colnames(hiv_q_mat) <- c("A", "C", "G", "T")
 usethis::use_data(hiv_q_mat, overwrite = TRUE)
-
-

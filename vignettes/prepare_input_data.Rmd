@@ -434,13 +434,12 @@ Here is a plot of how the cost and number of mutations influences overall fitnes
 ```{r}
 costs <- c(0, 0.001, 0.01, 0.05, 0.1, 0.5, 0.99)
 n_muts <- 0:100
-tibble(n_mut=sort(rep(n_muts, length(costs))), cost=rep(costs, length(n_muts))) %>% 
-  mutate(fitness = (1-cost)**n_mut) %>% 
+tibble(n_mut = sort(rep(n_muts, length(costs))), cost = rep(costs, length(n_muts))) %>%
+  mutate(fitness = (1 - cost)**n_mut) %>%
   ggplot(aes(x = n_mut, y = fitness, col = factor(cost))) +
   geom_line() +
   geom_point() +
-  labs(x = 'Number of mutations', y = 'Fitness', col = 'Cost per mutation')
-
+  labs(x = "Number of mutations", y = "Fitness", col = "Cost per mutation")
 ```
 
 
