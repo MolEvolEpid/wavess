@@ -19,11 +19,6 @@
 #'   [0,1) where 0 indicates no cost. 1, which indicates no ability to
 #'   survive, is not allowed (default: 0.4)
 #' **note that the model output is very sensitive to this parameter**
-#' @param cost_type "linear" or "random"; linear returns max fitness costs
-#'   distributed linearly between 0 and `max_fit_cost` (not including 0, but
-#'   including `max_fit_cost`), random returns one epitope with `max_fit_cost`
-#'   and all other epitopes with max fitness costs randomly selected from a
-#'   uniform distribution between 0 and `max_fit_cost` (default: "linear")
 #' @param max_resamples Maximum number of resampling events to attempt; this is
 #'   to prevent an infinite loop (default: 100)
 #' @param ref_founder_map Output from [map_ref_founder()], including
@@ -48,29 +43,19 @@ sample_epitopes <- function(epitope_probabilities,
                             num_epitopes = 10,
                             aa_epitope_length = 10,
                             max_fit_cost = 0.4,
-                            cost_type = "linear",
                             max_resamples = 100,
                             ref_founder_map = NULL) {
   check_sample_epitopes_inputs(
     epitope_probabilities, start_aa_pos, end_aa_pos,
     num_epitopes, aa_epitope_length,
-    max_fit_cost, cost_type,
+    max_fit_cost,
     max_resamples, ref_founder_map
   )
   if (is.null(end_aa_pos)) {
     end_aa_pos <- max(epitope_probabilities$aa_position)
   }
   # max fitness cost for each epitope
-  if (cost_type == "linear") {
-    max_fit_costs <- seq(0, max_fit_cost,
-      length.out = num_epitopes + 1
-    )[2:(num_epitopes + 1)]
-  } else if (cost_type == "random") {
-    max_fit_costs <- c(
-      max_fit_cost,
-      stats::runif(num_epitopes - 1, 0, max_fit_cost)
-    )
-  }
+  max_fit_costs <- seq(0, max_fit_cost, length.out = num_epitopes + 1)[2:(num_epitopes + 1)]
   # Draw num_epitopes positions
   start_pos <- c() # list of epitope start positions
   all_pos <- c() # list of all epitope positions

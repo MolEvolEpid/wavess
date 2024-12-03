@@ -163,7 +163,6 @@ test_that("check_sample_epitopes_inputs works", {
     num_epitopes = 10,
     aa_epitope_length = 10,
     max_fit_cost = 0.4,
-    cost_type = "linear",
     max_resamples = 100,
     ref_founder_map = NULL
   ))
@@ -174,7 +173,6 @@ test_that("check_sample_epitopes_inputs works", {
       num_epitopes = 10,
       aa_epitope_length = 10,
       max_fit_cost = 0.4,
-      cost_type = "linear",
       max_resamples = 100,
       ref_founder_map = NULL
     ),
@@ -183,24 +181,10 @@ test_that("check_sample_epitopes_inputs works", {
   expect_error(
     check_sample_epitopes_inputs(get_epitope_frequencies(env_features$Position - 1),
       start_aa_pos = 1,
-      end_aa_pos = NULL,
-      num_epitopes = 10,
-      aa_epitope_length = 10,
-      max_fit_cost = 0.4,
-      cost_type = "test",
-      max_resamples = 100,
-      ref_founder_map = NULL
-    ),
-    'Cost type must be either "linear" or "random", but you supplied: test'
-  )
-  expect_error(
-    check_sample_epitopes_inputs(get_epitope_frequencies(env_features$Position - 1),
-      start_aa_pos = 1,
       end_aa_pos = -1,
       num_epitopes = 10,
       aa_epitope_length = 10,
       max_fit_cost = 0.4,
-      cost_type = "linear",
       max_resamples = 100,
       ref_founder_map = NULL
     ),
@@ -213,7 +197,6 @@ test_that("check_sample_epitopes_inputs works", {
       num_epitopes = 10,
       aa_epitope_length = 10,
       max_fit_cost = 0.4,
-      cost_type = "linear",
       max_resamples = 100,
       ref_founder_map = tibble::tibble(test = 0:1)
     ),
@@ -226,7 +209,6 @@ test_that("check_sample_epitopes_inputs works", {
     num_epitopes = 10,
     aa_epitope_length = 10,
     max_fit_cost = 0.4,
-    cost_type = "linear",
     max_resamples = 100,
     ref_founder_map = tibble::tibble(
       ref_pos = 0:1,

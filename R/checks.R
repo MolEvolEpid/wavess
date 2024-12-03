@@ -257,7 +257,7 @@ check_is_phylo <- function(x, var_name, rooted = FALSE) {
 check_sample_epitopes_inputs <- function(epitope_probabilities,
                                          start_aa_pos, end_aa_pos,
                                          num_epitopes, aa_epitope_length,
-                                         max_fit_cost, cost_type,
+                                         max_fit_cost,
                                          max_resamples, ref_founder_map) {
   check_is_df(epitope_probabilities)
   if (!all(c("aa_position", "epitope_probability") %in%
@@ -265,13 +265,6 @@ check_sample_epitopes_inputs <- function(epitope_probabilities,
     stop("The following columns must be included in `epitope_probabilities`:
          `aa_position`, `epitope_probability`. See `sample_epitopes()`
          documentation for more details")
-  }
-  check_is_string(cost_type)
-  if (!cost_type %in% c("linear", "random")) {
-    stop(
-      'Cost type must be either "linear" or "random", but you supplied: ',
-      cost_type
-    )
   }
   check_is_pos(start_aa_pos, "start_aa_pos", ok0 = TRUE)
   if (!is.null(end_aa_pos)) {

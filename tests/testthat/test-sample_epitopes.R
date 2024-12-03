@@ -22,9 +22,6 @@ test_that("sample_epitopes works", {
     c(0.040, 0.080, 0.120, 0.160, 0.200, 0.240, 0.280, 0.320, 0.360, 0.400)
   )
   expect_message(sample_epitopes(get_epitope_frequencies(env_features$Position - 1),
-    cost_type = "random"
-  ))
-  expect_message(sample_epitopes(get_epitope_frequencies(env_features$Position - 1),
     end_aa_pos = 1000
   ))
   expect_error(
