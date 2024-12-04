@@ -340,7 +340,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
                                     conserved_sites, conserved_cost,
                                     ref_seq, replicative_cost,
                                     epitope_locations, seroconversion_time,
-                                    prop_for_imm, gen_full_potency,
+                                    n_for_imm, gen_full_potency,
                                     prob_act_to_lat, prob_lat_to_act,
                                     prob_lat_prolif, prob_lat_die,
                                     seed) {
@@ -438,7 +438,10 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
       check_is_0to1(x, "epitope_locations$max_fitness_cost", ok1 = FALSE)
     })
     check_is_pos(seroconversion_time, "seroconversion_time", TRUE)
-    check_is_0to1(prop_for_imm, "prop_for_imm")
+    check_is_pos(n_for_imm, "n_for_imm")
+    if(n_for_imm > max(pop_samp$active_cell_count)){
+      warning("n_for_imm is greater than the maximum population size so there will be no immune response")
+    }
     check_is_pos(gen_full_potency, "gen_full_potency", TRUE)
   }
   check_is_numeric(mut_rate, "mut_rate")

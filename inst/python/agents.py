@@ -359,7 +359,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         self,
         current_generation,
         epitopes,
-        immune_response_proportion,
+        n_for_imm,
         time_to_full_potency,
         seed,
     ):
@@ -416,9 +416,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
         # Mark frequent epitopes as recognized
         for variant, frequency in aa_epitope_variants.items():
-            if (
-                frequency / num_active_cd4
-            ) >= immune_response_proportion:  # common enough to be recognized
+            if frequency >= n_for_imm:  # common enough to be recognized
                 if (
                     variant not in self.epitopes_recognition_generation
                 ):  # if first time epitope is being recognized
@@ -720,7 +718,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         time_to_full_potency,
         cost_per_mutation_in_conserved_site,
         reference_sequence,
-        immune_response_proportion,
+        n_for_imm,
         epitopes,
         replicative_cost,
         seed,
@@ -754,7 +752,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 self.update_epitopes_recognized(
                     gen,
                     epitopes,
-                    immune_response_proportion,
+                    n_for_imm,
                     time_to_full_potency,
                     seed,
                 )

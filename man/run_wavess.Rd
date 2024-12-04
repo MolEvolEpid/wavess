@@ -19,9 +19,9 @@ run_wavess(
   ref_seq = NULL,
   replicative_cost = 0.001,
   epitope_locations = NULL,
-  seroconversion_time = 18,
-  prop_for_imm = 0.01,
+  n_for_imm = 200,
   gen_full_potency = 90,
+  immune_start_time = 0,
   seed = NULL
 )
 }
@@ -88,16 +88,18 @@ survive. This epitope location tibble can be generated using the functions
 \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and \code{\link[=sample_epitopes]{sample_epitopes()}}. (default: NULL, i.e.
 no immune fitness costs)}
 
-\item{seroconversion_time}{Generation at which seroconversion occurs, only
-relevant when epitope_locations is not NULL (default: 18).}
-
-\item{prop_for_imm}{Proportion of all infected cells that must be infected
+\item{n_for_imm}{Proportion of all infected cells that must be infected
 with a given sequence for that sequence to be recognized by the immune
 system, only relevant when epitope_locations is not NULL (default: 0.01).}
 
 \item{gen_full_potency}{Number of generations it takes for an immune response
 to an epitope to reach full potency, only relevant when epitope_locations
 is not NULL (default: 90).}
+
+\item{immune_start_time}{Generation to start checking for an immune response,
+only relevant when epitope_locations is not NULL (default: 0, but note that
+the immune response will not actually start until there are at least
+\code{n_for_imm} cells in the active population).}
 
 \item{seed}{Optional seed (default: NULL)}
 }

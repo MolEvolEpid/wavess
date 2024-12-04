@@ -182,7 +182,7 @@ if __name__ == "__main__":
         float(params["replicative_cost"]),
         epitope_locations,
         params["seroconversion_time"],
-        params["immune_response_proportion"],
+        params["n_for_imm"],
         params["time_to_full_potency"],
         generator
     )

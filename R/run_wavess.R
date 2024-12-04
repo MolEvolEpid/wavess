@@ -55,9 +55,11 @@
 #'   survive. This epitope location tibble can be generated using the functions
 #'   [get_epitope_frequencies()] and [sample_epitopes()]. (default: NULL, i.e.
 #'   no immune fitness costs)
-#' @param seroconversion_time Generation at which seroconversion occurs, only
-#'   relevant when epitope_locations is not NULL (default: 18).
-#' @param prop_for_imm Proportion of all infected cells that must be infected
+#' @param immune_start_time Generation to start checking for an immune response,
+#'   only relevant when epitope_locations is not NULL (default: 0, but note that
+#'   the immune response will not actually start until there are at least
+#'   `n_for_imm` cells in the active population).
+#' @param n_for_imm Proportion of all infected cells that must be infected
 #'   with a given sequence for that sequence to be recognized by the immune
 #'   system, only relevant when epitope_locations is not NULL (default: 0.01).
 #' @param gen_full_potency Number of generations it takes for an immune response
@@ -82,7 +84,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' run_wavess(generate_pop_samp(n_gen = 300), "ATCG")
+#' run_wavess(generate_pop_samp(n_gen = 300), rep("ATCG", 10))
 #' }
 run_wavess <- function(pop_samp,
                        founder_seqs,
@@ -98,17 +100,17 @@ run_wavess <- function(pop_samp,
                        ref_seq = NULL,
                        replicative_cost = 0.001,
                        epitope_locations = NULL,
-                       seroconversion_time = 18,
-                       prop_for_imm = 0.01,
+                       n_for_imm = 200, # should the default be max(pop_samp$active_cell_count)*0.01?
                        gen_full_potency = 90,
+                       immune_start_time = 0,
                        seed = NULL) {
   check_run_wavess_inputs(
     pop_samp, founder_seqs, q,
     mut_rate, recomb_rate,
     conserved_sites, conserved_cost,
     ref_seq, replicative_cost,
-    epitope_locations, seroconversion_time,
-    prop_for_imm, gen_full_potency,
+    epitope_locations, immune_start_time,
+    n_for_imm, gen_full_potency,
     prob_act_to_lat, prob_lat_to_act,
     prob_lat_prolif, prob_lat_die,
     seed
@@ -178,7 +180,7 @@ run_wavess <- function(pop_samp,
     prob_mut, prob_recomb,
     prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
     conserved_sites, conserved_cost, ref_seq, replicative_cost,
-    epitope_locations, seroconversion_time, prop_for_imm, gen_full_potency,
+    epitope_locations, immune_start_time, n_for_imm, gen_full_potency,
     generator
   ))
 
