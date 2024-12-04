@@ -4,10 +4,12 @@
 \alias{calc_tr_dists}
 \title{Calculate tree distances (root-to-tip and tip-to-tip)}
 \usage{
-calc_tr_dists(tr)
+calc_tr_dists(tr, tips = NULL)
 }
 \arguments{
 \item{tr}{Rooted phylogeny}
+
+\item{tips}{Tips use when calculating mean distance}
 }
 \value{
 Mean root-to-tip distance and mean tip-to-tip distance
