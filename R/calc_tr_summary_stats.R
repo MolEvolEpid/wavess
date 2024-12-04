@@ -96,15 +96,15 @@ calc_tr_dists <- function(tr, tips = NULL){
     tips <- tr$tip.label
   }
   ntip <- length(tr$tip.label)
-  root_node <- ntip+1
+  root_node <- ntip + 1
   d <- ape::dist.nodes(tr)
   colnames(d) <- rownames(d) <- c(tr$tip.label, paste0('node', root_node:(ntip+ape::Nnode(tr))))
   # mean root-to-tip distance
-  # dv <- mean(d[1:ntip,root_node])
-  dv <- mean(d[tips,root_node])
+  # dv <- mean(d[1:ntip, root_node])
+  dv <- mean(d[tips, root_node])
   # mean tip-to-tip distance
-  # d <- d[1:ntip,1:ntip]
-  d <- d[tips,tips]
+  # d <- d[1:ntip, 1:ntip]
+  d <- d[tips, tips]
   ds <- mean(d[upper.tri(d)])
   return(c(dv, ds))
 }

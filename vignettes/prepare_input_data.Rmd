@@ -700,10 +700,10 @@ returns a tibble with three columns:
 We can visualize it as follows:
 
 ```{r}
-epi_probs %>% 
+epi_probs %>%
   ggplot(aes(x = aa_position, y = epitope_probability)) +
   geom_col() +
-  labs(x = 'HXB2 amino acid position', y = 'Epitope probability')
+  labs(x = "HXB2 amino acid position", y = "Epitope probability")
 ```
 
 
@@ -779,29 +779,45 @@ to simulate within-host evolution.
 
 
 ```{r}
-founder_ref$conserved <- founder_conserved_sites %>% enframe() %>% mutate(name = as.numeric(name) + 1) %>% complete(name = seq(min(name), max(name), 1L), fill = list(value='-')) %>% pull(value) %>% paste0(., collapse = '')
+founder_ref$conserved <- founder_conserved_sites %>%
+  enframe() %>%
+  mutate(name = as.numeric(name) + 1) %>%
+  complete(name = seq(min(name), max(name), 1L), fill = list(value = "-")) %>%
+  pull(value) %>%
+  paste0(., collapse = "")
 
 founder_ref$aln_cons <- identify_conserved_sites(flt_gp120,
-    founder = "B.US.2011.DEMB11US006.KC473833",
-    ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
-    founder_aln = hcf_gp120
-  ) |>
+  founder = "B.US.2011.DEMB11US006.KC473833",
+  ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+  founder_aln = hcf_gp120
+) |>
   select(founder_pos, consensus_base) |>
   deframe() |>
-  toupper() %>% enframe() %>% mutate(name = as.numeric(name) + 1) %>% complete(name = seq(min(name), max(name), 1L), fill = list(value='-')) %>% pull(value) %>% paste0(., collapse = '')
+  toupper() %>%
+  enframe() %>%
+  mutate(name = as.numeric(name) + 1) %>%
+  complete(name = seq(min(name), max(name), 1L), fill = list(value = "-")) %>%
+  pull(value) %>%
+  paste0(., collapse = "")
 
 founder_ref$aln_cons_b <- identify_conserved_sites(
-  flt_gp120[grepl('^B', labels(flt_gp120)),],
-    founder = "B.US.2011.DEMB11US006.KC473833",
-    ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
-    founder_aln = hcf_gp120
-  ) |>
+  flt_gp120[grepl("^B", labels(flt_gp120)), ],
+  founder = "B.US.2011.DEMB11US006.KC473833",
+  ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
+  founder_aln = hcf_gp120
+) |>
   select(founder_pos, consensus_base) |>
   deframe() |>
-  toupper() %>% enframe() %>% mutate(name = as.numeric(name) + 1) %>% complete(name = seq(min(name), max(name), 1L), fill = list(value='-')) %>% pull(value) %>% paste0(., collapse = '')
+  toupper() %>%
+  enframe() %>%
+  mutate(name = as.numeric(name) + 1) %>%
+  complete(name = seq(min(name), max(name), 1L), fill = list(value = "-")) %>%
+  pull(value) %>%
+  paste0(., collapse = "")
 
-lapply(names(founder_ref), function(x) enframe(strsplit(founder_ref[[x]], '')[[1]]) %>% mutate(seq=x)) %>% bind_rows() %>% 
-  pivot_wider(names_from = seq, values_from = value) %>% #View()
-  filter(ref != aln_cons_b & conserved != '-')
+lapply(names(founder_ref), function(x) enframe(strsplit(founder_ref[[x]], "")[[1]]) %>% mutate(seq = x)) %>%
+  bind_rows() %>%
+  pivot_wider(names_from = seq, values_from = value) %>% # View()
+  filter(ref != aln_cons_b & conserved != "-")
 ```
 
