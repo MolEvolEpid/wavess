@@ -81,6 +81,7 @@ calc_parsimony <- function(tr, timepoints) {
 
 #' Calculate tree distances (root-to-tip and tip-to-tip)
 #'
+#' @param tips Tips use when calculating mean distance
 #' @inheritParams calc_tr_summary_stats
 #'
 #' @return Mean root-to-tip distance and mean tip-to-tip distance
@@ -89,15 +90,21 @@ calc_parsimony <- function(tr, timepoints) {
 #' @examples
 #' tr <- ape::rtree(100)
 #' calc_tr_dists(tr)
-calc_tr_dists <- function(tr){
+calc_tr_dists <- function(tr, tips = NULL){
   check_is_phylo(tr, "tr")
+  if(is.null(tips)){
+    tips <- tr$tip.label
+  }
   ntip <- length(tr$tip.label)
   root_node <- ntip+1
   d <- ape::dist.nodes(tr)
+  colnames(d) <- rownames(d) <- c(tr$tip.label, paste0('node', root_node:(ntip+ape::Nnode(tr))))
   # mean root-to-tip distance
-  dv <- mean(d[1:ntip,root_node])
+  # dv <- mean(d[1:ntip,root_node])
+  dv <- mean(d[tips,root_node])
   # mean tip-to-tip distance
-  d <- d[1:ntip,1:ntip]
+  # d <- d[1:ntip,1:ntip]
+  d <- d[tips,tips]
   ds <- mean(d[upper.tri(d)])
   return(c(dv, ds))
 }
