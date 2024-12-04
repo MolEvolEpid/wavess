@@ -7,8 +7,8 @@
 generate_pop_samp(
   n_gen = 3000,
   carry_cap = 2000,
-  n0 = 1,
-  max_growth_rate = 0.35,
+  n0 = 10,
+  max_growth_rate = 0.3,
   sampling_frequency = 300,
   max_samp = 20
 )
@@ -18,10 +18,10 @@ generate_pop_samp(
 
 \item{carry_cap}{carrying capacity (default: 2000)}
 
-\item{n0}{starting population size (default: 1; used for logistic)}
+\item{n0}{starting population size (default: 10)}
 
 \item{max_growth_rate}{maximum infected cell population growth rate
-(default: 0.35; used for logistic)}
+(default: 0.3)}
 
 \item{sampling_frequency}{frequency in generations at which to record
 sequences (and counts) (default: 300 generations)}

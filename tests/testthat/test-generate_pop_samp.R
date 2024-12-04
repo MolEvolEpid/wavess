@@ -6,8 +6,8 @@ test_that("generate_pop_samp works", {
     "n_sample_active"
   ))
   expect_equal(ps$generation, 0:3000)
-  expect_equal(ps$active_cell_count[1], 1)
-  expect_equal(ps$active_cell_count[30], 1664)
+  expect_equal(ps$active_cell_count[1], 10)
+  expect_equal(ps$active_cell_count[30], 1915)
   expect_equal(generate_pop_samp(n_gen = 300, n0 = 2)$active_cell_count[1], 2)
 })
 

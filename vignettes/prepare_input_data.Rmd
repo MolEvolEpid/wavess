@@ -134,9 +134,9 @@ generate_pop_samp()
 ```
 
 This will generate an infected cell population size following a logistic growth
-curve. By default, the starting population size (`n0`) is 1, the a carrying
+curve. By default, the starting population size (`n0`) is 10, the a carrying
 capacity (`carry_cap`) is 2000, the maximum growth rate (`max_growth_rate`) is
-0.35, the simulation is run for 3000 generations (`n_gen`), and a maximum of 20
+0.3, the simulation is run for 3000 generations (`n_gen`), and a maximum of 20
 sequences (`max_samp`) are sampled every 300 generations (`sampling_frequency`).
 All of these defaults can be changed by altering the input parameters of the
 function.

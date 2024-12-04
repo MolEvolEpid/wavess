@@ -2,9 +2,9 @@
 #'
 #' @param n_gen final sampling generation (default: 3000)
 #' @param carry_cap carrying capacity (default: 2000)
-#' @param n0 starting population size (default: 1; used for logistic)
+#' @param n0 starting population size (default: 10)
 #' @param max_growth_rate maximum infected cell population growth rate
-#' (default: 0.35; used for logistic)
+#' (default: 0.3)
 #' @param sampling_frequency frequency in generations at which to record
 #' sequences (and counts) (default: 300 generations)
 #' @param max_samp maximum number of cells (and thus sequences) to sample in a
@@ -22,8 +22,8 @@
 #' generate_pop_samp()
 generate_pop_samp <- function(n_gen = 3000,
                               carry_cap = 2000,
-                              n0 = 1,
-                              max_growth_rate = 0.35,
+                              n0 = 10,
+                              max_growth_rate = 0.3,
                               sampling_frequency = 300,
                               max_samp = 20) {
   check_generate_pop_samp_inputs(
