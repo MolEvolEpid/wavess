@@ -26,5 +26,5 @@ parameters:
     replicative_cost: 0.001 # Fitness cost per difference from reference
     # Immune
     seroconversion_time: 0 # Seroconversion time in generations; immunity considered only at this generation onward
-    n_for_imm: 200 # Number new viral antigen must reach to initiate immune response against corresponding epitope
+    n_for_imm: 100 # Number new viral antigen must reach to initiate immune response against corresponding epitope
     time_to_full_potency: 90 # Number of generations for a new immune response to reach full potency

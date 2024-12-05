@@ -445,7 +445,7 @@ test_that("check_run_wavess_inputs works", {
       el, 30, 0.01, -1,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "gen_full_potency must be a number"
+    "gen_full_potency must be a positive number"
   )
   expect_no_error(check_run_wavess_inputs(
     ps, "ATAA", hiv_q_mat,

@@ -384,6 +384,7 @@ active_latent_counts <- lapply(pop_samp$active_cell_count, function(x) {
 
 # Plot (latent) cell counts
 active_latent_counts |>
+  filter(gen <= 300) %>% 
   pivot_longer(c(Active, Latent)) |>
   ggplot(aes(x = gen, y = value, col = name)) +
   geom_line() +

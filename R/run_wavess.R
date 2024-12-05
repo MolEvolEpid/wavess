@@ -61,7 +61,7 @@
 #'   `n_for_imm` cells in the active population).
 #' @param n_for_imm Proportion of all infected cells that must be infected
 #'   with a given sequence for that sequence to be recognized by the immune
-#'   system, only relevant when epitope_locations is not NULL (default: 0.01).
+#'   system, only relevant when epitope_locations is not NULL (default: 100).
 #' @param gen_full_potency Number of generations it takes for an immune response
 #'   to an epitope to reach full potency, only relevant when epitope_locations
 #'   is not NULL (default: 90).
@@ -100,7 +100,7 @@ run_wavess <- function(pop_samp,
                        ref_seq = NULL,
                        replicative_cost = 0.001,
                        epitope_locations = NULL,
-                       n_for_imm = 200, # should the default be max(pop_samp$active_cell_count)*0.01?
+                       n_for_imm = 100, # should the default be max(pop_samp$active_cell_count)*0.05?
                        gen_full_potency = 90,
                        immune_start_time = 0,
                        seed = NULL) {
