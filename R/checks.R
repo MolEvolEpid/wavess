@@ -439,7 +439,7 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
     })
     check_is_pos(seroconversion_time, "seroconversion_time", TRUE)
     check_is_pos(n_for_imm, "n_for_imm")
-    if(n_for_imm > max(pop_samp$active_cell_count)){
+    if (n_for_imm > max(pop_samp$active_cell_count)) {
       warning("n_for_imm is greater than the maximum population size so there will be no immune response")
     }
     check_is_pos(gen_full_potency, "gen_full_potency", FALSE)
