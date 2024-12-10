@@ -31,7 +31,6 @@ Config/testthat/edition: 3
 Imports: 
     ape,
     dplyr,
-    methods,
     phangorn,
     reticulate,
     tibble,

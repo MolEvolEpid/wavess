@@ -49,7 +49,7 @@ create_python_venv <- function(ask = interactive(),
       )),
       silent = TRUE
     )
-    if (methods::is(t, "try-error")) {
+    if (inherits(t, "try-error")) {
       permission <- TRUE
       if (ask) {
         permission <- utils::askYesNo(paste0(
