@@ -64,7 +64,7 @@
 #'   system, only relevant when epitope_locations is not NULL (default: 100).
 #' @param gen_full_potency Number of generations it takes for an immune response
 #'   to an epitope to reach full potency, only relevant when epitope_locations
-#'   is not NULL (default: 90).
+#'   is not NULL (default: 75).
 #' @param mut_rate Mutation rate per-site, per-generation (default: 3.5e-5)
 #' @param recomb_rate Recombination rate per-site, per-generation (default:
 #'   1.4e-5)
@@ -101,7 +101,7 @@ run_wavess <- function(pop_samp,
                        replicative_cost = 0.001,
                        epitope_locations = NULL,
                        n_for_imm = 100, # should the default be max(pop_samp$active_cell_count)*0.05?
-                       gen_full_potency = 90,
+                       gen_full_potency = 75,
                        immune_start_time = 0,
                        seed = NULL) {
   check_run_wavess_inputs(

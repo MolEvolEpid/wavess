@@ -258,12 +258,11 @@ ref_fitness$counts$mean_replicative_active
 
 Active immunity can be modeled by defining B-cell epitopes locations that can be
 recognized by the immune system. Nucleotide epitopes are translated into amino
-acids before immune fitness costs are calculated. Epitopes are recognized only
-after the seroconversion time (`seroconversion_time` argument, default: 18
-generations), and when the epitope is present in at least 1% of the total viral
-population (`prop_for_imm` argument). Once an epitope is recognized, it
-undergoes affinity maturation for 90 generations (`gen_full_potency`), at which
-time it reaches full potency. Epitopes are also cross-reactive.
+acids before immune fitness costs are calculated. An epitope is recognized only
+when it is present at least 100 times across the population (`n_for_imm`
+argument). Once an epitope is recognized, it undergoes affinity maturation for
+75 generations (`gen_full_potency`), at which time it reaches full potency.
+Epitopes are also cross-reactive.
 
 Cross-reactivity is sampled from a Beta distribution where alpha is 1 and 
 beta is the square of the Hamming distance to the nearest recognized epitope:

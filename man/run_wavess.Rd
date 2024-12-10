@@ -19,8 +19,8 @@ run_wavess(
   ref_seq = NULL,
   replicative_cost = 0.001,
   epitope_locations = NULL,
-  n_for_imm = 200,
-  gen_full_potency = 90,
+  n_for_imm = 100,
+  gen_full_potency = 75,
   immune_start_time = 0,
   seed = NULL
 )
@@ -90,11 +90,11 @@ no immune fitness costs)}
 
 \item{n_for_imm}{Proportion of all infected cells that must be infected
 with a given sequence for that sequence to be recognized by the immune
-system, only relevant when epitope_locations is not NULL (default: 0.01).}
+system, only relevant when epitope_locations is not NULL (default: 100).}
 
 \item{gen_full_potency}{Number of generations it takes for an immune response
 to an epitope to reach full potency, only relevant when epitope_locations
-is not NULL (default: 90).}
+is not NULL (default: 75).}
 
 \item{immune_start_time}{Generation to start checking for an immune response,
 only relevant when epitope_locations is not NULL (default: 0, but note that
@@ -128,6 +128,6 @@ arguments.
 }
 \examples{
 \dontrun{
-run_wavess(generate_pop_samp(n_gen = 300), "ATCG")
+run_wavess(generate_pop_samp(n_gen = 300), rep("ATCG", 10))
 }
 }

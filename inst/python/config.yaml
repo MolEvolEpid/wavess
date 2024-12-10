@@ -27,4 +27,4 @@ parameters:
     # Immune
     seroconversion_time: 0 # Seroconversion time in generations; immunity considered only at this generation onward
     n_for_imm: 100 # Number new viral antigen must reach to initiate immune response against corresponding epitope
-    time_to_full_potency: 90 # Number of generations for a new immune response to reach full potency
+    time_to_full_potency: 75 # Number of generations for a new immune response to reach full potency
