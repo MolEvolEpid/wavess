@@ -88,7 +88,7 @@
 #' }
 run_wavess <- function(pop_samp,
                        founder_seqs,
-                       mut_rate = 3.5e-5,
+                       mut_rate = 1.2e-5,
                        q = wavess::hiv_q_mat,
                        recomb_rate = 1.4e-5,
                        prob_act_to_lat = 0.001,

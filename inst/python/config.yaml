@@ -12,8 +12,8 @@ input_files:
 # Parameters
 parameters:
     # Diversity-generating mechanisms
-    mut_rate: 3.50E-05 # Mutation rate per site per generation
-    recomb_rate: 1.40E-05 # Recombination rate per site per generation
+    mut_rate: 1.2E-05 # Mutation rate per site per generation
+    recomb_rate: 1.4E-05 # Recombination rate per site per generation
     # Latent cell dynamics
     prob_act_to_lat: 0.001 # Probability of infected cell becoming latent
     prob_lat_to_act: 0.01 # Probability that a latent cell will become active

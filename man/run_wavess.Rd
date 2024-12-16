@@ -7,7 +7,7 @@
 run_wavess(
   pop_samp,
   founder_seqs,
-  mut_rate = 3.5e-05,
+  mut_rate = 1.2e-05,
   q = wavess::hiv_q_mat,
   recomb_rate = 1.4e-05,
   prob_act_to_lat = 0.001,
