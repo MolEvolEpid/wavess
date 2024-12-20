@@ -19,7 +19,7 @@ test_that("estimate_q works", {
 test_that("calc_nt_sub_probs_from_q works", {
   hiv_env_flt_2022 <- ape::as.matrix.DNAbin(hiv_env_flt_2022)
   capture.output(q <- estimate_q(hiv_env_flt_2022[1:3, ]),
-                 file = nullfile()
+    file = nullfile()
   )
   probs <- calc_nt_sub_probs_from_q(q, 3.5e-5)
   expect_equal(round(probs[1, 3], 2), 0.65)

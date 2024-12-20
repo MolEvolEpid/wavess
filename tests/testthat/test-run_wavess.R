@@ -11,10 +11,14 @@ test_that("run_wavess works", {
     run_wavess(inf_pop_size, samp_scheme, c("ATCG", "ATTT")),
     "Initial population size must equal the number of founder sequences"
   )
-  expect_error(run_wavess(define_growth_curve(n_gen = 50),
-                          define_sampling_scheme(sampling_frequency = 10),
-                          rep("ATCG", 10)),
-               "you requested to sample at a time after max")
+  expect_error(
+    run_wavess(
+      define_growth_curve(n_gen = 50),
+      define_sampling_scheme(sampling_frequency = 10),
+      rep("ATCG", 10)
+    ),
+    "you requested to sample at a time after max"
+  )
   out <- run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10), generation_time = 1)
   expect_equal(out$counts$generation, c(0, 50, 100))
   expect_equal(out$counts$active_cell_count, c(10, 2000, 2000))

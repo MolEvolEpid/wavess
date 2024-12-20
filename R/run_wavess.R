@@ -97,9 +97,11 @@
 #'
 #' @examples
 #' \dontrun{
-#' run_wavess(define_growth_curve(n_gen = 50),
-#'            define_sampling_scheme(sampling_frequency = 10, n_days = 50),
-#'            rep("ATCG", 10))
+#' run_wavess(
+#'   define_growth_curve(n_gen = 50),
+#'   define_sampling_scheme(sampling_frequency = 10, n_days = 50),
+#'   rep("ATCG", 10)
+#' )
 #' }
 run_wavess <- function(inf_pop_size,
                        samp_scheme,
@@ -141,24 +143,27 @@ run_wavess <- function(inf_pop_size,
   prob_mut <- rate_to_probability(mut_rate)
   prob_recomb <- rate_to_probability(recomb_rate)
   # these are in days, so we convert to generations first
-  prob_act_to_lat <- rate_to_probability(act_to_lat/generation_time)
-  prob_lat_to_act <- rate_to_probability(lat_to_act/generation_time)
-  prob_lat_prolif <- rate_to_probability(lat_prolif/generation_time)
-  prob_lat_die <- rate_to_probability(lat_die/generation_time)
+  prob_act_to_lat <- rate_to_probability(act_to_lat / generation_time)
+  prob_lat_to_act <- rate_to_probability(lat_to_act / generation_time)
+  prob_lat_prolif <- rate_to_probability(lat_prolif / generation_time)
+  prob_lat_die <- rate_to_probability(lat_die / generation_time)
 
   # convert days to generations
-  gen_full_potency <- days_full_potency/generation_time
-  gen_immune_start <- immune_start_day/generation_time
+  gen_full_potency <- days_full_potency / generation_time
+  gen_immune_start <- immune_start_day / generation_time
 
   pop_samp <- inf_pop_size |>
-    dplyr::left_join(samp_scheme |>
-                       dplyr::mutate(generation = round(.data$day/generation_time)) |>
-                       dplyr::select("generation", "n_sample_active"),
-                     by = dplyr::join_by("generation")) |>
+    dplyr::left_join(
+      samp_scheme |>
+        dplyr::mutate(generation = round(.data$day / generation_time)) |>
+        dplyr::select("generation", "n_sample_active"),
+      by = dplyr::join_by("generation")
+    ) |>
     dplyr::rowwise() |>
     dplyr::mutate(n_sample_active = ifelse(!is.na(.data$n_sample_active),
-                                           min(.data$active_cell_count, .data$n_sample_active),
-                                           0)) |>
+      min(.data$active_cell_count, .data$n_sample_active),
+      0
+    )) |>
     dplyr::ungroup()
 
   # make sure founder sequences are all uppercase and in list format
