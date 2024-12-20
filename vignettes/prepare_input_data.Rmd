@@ -143,10 +143,10 @@ capacity (`carry_cap`) is 2000, the maximum growth rate (`max_growth_rate`) is
 All of these defaults can be changed by altering the input parameters of the
 function.
 
-Here is an example where there are fewer generations:
+Here is an example where we allow the simulation to run for longer (for as long as sequences are being sampled):
 
 ```{r, generate_pop_samp2}
-(inf_pop_size <- define_growth_curve(n_gen = 500))
+(inf_pop_size <- define_growth_curve(n_gen = 10000))
 ```
 
 If you'd like to write this to a file:
@@ -167,6 +167,7 @@ code:
 ```{r, plot_counts}
 # plot active cell counts
 inf_pop_size |>
+  filter(generation <= 500) |>
   ggplot(aes(x = generation, y = active_cell_count)) +
   geom_line() +
   labs(x = "Generation", y = "Number of infected active cells")
