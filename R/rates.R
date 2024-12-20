@@ -43,10 +43,10 @@ rate_to_probability <- function(rate, time = 1) {
 #'
 #' @examples
 #' calc_q_from_rates(hiv_mut_rates, 2.4e-5, 1.2)
-calc_q_from_rates <- function(rates, mut_rate, generation_time = NULL){
+calc_q_from_rates <- function(rates, mut_rate, generation_time = NULL) {
   # ADD CHECKS & TESTS
   rates_per_gen <- rates
-  if(!is.null(generation_time)){
+  if (!is.null(generation_time)) {
     rates_per_gen <- rates * generation_time
   }
   probs_per_gen <- rate_to_probability(rates_per_gen)

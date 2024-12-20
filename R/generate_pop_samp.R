@@ -51,7 +51,9 @@ define_sampling_scheme <- function(sampling_frequency = 365,
                                    max_samp = 20,
                                    n_days = 3650) {
   # ADD CHECKS AND TESTS
-  tibble::tibble(day = 0:n_days,
-                 n_sample_active = ifelse(.data$day %% sampling_frequency == 0, max_samp, 0)) |>
+  tibble::tibble(
+    day = 0:n_days,
+    n_sample_active = ifelse(.data$day %% sampling_frequency == 0, max_samp, 0)
+  ) |>
     dplyr::filter(.data$n_sample_active != 0)
 }

@@ -318,14 +318,16 @@ test_that("check_run_wavess_inputs works", {
     ),
     "founder_seqs must only contain the characters ACGT"
   )
-  expect_error(check_run_wavess_inputs(
-    inf_pop_size, samp_scheme, fs, 'notanum', hiv_q_mat,
-    3.5e-5, 1.4e-5,
-    NULL, 0.99, NULL, 1,
-    NULL, 30, 0.01, 90,
-    0.001, 0.01, 0.01, 0.01, NULL
-  ),
-  "generation_time must be numeric, but is")
+  expect_error(
+    check_run_wavess_inputs(
+      inf_pop_size, samp_scheme, fs, "notanum", hiv_q_mat,
+      3.5e-5, 1.4e-5,
+      NULL, 0.99, NULL, 1,
+      NULL, 30, 0.01, 90,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "generation_time must be numeric, but is"
+  )
   expect_error(
     check_run_wavess_inputs(
       inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat[1:2, ],

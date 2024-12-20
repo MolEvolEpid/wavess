@@ -367,7 +367,7 @@ check_run_wavess_inputs <- function(inf_pop_size, samp_scheme,
   }
   check_is_pos(samp_scheme$n_sample_active, "samp_scheme$n_sample_active", TRUE)
   check_is_pos(generation_time, "generation_time")
-  if(round(max(samp_scheme$day/generation_time)) > max(inf_pop_size$generation)) {
+  if (round(max(samp_scheme$day / generation_time)) > max(inf_pop_size$generation)) {
     stop(
       "you requested to sample at a time after max(inf_pop_size$generation)"
     )

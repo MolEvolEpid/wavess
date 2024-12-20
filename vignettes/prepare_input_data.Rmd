@@ -133,7 +133,7 @@ function to generate it: `define_growth_curve()`.
 All of the arguments in this function have defaults, so you can run:
 
 ```{r, define_growth_curve}
-define_growth_curve() 
+define_growth_curve()
 ```
 
 This will generate an infected cell population size following a logistic growth
@@ -364,10 +364,10 @@ becomes active, cell dies, cell proliferates.
 # set parameters to get latent curve
 generation_time <- 1.2
 # divide by generation time to get per-generation rate before converting to a probability
-to_latent <- rate_to_probability(0.001/generation_time)
-to_active <- rate_to_probability(0.01/generation_time)
-proliferation <- rate_to_probability(0.01/generation_time)
-death <- rate_to_probability(0.01/generation_time)
+to_latent <- rate_to_probability(0.001 / generation_time)
+to_active <- rate_to_probability(0.01 / generation_time)
+proliferation <- rate_to_probability(0.01 / generation_time)
+death <- rate_to_probability(0.01 / generation_time)
 
 # get latent cell count for each generation
 latent <- 0
