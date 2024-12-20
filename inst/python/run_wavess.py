@@ -100,6 +100,7 @@ if __name__ == "__main__":
     samp_scheme = samp_scheme.set_index(['generation'])
     pop_samp = pd.concat([inf_pop_size, samp_scheme], axis = 1)
     pop_samp['n_sample_active'] = pop_samp['n_sample_active'].fillna(0)
+    pop_samp = pop_samp[['active_cell_count', 'n_sample_active']]
 
     # Founder virus
     founder_virus_sequences = get_sequences(input_files["founder_seqs"])

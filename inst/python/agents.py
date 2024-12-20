@@ -832,8 +832,13 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         counts["mean_replicative_active"].append(fitness[3])
         return counts
 
-    def sample_viral_sequences(self, seqs, fitness, generation, n_to_samp):
+    def sample_viral_sequences(self, seqs, fitness, generation, n_to_samp, cell_type = 'active'):
+        assert cell_type in ['active', 'latent'], "sampling cell type must be active or latent"
         c_sub = sample(self.C, int(n_to_samp))
+        # if cell_type is 'active':
+        #     c_sub = sample(self.C, int(n_to_samp))
+        # elif cell_type is 'latent':
+        #     c_sub = sample(self.L, int(n_to_samp))
         for index, CD4 in enumerate(c_sub):
             name = "gen" + str(generation)
             name += "_" + str(index)
@@ -927,7 +932,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             counts = self.record_counts(
                 counts, 0, latent_nums, var_nums, mean_fitness)
             seqs, fitness = self.sample_viral_sequences(
-                seqs, fitness, 0, int(n_sample_active[0]))
+                seqs, fitness, 0, min(int(n_sample_active[0]), len(seqs)))
 
         # Looping through generations until we sample everything we want
         for t in range(1, int(last_sampled_gen) + 1):
@@ -966,6 +971,6 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 counts = self.record_counts(
                     counts, t, latent_nums, var_nums, mean_fitness)
                 seqs, fitness = self.sample_viral_sequences(
-                    seqs, fitness, t, n_sample_active[t])
+                    seqs, fitness, t, min(int(n_sample_active[t]), active_cell_count[t]))
 
         return counts, fitness, seqs
