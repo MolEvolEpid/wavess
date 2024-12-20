@@ -5,59 +5,70 @@
 \title{Run wavess}
 \usage{
 run_wavess(
-  pop_samp,
+  inf_pop_size,
+  samp_scheme,
   founder_seqs,
-  mut_rate = 1.2e-05,
-  q = wavess::hiv_q_mat,
+  generation_time = 1.2,
+  mut_rate = 2.4e-05,
+  q = wavess::calc_q_from_rates(wavess::hiv_mut_rates, mut_rate, generation_time),
   recomb_rate = 1.4e-05,
-  prob_act_to_lat = 0.001,
-  prob_lat_to_act = 0.01,
-  prob_lat_prolif = 0.01,
-  prob_lat_die = 0.01,
+  act_to_lat = 0.001,
+  lat_to_act = 0.01,
+  lat_prolif = 0.01,
+  lat_die = 0.01,
   conserved_sites = NULL,
   conserved_cost = 0.99,
   ref_seq = NULL,
   replicative_cost = 0.001,
   epitope_locations = NULL,
   n_for_imm = 100,
-  gen_full_potency = 75,
-  immune_start_time = 0,
+  days_full_potency = 90,
+  immune_start_day = 0,
   seed = NULL
 )
 }
 \arguments{
-\item{pop_samp}{Tibble with columns generation, active_cell_count,
-n_sample_active. Note that the initial active cell population size in the
-first generation must be the same as the number of input founder sequences
-(because it simply \emph{is} the input founder sequences). Can be generated
-using the \code{\link[=generate_pop_samp]{generate_pop_samp()}} function.}
+\item{inf_pop_size}{Tibble with columns \emph{generation} (starting at day 0) and
+active_cell_count. Note that the initial active cell population size on day
+0 must be the same as the number of input founder sequences (because it
+simply \emph{is} the input founder sequences).  Can be generated using the
+\code{\link[=define_growth_curve]{define_growth_curve()}} function.}
+
+\item{samp_scheme}{Tibble with columns \emph{day} and n_sample_active. Rows only
+need to contain the days on which sampling occurrs. Can be generated using
+the \code{\link[=define_sampling_scheme]{define_sampling_scheme()}} function.}
 
 \item{founder_seqs}{Founder sequence(s) as a character string or a vector of
 character strings, for example 'ACATG'. The founder sequence(s) may only
 contain the characters ACGT, and no gaps are allowed. When modeling immune
 fitness, they are expected to be codon-aligned.}
 
-\item{mut_rate}{Mutation rate per-site, per-generation (default: 3.5e-5)}
+\item{generation_time}{Amount of time in days it takes a virus to complete
+one full life cycle, from infecting one cell to exiting the cell and
+infecting the next one (default: 1.2 days). Any inputs that are in days
+will be converted to generations using this number.}
+
+\item{mut_rate}{Mutation rate per-site, per-\emph{generation} (default: 2.4e-5)}
 
 \item{q}{Nucleotide substitution rate matrix Q with rows and columns named as
 the nucleotides ACGT. Rows are from, columns are to. Can be generated using
-the \code{\link[=estimate_q]{estimate_q()}} function (default: \code{hiv_q_mat}).}
+the \code{\link[=estimate_q]{estimate_q()}} function. The default is to calculate the Q matrix using
+estimates of per-day rates from nearly neutral sites:
+\code{wavess::calc_q_from_rates(wavess::hiv_mut_rates,mut_rate,generation_time)}.}
 
-\item{recomb_rate}{Recombination rate per-site, per-generation (default:
+\item{recomb_rate}{Recombination rate per-site, per-\emph{generation} (default:
 1.4e-5)}
 
-\item{prob_act_to_lat}{Probability that an active cell becomes latent in a
-generation (default: 0.001). Set this to 0 if you don't want to model
-latent cell dynamics.}
+\item{act_to_lat}{Per-\emph{day} rate that an active cell becomes latent (default:
+0.001). Set this to 0 if you don't want to model latent cell dynamics.}
 
-\item{prob_lat_to_act}{Probability that a latent cell becomes active in a
-generation (default: 0.01)}
+\item{lat_to_act}{Per-\emph{day} rate that a latent cell becomes active (default:
+0.01)}
 
-\item{prob_lat_prolif}{Probability that a latent cell proliferates in a
-generation (default: 0.01)}
+\item{lat_prolif}{Per-\emph{day} rate that a latent cell proliferates (default:
+0.01)}
 
-\item{prob_lat_die}{Probability that a latent cell dies in a generation
-(default: 0.01)}
+\item{lat_die}{Per-\emph{day} rate that a latent cell dies (default: 0.01)}
 
 \item{conserved_sites}{Vector of conserved bases named by position in the
 founder sequence (indexed at 0). This can be generated using the
@@ -88,17 +99,17 @@ survive. This epitope location tibble can be generated using the functions
 \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and \code{\link[=sample_epitopes]{sample_epitopes()}}. (default: NULL, i.e.
 no immune fitness costs)}
 
-\item{n_for_imm}{Proportion of all infected cells that must be infected
-with a given sequence for that sequence to be recognized by the immune
-system, only relevant when epitope_locations is not NULL (default: 100).}
+\item{n_for_imm}{Number of infected cells that must contain a given sequence
+for that sequence to be recognized by the immune system, only relevant when
+epitope_locations is not NULL (default: 100).}
 
-\item{gen_full_potency}{Number of generations it takes for an immune response
-to an epitope to reach full potency, only relevant when epitope_locations
-is not NULL (default: 75).}
+\item{days_full_potency}{Number of \emph{days} it takes for an immune response to
+an epitope to reach full potency, only relevant when epitope_locations is
+not NULL (default: 90).}
 
-\item{immune_start_time}{Generation to start checking for an immune response,
-only relevant when epitope_locations is not NULL (default: 0, but note that
-the immune response will not actually start until there are at least
+\item{immune_start_day}{\emph{Day} to start checking for an immune response, only
+relevant when epitope_locations is not NULL (default: 0, but note that the
+immune response will not actually start until there are at least
 \code{n_for_imm} cells in the active population).}
 
 \item{seed}{Optional seed (default: NULL)}
@@ -112,12 +123,12 @@ on), latency (default: on), and fitness costs (default: off). The three
 fitness costs that can be simulated are conserved sites, fitness relative to
 a reference sequence, and antibody-based immune fitness costs. Nucleotide
 positions for conserved and immune fitness are expected to be indexed at 0.
-Please note that the default arguments were set with the the HIV ENV gp120
+Please note that the default arguments were set with the the HIV \emph{env} gp120
 gene in mind. If you'd like to simulate something else, you will likely have
 to modify certain parameters. However, if you are interested in this gene in
 particular, you can probably use most of the defaults including the founder
 and reference sequences provided as examples. However, by default no fitness
-costs are modeled. We recommend including fitness to get a realistic model
+costs are modeled. We recommend including fitness to obtain a realistic model
 output. To model these, you can use the pre-processing functions (see
 \code{vignette('prepare_input_data')}) to generate the relevant inputs. Also, the
 parameters for latent probabilities are assumed to be small, such that it is
@@ -126,8 +137,17 @@ single latent cell in a single (active cell) generation. See
 \code{vignette('run_wavess')} for more details about the simulator and input
 arguments.
 }
+\details{
+Also note that some of the inputs are expected to be in units of
+\emph{generations} and some are expected to be in units of \emph{days}. These choices
+were made based on what empirical estimates are most often estimated present
+in the literature. We have highlighted in the parameter descriptions which
+inputs are which.
+}
 \examples{
 \dontrun{
-run_wavess(generate_pop_samp(n_gen = 300), rep("ATCG", 10))
+run_wavess(define_growth_curve(n_gen = 50),
+           define_sampling_scheme(sampling_frequency = 10, n_days = 50),
+           rep("ATCG", 10))
 }
 }

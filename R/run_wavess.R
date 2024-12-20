@@ -5,12 +5,12 @@
 #' fitness costs that can be simulated are conserved sites, fitness relative to
 #' a reference sequence, and antibody-based immune fitness costs. Nucleotide
 #' positions for conserved and immune fitness are expected to be indexed at 0.
-#' Please note that the default arguments were set with the the HIV ENV gp120
+#' Please note that the default arguments were set with the the HIV *env* gp120
 #' gene in mind. If you'd like to simulate something else, you will likely have
 #' to modify certain parameters. However, if you are interested in this gene in
 #' particular, you can probably use most of the defaults including the founder
 #' and reference sequences provided as examples. However, by default no fitness
-#' costs are modeled. We recommend including fitness to get a realistic model
+#' costs are modeled. We recommend including fitness to obtain a realistic model
 #' output. To model these, you can use the pre-processing functions (see
 #' `vignette('prepare_input_data')`) to generate the relevant inputs. Also, the
 #' parameters for latent probabilities are assumed to be small, such that it is
@@ -19,18 +19,33 @@
 #' `vignette('run_wavess')` for more details about the simulator and input
 #' arguments.
 #'
-#' @param pop_samp Tibble with columns generation, active_cell_count,
-#'   n_sample_active. Note that the initial active cell population size in the
-#'   first generation must be the same as the number of input founder sequences
-#'   (because it simply _is_ the input founder sequences). Can be generated
-#'   using the [generate_pop_samp()] function.
+#' Also note that some of the inputs are expected to be in units of
+#' *generations* and some are expected to be in units of *days*. These choices
+#' were made based on what empirical estimates are most often estimated present
+#' in the literature. We have highlighted in the parameter descriptions which
+#' inputs are which.
+#'
+#' @param inf_pop_size Tibble with columns *generation* (starting at day 0) and
+#'   active_cell_count. Note that the initial active cell population size on day
+#'   0 must be the same as the number of input founder sequences (because it
+#'   simply _is_ the input founder sequences).  Can be generated using the
+#'   [define_growth_curve()] function.
+#' @param samp_scheme Tibble with columns *day* and n_sample_active. Rows only
+#'   need to contain the days on which sampling occurrs. Can be generated using
+#'   the [define_sampling_scheme()] function.
 #' @param founder_seqs Founder sequence(s) as a character string or a vector of
 #'   character strings, for example 'ACATG'. The founder sequence(s) may only
 #'   contain the characters ACGT, and no gaps are allowed. When modeling immune
 #'   fitness, they are expected to be codon-aligned.
+#' @param generation_time Amount of time in days it takes a virus to complete
+#'   one full life cycle, from infecting one cell to exiting the cell and
+#'   infecting the next one (default: 1.2 days). Any inputs that are in days
+#'   will be converted to generations using this number.
 #' @param q Nucleotide substitution rate matrix Q with rows and columns named as
 #'   the nucleotides ACGT. Rows are from, columns are to. Can be generated using
-#'   the [estimate_q()] function (default: `hiv_q_mat`).
+#'   the [estimate_q()] function. The default is to calculate the Q matrix using
+#'   estimates of per-day rates from nearly neutral sites:
+#'   `wavess::calc_q_from_rates(wavess::hiv_mut_rates,mut_rate,generation_time)`.
 #' @param conserved_sites Vector of conserved bases named by position in the
 #'   founder sequence (indexed at 0). This can be generated using the
 #'   [identify_conserved_sites()] function (default: NULL, i.e. no conserved
@@ -55,28 +70,26 @@
 #'   survive. This epitope location tibble can be generated using the functions
 #'   [get_epitope_frequencies()] and [sample_epitopes()]. (default: NULL, i.e.
 #'   no immune fitness costs)
-#' @param immune_start_time Generation to start checking for an immune response,
-#'   only relevant when epitope_locations is not NULL (default: 0, but note that
-#'   the immune response will not actually start until there are at least
+#' @param immune_start_day *Day* to start checking for an immune response, only
+#'   relevant when epitope_locations is not NULL (default: 0, but note that the
+#'   immune response will not actually start until there are at least
 #'   `n_for_imm` cells in the active population).
-#' @param n_for_imm Proportion of all infected cells that must be infected
-#'   with a given sequence for that sequence to be recognized by the immune
-#'   system, only relevant when epitope_locations is not NULL (default: 100).
-#' @param gen_full_potency Number of generations it takes for an immune response
-#'   to an epitope to reach full potency, only relevant when epitope_locations
-#'   is not NULL (default: 75).
-#' @param mut_rate Mutation rate per-site, per-generation (default: 3.5e-5)
-#' @param recomb_rate Recombination rate per-site, per-generation (default:
+#' @param n_for_imm Number of infected cells that must contain a given sequence
+#'   for that sequence to be recognized by the immune system, only relevant when
+#'   epitope_locations is not NULL (default: 100).
+#' @param days_full_potency Number of *days* it takes for an immune response to
+#'   an epitope to reach full potency, only relevant when epitope_locations is
+#'   not NULL (default: 90).
+#' @param mut_rate Mutation rate per-site, per-*generation* (default: 2.4e-5)
+#' @param recomb_rate Recombination rate per-site, per-*generation* (default:
 #'   1.4e-5)
-#' @param prob_act_to_lat Probability that an active cell becomes latent in a
-#'   generation (default: 0.001). Set this to 0 if you don't want to model
-#'   latent cell dynamics.
-#' @param prob_lat_to_act Probability that a latent cell becomes active in a
-#'   generation (default: 0.01)
-#' @param prob_lat_prolif Probability that a latent cell proliferates in a
-#'   generation (default: 0.01)
-#' @param prob_lat_die Probability that a latent cell dies in a generation
-#'   (default: 0.01)
+#' @param act_to_lat Per-*day* rate that an active cell becomes latent (default:
+#'   0.001). Set this to 0 if you don't want to model latent cell dynamics.
+#' @param lat_to_act Per-*day* rate that a latent cell becomes active (default:
+#'   0.01)
+#' @param lat_prolif Per-*day* rate that a latent cell proliferates (default:
+#'   0.01)
+#' @param lat_die Per-*day* rate that a latent cell dies (default: 0.01)
 #' @param seed Optional seed (default: NULL)
 #'
 #' @return List including: tibble of counts, and alignment of sampled sequences
@@ -84,35 +97,39 @@
 #'
 #' @examples
 #' \dontrun{
-#' run_wavess(generate_pop_samp(n_gen = 300), rep("ATCG", 10))
+#' run_wavess(define_growth_curve(n_gen = 50),
+#'            define_sampling_scheme(sampling_frequency = 10, n_days = 50),
+#'            rep("ATCG", 10))
 #' }
-run_wavess <- function(pop_samp,
+run_wavess <- function(inf_pop_size,
+                       samp_scheme,
                        founder_seqs,
-                       mut_rate = 1.2e-5,
-                       q = wavess::hiv_q_mat,
+                       generation_time = 1.2,
+                       mut_rate = 2.4e-5,
+                       q = wavess::calc_q_from_rates(wavess::hiv_mut_rates, mut_rate, generation_time),
                        recomb_rate = 1.4e-5,
-                       prob_act_to_lat = 0.001,
-                       prob_lat_to_act = 0.01,
-                       prob_lat_prolif = 0.01,
-                       prob_lat_die = 0.01,
+                       act_to_lat = 0.001,
+                       lat_to_act = 0.01,
+                       lat_prolif = 0.01,
+                       lat_die = 0.01,
                        conserved_sites = NULL,
                        conserved_cost = 0.99,
                        ref_seq = NULL,
                        replicative_cost = 0.001,
                        epitope_locations = NULL,
                        n_for_imm = 100, # should the default be max(pop_samp$active_cell_count)*0.05?
-                       gen_full_potency = 75,
-                       immune_start_time = 0,
+                       days_full_potency = 90,
+                       immune_start_day = 0,
                        seed = NULL) {
   check_run_wavess_inputs(
-    pop_samp, founder_seqs, q,
+    inf_pop_size, samp_scheme, founder_seqs, generation_time, q,
     mut_rate, recomb_rate,
     conserved_sites, conserved_cost,
     ref_seq, replicative_cost,
-    epitope_locations, immune_start_time,
-    n_for_imm, gen_full_potency,
-    prob_act_to_lat, prob_lat_to_act,
-    prob_lat_prolif, prob_lat_die,
+    epitope_locations, immune_start_day,
+    n_for_imm, days_full_potency,
+    act_to_lat, lat_to_act,
+    lat_prolif, lat_die,
     seed
   )
 
@@ -120,8 +137,29 @@ run_wavess <- function(pop_samp,
   agents <- use_python_venv()
 
   # convert rates to probabilities
+  # these are in generations already
   prob_mut <- rate_to_probability(mut_rate)
   prob_recomb <- rate_to_probability(recomb_rate)
+  # these are in days, so we convert to generations first
+  prob_act_to_lat <- rate_to_probability(act_to_lat/generation_time)
+  prob_lat_to_act <- rate_to_probability(lat_to_act/generation_time)
+  prob_lat_prolif <- rate_to_probability(lat_prolif/generation_time)
+  prob_lat_die <- rate_to_probability(lat_die/generation_time)
+
+  # convert days to generations
+  gen_full_potency <- days_full_potency/generation_time
+  gen_immune_start <- immune_start_day/generation_time
+
+  pop_samp <- inf_pop_size |>
+    dplyr::left_join(samp_scheme |>
+                       dplyr::mutate(generation = round(.data$day/generation_time)) |>
+                       dplyr::select("generation", "n_sample_active"),
+                     by = dplyr::join_by("generation")) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(n_sample_active = ifelse(!is.na(.data$n_sample_active),
+                                           min(.data$active_cell_count, .data$n_sample_active),
+                                           0)) |>
+    dplyr::ungroup()
 
   # make sure founder sequences are all uppercase and in list format
   founder_seqs <- as.list(toupper(founder_seqs))
@@ -180,7 +218,7 @@ run_wavess <- function(pop_samp,
     prob_mut, prob_recomb,
     prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
     conserved_sites, conserved_cost, ref_seq, replicative_cost,
-    epitope_locations, immune_start_time, n_for_imm, gen_full_potency,
+    epitope_locations, gen_immune_start, n_for_imm, gen_full_potency,
     generator
   ))
 

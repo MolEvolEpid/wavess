@@ -19,8 +19,8 @@ knitr::opts_chunk$set(
 
 wavess is a agent-based discrete-time within-host evolution simulator. We assume
 that all virus life cycles within the infection are synchronized into
-generations. Each generation is one full virus life cycle, from infecting a cell
-to exiting the cell.
+generations. Each generation is one full virus life cycle, from infecting one cell
+to exiting the cell and infecting the next one.
 
 This vignette describes how to generate input data for running wavess
 using functions from the package, as summarized in the table below.
@@ -31,7 +31,8 @@ for most users.
 
 | `run_wavess()` argument | `wavess` function to generate input | Description |
 |------------------------|------------------------|------------------------|
-| `pop_samp` | `generate_pop_samp()` | [Define active cell growth and sampling](#define-active-cell-growth-and-sampling) |
+| `inf_pop_size` | `define_growth_curve()` | [Define active cell growth](#define-active-cell-growth) |
+| `samp_scheme` | `define_samp_scheme()` | [Define sampling scheme](#define-sampling-scheme) |
 | `founder_seqs` | `extract_seqs()` | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment) |
 | `q` | `estimate_q()` | [Determine nucleotide substitution probabilities](#estimate-q-matrix) |
 | `prob_*` | `rate_to_prob()` | [Convert rate to probability](#convert-rate-to-probability) |
@@ -108,79 +109,111 @@ delimited files.
 ## Required `run_wavess()` inputs
 
 The three required inputs to `run_waves()` are a data frame of the infected cell
-effective population size and sampling scheme per generation (`pop_samp`), a
-vector of the founder sequence(s) in character string format (`founder_seqs`),
-and a nucleotide substitution rate matrix Q (`q`). In this section, we will
-introduce functions that can help generate these inputs.
+population size for each *generation*, a data frame including the *days* on
+which to sample and how many sequences to sample  (`samp_scheme`), and a vector
+of the founder sequence(s) in character string format (`founder_seqs`). In this
+section, we will introduce functions that can help generate these inputs.
 
-### Define active cell growth and sampling {#define-active-cell-growth-and-sampling}
+Note that, in general, some of the inputs are in units of generations and some
+are in units of days. We made these decisions mainly based on what information
+is most readily available in the literature related to each parameter value. 
 
-`run_wavess()` requires a `pop_samp` data frame as input where each row
+### Define active cell growth {#define-active-cell}
+
+`run_wavess()` requires a `inf_pop_size` data frame as input where each row
 is a generation with the following columns:
 
 - `generation`: Each generation to be simulated (must be consecutive
   whole numbers starting with 0)
 - `active_cell_count`: Number of active infected cells in each generation
-- `n_sample_active`: Number of sequences to sample in each generation
-  (must be ≤ `active_cell_count`)
 
 You can create this data frame yourself, but we also provide a helper
-function to generate it: `generate_pop_samp()`.
+function to generate it: `define_growth_curve()`.
 
 All of the arguments in this function have defaults, so you can run:
 
-```{r, generate_pop_samp}
-generate_pop_samp()
+```{r, define_growth_curve}
+define_growth_curve() 
 ```
 
 This will generate an infected cell population size following a logistic growth
 curve. By default, the starting population size (`n0`) is 10, the a carrying
 capacity (`carry_cap`) is 2000, the maximum growth rate (`max_growth_rate`) is
-0.3, the simulation is run for 3000 generations (`n_gen`), and a maximum of 20
-sequences (`max_samp`) are sampled every 300 generations (`sampling_frequency`).
+0.3, and the simulation is run for a maximum 5000 generations (`n_gen`). 
 All of these defaults can be changed by altering the input parameters of the
 function.
 
-Here is an example where there are fewer generations, but more frequent
-sampling and more samples taken at each sampling event:
+Here is an example where there are fewer generations:
 
 ```{r, generate_pop_samp2}
-(pop_samp <- generate_pop_samp(
-  n_gen = 500,
-  sampling_frequency = 30,
-  max_samp = 50
-))
+(inf_pop_size <- define_growth_curve(n_gen = 500))
 ```
 
 If you'd like to write this to a file:
 
 ```{r, write_pop_samp}
-write_csv(pop_samp, "input_data/pop_samp.csv")
+write_csv(inf_pop_size, "input_data/inf_pop_size.csv")
 ```
 
 A couple notes:
 
-- Assuming everything else remains the same, the maximum population size simulated
-greatly influences the simulation output.
-- The default starts with 1 active cell in generation 0, which means
-that no multiple infections can occur. If multiple founders are provided, you
-must provide the correct number for the initial population size. However, also
-note that you may stochastically lose founder sequences after generation 0.
+- The number of founders must equal the intial population size. 
+- Note that if you start with multiple different founder sequences, you may 
+stochastically lose some of those sequences after generation 0.
 
 You can visualize the active cell dynamics over time using the following
-code, where the black line is the effective population size and the 
-red dots are the number of samples taken:
+code:
 
 ```{r, plot_counts}
 # plot active cell counts
-pop_samp |>
-  # to only plot the number of samples taken when it's not 0
-  mutate(n_sample_active = ifelse(n_sample_active == 0, NA, n_sample_active)) |>
+inf_pop_size |>
   ggplot(aes(x = generation, y = active_cell_count)) +
   geom_line() +
-  geom_point(aes(x = generation, y = n_sample_active), col = "red") +
   labs(x = "Generation", y = "Number of infected active cells")
 ```
+
+### Define sampling scheme {#define-sampling-scheme}
+
+`run_wavess()` requires a `samp_scheme` data frame as input where each row
+is a *day* with the following columns:
+
+- `day`: Each day on which to sample sequences
+- `n_sample_active`: Number of sequences from active cellsto sample for that day
+(note that in the simulation output, this number may be lower if the population
+size is smaller than the requested number of sequences to sample)
+
+You can create this data frame yourself, but we also provide a helper
+function to generate it: `define_sampling_scheme()`.
+
+All of the arguments in this function have defaults, so you can run:
+
+```{r, generate_pop_samp}
+define_sampling_scheme()
+```
+
+This will lead to sampling a maximum of 20 sequences (`max_samp`) every 365 days
+(`sampling_frequency`) for 3650 days (`n_days`).
+
+Here is an example with sampling over a shorter time period, but more frequent
+sampling and fewer samples taken at each sampling event:
+
+```{r, generate_pop_samp2}
+(samp_scheme <- define_sampling_scheme(
+  sampling_frequency = 30,
+  max_samp = 10,
+  n_days = 365
+))
+```
+
+Note that the simulation will automatically end after the last sampling time,
+even if the growth curve continues for more generations. 
+
+If you'd like to write this to a file:
+
+```{r, write_pop_samp}
+write_csv(samp_scheme, "input_data/samp_scheme.csv")
+```
+
 
 ### Extract founder sequence from an alignment {#extract-founder-sequence-from-an-alignment}
 
@@ -250,11 +283,10 @@ rep(list(strsplit(founder_seq, "")[[1]]), 10) |>
 
 The model requires as input a Q matrix (`q`), which defines the rates of
 nucleotide substitution for each possible transition between nucleotides. By
-default, this matrix is the HIV "Q" matrix we provide with the package, which is
-estimated from approximately neutral sites:
+default, this matrix is estimated from approximately neutral sites:
 
 ```{r}
-hiv_q_mat
+(hiv_q_mat <- calc_q_from_rates(hiv_mut_rates, mut_rate = 2.4e-5, generation_time = 1.2))
 ```
 
 This matrix is based on the rates from [Zanini et al.
@@ -304,49 +336,21 @@ as.matrix(read.csv("input_data/hiv_q_mat.csv", row.names = 1))
 ```
 
 
-## Latent probabilities
+## Latent cell dynamics {#visualize-latent-cell-dynamics}
 
-The required inputs related to latency are probabilities that these events
-happen to a cell in one generation. All of these arguments have the prefix
-`prob_`. (Note that to "turn off" any of these, all you have to do is set the
-probability equal to 0.)
-
-### Convert rates to probabilities
-
-Much of the time, in the literature, values for events of interest are reported
-as *rates*, i.e. the number of events that happen in a given amount of time.
-However, our simulations require *probabilities* of an event occurring in one
-generation. Therefore, we provide a function to convert a per-generation rate to
-a per-generation probability:
-
-```{r, rate_to_prob}
-rate_to_probability(0.001)
-rate_to_probability(0.01)
-rate_to_probability(0.1)
-rate_to_probability(1)
-```
-
-What you'll notice is that the rates and the probabilities are effectively
-identical for slow rates, but quite different for faster rates. 
-
-### Visualize latent cell dynamics {#visualize-latent-cell-dynamics}
-
-While the input parameters for latency are simply probabilities, it is
-helpful to visualize the latent cell dynamics prior to simulating data
-with a given set of probabilties.
-
-The way the model implements latency is stochastic, meaning that a
-different number of cells will become latent in each simulation, but the
-overall trends should be similar across simulations, given the same set
-of probabilities.
+The required inputs related to latency are per-day rates that these events
+happen to a cell. (Note that to "turn off" any of these, all you have to do is
+set the rate equal to 0.) It is helpful to visualize the latent cell dynamics
+prior to simulating data with a given set of rates. While the way the model
+implements latency is stochastic, meaning that a different number of cells will
+become latent in each simulation, the overall trends should be similar across
+simulations, given the same set of rates.
 
 To make these plots, you need the active cell counts, which can be
-generated from the `generate_pop_sam()` function described above. We
-will therefore be using the `pop_samp` dataset we created earlier in the
-vignette.
-
-Below is example code you can use to plot the latent cell dynamics given
-certain probabilities. 
+generated from the `define_growth_curve()` function described above. We
+will therefore be using the `inf_pop_size` dataset we created earlier in the
+vignette. Also, the rates related to latency are converted
+to probabilities for simulation, so we will convert them here before plotting.
 
 **Please note that we assume the probabilities are small for all latency parameters**,
 such that it is unlikely that multiple events (activate, die, proliferate) will
@@ -357,18 +361,20 @@ becomes active, cell dies, cell proliferates.
 
 ```{r, viz_latent}
 # set parameters to get latent curve
-to_latent_rate <- 0.001
-to_active_rate <- 0.01
-proliferation_rate <- 0.01
-death_rate <- 0.01
+generation_time <- 1.2
+# divide by generation time to get per-generation rate before converting to a probability
+to_latent <- rate_to_probability(0.001/generation_time)
+to_active <- rate_to_probability(0.01/generation_time)
+proliferation <- rate_to_probability(0.01/generation_time)
+death <- rate_to_probability(0.01/generation_time)
 
 # get latent cell count for each generation
 latent <- 0
-active_latent_counts <- lapply(pop_samp$active_cell_count, function(x) {
-  n_to_latent <- rbinom(1, x, prob = to_latent_rate)
-  to_active <- rbinom(latent, 1, prob = to_active_rate)
-  to_proliferate <- rbinom(latent, 1, prob = proliferation_rate)
-  to_die <- rbinom(latent, 1, prob = death_rate)
+active_latent_counts <- lapply(inf_pop_size$active_cell_count, function(x) {
+  n_to_latent <- rbinom(1, x, prob = to_latent)
+  to_active <- rbinom(latent, 1, prob = to_active)
+  to_proliferate <- rbinom(latent, 1, prob = proliferation)
+  to_die <- rbinom(latent, 1, prob = death)
   n_to_active <- sum(to_active == 1)
   n_to_die <- sum((to_die - to_active) == 1)
   n_to_proliferate <- sum((to_proliferate - to_die - to_active) == 1)
@@ -433,7 +439,7 @@ conserved site, then it is not considered for replicative fitness.
 Here is a plot of how the cost and number of mutations influences overall fitness:
 
 ```{r}
-costs <- c(0, 0.001, 0.01, 0.05, 0.1, 0.5, 0.99)
+costs <- c(0, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 0.9, 0.99)
 n_muts <- 0:100
 tibble(n_mut = sort(rep(n_muts, length(costs))), cost = rep(costs, length(n_muts))) %>%
   mutate(fitness = (1 - cost)**n_mut) %>%

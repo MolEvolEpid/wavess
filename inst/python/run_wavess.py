@@ -16,17 +16,12 @@ from yaml import safe_load
 from csv import writer
 from math import exp
 import numpy as np
+import pandas as pd
 
 # Import custom classes and functions
 import agents
 
 # Functions to read in data
-
-
-def read_pop_samp(filename):
-    pop_samp = read_csv(filename, index_col=["generation"])
-    return pop_samp
-
 
 # Epitopes file has the following columns (tab-delimited)
 # col 1 -> epi_start
@@ -98,7 +93,13 @@ if __name__ == "__main__":
 
     # Generation information, including cd4 counts and sampling times and
     # numbers
-    pop_samp = read_pop_samp(input_files["pop_samp"])
+    inf_pop_size = read_csv(input_files["inf_pop_size"], index_col=["generation"])
+    samp_scheme = read_csv(input_files["samp_scheme"])
+    samp_scheme['generation'] = pd.to_numeric(round(samp_scheme['day']/params['generation_time']), downcast = 'integer')
+    samp_scheme = samp_scheme.drop(['day'], axis = 1)
+    samp_scheme = samp_scheme.set_index(['generation'])
+    pop_samp = pd.concat([inf_pop_size, samp_scheme], axis = 1)
+    pop_samp['n_sample_active'] = pop_samp['n_sample_active'].fillna(0)
 
     # Founder virus
     founder_virus_sequences = get_sequences(input_files["founder_seqs"])
@@ -170,20 +171,21 @@ if __name__ == "__main__":
         founder_viruses,
         nucleotides_order,
         substitution_probabilities,
-        1 - exp(-params["mut_rate"]), # change to probability
-        1 - exp(-params["recomb_rate"]), # change to probability
-        params["prob_act_to_lat"],
-        params["prob_lat_to_act"],
-        params["prob_lat_die"],
-        params["prob_lat_prolif"],
+        # change to probabilities
+        1 - exp(-params["mut_rate"]), 
+        1 - exp(-params["recomb_rate"]), 
+        1 - exp(-params["act_to_lat"]/params["generation_time"]),
+        1 - exp(-params["lat_to_act"]/params["generation_time"]),
+        1 - exp(-params["lat_die"]/params["generation_time"]),
+        1 - exp(-params["lat_prolif"]/params["generation_time"]),
         conserved_sites,
         params["conserved_cost"],
         reference_sequence,
         float(params["replicative_cost"]),
         epitope_locations,
-        params["seroconversion_time"],
+        params["immune_start_day"]/params["generation_time"],
         params["n_for_imm"],
-        params["time_to_full_potency"],
+        params["time_to_full_potency"]/params["generation_time"],
         generator
     )
 

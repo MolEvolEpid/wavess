@@ -1,54 +1,54 @@
-test_that("check_generate_pop_samp_inputs works", {
-  expect_error(
-    generate_pop_samp(n_gen = "a"),
-    "n_gen must be numeric, but is a character"
-  )
-  expect_error(generate_pop_samp(n_gen = -1), "n_gen must be a positive")
-  expect_error(
-    generate_pop_samp(carry_cap = "a"),
-    "carry_cap must be numeric, but is a character"
-  )
-  expect_error(
-    generate_pop_samp(carry_cap = -1),
-    "carry_cap must be a positive"
-  )
-  expect_error(
-    generate_pop_samp(n0 = "a"),
-    "n0 must be numeric, but is a character"
-  )
-  expect_error(
-    generate_pop_samp(n0 = 10000),
-    "n0 must be a number "
-  )
-  expect_error(
-    generate_pop_samp(max_growth_rate = "a"),
-    "max_growth_rate must be numeric, but is a character"
-  )
-  expect_error(
-    generate_pop_samp(sampling_frequency = "a"),
-    "sampling_frequency must be numeric, but is a character"
-  )
-  expect_error(
-    generate_pop_samp(sampling_frequency = -1),
-    "sampling_frequency must be a positive number"
-  )
-  expect_error(
-    generate_pop_samp(sampling_frequency = "a"),
-    "sampling_frequency must be numeric, but is a character"
-  )
-  expect_error(
-    generate_pop_samp(sampling_frequency = 10000),
-    "sampling_frequency must be "
-  )
-  expect_error(
-    generate_pop_samp(max_samp = "a"),
-    "max_samp must be numeric, but is a character"
-  )
-  expect_error(
-    generate_pop_samp(max_samp = -1),
-    "max_samp must be a positive number"
-  )
-})
+# test_that("check_generate_pop_samp_inputs works", {
+#   expect_error(
+#     generate_pop_samp(n_gen = "a"),
+#     "n_gen must be numeric, but is a character"
+#   )
+#   expect_error(generate_pop_samp(n_gen = -1), "n_gen must be a positive")
+#   expect_error(
+#     generate_pop_samp(carry_cap = "a"),
+#     "carry_cap must be numeric, but is a character"
+#   )
+#   expect_error(
+#     generate_pop_samp(carry_cap = -1),
+#     "carry_cap must be a positive"
+#   )
+#   expect_error(
+#     generate_pop_samp(n0 = "a"),
+#     "n0 must be numeric, but is a character"
+#   )
+#   expect_error(
+#     generate_pop_samp(n0 = 10000),
+#     "n0 must be a number "
+#   )
+#   expect_error(
+#     generate_pop_samp(max_growth_rate = "a"),
+#     "max_growth_rate must be numeric, but is a character"
+#   )
+#   expect_error(
+#     generate_pop_samp(sampling_frequency = "a"),
+#     "sampling_frequency must be numeric, but is a character"
+#   )
+#   expect_error(
+#     generate_pop_samp(sampling_frequency = -1),
+#     "sampling_frequency must be a positive number"
+#   )
+#   expect_error(
+#     generate_pop_samp(sampling_frequency = "a"),
+#     "sampling_frequency must be numeric, but is a character"
+#   )
+#   expect_error(
+#     generate_pop_samp(sampling_frequency = 10000),
+#     "sampling_frequency must be "
+#   )
+#   expect_error(
+#     generate_pop_samp(max_samp = "a"),
+#     "max_samp must be numeric, but is a character"
+#   )
+#   expect_error(
+#     generate_pop_samp(max_samp = -1),
+#     "max_samp must be a positive number"
+#   )
+# })
 
 test_that("check_is_numeric works", {
   expect_no_error(check_is_numeric(0, "test"))
@@ -247,15 +247,15 @@ test_that("check_estimate_q_inputs works", {
 
 test_that("check_run_wavess_inputs works", {
   # hiv_env_flt_2022 <- ape::as.matrix.DNAbin(hiv_env_flt_2022)
-  ps <- define_sampling_scheme(define_growth_curve(n_gen = 100),
-    sampling_frequency = 50
-  )
-  fs <- "ACGT"
+  inf_pop_size <- define_growth_curve(n_gen = 100)
+  samp_scheme <- define_sampling_scheme(sampling_frequency = 50, n_days = 100)
+  fs <- rep("ACGT", 10)
   suppressMessages(el <- sample_epitopes(
     get_epitope_frequencies(env_features$Position - 1)
   ))
+  hiv_q_mat <- calc_q_from_rates(hiv_mut_rates, 2.4e-5, 1.2)
   expect_no_error(check_run_wavess_inputs(
-    ps, fs, hiv_q_mat,
+    inf_pop_size, samp_scheme, fs, 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
     NULL, 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
@@ -263,16 +263,16 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      ps |> dplyr::mutate(n_sample_active = 0), fs, hiv_q_mat,
+      inf_pop_size, samp_scheme |> dplyr::mutate(n_sample_active = 0), fs, 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "you must sample at least one generation"
+    "you must sample at least one day"
   )
   expect_error(check_run_wavess_inputs(
-    ps, fs, hiv_q_mat,
+    inf_pop_size, samp_scheme, fs, 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
     10000, 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
@@ -280,27 +280,27 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      "ps", fs, hiv_q_mat,
+      "ps", fs, 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "pop_samp must be a data frame or tibble, but is a character"
+    "inf_pop_size must be a data frame or tibble, but is a character"
   )
   expect_error(
     check_run_wavess_inputs(
-      ps |> dplyr::rename(gen = generation), fs, hiv_q_mat,
+      inf_pop_size |> dplyr::rename(gen = generation), fs, 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
       0.001, 0.01, 0.01, 0.01, NULL
     ),
-    "pop_samp must contain the columns generation, active_cell_count, "
+    "inf_pop_size must contain the columns generation, active_cell_count"
   )
   expect_error(
     check_run_wavess_inputs(
-      ps |> dplyr::mutate(generation = sample(generation)), fs, hiv_q_mat,
+      inf_pop_samp |> dplyr::mutate(generation = sample(generation)), fs, 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -310,7 +310,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ADAA", hiv_q_mat,
+      inf_pop_size, samp_scheme, rep("ADAA", 10), 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -318,9 +318,17 @@ test_that("check_run_wavess_inputs works", {
     ),
     "founder_seqs must only contain the characters ACGT"
   )
+  expect_error(check_run_wavess_inputs(
+    inf_pop_size, samp_scheme, fs, 'notanum', hiv_q_mat,
+    3.5e-5, 1.4e-5,
+    NULL, 0.99, NULL, 1,
+    NULL, 30, 0.01, 90,
+    0.001, 0.01, 0.01, 0.01, NULL
+  ),
+  "generation_time must be numeric, but is")
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat[1:2, ],
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat[1:2, ],
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -332,7 +340,7 @@ test_that("check_run_wavess_inputs works", {
   colnames(hiv_q_mat_tmp) <- rev(colnames(hiv_q_mat_tmp))
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat_tmp,
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat_tmp,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -342,7 +350,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat[1, ],
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat[1, ],
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -351,14 +359,14 @@ test_that("check_run_wavess_inputs works", {
     "q must be a matrix, but is a numeric"
   )
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", hiv_q_mat,
+    inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
     c("1" = "a"), 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
     0.001, 0.01, 0.01, 0.01, NULL
   ))
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", hiv_q_mat,
+    inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
     c("1" = "A", "2" = "C"), 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
@@ -366,7 +374,7 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat,
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       "a", 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -376,7 +384,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat,
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       c("1" = "A", "2" = "C"), 10, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -385,7 +393,7 @@ test_that("check_run_wavess_inputs works", {
     "conserved_cost must be in the range"
   )
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", hiv_q_mat,
+    inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
     NULL, 0.99, "ATTT", 0.99,
     NULL, 30, 0.01, 90,
@@ -393,7 +401,7 @@ test_that("check_run_wavess_inputs works", {
   ))
 
   expect_error(check_run_wavess_inputs(
-    ps, "ATAA", hiv_q_mat,
+    inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
     NULL, 0.99, "ATTT", 1,
     NULL, 30, 0.01, 90,
@@ -402,7 +410,7 @@ test_that("check_run_wavess_inputs works", {
 
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat,
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, "ATT", 0.99,
       NULL, 30, 0.01, 90,
@@ -411,7 +419,7 @@ test_that("check_run_wavess_inputs works", {
     "ref_seq must be the same length as the founder sequence"
   )
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", hiv_q_mat,
+    inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
     NULL, 0.99, NULL, 1,
     el, 30, 0.01, 90,
@@ -419,7 +427,7 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat,
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       el |> dplyr::select(epi_start_nt), 30, 0.01, 90,
@@ -429,7 +437,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat[, 1:2],
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat[, 1:2],
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -439,7 +447,7 @@ test_that("check_run_wavess_inputs works", {
   )
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat,
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       el, 30, 0.01, -1,
@@ -448,7 +456,7 @@ test_that("check_run_wavess_inputs works", {
     "gen_full_potency must be a positive number"
   )
   expect_no_error(check_run_wavess_inputs(
-    ps, "ATAA", hiv_q_mat,
+    inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
     NULL, 0.99, NULL, 1,
     NULL, 30, 0.01, 90,
@@ -456,7 +464,7 @@ test_that("check_run_wavess_inputs works", {
   ))
   expect_error(
     check_run_wavess_inputs(
-      ps, "ATAA", hiv_q_mat,
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,
@@ -464,20 +472,10 @@ test_that("check_run_wavess_inputs works", {
     ),
     "seed must be numeric, but is a character"
   )
+  # ps$active_cell_count[1] <- 2
   expect_error(
     check_run_wavess_inputs(
-      ps |> dplyr::mutate(n_sample_active = 10000), "ATAA", hiv_q_mat,
-      3.5e-5, 1.4e-5,
-      NULL, 0.99, NULL, 1,
-      NULL, 30, 0.01, 90,
-      0.001, 0.01, 0.01, 0.01, NULL
-    ),
-    "pop_samp"
-  )
-  ps$active_cell_count[1] <- 2
-  expect_error(
-    check_run_wavess_inputs(
-      ps, c("AG", "ATAA"), hiv_q_mat,
+      inf_pop_size, samp_scheme, c("AG", rep("ATAA", 9)), 1.2, hiv_q_mat,
       3.5e-5, 1.4e-5,
       NULL, 0.99, NULL, 1,
       NULL, 30, 0.01, 90,

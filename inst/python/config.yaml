@@ -1,7 +1,8 @@
 # Input file paths
 input_files:
     # Required input files
-    pop_samp: ../extdata/pop_samp.csv
+    inf_pop_size: ../extdata/inf_pop_size.csv
+    samp_scheme: ../extdata/samp_scheme.csv
     founder_seqs: ../extdata/founder.fasta
     q: ../extdata/hiv_q_mat.csv
     # Optional input files related to selection ("", i.e. empty string, = not modeled)
@@ -11,20 +12,21 @@ input_files:
 
 # Parameters
 parameters:
+    generation_time: 1.2 # Generation time in days
     # Diversity-generating mechanisms
-    mut_rate: 1.2E-05 # Mutation rate per site per generation
-    recomb_rate: 1.4E-05 # Recombination rate per site per generation
+    mut_rate: 2.4e-5 # Mutation rate per site per generation
+    recomb_rate: 1.4e-5 # Recombination rate per site per generation
     # Latent cell dynamics
-    prob_act_to_lat: 0.001 # Probability of infected cell becoming latent
-    prob_lat_to_act: 0.01 # Probability that a latent cell will become active
-    prob_lat_prolif: 0.01 # Probability that a latent cell will proliferate (based on central memory cells)
-    prob_lat_die: 0.01 # Probability that a latent cell will die
+    act_to_lat: 0.001 # Per-day rate that an infected cell will become latent
+    lat_to_act: 0.01 # Per-day rate that a latent cell will become active
+    lat_prolif: 0.01 # Per-day rate that a latent cell will proliferate (based on central memory cells)
+    lat_die: 0.01 # Per-day rate that a latent cell will die
     # Parameters related to fitness
     # Conserved sites
     conserved_cost: 0.99 # Fitness cost per mutation in a conserved site
     # Replicative
     replicative_cost: 0.001 # Fitness cost per difference from reference
     # Immune
-    seroconversion_time: 0 # Seroconversion time in generations; immunity considered only at this generation onward
+    immune_start_day: 0 # Immunity considered only at this day onward
     n_for_imm: 100 # Number new viral antigen must reach to initiate immune response against corresponding epitope
-    time_to_full_potency: 75 # Number of generations for a new immune response to reach full potency
+    time_to_full_potency: 90 # Number of days for a new immune response to reach full potency

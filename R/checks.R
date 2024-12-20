@@ -335,43 +335,45 @@ check_seq <- function(seq, chars, seq_type) {
 #'
 #' @return error if wrong inputs
 #' @noRd
-check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
+check_run_wavess_inputs <- function(inf_pop_size, samp_scheme,
+                                    founder_seqs, generation_time, q,
                                     mut_rate, recomb_rate,
                                     conserved_sites, conserved_cost,
                                     ref_seq, replicative_cost,
                                     epitope_locations, seroconversion_time,
                                     n_for_imm, gen_full_potency,
-                                    prob_act_to_lat, prob_lat_to_act,
-                                    prob_lat_prolif, prob_lat_die,
+                                    act_to_lat, lat_to_act,
+                                    lat_prolif, lat_die,
                                     seed) {
-  check_is_df(pop_samp, "pop_samp")
-  if (!all(c("generation", "active_cell_count", "n_sample_active") %in%
-    colnames(pop_samp))) {
+  check_is_df(inf_pop_size, "inf_pop_size")
+  if (!all(c("generation", "active_cell_count") %in%
+    colnames(inf_pop_size))) {
     stop(
-      "pop_samp must contain the columns ",
-      "generation, active_cell_count, n_sample_active"
+      "inf_pop_size must contain the columns ",
+      "generation, active_cell_count"
     )
   }
-  check_is_pos(pop_samp$generation, "pop_samp$generation", TRUE)
-  check_is_pos(pop_samp$active_cell_count, "pop_samp$active_cell_count", TRUE)
-  if (all(pop_samp$n_sample_active == 0)) {
-    stop("you must sample at least one generation")
-  }
-  check_is_pos(pop_samp$n_sample_active, "pop_samp$n_sample_active", TRUE)
-  if (!all(pop_samp$generation == seq_len(nrow(pop_samp)) - 1)) {
+  check_is_pos(inf_pop_size$generation, "inf_pop_size$generation", TRUE)
+  check_is_pos(inf_pop_size$active_cell_count, "inf_pop_size$active_cell_count", TRUE)
+  if (!all(inf_pop_size$generation == seq_len(nrow(inf_pop_size)) - 1)) {
     stop(
-      "pop_samp$generation must be consecutive numbers from 0 to ",
+      "inf_pop_size$generation must be consecutive numbers from 0 to ",
       "the number of rows in the data"
     )
   }
-  if (!all(pop_samp$active_cell_count >= pop_samp$n_sample_active)) {
+  check_is_df(samp_scheme, "samp_scheme")
+  if (all(samp_scheme$n_sample_active == 0)) {
+    stop("you must sample at least one day")
+  }
+  check_is_pos(samp_scheme$n_sample_active, "samp_scheme$n_sample_active", TRUE)
+  check_is_pos(generation_time, "generation_time")
+  if(round(max(samp_scheme$day/generation_time)) > max(inf_pop_size$generation)) {
     stop(
-      "pop_samp$active_cell_count must always be ",
-      ">= pop_samp$n_sample_active"
+      "you requested to sample at a time after max(inf_pop_size$generation)"
     )
   }
   check_is_string(founder_seqs, "founder_seqs")
-  if (pop_samp$active_cell_count[1] != length(founder_seqs)) {
+  if (inf_pop_size$active_cell_count[1] != length(founder_seqs)) {
     stop("Initial population size must equal the number of founder sequences")
   }
   lapply(as.list(founder_seqs), function(x) {
@@ -439,17 +441,17 @@ check_run_wavess_inputs <- function(pop_samp, founder_seqs, q,
     })
     check_is_pos(seroconversion_time, "seroconversion_time", TRUE)
     check_is_pos(n_for_imm, "n_for_imm")
-    if (n_for_imm > max(pop_samp$active_cell_count)) {
+    if (n_for_imm > max(inf_pop_size$active_cell_count)) {
       warning("n_for_imm is greater than the maximum population size so there will be no immune response")
     }
     check_is_pos(gen_full_potency, "gen_full_potency", FALSE)
   }
   check_is_numeric(mut_rate, "mut_rate")
   check_is_numeric(recomb_rate, "recomb_rate")
-  check_is_0to1(prob_act_to_lat, "prob_act_to_lat")
-  check_is_0to1(prob_lat_to_act, "prob_lat_to_act")
-  check_is_0to1(prob_lat_prolif, "prob_lat_prolif")
-  check_is_0to1(prob_lat_die, "prob_lat_die")
+  check_is_pos(act_to_lat, "act_to_lat", ok0 = TRUE)
+  check_is_pos(lat_to_act, "lat_to_act", ok0 = TRUE)
+  check_is_pos(lat_prolif, "lat_prolif", ok0 = TRUE)
+  check_is_pos(lat_die, "lat_die", ok0 = TRUE)
   if (!is.null(seed)) {
     check_is_numeric(seed, "seed")
   }
