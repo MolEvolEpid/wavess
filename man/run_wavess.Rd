@@ -8,8 +8,8 @@ run_wavess(
   inf_pop_size,
   samp_scheme,
   founder_seqs,
-  generation_time = 1.2,
-  mut_rate = 2.4e-05,
+  generation_time = 1,
+  mut_rate = 3e-05,
   q = wavess::calc_q_from_rates(wavess::hiv_mut_rates, mut_rate, generation_time),
   recomb_rate = 1.4e-05,
   act_to_lat = 0.001,
@@ -45,10 +45,10 @@ fitness, they are expected to be codon-aligned.}
 
 \item{generation_time}{Amount of time in days it takes a virus to complete
 one full life cycle, from infecting one cell to exiting the cell and
-infecting the next one (default: 1.2 days). Any inputs that are in days
+infecting the next one (default: 1 day). Any inputs that are in days
 will be converted to generations using this number.}
 
-\item{mut_rate}{Mutation rate per-site, per-\emph{generation} (default: 2.4e-5)}
+\item{mut_rate}{Mutation rate per-site, per-\emph{generation} (default: 3.0e-5)}
 
 \item{q}{Nucleotide substitution rate matrix Q with rows and columns named as
 the nucleotides ACGT. Rows are from, columns are to. Can be generated using
@@ -146,8 +146,10 @@ inputs are which.
 }
 \examples{
 \dontrun{
-run_wavess(define_growth_curve(n_gen = 50),
-           define_sampling_scheme(sampling_frequency = 10, n_days = 50),
-           rep("ATCG", 10))
+run_wavess(
+  define_growth_curve(n_gen = 50),
+  define_sampling_scheme(sampling_frequency = 10, n_days = 50),
+  rep("ATCG", 10)
+)
 }
 }
