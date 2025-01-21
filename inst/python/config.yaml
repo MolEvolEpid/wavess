@@ -12,9 +12,9 @@ input_files:
 
 # Parameters
 parameters:
-    generation_time: 1.2 # Generation time in days
+    generation_time: 1 # Generation time in days
     # Diversity-generating mechanisms
-    mut_rate: 2.4e-5 # Mutation rate per site per generation
+    mut_rate: 3.0e-5 # Mutation rate per site per generation
     recomb_rate: 1.4e-5 # Recombination rate per site per generation
     # Latent cell dynamics
     act_to_lat: 0.001 # Per-day rate that an infected cell will become latent

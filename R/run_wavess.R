@@ -39,7 +39,7 @@
 #'   fitness, they are expected to be codon-aligned.
 #' @param generation_time Amount of time in days it takes a virus to complete
 #'   one full life cycle, from infecting one cell to exiting the cell and
-#'   infecting the next one (default: 1.2 days). Any inputs that are in days
+#'   infecting the next one (default: 1 day). Any inputs that are in days
 #'   will be converted to generations using this number.
 #' @param q Nucleotide substitution rate matrix Q with rows and columns named as
 #'   the nucleotides ACGT. Rows are from, columns are to. Can be generated using
@@ -80,7 +80,7 @@
 #' @param days_full_potency Number of *days* it takes for an immune response to
 #'   an epitope to reach full potency, only relevant when epitope_locations is
 #'   not NULL (default: 90).
-#' @param mut_rate Mutation rate per-site, per-*generation* (default: 2.4e-5)
+#' @param mut_rate Mutation rate per-site, per-*generation* (default: 3.0e-5)
 #' @param recomb_rate Recombination rate per-site, per-*generation* (default:
 #'   1.4e-5)
 #' @param act_to_lat Per-*day* rate that an active cell becomes latent (default:
@@ -106,8 +106,8 @@
 run_wavess <- function(inf_pop_size,
                        samp_scheme,
                        founder_seqs,
-                       generation_time = 1.2,
-                       mut_rate = 2.4e-5,
+                       generation_time = 1,
+                       mut_rate = 3.0e-5,
                        q = wavess::calc_q_from_rates(wavess::hiv_mut_rates, mut_rate, generation_time),
                        recomb_rate = 1.4e-5,
                        act_to_lat = 0.001,
