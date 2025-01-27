@@ -17,44 +17,46 @@ knitr::opts_chunk$set(
 )
 ```
 
-wavess is a agent-based discrete-time within-host evolution simulator. We assume
-that all virus life cycles within the infection are synchronized into
-generations. Each generation is one full virus life cycle, from infecting one cell
-to exiting the cell and infecting the next one.
+wavess is a agent-based discrete-time within-host evolution simulator.
+We assume that all virus life cycles within the infection are
+synchronized into generations. Each generation is one full virus life
+cycle, from infecting one cell to exiting the cell and infecting the
+next one.
 
 This vignette describes how to generate input data for running wavess
 using functions from the package, as summarized in the table below.
 Please note that you may also generate the input data on your own, which
 may be necessary if your inputs require more customization than these
 functions provide. However, we expect these functions to be sufficient
-for most users. 
+for most users.
 
-| `run_wavess()` argument | `wavess` function to generate input | Description |
-|------------------------|------------------------|------------------------|
-| `inf_pop_size` | `define_growth_curve()` | [Define active cell growth](#define-active-cell-growth) |
-| `samp_scheme` | `define_samp_scheme()` | [Define sampling scheme](#define-sampling-scheme) |
-| `founder_seqs` | `extract_seqs()` | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment) |
-| `q` | `estimate_q()` | [Determine nucleotide substitution probabilities](#estimate-q-matrix) |
-| `prob_*` | `rate_to_prob()` | [Convert rate to probability](#convert-rate-to-probability) |
-| `conserved_sites` | `identify_conserved_sites()` | [Identify conserved sites](#identify-conserved-sites) |
-| `ref_seq` | `identify_conserved_sites()`, `extract_seqs()` | [Get reference sequence that is considered to be the best replicator](#find-a-consensus-sequence) |
-| `epitope_locations` | `get_epitope_frequencies()`, `sample_epitopes()` | [Sample epitopes](#sample-epitopes) |
+| `run_wavess()` argument | `wavess` function to generate input              | Description                                                                                       |
+|----------------|-------------------|--------------------------------------|
+| `inf_pop_size`          | `define_growth_curve()`                          | [Define active cell growth](#define-active-cell-growth)                                           |
+| `samp_scheme`           | `define_samp_scheme()`                           | [Define sampling scheme](#define-sampling-scheme)                                                 |
+| `founder_seqs`          | `extract_seqs()`                                 | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment)         |
+| `q`                     | `estimate_q()`                                   | [Determine nucleotide substitution probabilities](#estimate-q-matrix)                             |
+| `prob_*`                | `rate_to_prob()`                                 | [Convert rate to probability](#convert-rate-to-probability)                                       |
+| `conserved_sites`       | `identify_conserved_sites()`                     | [Identify conserved sites](#identify-conserved-sites)                                             |
+| `ref_seq`               | `identify_conserved_sites()`, `extract_seqs()`   | [Get reference sequence that is considered to be the best replicator](#find-a-consensus-sequence) |
+| `epitope_locations`     | `get_epitope_frequencies()`, `sample_epitopes()` | [Sample epitopes](#sample-epitopes)                                                               |
 
 Each of the sections below goes into more detail.
 
-We also provide examples of how to save the data. This can be 
-useful if generating the input data takes a while to run or if, rather than
-using the built-in `run_wavess()` function, you'd rather run it using a python
-command line script (see `vignette("python")` for details). We save the files
-to a directory called `input_data`. If you would like to do the same, you will
-have to create thet directory before running the file saving commands. For 
-example:
+We also provide examples of how to save the data. This can be useful if
+generating the input data takes a while to run or if, rather than using
+the built-in `run_wavess()` function, you'd rather run it using a python
+command line script (see `vignette("python")` for details). We save the
+files to a directory called `input_data`. If you would like to do the
+same, you will have to create thet directory before running the file
+saving commands. For example:
 
 ```{r, create_dir}
 dir.create("input_data")
 ```
 
-In each relevant section, we also provide examples of how to visualize the data.
+In each relevant section, we also provide examples of how to visualize
+the data.
 
 ## Install and load `wavess`
 
@@ -82,50 +84,54 @@ set.seed(1234)
 
 This will also load some example data that we will be using in this
 vignette. All of this example data is related to the HIV gp120 protein.
-Please note that the default parameters for `run_wavess()` are also based on 
-this example.
+Please note that the default parameters for `run_wavess()` are also
+based on this example.
 
 In particular, we include the following example data in the package:
 
-- `hxb2_cons_founder`: an alignment in `ape::DNAbin` format that includes
-  the HIV full-genome sequence for the HXB2 reference sequence, the consensus 
-  sequence, and an example founder sequence.
-- `hiv_env_flt_2022`: the first 10 sequences from the filtered HIV ENV alignment 
-downloaded from the [LANL HIV sequence
-  database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html),
-  in `ape::DNAbin` format. Feel free to download the entire alignment if you'd like.
-- `conserved_sites`: a vector of conserved sites for the example founder sequence.
-More details on this below.
-- `env_features`: a tibble of binding, contact, and and neutralization
-  features for HIV ENV from the [LANL HIV immunology
-  database](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp).
+-   `hxb2_cons_founder`: an alignment in `ape::DNAbin` format that
+    includes the HIV full-genome sequence for the HXB2 reference
+    sequence, the consensus sequence, and an example founder sequence.
+-   `hiv_env_flt_2022`: the first 10 sequences from the filtered HIV ENV
+    alignment downloaded from the [LANL HIV sequence
+    database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html),
+    in `ape::DNAbin` format. Feel free to download the entire alignment
+    if you'd like.
+-   `conserved_sites`: a vector of conserved sites for the example
+    founder sequence. More details on this below.
+-   `env_features`: a tibble of binding, contact, and and neutralization
+    features for HIV ENV from the [LANL HIV immunology
+    database](https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp).
 
 You can check out the documentation for these datasets for more details.
 
-If you want to load your own data, you can use `ape::read.dna()` or 
-`ape::read.FASTA()` to load alignment files and `readr::read_delim()` to load 
-delimited files. 
+If you want to load your own data, you can use `ape::read.dna()` or
+`ape::read.FASTA()` to load alignment files and `readr::read_delim()` to
+load delimited files.
 
 ## Required `run_wavess()` inputs
 
-The three required inputs to `run_waves()` are a data frame of the infected cell
-population size for each *generation*, a data frame including the *days* on
-which to sample and how many sequences to sample  (`samp_scheme`), and a vector
-of the founder sequence(s) in character string format (`founder_seqs`). In this
-section, we will introduce functions that can help generate these inputs.
+The three required inputs to `run_waves()` are a data frame of the
+infected cell population size for each *generation*, a data frame
+including the *days* on which to sample and how many sequences to sample
+(`samp_scheme`), and a vector of the founder sequence(s) in character
+string format (`founder_seqs`). In this section, we will introduce
+functions that can help generate these inputs.
 
-Note that, in general, some of the inputs are in units of generations and some
-are in units of days. We made these decisions mainly based on what information
-is most readily available in the literature related to each parameter value. 
+Note that, in general, some of the inputs are in units of generations
+and some are in units of days. We made these decisions mainly based on
+what information is most readily available in the literature related to
+each parameter value.
 
 ### Define active cell growth {#define-active-cell}
 
-`run_wavess()` requires a `inf_pop_size` data frame as input where each row
-is a generation with the following columns:
+`run_wavess()` requires a `inf_pop_size` data frame as input where each
+row is a generation with the following columns:
 
-- `generation`: Each generation to be simulated (must be consecutive
-  whole numbers starting with 0)
-- `active_cell_count`: Number of active infected cells in each generation
+-   `generation`: Each generation to be simulated (must be consecutive
+    whole numbers starting with 0)
+-   `active_cell_count`: Number of active infected cells in each
+    generation
 
 You can create this data frame yourself, but we also provide a helper
 function to generate it: `define_growth_curve()`.
@@ -136,14 +142,15 @@ All of the arguments in this function have defaults, so you can run:
 define_growth_curve()
 ```
 
-This will generate an infected cell population size following a logistic growth
-curve. By default, the starting population size (`n0`) is 10, the a carrying
-capacity (`carry_cap`) is 2000, the maximum growth rate (`max_growth_rate`) is
-0.3, and the simulation is run for a maximum 5000 generations (`n_gen`). 
-All of these defaults can be changed by altering the input parameters of the
-function.
+This will generate an infected cell population size following a logistic
+growth curve. By default, the starting population size (`n0`) is 10, the
+a carrying capacity (`carry_cap`) is 2000, the maximum growth rate
+(`max_growth_rate`) is 0.3, and the simulation is run for a maximum 5000
+generations (`n_gen`). All of these defaults can be changed by altering
+the input parameters of the function.
 
-Here is an example where we allow the simulation to run for longer (for as long as sequences are being sampled):
+Here is an example where we allow the simulation to run for longer (for
+as long as sequences are being sampled):
 
 ```{r, generate_pop_samp2}
 (inf_pop_size <- define_growth_curve(n_gen = 10000))
@@ -157,9 +164,10 @@ write_csv(inf_pop_size, "input_data/inf_pop_size.csv")
 
 A couple notes:
 
-- The number of founders must equal the intial population size. 
-- Note that if you start with multiple different founder sequences, you may 
-stochastically lose some of those sequences after generation 0.
+-   The number of founders must equal the intial population size.
+-   Note that if you start with multiple different founder sequences,
+    you may stochastically lose some of those sequences after generation
+    0.  
 
 You can visualize the active cell dynamics over time using the following
 code:
@@ -175,13 +183,14 @@ inf_pop_size |>
 
 ### Define sampling scheme {#define-sampling-scheme}
 
-`run_wavess()` requires a `samp_scheme` data frame as input where each row
-is a *day* with the following columns:
+`run_wavess()` requires a `samp_scheme` data frame as input where each
+row is a *day* with the following columns:
 
-- `day`: Each day on which to sample sequences
-- `n_sample_active`: Number of sequences from active cellsto sample for that day
-(note that in the simulation output, this number may be lower if the population
-size is smaller than the requested number of sequences to sample)
+-   `day`: Each day on which to sample sequences
+-   `n_sample_active`: Number of sequences from active cellsto sample
+    for that day (note that in the simulation output, this number may be
+    lower if the population size is smaller than the requested number of
+    sequences to sample)
 
 You can create this data frame yourself, but we also provide a helper
 function to generate it: `define_sampling_scheme()`.
@@ -192,11 +201,11 @@ All of the arguments in this function have defaults, so you can run:
 define_sampling_scheme()
 ```
 
-This will lead to sampling a maximum of 20 sequences (`max_samp`) every 365 days
-(`sampling_frequency`) for 3650 days (`n_days`).
+This will lead to sampling a maximum of 20 sequences (`max_samp`) every
+365 days (`sampling_frequency`) for 3650 days (`n_days`).
 
-Here is an example with sampling over a shorter time period, but more frequent
-sampling and fewer samples taken at each sampling event:
+Here is an example with sampling over a shorter time period, but more
+frequent sampling and fewer samples taken at each sampling event:
 
 ```{r, generate_pop_samp2}
 (samp_scheme <- define_sampling_scheme(
@@ -206,8 +215,8 @@ sampling and fewer samples taken at each sampling event:
 ))
 ```
 
-Note that the simulation will automatically end after the last sampling time,
-even if the growth curve continues for more generations. 
+Note that the simulation will automatically end after the last sampling
+time, even if the growth curve continues for more generations.
 
 If you'd like to write this to a file:
 
@@ -215,36 +224,37 @@ If you'd like to write this to a file:
 write_csv(samp_scheme, "input_data/samp_scheme.csv")
 ```
 
-
 ### Extract founder sequence from an alignment {#extract-founder-sequence-from-an-alignment}
 
 `run_wavess()` takes as input a character vector of founder sequence(s)
 (`founder_seqs`). All sequences must be the same length and not contain
 gaps.
 
-We provide the function `extract_seqs()` to extract a founder
-sequence from an alignment in `ape::DNAbin` format and convert it into a
+We provide the function `extract_seqs()` to extract a founder sequence
+from an alignment in `ape::DNAbin` format and convert it into a
 character vector. The alignment can be read in using `ape::read.FASTA()`
-or `ape::read.dna()`. 
+or `ape::read.dna()`.
 
-NOTE: We do not recommend using this function to extract
-more than one founder sequence to initiate a single simulation because
-if any gaps are present then the founder sequences will not be the same
-length, which will lead to an error. Rather, if you would like to simulate
-multiple founders, we recommend aligning all the founder sequences and then
-stripping gaps such that the alignment remains codon-aligned, especially if
-you plan to simulate immune fitness because epitopes are translated to amino
-acids to caclulate immune fitness costs.
+NOTE: We do not recommend using this function to extract more than one
+founder sequence to initiate a single simulation because if any gaps are
+present then the founder sequences will not be the same length, which
+will lead to an error. Rather, if you would like to simulate multiple
+founders, we recommend aligning all the founder sequences and then
+stripping gaps such that the alignment remains codon-aligned, especially
+if you plan to simulate immune fitness because epitopes are translated
+to amino acids to caclulate immune fitness costs.
 
+This alignment is of the entire HIV genome, but we're only interested in
+the ENV gp120 gene, which we can subset to using the `start` and `end`
+arguments.
 
-This alignment is of the entire HIV genome, but we're only interested in the
-ENV gp120 gene, which we can subset to using the `start` and `end` arguments.
-
-To do this, we first have to know what the start and end positions of gp120 are
-in the alignment. We know the start and end positions of gp120 in HXB2 from
-[here](https://www.hiv.lanl.gov/content/sequence/HIV/MAP/landmark.html) (6225
-and 7757). To get the start and end positions in our alignment, we can therefore
-find what alignment positions correspond to these HXB2 coordinates:
+To do this, we first have to know what the start and end positions of
+gp120 are in the alignment. We know the start and end positions of gp120
+in HXB2 from
+[here](https://www.hiv.lanl.gov/content/sequence/HIV/MAP/landmark.html)
+(6225 and 7757). To get the start and end positions in our alignment, we
+can therefore find what alignment positions correspond to these HXB2
+coordinates:
 
 **(MAKE THIS INTO A FUNCTION?)**
 
@@ -257,8 +267,8 @@ gp120_end <- which(cumsum(as.character(
 ) != "-") == 7757)[1]
 ```
 
-Then we can use these start and end positions to extract gp120 for our founder 
-sequence:
+Then we can use these start and end positions to extract gp120 for our
+founder sequence:
 
 ```{r, extract_seqs}
 founder_seq <- extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833",
@@ -266,11 +276,12 @@ founder_seq <- extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833",
 )$founder
 ```
 
-This function can also take a reference sequence name (`ref_name`), which can be
-used as the input to the `ref_seq` argument in `run_wavess()`. More on this later.
+This function can also take a reference sequence name (`ref_name`),
+which can be used as the input to the `ref_seq` argument in
+`run_wavess()`. More on this later.
 
-The easiest way to save this sequence as a fasta file is to convert it into an 
-`ape::DNAbin` object and then save it:
+The easiest way to save this sequence as a fasta file is to convert it
+into an `ape::DNAbin` object and then save it:
 
 ```{r, write_founder}
 rep(list(strsplit(founder_seq, "")[[1]]), 10) |>
@@ -279,47 +290,49 @@ rep(list(strsplit(founder_seq, "")[[1]]), 10) |>
   write.FASTA("input_data/founder.fasta")
 ```
 
-
 ### Estimate Q matrix {#estimate-q-matrix}
 
 The model requires as input a Q matrix (`q`), which defines the rates of
-nucleotide substitution for each possible transition between nucleotides. By
-default, this matrix is estimated from approximately neutral sites:
+nucleotide substitution for each possible transition between
+nucleotides. By default, this matrix is estimated from approximately
+neutral sites:
 
 ```{r}
 (hiv_q_mat <- calc_q_from_rates(hiv_mut_rates, mut_rate = 2.4e-5, generation_time = 1.2))
 ```
 
 This matrix is based on the rates from [Zanini et al.
-2017](https://doi.org/10.1093/ve/vex003), and is converted to an approximate Q
-matrix by dividing by the estimated overall nucleotide substitution rate.
+2017](https://doi.org/10.1093/ve/vex003), and is converted to an
+approximate Q matrix by dividing by the estimated overall nucleotide
+substitution rate.
 
-**If you are simulating an organism other than HIV, you will want to provide a
-Q matrix estimated for that organism.** Any phylogenetic tree building program
-will estimate a Q matrix. For instance, the Q matrix is returned when estimating
-a tree using [IQ-TREE](http://www.iqtree.org/) (in the .iqtree output file). We
-also provide the function `estimate_q()` to estimate Q from a multiple sequence
-alignment (in `ape::DNAbin` format) directly in R. Ideally, the input for this
-function would be an alignment of sequences from within-host evolution of a 
-representative person. However, we have found that the simulation output
-is relatively robust to variations in the Q matrix, so if you don't have a
-within-host alignment, then you can input an alignment with somewhat closely
-related sequences (e.g. from the same subtype). The function outputs a Q matrix
-where the rows are the "from" nucleotide and the columns are the "to"
-nucleotide.
+**If you are simulating an organism other than HIV, you will want to
+provide a Q matrix estimated for that organism.** Any phylogenetic tree
+building program will estimate a Q matrix. For instance, the Q matrix is
+returned when estimating a tree using [IQ-TREE](http://www.iqtree.org/)
+(in the .iqtree output file). We also provide the function
+`estimate_q()` to estimate Q from a multiple sequence alignment (in
+`ape::DNAbin` format) directly in R. Ideally, the input for this
+function would be an alignment of sequences from within-host evolution
+of a representative person. However, we have found that the simulation
+output is relatively robust to variations in the Q matrix, so if you
+don't have a within-host alignment, then you can input an alignment with
+somewhat closely related sequences (e.g. from the same subtype). The
+function outputs a Q matrix where the rows are the "from" nucleotide and
+the columns are the "to" nucleotide.
 
-Here is an example (but note that this matrix isn't accurate because it's simply
-a random set of sequences):
+Here is an example (but note that this matrix isn't accurate because
+it's simply a random set of sequences):
 
 ```{r, estimate_q}
 estimate_q(hiv_env_flt_2022)
 ```
 
 By default, a neighbor joining tree is created using
-`ape::bionj(ape::dist.dna(aln, model = 'TN93'))`. Instead, you can provide an
-input tree (`tr`). From this, the Q matrix is computed with `phangorn::pml_bb()`
-using by default a GTR+I+R4 model of nucleotide substitution (`model`) and no
-tree rearrangement (`rearrangement`).
+`ape::bionj(ape::dist.dna(aln, model = 'TN93'))`. Instead, you can
+provide an input tree (`tr`). From this, the Q matrix is computed with
+`phangorn::pml_bb()` using by default a GTR+I+R4 model of nucleotide
+substitution (`model`) and no tree rearrangement (`rearrangement`).
 
 To save this to a file:
 
@@ -329,36 +342,38 @@ data.frame(hiv_q_mat) |>
   write_csv("input_data/hiv_q_mat.csv")
 ```
 
-**Note:** to read this back into R and get it into matrix form, you can use
-this code:
+**Note:** to read this back into R and get it into matrix form, you can
+use this code:
 
 ```{r}
 as.matrix(read.csv("input_data/hiv_q_mat.csv", row.names = 1))
 ```
 
-
 ## Latent cell dynamics {#visualize-latent-cell-dynamics}
 
-The required inputs related to latency are per-day rates that these events
-happen to a cell. (Note that to "turn off" any of these, all you have to do is
-set the rate equal to 0.) It is helpful to visualize the latent cell dynamics
-prior to simulating data with a given set of rates. While the way the model
-implements latency is stochastic, meaning that a different number of cells will
-become latent in each simulation, the overall trends should be similar across
-simulations, given the same set of rates.
+The required inputs related to latency are per-day rates that these
+events happen to a cell. (Note that to "turn off" any of these, all you
+have to do is set the rate equal to 0.) It is helpful to visualize the
+latent cell dynamics prior to simulating data with a given set of rates.
+While the way the model implements latency is stochastic, meaning that a
+different number of cells will become latent in each simulation, the
+overall trends should be similar across simulations, given the same set
+of rates.
 
 To make these plots, you need the active cell counts, which can be
 generated from the `define_growth_curve()` function described above. We
-will therefore be using the `inf_pop_size` dataset we created earlier in the
-vignette. Also, the rates related to latency are converted
-to probabilities for simulation, so we will convert them here before plotting.
+will therefore be using the `inf_pop_size` dataset we created earlier in
+the vignette. Also, the rates related to latency are converted to
+probabilities for simulation, so we will convert them here before
+plotting.
 
-**Please note that we assume the probabilities are small for all latency parameters**,
-such that it is unlikely that multiple events (activate, die, proliferate) will
-occur to a single latent cell in a single [active cell] generation. If multiple
-events occur to a single latent cell, then the first event in this ordered list
-will be chosen as the event that occurred to the cell in that generation: cell
-becomes active, cell dies, cell proliferates.
+**Please note that we assume the probabilities are small for all latency
+parameters**, such that it is unlikely that multiple events (activate,
+die, proliferate) will occur to a single latent cell in a single [active
+cell] generation. If multiple events occur to a single latent cell, then
+the first event in this ordered list will be chosen as the event that
+occurred to the cell in that generation: cell becomes active, cell dies,
+cell proliferates.
 
 ```{r, viz_latent}
 # set parameters to get latent curve
@@ -402,42 +417,44 @@ active_latent_counts |>
 
 ## Selection
 
-`wavess` can simulate three types of selection: conserved sites, replicative
-fitness relative to a reference sequence, and B-cell immune selection at
-user-defined epitopes. By default, no selection is included in the simulations.
-However, we recommend including selection to obtain realistic model outputs.
+`wavess` can simulate three types of selection: conserved sites,
+replicative fitness relative to a reference sequence, and B-cell immune
+selection at user-defined epitopes. By default, no selection is included
+in the simulations. However, we recommend including selection to obtain
+realistic model outputs.
 
-Below, we describe how to generate the inputs for each of these selective
-pressures.
+Below, we describe how to generate the inputs for each of these
+selective pressures.
 
 ### Fitness costs
 
-Each of the different forms of selection has a fitness cost associated with it.
-The fitness cost can be in the range [0,1), where 0 indicates no cost. 1, which
-indicates no ability to survive, is not allowed as we assume that we are only
-simulating scenarios where infection is established and the viruses are at least
-somewhat viable. However, using a very high fitness cost, e.g. of 0.99,
-effectively simulates purifying selection due to the compounding nature of the
-fitness cost over many generations.
+Each of the different forms of selection has a fitness cost associated
+with it. The fitness cost can be in the range [0,1), where 0 indicates
+no cost. 1, which indicates no ability to survive, is not allowed as we
+assume that we are only simulating scenarios where infection is
+established and the viruses are at least somewhat viable. However, using
+a very high fitness cost, e.g. of 0.99, effectively simulates purifying
+selection due to the compounding nature of the fitness cost over many
+generations.
 
-The fitness, F, of a virus is defined by the product of the fitness of each component:
+The fitness, F, of a virus is defined by the product of the fitness of
+each component:
 
-
-$$F=F_C*F_R*F_I$$
-where $F_C$ is the conserved fitness, $F_R$ is the replicative fitness,
-and $F_I$ is the immune fitness.
+$$F=F_C*F_R*F_I$$ where $F_C$ is the conserved fitness, $F_R$ is the
+replicative fitness, and $F_I$ is the immune fitness.
 
 The equation used to compute $F_C$ and $F_R$ is:
 
-$$F_{C/R} = (1-c)^n$$
-Where $c$ is either the conserved fitness cost or the replicative fitness cost,
-and $n$ is the number of mutations at conserved sites or the number of sites
-that differ from the reference sequence, respectively.
+$$F_{C/R} = (1-c)^n$$ Where $c$ is either the conserved fitness cost or
+the replicative fitness cost, and $n$ is the number of mutations at
+conserved sites or the number of sites that differ from the reference
+sequence, respectively.
 
-When both forms of fitness are used, if the position is considered to be a
-conserved site, then it is not considered for replicative fitness.
+When both forms of fitness are used, if the position is considered to be
+a conserved site, then it is not considered for replicative fitness.
 
-Here is a plot of how the cost and number of mutations influences overall fitness:
+Here is a plot of how the cost and number of mutations influences
+overall fitness:
 
 ```{r}
 costs <- c(0, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 0.9, 0.99)
@@ -450,97 +467,100 @@ tibble(n_mut = sort(rep(n_muts, length(costs))), cost = rep(costs, length(n_muts
   labs(x = "Number of mutations", y = "Fitness", col = "Cost per mutation")
 ```
 
+The calculation of immune fitness is a bit more involved, but the result
+is that it is computed as the largest fitness cost across all
+immune-recognized epitopes:
 
-The calculation of immune fitness is a bit more involved, but the result is that
-it is computed as the largest fitness cost across all immune-recognized
-epitopes:
+$$F_I = max(c_{epitope})$$ Where $c_{epitope}$ is a vector of the costs
+of each epitope recognized by the immune system. Note that this cost
+changes over generations. Please refer to the manuscript for more
+details.
 
-$$F_I = max(c_{epitope})$$
-Where $c_{epitope}$ is a vector of the costs of each epitope recognized by the
-immune system. Note that this cost changes over generations. Please refer to the
-manuscript for more details.
-
-In the next sections, we will discuss how to identify conserved sites, create
-a reference sequence, and generate epitopes. 
+In the next sections, we will discuss how to identify conserved sites,
+create a reference sequence, and generate epitopes.
 
 ### An important note about indexing and reference sequences
 
-First, all nucleotide positions must be indexed relative to the start of the 
-founder sequence in the simulation. Since the back-end is implemented in
-Python, we expect the indexing to begin at 0. This is because you can run wavess
-using the `run_wavess()` function in R, but also directly from Python (see 
-`vignette("python")` for details). This way, the inputs are the same regardless
-of what program you use to run wavess. This is relevant for conserved sites and
-epitopes. 
+First, all nucleotide positions must be indexed relative to the start of
+the founder sequence in the simulation. Since the back-end is
+implemented in Python, we expect the indexing to begin at 0. This is
+because you can run wavess using the `run_wavess()` function in R, but
+also directly from Python (see `vignette("python")` for details). This
+way, the inputs are the same regardless of what program you use to run
+wavess. This is relevant for conserved sites and epitopes.
 
-Second, information of interest such as conserved sites or antibody contacts, 
-is often computed or provided relative to what is 
-called a reference sequence. For HIV, the reference sequence is usually HXB2. **This
-community reference sequence is different than how we define a reference sequence in 
-`wavess`.** The community reference sequence (e.g. HXB2) is a standard that 
-researchers use to more easily be able to share and compare information. The
-reference sequence defined in `wavess` is one that is believed to be 
-representative of the "most fit" sequence (when not under immune pressure), 
-however you would like to think of it.
+Second, information of interest such as conserved sites or antibody
+contacts, is often computed or provided relative to what is called a
+reference sequence. For HIV, the reference sequence is usually HXB2.
+**This community reference sequence is different than how we define a
+reference sequence in `wavess`.** The community reference sequence (e.g.
+HXB2) is a standard that researchers use to more easily be able to share
+and compare information. The reference sequence defined in `wavess` is
+one that is believed to be representative of the "most fit" sequence
+(when not under immune pressure), however you would like to think of it.
 
-When information of interest is provided relative to the community reference
-sequence, we must change the indexing of the information to be relative to 
-the founder sequence that will be used in the simulation. 
+When information of interest is provided relative to the community
+reference sequence, we must change the indexing of the information to be
+relative to the founder sequence that will be used in the simulation.
 
-The easiest way to ensure that the indexing is correct is to have an alignment
-consisting of the founder sequence, the community reference sequence 
-(if needed), and the wavess reference sequence (if being used), where the
-start and end of the alignment are the start and end of the founder sequence
-to be used in the simulation. 
+The easiest way to ensure that the indexing is correct is to have an
+alignment consisting of the founder sequence, the community reference
+sequence (if needed), and the wavess reference sequence (if being used),
+where the start and end of the alignment are the start and end of the
+founder sequence to be used in the simulation.
 
-If you have an alignment with sequences that are longer than the input sequence
-you want to simulate, you can use the `slice_aln()` function to slice out the
-desired section of the alignment. Here's an example:
+If you have an alignment with sequences that are longer than the input
+sequence you want to simulate, you can use the `slice_aln()` function to
+slice out the desired section of the alignment. Here's an example:
 
 ```{r, slice_aln}
 (gp120 <- slice_aln(hxb2_cons_founder, gp120_start, gp120_end))
 ```
 
-We will use this alignment below. 
+We will use this alignment below.
 
-### Identify conserved sites
+### Identify conserved sites {#identify-conserved-sites}
 
-In `run_wavess()` you can provide a vector of conserved sites (`conserved_sites`
-argument). Mutations in conserved sites have a fitness cost defined by the
-`conserved_cost` argument.
+In `run_wavess()` you can provide a vector of conserved sites
+(`conserved_sites` argument). Mutations in conserved sites have a
+fitness cost defined by the `conserved_cost` argument.
 
-To generate a vector of conserved sites from an alignment, you can use the
-function `identify_conserved_sites()`, which outputs a data frame with 5
-columns:
+To generate a vector of conserved sites from an alignment, you can use
+the function `identify_conserved_sites()`, which outputs a data frame
+with 5 columns:
 
-- `founder_pos`: the position in the founder
-- `founder_base`: the base in the founder sequence
-- `consensus_base`: the consensus base
-- `consensus_prop`: the proportion of sequences that have the consensus base
-- `conserved`: whether ('Yes') or not ('No') the site is considered
-  conserved, based on the threshold value defined by the `thresh`
-  argument (default: 0.99)
+-   `founder_pos`: the position in the founder
+-   `founder_base`: the base in the founder sequence
+-   `consensus_base`: the consensus base
+-   `consensus_prop`: the proportion of sequences that have the
+    consensus base
+-   `conserved`: whether ('Yes') or not ('No') the site is considered
+    conserved, based on the threshold value defined by the `thresh`
+    argument (default: 0.99)
 
-You can use this function in two ways. If you have an alignment that includes
-the founder sequence of interest, all you need to provide is the alignment in
-`ape::DNAbin` format and the name of the founder sequence in the alignment.
-Note that the function assumes that the alignment consists of only the segment
-of the founder sequence that you want to simulate (i.e., the beginning of the 
-alignment is the beginning of the founder sequence that you want to simulate,
-and the end of the alignment is the end of the sequence you want to simulate).
+You can use this function in two ways. If you have an alignment that
+includes the founder sequence of interest, all you need to provide is
+the alignment in `ape::DNAbin` format and the name of the founder
+sequence in the alignment. Note that the function assumes that the
+alignment consists of only the segment of the founder sequence that you
+want to simulate (i.e., the beginning of the alignment is the beginning
+of the founder sequence that you want to simulate, and the end of the
+alignment is the end of the sequence you want to simulate).
 
-We will be using the built-in `hiv_env_flt_2022` alignment as an example.
-However, this contains only 10 sequences. **In reality, you should use many more 
-sequences.** For HIV, you can download the entire filtered alignment for each 
-gene or for the entire genome from the [LANL HIV sequence
-database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html). 
+We will be using the built-in `hiv_env_flt_2022` alignment as an
+example. However, this contains only 10 sequences. **In reality, you
+should use many more sequences.** For HIV, you can download the entire
+filtered alignment for each gene or for the entire genome from the [LANL
+HIV sequence
+database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html).
 
-For the example founder gp120 sequence we use in the package 
-(B.US.2011.DEMB11US006.KC473833), we also provide a vector of conserved sites 
-for this founder sequence (`founder_conserved_sites`) for ease of use.
+For the example founder gp120 sequence we use in the package
+(B.US.2011.DEMB11US006.KC473833), we also provide a vector of conserved
+sites for this founder sequence (`founder_conserved_sites`) for ease of
+use.
 
-First, since the `hxb2_cons_founder` sequence is all of env, but we just want to 
-simulate gp120, we have to slice out that part of the alignment:
+First, since the `hxb2_cons_founder` sequence is all of env, but we just
+want to simulate gp120, we have to slice out that part of the alignment:
 
 ```{r, get_gp120}
 # get hxb2 gp120 length and end position in flt alignment
@@ -560,12 +580,12 @@ Then we can use this sliced alignment to identify conserved sites:
 identify_conserved_sites(hiv_gp120_flt_2022, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455")
 ```
 
-Alternatively, if you have two alignments with a shared reference, one from
-which you'd like to calculate conserved sites, and the other that contains the
-founder, you can provide both alignments, as well as the common reference, and
-the function will return the conserved sites relative to the founder sequence.
-In this case, the shared reference sequence is assumed to have the same start
-position in each alignment.
+Alternatively, if you have two alignments with a shared reference, one
+from which you'd like to calculate conserved sites, and the other that
+contains the founder, you can provide both alignments, as well as the
+common reference, and the function will return the conserved sites
+relative to the founder sequence. In this case, the shared reference
+sequence is assumed to have the same start position in each alignment.
 
 ```{r, conserved2}
 (founder_conserved_df <- identify_conserved_sites(hiv_gp120_flt_2022,
@@ -575,7 +595,8 @@ position in each alignment.
 ))
 ```
 
-You can visualize the conserved sites across the genome using the following code:
+You can visualize the conserved sites across the genome using the
+following code:
 
 ```{r, viz_conserved}
 founder_conserved_df |>
@@ -583,15 +604,16 @@ founder_conserved_df |>
   geom_col()
 ```
 
-The blue sites are conserved, the red sites are not conserved, and the y-axis
-indicates the proportion of sequences in the alignment that contain the
-consensus base. **Note that this example only uses 10 sequences. We recommend
-using a large alignment with very diverse sequences to identify conserved sites
-to ensure that the identified sites are across many genetic backgrounds.**
+The blue sites are conserved, the red sites are not conserved, and the
+y-axis indicates the proportion of sequences in the alignment that
+contain the consensus base. **Note that this example only uses 10
+sequences. We recommend using a large alignment with very diverse
+sequences to identify conserved sites to ensure that the identified
+sites are across many genetic backgrounds.**
 
-While we provide information about each sequence in the output, the input of
-`run_wavess` only takes a vector of the conserved sites. To generate this, you
-can run the following code:
+While we provide information about each sequence in the output, the
+input of `run_wavess` only takes a vector of the conserved sites. To
+generate this, you can run the following code:
 
 ```{r, prep_conserved}
 founder_conserved_sites_example <- founder_conserved_df |>
@@ -604,16 +626,16 @@ head(founder_conserved_sites_example)
 tail(founder_conserved_sites_example)
 ```
 
-To write this to a file (note that we use the internal conserved sites because
-it is more accurate for our example, rather than the example run above,
-which is not accurate since it was only run on a handful of genomes):
+To write this to a file (note that we use the internal conserved sites
+because it is more accurate for our example, rather than the example run
+above, which is not accurate since it was only run on a handful of
+genomes):
 
 ```{r, write_conserved}
 write_csv(enframe(founder_conserved_sites, name = "position", value = "nucleotide"), "input_data/founder_conserved_sites.csv")
 ```
 
-
-### Find a consensus sequence
+### Find a consensus sequence {#find-a-consensus-sequence}
 
 We have implemented a very crude way of generating a consensus sequence,
 by taking the most common base at each position, and if there is a tie,
@@ -625,16 +647,16 @@ Maker](https://www.hiv.lanl.gov/content/sequence/CONSENSUS/consensus.html)
 tool on the LANL HIV website.
 
 To convert the consensus sequence from above into the correct input
-format for `run_wavess()`, you can use the following code, where NA values
-are converted to gaps:
+format for `run_wavess()`, you can use the following code, where NA
+values are converted to gaps:
 
 ```{r, prep_founder}
 gsub("NA", "-", paste0(founder_conserved_df$consensus_base, collapse = ""))
 ```
 
-If you have an alignment including the founder sequence and wavess reference
-sequence you'd like to use, then you can also use the `extract_seqs()` function
-to obtain both at once:
+If you have an alignment including the founder sequence and wavess
+reference sequence you'd like to use, then you can also use the
+`extract_seqs()` function to obtain both at once:
 
 ```{r, get_ref}
 (founder_ref <- extract_seqs(hxb2_cons_founder,
@@ -644,11 +666,11 @@ to obtain both at once:
 ))
 ```
 
-It's okay if the reference sequence has gaps. These will be ignored when 
+It's okay if the reference sequence has gaps. These will be ignored when
 computing fitness relative to the reference.
 
-To write this to a fasta file, you use a similar method as writing the founder
-to a fasta file:
+To write this to a fasta file, you use a similar method as writing the
+founder to a fasta file:
 
 ```{r, write_ref}
 strsplit(founder_ref$ref, "")[[1]] |>
@@ -657,49 +679,50 @@ strsplit(founder_ref$ref, "")[[1]] |>
   write.FASTA("input_data/ref.fasta")
 ```
 
+### Sample epitopes {#sample-epitopes}
 
-### Sample epitopes
-
-Immune fitness in `wavess` is defined by epitope locations in the sequence, each
-of which can have a maximum fitness cost between 0 and 1. These are defined at
-the amino acid level, so they must both be within a nucleotide sequence that is
-translated to a protein and in the correct reading frame.
+Immune fitness in `wavess` is defined by epitope locations in the
+sequence, each of which can have a maximum fitness cost between 0 and 1.
+These are defined at the amino acid level, so they must both be within a
+nucleotide sequence that is translated to a protein and in the correct
+reading frame.
 
 While you can define your own epitope locations, we provide the function
-`sample_epitopes()` that, given epitope probabilities for each *amino acid*
-position of interest, will return randomly sampled *nucleoitde* epitope
-locations based on the probability of an epitope occurring at that location.
-Therefore, the function `sample_epitopes()` takes as input a data frame that
-must contain columns for the amino acid position (`aa_position`) and the epitope
-probability at that position (`epitope_probability`). The amino acid positions
-must only include those corresponding to the nucleotide sequence to be
-simulated, and must be indexed in such a way that the first amino acid position
-corresponds to the first nucleotide position in the founder sequence. In our example,
-this is gp120. We have already filtered the built-in package data to only
-include this subset.
+`sample_epitopes()` that, given epitope probabilities for each *amino
+acid* position of interest, will return randomly sampled *nucleoitde*
+epitope locations based on the probability of an epitope occurring at
+that location. Therefore, the function `sample_epitopes()` takes as
+input a data frame that must contain columns for the amino acid position
+(`aa_position`) and the epitope probability at that position
+(`epitope_probability`). The amino acid positions must only include
+those corresponding to the nucleotide sequence to be simulated, and must
+be indexed in such a way that the first amino acid position corresponds
+to the first nucleotide position in the founder sequence. In our
+example, this is gp120. We have already filtered the built-in package
+data to only include this subset.
 
-If possible, we recommend determining epitope probabilities based on some sort
-of known antibody contact/binding/neutralization maps. For HIV ENV gp120, we
-used the features from the LANL HIV immunology database:
+If possible, we recommend determining epitope probabilities based on
+some sort of known antibody contact/binding/neutralization maps. For HIV
+ENV gp120, we used the features from the LANL HIV immunology database:
 
 ```{r, view_features}
 env_features
 ```
 
-All we need is the positions column, but we provide the rest of the information
-for reference.
+All we need is the positions column, but we provide the rest of the
+information for reference.
 
 If you don't have this information, you can use uniformly distributed
-probabilities, or some other informed guess as to where the probabilities for
-epitopes binding is higher.
+probabilities, or some other informed guess as to where the
+probabilities for epitopes binding is higher.
 
-We can put the positions into the `get_epitope_frequencies()` function, which
-returns a tibble with three columns:
+We can put the positions into the `get_epitope_frequencies()` function,
+which returns a tibble with three columns:
 
-- `aa_pos`: amino acid position
-- `n_features`: the number of features at that position
-- `epitope_probability`: the probability of an epitope at that
-  position, given the input positions
+-   `aa_pos`: amino acid position
+-   `n_features`: the number of features at that position
+-   `epitope_probability`: the probability of an epitope at that
+    position, given the input positions
 
 ```{r, get_epi_probs}
 (epi_probs <- get_epitope_frequencies(env_features$Position))
@@ -714,33 +737,34 @@ epi_probs %>%
   labs(x = "HXB2 amino acid position", y = "Epitope probability")
 ```
 
-
-This information can be used as input to the `sample_epitopes()` function. Note
-that the output of this function is different each time it's run, since the
-locations are selected randomly each time.
+This information can be used as input to the `sample_epitopes()`
+function. Note that the output of this function is different each time
+it's run, since the locations are selected randomly each time.
 
 ```{r, sample_epis}
 sample_epitopes(epi_probs)
 ```
 
-The function returns start and end *nucleotide* positions for each epitope,
-relative to the input amino acid positions. 
+The function returns start and end *nucleotide* positions for each
+epitope, relative to the input amino acid positions.
 
-There are many ways to customize the output of this function. You can provide
-the starting (`start_aa_pos`) and ending (`end_aa_pos`) amino acid positions to
-consider for epitope sampling (here we've pre-subset to only gp120 features),
-the number of epitopes to sample (`num_epitopes`), the amino acid epitope length
-(`aa_epitope_length`), and the maximum fitness cost of an epitope (`max_fit_cost`).
+There are many ways to customize the output of this function. You can
+provide the starting (`start_aa_pos`) and ending (`end_aa_pos`) amino
+acid positions to consider for epitope sampling (here we've pre-subset
+to only gp120 features), the number of epitopes to sample
+(`num_epitopes`), the amino acid epitope length (`aa_epitope_length`),
+and the maximum fitness cost of an epitope (`max_fit_cost`).
 
-If the amino acid positions are relative to a community reference sequence, then
-you will also need to create a map between the community reference and your
-founder sequence so that the data can be re-indexed to the founder sequence. In
-this case, the amino acid positions we used are from HXB2, so we want to map
-them to our founder sequence. You should use an alignment that contains the
-exact founder sequence you plan to simulate (no longer and no shorter). Once you
-have this alignment (e.g. using the `slice_aln()` function described above), you
-can use the `map_ref_founder()` function, which returns reference and founder
-positions mapped to each other:
+If the amino acid positions are relative to a community reference
+sequence, then you will also need to create a map between the community
+reference and your founder sequence so that the data can be re-indexed
+to the founder sequence. In this case, the amino acid positions we used
+are from HXB2, so we want to map them to our founder sequence. You
+should use an alignment that contains the exact founder sequence you
+plan to simulate (no longer and no shorter). Once you have this
+alignment (e.g. using the `slice_aln()` function described above), you
+can use the `map_ref_founder()` function, which returns reference and
+founder positions mapped to each other:
 
 ```{r, map}
 (ref_founder_map <- map_ref_founder(gp120,
@@ -749,8 +773,8 @@ positions mapped to each other:
 ))
 ```
 
-You can input this into `sample_epitopes()`, which will then return nucleotide
-positions relative to the founder sequence (instead of HXB2):
+You can input this into `sample_epitopes()`, which will then return
+nucleotide positions relative to the founder sequence (instead of HXB2):
 
 ```{r, epi_locs}
 (epitope_locations <- sample_epitopes(epi_probs,
@@ -779,11 +803,7 @@ To write them to a file:
 write_csv(epitope_locations, "input_data/epitope_locations.csv")
 ```
 
-
 ## On to simulations
 
-Next, check out `vignette("run_wavess")` to see how to use all these inputs
-to simulate within-host evolution. 
-
-
-
+Next, check out `vignette("run_wavess")` to see how to use all these
+inputs to simulate within-host evolution.

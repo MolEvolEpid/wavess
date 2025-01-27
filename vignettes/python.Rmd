@@ -27,8 +27,6 @@ as the R function. If you need to troubleshoot an error you are getting with the
 Python script, it is probably worth testing it out in the R function to see if
 you get a more informative error message.**
 
-**SHOULD WE ADD BETTER INPUT CHECKING TO THE PYTHON SCRIPT?**
-
 We provide example input files in `inst/extdata`. You can generate the input
 files on your own, or using the functions provided in this package. See
 `vignette("prepare_input_data")` for details on how to create and save the
