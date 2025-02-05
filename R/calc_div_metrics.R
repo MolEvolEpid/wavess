@@ -7,7 +7,8 @@
 #' @param gen Vector that indicates the generation of each sequence in the
 #' alignment, assumed to be in the same order as the alignment
 #'
-#' @return tibble including mean divergence for each generation
+#' @return tibble including mean sequence-based diversity and divergence for
+#'   each generation
 #' @export
 #'
 #' @examples

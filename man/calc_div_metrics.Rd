@@ -15,7 +15,8 @@ calc_div_metrics(aln, founder, gen)
 alignment, assumed to be in the same order as the alignment}
 }
 \value{
-tibble including mean divergence for each generation
+tibble including mean sequence-based diversity and divergence for
+each generation
 }
 \description{
 See \code{vignette('analyze_output')} for more details.
