@@ -36,12 +36,16 @@ calc_tr_stats <- function(tr, timepoints) {
   transitions <- phangorn::parsimony(tr, phangorn::phyDat(factor(timepoints), type = "USER"))
 
   rtt_ttt <- calc_tr_dists(tr)
-  diverg_divers <- lapply(unique(timepoints), function(x){
+  diverg_divers <- lapply(unique(timepoints), function(x) {
     calc_tr_dists(tr, names(timepoints)[timepoints == x])
-  }) |> dplyr::bind_rows() |>
-    dplyr::summarize(mean_divergence = mean(rtt, na.rm = TRUE),
-              mean_diversity = mean(ttt, na.rm = TRUE)) |>
-    unlist() |> unname()
+  }) |>
+    dplyr::bind_rows() |>
+    dplyr::summarize(
+      mean_divergence = mean(rtt, na.rm = TRUE),
+      mean_diversity = mean(ttt, na.rm = TRUE)
+    ) |>
+    unlist() |>
+    unname()
 
   tibble::tibble(
     stat_name = c("sackin", "mean_bl", "mean_int_bl", "mean_ext_bl", "mean_root_to_tip", "mean_tip_to_tip", "mean_divergence", "mean_diversity", "transition_score"),
@@ -126,7 +130,3 @@ calc_tr_dists <- function(tr, tips = NULL) {
   ttt <- mean(d[upper.tri(d)])
   return(tibble::tibble(rtt, ttt))
 }
-
-
-
-
