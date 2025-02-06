@@ -41,8 +41,8 @@ calc_tr_stats <- function(tr, timepoints) {
   }) |>
     dplyr::bind_rows() |>
     dplyr::summarize(
-      mean_divergence = mean(rtt, na.rm = TRUE),
-      mean_diversity = mean(ttt, na.rm = TRUE)
+      mean_divergence = mean(mean_rtt, na.rm = TRUE),
+      mean_diversity = mean(mean_ttt, na.rm = TRUE)
     ) |>
     unlist() |>
     unname()
@@ -51,7 +51,8 @@ calc_tr_stats <- function(tr, timepoints) {
   mean_node_dist <- mean(d[lower.tri(d)])
 
   tibble::tibble(
-    stat_name = c("sackin", "mean_bl", "median_bl", "mean_int_bl", "mean_ext_bl", "mean_node_dist", "mean_root_to_tip", "mean_tip_to_tip", "mean_divergence", "mean_diversity", "transition_score"),
+    stat_name = c("sackin", "mean_bl", "median_bl", "mean_int_bl", "mean_ext_bl", "mean_node_dist", "mean_root_to_tip", "mean_tip_to_tip",
+                  "median_root_to_tip", "median_tip_to_tip", "mean_divergence", "mean_diversity", "transition_score"),
     stat_value = c(
       treebalance::sackinI(tr), # sackin index
       mean(tr$edge.length), # branch length
@@ -59,8 +60,10 @@ calc_tr_stats <- function(tr, timepoints) {
       mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch lengths
       mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)]), # external branch lengths
       mean_node_dist, # node distance
-      rtt_ttt$rtt, # root-to-tip
-      rtt_ttt$ttt, # tip-to-tip
+      rtt_ttt$mean_rtt, # root-to-tip
+      rtt_ttt$mean_ttt, # tip-to-tip
+      rtt_ttt$median_rtt, # root-to-tip
+      rtt_ttt$median_ttt, # tip-to-tip
       diverg_divers[1], # divergence
       diverg_divers[2], # diversity
       transitions # transition score
@@ -129,9 +132,11 @@ calc_tr_dists <- function(tr, tips = NULL) {
   d <- ape::dist.nodes(tr)
   colnames(d) <- rownames(d) <- c(tr$tip.label, paste0("node", root_node:(ntip + ape::Nnode(tr))))
   # mean root-to-tip distance
-  rtt <- mean(d[tips, root_node])
+  mean_rtt <- mean(d[tips, root_node])
+  median_rtt <- median(d[tips, root_node])
   # mean tip-to-tip distance
   d <- d[tips, tips]
-  ttt <- mean(d[upper.tri(d)])
-  return(tibble::tibble(rtt, ttt))
+  mean_ttt <- mean(d[upper.tri(d)])
+  median_ttt <- median(d[upper.tri(d)])
+  return(tibble::tibble(mean_rtt, median_rtt, mean_ttt, median_ttt))
 }
