@@ -51,15 +51,13 @@ calc_tr_stats <- function(tr, timepoints) {
   mean_node_dist <- mean(d[lower.tri(d)])
 
   tibble::tibble(
-    stat_name = c("sackin", "mean_bl", "var_bl", "mean_int_bl", "mean_ext_bl", "var_int_bl", "var_ext_bl", "mean_node_dist", "mean_root_to_tip", "mean_tip_to_tip", "mean_divergence", "mean_diversity", "transition_score"),
+    stat_name = c("sackin", "mean_bl", "median_bl", "mean_int_bl", "mean_ext_bl", "mean_node_dist", "mean_root_to_tip", "mean_tip_to_tip", "mean_divergence", "mean_diversity", "transition_score"),
     stat_value = c(
       treebalance::sackinI(tr), # sackin index
       mean(tr$edge.length), # branch length
-      var(tr$edge.length), # branch length variance
+      median(tr$edge.length), # branch length variance
       mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch lengths
       mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)]), # external branch lengths
-      var(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch length variance
-      var(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)]), # external branch length variance
       mean_node_dist, # node distance
       rtt_ttt$rtt, # root-to-tip
       rtt_ttt$ttt, # tip-to-tip
