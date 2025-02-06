@@ -36,6 +36,7 @@ calc_tr_stats <- function(tr, timepoints) {
   transitions <- phangorn::parsimony(tr, phangorn::phyDat(factor(timepoints), type = "USER"))
 
   rtt_ttt <- calc_tr_dists(tr)
+
   diverg_divers <- lapply(unique(timepoints), function(x){
     calc_tr_dists(tr, names(timepoints)[timepoints == x])
   }) |> dplyr::bind_rows() |>
@@ -43,13 +44,17 @@ calc_tr_stats <- function(tr, timepoints) {
               mean_diversity = mean(ttt, na.rm = TRUE)) |>
     unlist() |> unname()
 
+  d <- ape::dist.nodes(tr)
+  mean_node_dist <- mean(d[lower.tri(d)])
+
   tibble::tibble(
-    stat_name = c("sackin", "mean_bl", "mean_int_bl", "mean_ext_bl", "mean_root_to_tip", "mean_tip_to_tip", "mean_divergence", "mean_diversity", "transition_score"),
+    stat_name = c("sackin", "mean_bl", "mean_int_bl", "mean_ext_bl", "mean_node_dist", "mean_root_to_tip", "mean_tip_to_tip", "mean_divergence", "mean_diversity", "transition_score"),
     stat_value = c(
       treebalance::sackinI(tr), # sackin index
       mean(tr$edge.length), # branch length
       mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch lengths
       mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)]), # external branch lengths
+      mean_node_dist, # node distance
       rtt_ttt$rtt, # root-to-tip
       rtt_ttt$ttt, # tip-to-tip
       diverg_divers[1], # divergence
