@@ -8,11 +8,10 @@
 #' you must drop them from the tree prior to using this function.
 #'
 #' @return Tibble including 3 tree summary statistics:
-#' - Sackin index
+#' - Mean leaf depth (normalized Sackin index)
 #' - Mean internal branch length
 #' - Mean external branch length
 #' - Timepoint transition score
-#' - Mean root-to-tip distance
 #' - Mean tip-to-tip distance
 #' - Mean divergence (per-generation root-to-tip distance)
 #' - Mean diversity (per-generation tip-to-tip distance)
@@ -47,23 +46,14 @@ calc_tr_stats <- function(tr, timepoints) {
     unlist() |>
     unname()
 
-  d <- ape::dist.nodes(tr)
-  mean_node_dist <- mean(d[lower.tri(d)])
-
   tibble::tibble(
-    stat_name = c("sackin", "mean_bl", "median_bl", "mean_int_bl", "mean_ext_bl", "mean_node_dist", "mean_root_to_tip", "mean_tip_to_tip",
-                  "median_root_to_tip", "median_tip_to_tip", "mean_divergence", "mean_diversity", "transition_score"),
+    stat_name = c("mean_leaf_depth", "mean_int_bl", "mean_ext_bl", "mean_tip_to_tip",
+                  "mean_divergence", "mean_diversity", "transition_score"),
     stat_value = c(
-      treebalance::sackinI(tr), # sackin index
-      mean(tr$edge.length), # branch length
-      median(tr$edge.length), # branch length variance
+      treebalance::avgLeafDepI(tr), # average leaf depth (normalized sackin)
       mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch lengths
       mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)]), # external branch lengths
-      mean_node_dist, # node distance
-      rtt_ttt$mean_rtt, # root-to-tip
       rtt_ttt$mean_ttt, # tip-to-tip
-      rtt_ttt$median_rtt, # root-to-tip
-      rtt_ttt$median_ttt, # tip-to-tip
       diverg_divers[1], # divergence
       diverg_divers[2], # diversity
       transitions # transition score
