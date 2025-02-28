@@ -47,8 +47,10 @@ calc_tr_stats <- function(tr, timepoints) {
     unname()
 
   tibble::tibble(
-    stat_name = c("mean_leaf_depth", "mean_int_bl", "mean_ext_bl", "mean_tip_to_tip",
-                  "mean_divergence", "mean_diversity", "transition_score"),
+    stat_name = c(
+      "mean_leaf_depth", "mean_int_bl", "mean_ext_bl", "mean_tip_to_tip",
+      "mean_divergence", "mean_diversity", "transition_score"
+    ),
     stat_value = c(
       treebalance::avgLeafDepI(tr), # average leaf depth (normalized sackin)
       mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch lengths
