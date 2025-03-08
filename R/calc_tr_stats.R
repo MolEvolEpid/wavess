@@ -93,7 +93,7 @@ calc_tr_stats <- function(tr, timepoints) {
                   "transition_score"),
     stat_value = c(
       treebalance::avgLeafDepI(tr), # average leaf depth (normalized sackin)
-      treebalance::collessI(tr, method = 'corrected'), # corrected colless to enable comparison between trees
+      treebalance::collessI(ape::multi2di(tr), method = 'corrected'), # corrected colless to enable comparison between trees
       mean(tr$edge.length), # branch lengths
       mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch lengths
       mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)]), # external branch lengths
