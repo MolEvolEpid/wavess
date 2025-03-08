@@ -16,11 +16,10 @@ you must drop them from the tree prior to using this function.}
 \value{
 Tibble including 3 tree summary statistics:
 \itemize{
-\item Sackin index
+\item Mean leaf depth (normalized Sackin index)
 \item Mean internal branch length
 \item Mean external branch length
 \item Timepoint transition score
-\item Mean root-to-tip distance
 \item Mean tip-to-tip distance
 \item Mean divergence (per-generation root-to-tip distance)
 \item Mean diversity (per-generation tip-to-tip distance)
