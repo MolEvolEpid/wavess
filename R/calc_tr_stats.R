@@ -85,7 +85,7 @@ calc_tr_stats <- function(tr, timepoints) {
     dplyr::filter(name == 'timepoint')
 
   tibble::tibble(
-    stat_name = c("mean_leaf_depth", "mean_bl",
+    stat_name = c("mean_leaf_depth", "corrected_colless", "mean_bl",
                   "mean_int_bl", "mean_ext_bl",
                   "mean_tip_to_tip", "mean_root_to_tip",
                   "mean_divergence", "mean_diversity",
@@ -93,6 +93,7 @@ calc_tr_stats <- function(tr, timepoints) {
                   "transition_score"),
     stat_value = c(
       treebalance::avgLeafDepI(tr), # average leaf depth (normalized sackin)
+      treebalance::collessI(tr, method = 'corrected'), # corrected colless to enable comparison between trees
       mean(tr$edge.length), # branch lengths
       mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch lengths
       mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)]), # external branch lengths
