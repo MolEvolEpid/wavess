@@ -4,7 +4,7 @@
 \alias{calc_tr_stats}
 \title{Calculate tree summary statistics}
 \usage{
-calc_tr_stats(tr, timepoints)
+calc_tr_stats(tr, timepoints, tol = 0)
 }
 \arguments{
 \item{tr}{Rooted phylogeny}
