@@ -48,7 +48,7 @@ generating the input data takes a while to run or if, rather than using
 the built-in `run_wavess()` function, you'd rather run it using a python
 command line script (see `vignette("python")` for details). We save the
 files to a directory called `input_data`. If you would like to do the
-same, you will have to create thet directory before running the file
+same, you will have to create that directory before running the file
 saving commands. For example:
 
 ```{r, create_dir}
@@ -144,7 +144,7 @@ define_growth_curve()
 
 This will generate an infected cell population size following a logistic
 growth curve. By default, the starting population size (`n0`) is 10, the
-a carrying capacity (`carry_cap`) is 2000, the maximum growth rate
+carrying capacity (`carry_cap`) is 2000, the maximum growth rate
 (`max_growth_rate`) is 0.3, and the simulation is run for a maximum 5000
 generations (`n_gen`). All of these defaults can be changed by altering
 the input parameters of the function.
@@ -164,7 +164,7 @@ write_csv(inf_pop_size, "input_data/inf_pop_size.csv")
 
 A couple notes:
 
--   The number of founders must equal the intial population size.
+-   The number of founders must equal the initial population size.
 -   Note that if you start with multiple different founder sequences,
     you may stochastically lose some of those sequences after generation
     0.  
@@ -187,7 +187,7 @@ inf_pop_size |>
 row is a *day* with the following columns:
 
 -   `day`: Each day on which to sample sequences
--   `n_sample_active`: Number of sequences from active cellsto sample
+-   `n_sample_active`: Number of sequences from active cells to sample
     for that day (note that in the simulation output, this number may be
     lower if the population size is smaller than the requested number of
     sequences to sample)
@@ -242,7 +242,7 @@ will lead to an error. Rather, if you would like to simulate multiple
 founders, we recommend aligning all the founder sequences and then
 stripping gaps such that the alignment remains codon-aligned, especially
 if you plan to simulate immune fitness because epitopes are translated
-to amino acids to caclulate immune fitness costs.
+to amino acids to calculate immune fitness costs.
 
 This alignment is of the entire HIV genome, but we're only interested in
 the ENV gp120 gene, which we can subset to using the `start` and `end`

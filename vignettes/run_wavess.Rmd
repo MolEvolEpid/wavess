@@ -106,12 +106,16 @@ Please note that the total population size simulated greatly influences
 the simulation output.
 
 ```{r}
-required_args_only <- run_wavess(pop_samp = pop_samp, founder_seqs = rep(founder_ref$founder, 10))
+required_args_only <- run_wavess(
+  inf_pop_size = inf_pop_size,
+  samp_scheme = samp_scheme,
+  founder_seqs = rep(founder_ref$founder, 10)
+)
 ```
 
 Here, we simulate one founder sequence. You may simulate more, but you
 will have to ensure that they are the same length, do not include gaps,
-and are codon-algined. You will also have to modify the input growth
+and are codon-aligned. You will also have to modify the input growth
 curve to start with the correct number of cells. See
 `vignette('prepare_input_data')` for a few more details.
 
@@ -187,7 +191,7 @@ Each sequence is named as follows:
     viruses.
 
 These outputs can be plotted and analyzed in various ways. If you'd like
-to learn more about how to analyze the output, please checkout the
+to learn more about how to analyze the output, please check out the
 post-processing vignette `vignette("analyze_output")`.
 
 ## Including selective pressures
@@ -231,7 +235,8 @@ Here's an example of simulating evolution with conserved sites fitness:
 
 ```{r}
 conserved_fitness <- run_wavess(
-  pop_samp = pop_samp,
+  inf_pop_size = inf_pop_size,
+  samp_scheme = samp_scheme,
   founder_seqs = rep(founder_ref$founder, 10),
   conserved_sites = founder_conserved_sites
 )
@@ -254,7 +259,8 @@ argument.
 
 ```{r}
 ref_fitness <- run_wavess(
-  pop_samp = pop_samp,
+  inf_pop_size = inf_pop_size,
+  samp_scheme = samp_scheme,
   founder_seqs = rep(founder_ref$founder, 10),
   ref_seq = founder_ref$ref
 )
@@ -274,7 +280,7 @@ translated into amino acids before immune fitness costs are calculated.
 An epitope is recognized only when it is present at least 100 times
 across the population (`n_for_imm` argument). Once an epitope is
 recognized, it undergoes affinity maturation for 75 generations
-(`gen_full_potency`), at which time it reaches full potency. Epitopes
+(`days_full_potency`), at which time it reaches full potency. Epitopes
 are also cross-reactive.
 
 Cross-reactivity is sampled from a Beta distribution where alpha is 1
@@ -299,7 +305,8 @@ lapply(1:5, function(x) {
 
 ```{r}
 immune_fitness <- run_wavess(
-  pop_samp = pop_samp,
+  inf_pop_size = inf_pop_size,
+  samp_scheme = samp_scheme,
   founder_seqs = rep(founder_ref$founder, 10),
   epitope_locations = epitope_locations
 )
@@ -332,6 +339,7 @@ probabilities related to latent cell dynamics (`prob_act_to_lat`,
 be turned off by setting the respective probability value to 0. The
 simulation starts with 0 latent cells, so setting `prob_act_to_lat` will
 turn latent cell dynamics off.
+[**NOTE: these are now rates, not probabilities**]
 
 ## Seed
 

@@ -78,7 +78,8 @@ epitope_locations <- sample_epitopes(epi_probs,
 )
 
 wavess_out <- run_wavess(
-  pop_samp = pop_samp,
+  inf_pop_size = inf_pop_size,
+  samp_scheme = samp_scheme,
   founder_seqs = rep(founder_ref$founder, 10),
   conserved_sites = founder_conserved_sites,
   ref_seq = founder_ref$ref,

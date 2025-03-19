@@ -79,7 +79,7 @@ create_python_venv <- function(ask = interactive(),
   }
   reticulate::use_virtualenv(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))
 
-  dependencies <- c("numpy")
+  dependencies <- c("scipy")
 
   installed <- c()
   for (dep in dependencies) {
