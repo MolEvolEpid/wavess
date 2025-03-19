@@ -269,6 +269,7 @@ class InfectedCD4:
         ), "Provide bool value for whether CD4 T cell is active (vs latent)"
         self.active = active
         self.infecting_virus = infecting_virus
+        self.recombination_history = []
 
     def __repr__(self):
         return "Infected CD4. Active: %s. %s" % (
@@ -552,6 +553,13 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     breakpoints,
                 )
             )
+
+            # Add a note about the recombination event
+            # TODO:
+            #   use newly_infected instead of index_of_cd4 ?
+            #   include generation number
+            #   include breakpoint
+            newly_infected[n_added].recombination_history.append([index_of_cd4_with_virus1, index_of_cd4_with_virus2])
 
             if len(conserved_sites):
                 # Get mutations in conserved sites for recombined virus
@@ -850,6 +858,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             fitness["replicative"].append(
                 float(CD4.infecting_virus.replicative_fitness))
             fitness["overall"].append(float(CD4.infecting_virus.fitness))
+            fitness["recombhist"].append(str(CD4.recombination_history))
             seqs[name] = CD4.infecting_virus.nuc_sequence
         return seqs, fitness
 
@@ -902,7 +911,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             "immune": [],
             "conserved": [],
             "replicative": [],
-            "overall": []
+            "overall": [],
+            "recombhist": []
         }
 
         # put founders at top of fasta and fitness
@@ -920,6 +930,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             else:
                 fitness["replicative"].append(float(1))
                 fitness["overall"].append(float(1))
+            fitness["recombhist"].append(str([]))
 
         if n_sample_active[0] != 0:
             # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
