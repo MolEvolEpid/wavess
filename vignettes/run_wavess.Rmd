@@ -127,16 +127,15 @@ names(required_args_only)
 
 The counts tibble contains the following columns:
 
--   `generation`: generation that numbers were recorded and sequences
-    were sampled
+-   `generation`: generation that number of events was recorded and sequences were sampled
 -   `active_cell_count`: active cell count
 -   `latent_cell_count`: latent cell count
 -   `active_turned_latent`: number of active cells that became latent
 -   `latent_turned_active`: number of latent cells that became active
 -   `latent_died`: number of latent cells that died
 -   `latent_proliferated`: number of latent cells that proliferated
--   `number_mutations`: total number of mutations across all sequences
--   `number_recombinations`: total number of infected cells with at least one recombination event
+-   `number_mutations`: number of mutations across all sequences
+-   `number_recombinations`: number of infected cells with at least one recombination event
 -   `mean_fitness_active`: mean fitness of active cells
 -   `mean_conserved_active`: mean conserved sites fitness of active
     cells
