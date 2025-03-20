@@ -387,10 +387,19 @@ check_run_wavess_inputs <- function(inf_pop_size, samp_scheme,
     )
   }
   check_is_df(samp_scheme, "samp_scheme")
+  if (!all(c("day", "n_sample_active", "n_sample_latent") %in%
+           colnames(samp_scheme))) {
+    stop(
+      "samp_scheme must contain the columns ",
+      "day, n_sample_active, n_sample_latent"
+    )
+  }
   if (all(samp_scheme$n_sample_active == 0)) {
     stop("you must sample at least one day")
   }
+  check_is_pos(samp_scheme$day, "samp_scheme$day", TRUE)
   check_is_pos(samp_scheme$n_sample_active, "samp_scheme$n_sample_active", TRUE)
+  check_is_pos(samp_scheme$n_sample_latent, "samp_scheme$n_sample_latent", TRUE)
   check_is_pos(generation_time, "generation_time")
   if (round(max(samp_scheme$day / generation_time)) > max(inf_pop_size$generation)) {
     stop(

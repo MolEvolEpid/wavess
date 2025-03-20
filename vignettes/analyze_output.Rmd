@@ -56,7 +56,7 @@ theme_set(theme_classic() +
 create_python_venv()
 
 pop <- define_growth_curve(n_gens = 500)
-samp <- define_sampling_scheme(sampling_frequency = 30, max_samp = 50) %>%
+samp <- define_sampling_scheme(sampling_frequency_active = 30, max_samp_active = 50) %>%
   filter(day <= 500)
 
 founder_ref <- extract_seqs(hxb2_cons_founder,
@@ -104,8 +104,8 @@ can be computed and plotted as follows (reference for calculations
 [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004625)):
 
 ```{r, get_div_mets}
-gens <- gsub("gen|_.*", "", labels(wavess_out$seqs))
-(div_metrics <- calc_div_metrics(wavess_out$seqs, "founder0", gens) |>
+gens <- gsub("gen|_.*", "", labels(wavess_out$seqs_active))
+(div_metrics <- calc_div_metrics(wavess_out$seqs_active, "founder0", gens) |>
   filter(!is.na(diversity)))
 ```
 
@@ -136,9 +136,9 @@ below code to estimate a full maximum-likelihood tree in R by deleting
 longer than it would take to run IQ-TREE.)
 
 ```{r, plot_tree}
-seqs <- wavess_out$seqs[grepl("founder0|gen30|gen90|gen150|gen480", labels(wavess_out$seqs)), ]
-pml_out <- pml_bb(seqs,
-  start = bionj(dist.dna(seqs, model = "TN93")),
+seqs_active <- wavess_out$seqs_active[grepl("founder0|gen30|gen90|gen150|gen480", labels(wavess_out$seqs_active)), ]
+pml_out <- pml_bb(seqs_active,
+  start = bionj(dist.dna(seqs_active, model = "TN93")),
   model = "GTR+I+R(4)", rearrangement = "none"
 )
 

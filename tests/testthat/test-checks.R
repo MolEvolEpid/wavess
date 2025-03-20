@@ -249,7 +249,7 @@ test_that("check_estimate_q_inputs works", {
 test_that("check_run_wavess_inputs works", {
   # hiv_env_flt_2022 <- ape::as.matrix.DNAbin(hiv_env_flt_2022)
   inf_pop_size <- define_growth_curve(n_gen = 100)
-  samp_scheme <- define_sampling_scheme(sampling_frequency = 50, n_days = 100)
+  samp_scheme <- define_sampling_scheme(sampling_frequency_active = 50, n_days = 100)
   fs <- rep("ACGT", 10)
   suppressMessages(el <- sample_epitopes(
     get_epitope_frequencies(env_features$Position - 1)
@@ -271,6 +271,16 @@ test_that("check_run_wavess_inputs works", {
       0.001, 0.01, 0.01, 0.01, NULL
     ),
     "you must sample at least one day"
+  )
+  expect_error(
+    check_run_wavess_inputs(
+      inf_pop_size, samp_scheme |> dplyr::rename(a = n_sample_latent), fs, 1.2, hiv_q_mat,
+      3.5e-5, 1.4e-5,
+      NULL, 0.99, NULL, 1,
+      NULL, 30, 0.01, 90,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "samp_scheme must contain the columns"
   )
   expect_error(check_run_wavess_inputs(
     inf_pop_size, samp_scheme, fs, 1.2, hiv_q_mat,

@@ -192,6 +192,10 @@ row is a *day* with the following columns:
     for that day (note that in the simulation output, this number may be
     lower if the population size is smaller than the requested number of
     sequences to sample)
+-   `n_sample_latent`: Number of sequences from latent cells to sample
+    for that day (note that in the simulation output, this number may be
+    lower if the population size is smaller than the requested number of
+    sequences to sample)
 
 You can create this data frame yourself, but we also provide a helper
 function to generate it: `define_sampling_scheme()`.
@@ -210,8 +214,8 @@ frequent sampling and fewer samples taken at each sampling event:
 
 ```{r, samp_scheme}
 (samp_scheme <- define_sampling_scheme(
-  sampling_frequency = 30,
-  max_samp = 10,
+  sampling_frequency_active = 30,
+  max_samp_active = 10,
   n_days = 365
 ))
 ```

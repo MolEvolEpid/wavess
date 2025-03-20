@@ -4,14 +4,26 @@
 \alias{define_sampling_scheme}
 \title{Define sampling scheme}
 \usage{
-define_sampling_scheme(sampling_frequency = 365, max_samp = 20, n_days = 3650)
+define_sampling_scheme(
+  sampling_frequency_active = 365,
+  max_samp_active = 20,
+  sampling_frequency_latent = 365,
+  max_samp_latent = 20,
+  n_days = 3650
+)
 }
 \arguments{
-\item{sampling_frequency}{frequency in days at which to record
-sequences (and counts) (default: 365 days)}
+\item{sampling_frequency_active}{frequency in days at which to record
+sequences from active cells (and counts) (default: 365 days)}
 
-\item{max_samp}{maximum number of cells (and thus sequences) to sample in a
-given day (default: 20 sequences)}
+\item{max_samp_active}{maximum number of cells (and thus sequences) to sample
+from active cells in a given day (default: 20 sequences)}
+
+\item{sampling_frequency_latent}{frequency in days at which to record
+sequences from latent cells (default: 365 days)}
+
+\item{max_samp_latent}{maximum number of cells (and thus sequences) to sample
+from latent cells in a given day (default: 20 sequences)}
 
 \item{n_days}{day to end sampling (default: 3650)}
 }
@@ -24,5 +36,5 @@ samples
 Define which days to sample sequences, and how many sequences to sample
 }
 \examples{
-define_growth_curve()
+define_sampling_scheme()
 }

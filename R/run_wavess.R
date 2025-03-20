@@ -93,14 +93,17 @@
 #' @param seed Optional seed (default: NULL)
 #'
 #' @return List including: tibble of counts and mean fitness values, an alignment
-#' of sampled sequences, and fitness of the sampled sequences
+#' of sampled sequences, and fitness of the sampled sequences. If latent cells
+#' are sampled, then an alignment of the sampled latent cells will also be
+#' returned.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' run_wavess(
 #'   define_growth_curve(n_gen = 50),
-#'   define_sampling_scheme(sampling_frequency = 10, n_days = 50),
+#'   define_sampling_scheme(sampling_frequency_active = 10,
+#'   sampling_frequency_latent = 10, n_days = 50),
 #'   rep("ATCG", 10)
 #' )
 #' }
@@ -120,7 +123,7 @@ run_wavess <- function(inf_pop_size,
                        ref_seq = NULL,
                        replicative_cost = 0.001,
                        epitope_locations = NULL,
-                       n_for_imm = 100, # should the default be max(pop_samp$active_cell_count)*0.05?
+                       n_for_imm = 100,
                        days_full_potency = 90,
                        immune_start_day = 0,
                        seed = NULL) {
@@ -157,14 +160,15 @@ run_wavess <- function(inf_pop_size,
     dplyr::left_join(
       samp_scheme |>
         dplyr::mutate(generation = round(.data$day / generation_time)) |>
-        dplyr::select("generation", "n_sample_active"),
+        dplyr::select("generation", "n_sample_active", "n_sample_latent"),
       by = dplyr::join_by("generation")
     ) |>
     dplyr::rowwise() |>
     dplyr::mutate(n_sample_active = ifelse(!is.na(.data$n_sample_active),
       min(.data$active_cell_count, .data$n_sample_active),
       0
-    )) |>
+    ),
+    n_sample_latent = ifelse(is.na(.data$n_sample_latent), 0, .data$n_sample_latent)) |>
     dplyr::ungroup()
 
   # make sure founder sequences are all uppercase and in list format
@@ -213,12 +217,14 @@ run_wavess <- function(inf_pop_size,
     as.integer(pop_samp$active_cell_count[1])
   )
   # Last sampled generation (don't have to continue simulation after this)
-  last_sampled_gen <- max(pop_samp$generation[pop_samp$n_sample_active != 0])
+  last_sampled_gen <- max(pop_samp$generation[pop_samp$n_sample_active != 0],
+                          pop_samp$generation[pop_samp$n_sample_latent != 0])
 
   # Simulate within-host evolution
   out <- reticulate::py_to_r(host$loop_through_generations(
     pop_samp$active_cell_count,
     pop_samp$n_sample_active,
+    pop_samp$n_sample_latent,
     last_sampled_gen,
     founder_seqs, nucleotides_order, substitution_probabilities,
     prob_mut, prob_recomb,
@@ -229,10 +235,15 @@ run_wavess <- function(inf_pop_size,
   ))
 
   # Fix up output
-  names(out) <- c("counts", "fitness", "seqs")
+  names(out) <- c("counts", "fitness", "seqs_active", "seqs_latent")
   out$counts <- out$counts |> dplyr::bind_rows()
   out$fitness <- out$fitness |> dplyr::bind_rows()
-  out$seqs <- ape::as.DNAbin(t(sapply(out$seqs, function(x) strsplit(x, split = "")[[1]])))
+  out$seqs_active <- ape::as.DNAbin(t(sapply(out$seqs_active, function(x) strsplit(x, split = "")[[1]])))
+  if(length(out$seqs_latent) == 0){
+    out$seqs_latent <- NULL
+  }else{
+    out$seqs_latent <- ape::as.DNAbin(t(sapply(out$seqs_latent, function(x) strsplit(x, split = "")[[1]])))
+  }
 
   # Return output
   return(out)

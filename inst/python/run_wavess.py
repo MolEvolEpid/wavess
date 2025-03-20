@@ -100,7 +100,8 @@ if __name__ == "__main__":
     samp_scheme = samp_scheme.set_index(['generation'])
     pop_samp = pd.concat([inf_pop_size, samp_scheme], axis = 1)
     pop_samp['n_sample_active'] = pop_samp['n_sample_active'].fillna(0)
-    pop_samp = pop_samp[['active_cell_count', 'n_sample_active']]
+    pop_samp['n_sample_latent'] = pop_samp['n_sample_latent'].fillna(0)
+    pop_samp = pop_samp[['active_cell_count', 'n_sample_active', 'n_sample_latent']]
 
     # Founder virus
     founder_virus_sequences = get_sequences(input_files["founder_seqs"])
@@ -159,15 +160,20 @@ if __name__ == "__main__":
     # Active cell counts for each generation
     active_cell_count = pop_samp["active_cell_count"]
     # Number of cells to sample for each generation
-    n_to_samp = pop_samp["n_sample_active"]
+    n_to_samp_active = pop_samp["n_sample_active"]
+    n_to_samp_latent = pop_samp["n_sample_latent"]
     # Last sampled generation (don't have to continue simulation after this)
-    last_sampled_gen = [index for index,
-                        item in enumerate(n_to_samp) if item != 0][-1]
+    last_sampled_gen_active = [index for index,
+                        item in enumerate(n_to_samp_active) if item != 0][-1]
+    last_sampled_gen_latent = [index for index,
+                        item in enumerate(n_to_samp_latent) if item != 0][-1]
+    last_sampled_gen = max(last_sampled_gen_active, last_sampled_gen_latent)
 
     # Loop through generations
-    counts, fitness, seqs = host.loop_through_generations(
+    counts, fitness, seqs_active, seqs_latent = host.loop_through_generations(
         active_cell_count,
-        n_to_samp,
+        n_to_samp_active,
+        n_to_samp_latent,
         last_sampled_gen,
         founder_viruses,
         nucleotides_order,
@@ -231,7 +237,11 @@ if __name__ == "__main__":
 
     # Write sequences to fasta
     with open(argv[2] + "viral_seqs_active_CD4.fasta", "w") as outfile:
-        for key, value in seqs.items():
+        for key, value in seqs_active.items():
+            outfile.write(">" + key + "\n")
+            outfile.write(value + "\n")
+    with open(argv[2] + "viral_seqs_latent_CD4.fasta", "w") as outfile:
+        for key, value in seqs_latent.items():
             outfile.write(">" + key + "\n")
             outfile.write(value + "\n")
 

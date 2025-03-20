@@ -77,7 +77,7 @@ simulation doesn't take too long to run.
 
 ```{r setup}
 pop <- define_growth_curve(n_gens = 300)
-samp <- define_sampling_scheme(sampling_frequency = 100) %>% filter(day <= 300)
+samp <- define_sampling_scheme(sampling_frequency_active = 100, sampling_frequency_latent = 100) %>% filter(day <= 300)
 founder_ref <- extract_seqs(hxb2_cons_founder,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "CON_B(1295)",
@@ -117,13 +117,16 @@ codon-aligned. You will also have to modify the input growth curve to start with
 the correct number of cells. See `vignette('prepare_input_data')` for more
 details.
 
-The output format of `run_wavess()` is always the same: a list of length three
+The output format of `run_wavess()` is a list of length four
 containing a tibble of various counts, the fitness of the sampled viruses, and
-the DNA sequences of the sampled viruses:
+the DNA sequences of the sampled viruses from the active and latent reservoir:
 
 ```{r}
 names(required_args_only)
 ```
+
+Note that, if no latent cells are sampled, then the length of the list will be 
+three instead, with no sequences from latent cells.
 
 The counts tibble contains the following columns:
 
@@ -172,17 +175,24 @@ fitness.
 
 The sequences are returned as well, in `ape::DNAbin` format:
 
+Sequences from active cells:
+
 ```{r}
-required_args_only$seqs
+required_args_only$seqs_active
 ```
 
-Note that all sequence are sampled from active cells (not latent).
+Sequences from latent cells:
+
+```{r}
+required_args_only$seqs_latent
+```
 
 Each sequence is named as follows:
 
 -   Founder sequences are named as "founderX" where X is the index of
     the founder sequence in the input vector (indexed at 0).
--   All other sequences are sampled and are named by the generation, and
+-   All other sequences are sampled and are named by the generation, whether they
+    were sampled from the active or latent reservoir, and
     a number. Note again that the same value for different generations
     *does not* say anything about the ancestral relationship between the
     viruses.
