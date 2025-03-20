@@ -1,4 +1,4 @@
-#' Calculate diversity and divergence
+#' Calculate sequence-based diversity and divergence
 #'
 #' See `vignette('analyze_output')` for more details.
 #'
