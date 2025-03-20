@@ -13,7 +13,8 @@
 #'
 #' Full-genome alignment of HXB2, consensus sequence, and DEMB11US006 (founder)
 #'
-#' @format ## `hxb2_cons_founder` An `ape` DNAbin object with 3 DNA sequences of
+#' @format ## `hxb2_cons_founder`
+#' An `ape` DNAbin object with 3 DNA sequences of
 #'   length 1563 including the full-genome sequence for HXB2, the consensus
 #'   sequence, and DEMB11US006 (founder)
 #' @source HXB2 and consensus (1st 2 sequences):
@@ -31,7 +32,8 @@
 #' HIV ENV filtered alignment from the LANL HIV database.
 #' See `hiv_env_flt_2022` for more details and the link to the entire alignment.
 #'
-#' @format ## `founder_conserved_sites` Vector of conserved nucleotides for the
+#' @format ## `founder_conserved_sites`
+#' Vector of conserved nucleotides for the
 #' gp120 gene of DEMB11US006 (founder), named by the sequence position (indexed at 0)
 #' @source Full alignment used:
 #' <https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html>
@@ -54,10 +56,11 @@
 #' <https://www.hiv.lanl.gov/components/sequence/HIV/neutralization/download_db.comp>
 "env_features"
 
-#' HIV nucleotide-specific mutation rates at approximately neutral sites
+#'HIV nucleotide-specific mutation rates at approximately neutral sites
 #'
-#' @format ## `hiv_mut_rates` A matrix of per-site per-day individual nucleotide
-#'   rates of change between nucleotides, where the rows are the "from"
-#'   nucleotide and the columns are the "to" nucleotide.
-#' @source Zanini et al. 2017: <https://doi.org/10.1093/ve/vex003>
+#'@format ## `hiv_mut_rates`
+#' A matrix of per-site per-day individual nucleotide
+#' rates of change between nucleotides, where the rows are the "from"
+#' nucleotide and the columns are the "to" nucleotide.
+#'@source Zanini et al. 2017: <https://doi.org/10.1093/ve/vex003>
 "hiv_mut_rates"

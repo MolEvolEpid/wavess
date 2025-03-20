@@ -5,8 +5,9 @@
 \alias{hiv_mut_rates}
 \title{HIV nucleotide-specific mutation rates at approximately neutral sites}
 \format{
-\subsection{\code{hiv_mut_rates} A matrix of per-site per-day individual nucleotide}{
+\subsection{\code{hiv_mut_rates}}{
 
+A matrix of per-site per-day individual nucleotide
 rates of change between nucleotides, where the rows are the "from"
 nucleotide and the columns are the "to" nucleotide.
 }
