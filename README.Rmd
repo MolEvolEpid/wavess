@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 **Within-host agent-based viral evolution sequence simulator.**
 
-<a href='https://github.com/MolEvolEpid/wavess/'><embed src='inst/logo/wavess-logo.pdf' align="right" width="120" height="120" /></a>
+<a href='https://github.com/MolEvolEpid/wavess/'><embed src='inst/logo/wavess-logo.pdf' width="120" height="120" /></a>
 
 
 <!-- badges: start -->
