@@ -413,7 +413,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     ] = immune_strength_dict[most_similar] * rng.beta(
                         1, n_diff_min**2
                     )
-
+                    
         # Mark frequent epitopes as recognized
         for variant, frequency in aa_epitope_variants.items():
             if frequency >= n_for_imm:  # common enough to be recognized
