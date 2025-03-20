@@ -17,39 +17,37 @@ knitr::opts_chunk$set(
 )
 ```
 
-wavess is a agent-based discrete-time within-host evolution simulator.
-We assume that all virus life cycles within the infection are
-synchronized into generations. Each generation is one full virus life
-cycle, from infecting a cell to exiting the cell.
+wavess is a agent-based discrete-time within-host evolution simulator. We assume
+that all virus life cycles within the infection are synchronized into
+generations. Each generation is one full virus life cycle, from infecting a cell
+to exiting the cell.
 
-In this vignette, we focus on how to simulate within-host evolution
-using the `run_wavess()` function. We will be using the HIV ENV gp120
-gene as an example. Please note that the default arguments were set with
-this particular organism and genomic region in mind. If you'd like to
-simulate something else, you may have to modify certain parameters.
-However, if you are interested in this gene in particular, you can
-probably use most of the defaults including the founder and reference
-sequences provided as examples.
+In this vignette, we focus on how to simulate within-host evolution using the
+`run_wavess()` function. We will be using the HIV ENV gp120 gene as an example.
+Please note that the default arguments were set with this particular organism
+and genomic region in mind. If you'd like to simulate something else, you may
+have to modify certain parameters. However, if you are interested in this gene
+in particular, you can probably use most of the defaults including the founder
+and reference sequences provided as examples.
 
 ## A note about using the simulation output
 
-Before we get started, I just want to note that the output of these
-simulations is stochastic, meaning they will be different each time it
-is run. You can set a seed for reproducibility and troubleshooting if
-you'd like, but for the vast majority of applications, you will want to
-run many replicates of a given simulation scenario with different seeds
-(random is okay) to get a reasonable sense of what dynamics are
-observed. You will also want to check the simulation outputs to see if
-they are giving you reasonable/expected results that conform to your
-prior knowledge about the system you're simulating. If the output does
-not seem right, you might have to tweak the input parameters to work for
-your particular system. We go into more detail about analyzing the model
-output in a separate vignette (see `vignette("analyze_output")`).
+Before we get started, I just want to note that the output of these simulations
+is stochastic, meaning they will be different each time it is run. You can set a
+seed for reproducibility and troubleshooting if you'd like, but for the vast
+majority of applications, you will want to run many replicates of a given
+simulation scenario with different seeds (random is okay) to get a reasonable
+sense of what dynamics are observed. You will also want to check the simulation
+outputs to see if they are giving you reasonable/expected results that conform
+to your prior knowledge about the system you're simulating. If the output does
+not seem right, you might have to tweak the input parameters to work for your
+particular system. We go into more detail about analyzing the model output in a
+separate vignette (see `vignette("analyze_output")`).
 
 ## Load libraries
 
-First, we have to load the wavess library and a few additional libraries
-that we'll use for this vignette:
+First, we have to load the wavess library and a few additional libraries that
+we'll use for this vignette:
 
 ```{r}
 library(wavess)
@@ -60,10 +58,9 @@ library(ggplot2)
 
 ## Create Python virtual environment
 
-Next, we must create a Python virtual environment. The virtual
-environment is required because the underlying code of `run_wavess()` is
-written in Python. You only have to create the virtual environment once
-on each machine.
+Next, we must create a Python virtual environment. The virtual environment is
+required because the underlying code of `run_wavess()` is written in Python. You
+only have to create the virtual environment once on each machine.
 
 ```{r}
 create_python_venv()
@@ -71,15 +68,16 @@ create_python_venv()
 
 ## Prepare input data
 
-Next, we must generate the input data. If you're interested in learning
-more about how to prepare the input data, please see the corresponding
-vignette (see `vignette("prepare_input_data")`).
+Next, we must generate the input data. If you're interested in learning more
+about how to prepare the input data, please see the corresponding vignette (see
+`vignette("prepare_input_data")`).
 
-We will only simulate 300 generations with sampling every 100
-generations so the simulation doesn't take too long to run.
+We will only simulate 300 generations with sampling every 100 generations so the
+simulation doesn't take too long to run.
 
 ```{r setup}
-pop_samp <- generate_pop_samp(n_gen = 300, sampling_frequency = 100)
+pop <- define_growth_curve(n_gens = 300)
+samp <- define_sampling_scheme(sampling_frequency = 100) %>% filter(day <= 300)
 founder_ref <- extract_seqs(hxb2_cons_founder,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "CON_B(1295)",
@@ -99,29 +97,29 @@ epitope_locations <- sample_epitopes(epi_probs,
 ## Simplest way to `run_wavess()`
 
 The simplest way to simulate within-host evolution is to use all of the
-defaults, and only input the population growth and sampling scheme,
-founder sequence, and nucleotide substitution probabilities.
+defaults, and only input the population growth and sampling scheme, founder
+sequence, and nucleotide substitution probabilities.
 
-Please note that the total population size simulated greatly influences
-the simulation output.
+Please note that the total population size simulated greatly influences the
+simulation output.
 
 ```{r}
 required_args_only <- run_wavess(
-  inf_pop_size = inf_pop_size,
-  samp_scheme = samp_scheme,
+  inf_pop_size = pop,
+  samp_scheme = samp,
   founder_seqs = rep(founder_ref$founder, 10)
 )
 ```
 
-Here, we simulate one founder sequence. You may simulate more, but you
-will have to ensure that they are the same length, do not include gaps,
-and are codon-aligned. You will also have to modify the input growth
-curve to start with the correct number of cells. See
-`vignette('prepare_input_data')` for a few more details.
+Here, we simulate one founder sequence. You may simulate more, but you will have
+to ensure that they are the same length, do not include gaps, and are
+codon-aligned. You will also have to modify the input growth curve to start with
+the correct number of cells. See `vignette('prepare_input_data')` for more
+details.
 
-The output format of `run_wavess()` is always the same: a list of length
-three containing a tibble of various counts, the fitness of the sampled
-viruses, and the DNA sequences of the sampled viruses:
+The output format of `run_wavess()` is always the same: a list of length three
+containing a tibble of various counts, the fitness of the sampled viruses, and
+the DNA sequences of the sampled viruses:
 
 ```{r}
 names(required_args_only)
@@ -138,7 +136,7 @@ The counts tibble contains the following columns:
 -   `latent_died`: number of latent cells that died
 -   `latent_proliferated`: number of latent cells that proliferated
 -   `number_mutations`: total number of mutations across all sequences
--   `number_dual_inf`: total number of dually infected cells
+-   `number_recombinations`: total number of infected cells with at least one recombination event
 -   `mean_fitness_active`: mean fitness of active cells
 -   `mean_conserved_active`: mean conserved sites fitness of active
     cells
@@ -151,11 +149,11 @@ required_args_only$counts
 ```
 
 As you can see, the default values for `run_wavess()` include latency,
-mutations, and dual infections (which lead to recombination), but no
-fitness costs.
+mutations, and dual infections (which lead to recombination), but no fitness
+costs.
 
-The fitness tibble contains a row for each sampled sequence (all from
-the active pool) and the following columns:
+The fitness tibble contains a row for each sampled sequence (all from the active
+pool) and the following columns:
 
 -   `generation`: generation that the virus was sampled in
 -   `seq_id`: sequence id (corresponds to the sequence name below). Note
@@ -190,9 +188,9 @@ Each sequence is named as follows:
     *does not* say anything about the ancestral relationship between the
     viruses.
 
-These outputs can be plotted and analyzed in various ways. If you'd like
-to learn more about how to analyze the output, please check out the
-post-processing vignette `vignette("analyze_output")`.
+These outputs can be plotted and analyzed in various ways. If you'd like to
+learn more about how to analyze the output, please check out the post-processing
+vignette `vignette("analyze_output")`.
 
 ## Including selective pressures
 
@@ -200,51 +198,49 @@ post-processing vignette `vignette("analyze_output")`.
 
 -   Conserved sites fitness
 -   Fitness relative to a "most fit" reference sequence
--   B-cell immunity
+-   B-cell immune response
 
-Note that all nucleotide positions related to fitness are expected to be
-indexed at 0. Including these requires additional inputs, which are
-described in more detail in the prepare input data vignette
-(`vignette("prepare_input_data")`).
+Note that all nucleotide positions related to fitness are expected to be indexed
+at 0. Including these requires additional inputs, which are described in more
+detail in the prepare input data vignette (`vignette("prepare_input_data")`).
 
-Both conserved sites fitness and replicative fitness (comparison to a
-reference) are modeled using a multiplicative fitness landscape with the
-equation:
+Both conserved sites fitness and replicative fitness (comparison to a reference)
+are modeled using a multiplicative fitness landscape with the equation:
 
 ```         
 fitness = (1 - cost) ** n_mut
 ```
 
-The fitness cost must be between 0 and 1, where 0 indicates no fitness
-cost and 1 indicates no ability to survive. `n_mut` is the number of
-mutations in conserved sites or the number of nucleotides different from
-the reference sequence.
+The fitness cost must be between 0 and 1, where 0 indicates no fitness cost and
+1 indicates no ability to survive. `n_mut` is the number of mutations in
+conserved sites or the number of nucleotides different from the reference
+sequence.
 
-For additional details on how each of these selective pressures is
-implemented, please see the manuscript [**ADD LINK WHEN WE HAVE IT**].
+For additional details on how each of these selective pressures is implemented,
+please see the manuscript [**ADD LINK WHEN WE HAVE IT**].
 
 ### Conserved sites fitness
 
-To simulate conserved sites fitness, you must provide a vector of sites
-in the founder sequence that are considered to be conserved
-(`conserved_sites` argument). By default, the cost of a mutation at
-these sites is 0.99 (`conserved_cost` argument), but this can be
-modified.
+To simulate conserved sites fitness, you must provide a vector of sites in the
+founder sequence that are considered to be conserved (`conserved_sites`
+argument). By default, the cost of a mutation at these sites is 0.99
+(`conserved_cost` argument).
 
 Here's an example of simulating evolution with conserved sites fitness:
 
 ```{r}
 conserved_fitness <- run_wavess(
-  inf_pop_size = inf_pop_size,
-  samp_scheme = samp_scheme,
+  inf_pop_size = pop,
+  samp_scheme = samp,
   founder_seqs = rep(founder_ref$founder, 10),
-  conserved_sites = founder_conserved_sites
+  conserved_sites = founder_conserved_sites,
+  conserved_cost = 0.99
 )
 ```
 
-If you look at the mean conserved fitness of active cells, you'll see
-that it's not always 1 (although it may sometimes be 1 depending on the
-simulation, since the output is stochastic).
+If you look at the mean conserved fitness of active cells, you'll see that it's
+not always 1 (although it may sometimes be 1 depending on the simulation, since
+the output is stochastic).
 
 ```{r}
 conserved_fitness$counts$mean_conserved_active
@@ -252,15 +248,14 @@ conserved_fitness$counts$mean_conserved_active
 
 ### Comparison to a reference
 
-To simulate fitness compared to a reference, you must provide a "most
-fit" reference sequence to compare each simulated sequence to. The
-strength of this fitness can be altered using the `replicative_cost`
-argument.
+To simulate fitness compared to a reference, you must provide a "most fit"
+reference sequence to compare each simulated sequence to. The strength of this
+fitness can be altered using the `replicative_cost` argument.
 
 ```{r}
 ref_fitness <- run_wavess(
-  inf_pop_size = inf_pop_size,
-  samp_scheme = samp_scheme,
+  inf_pop_size = pop,
+  samp_scheme = samp,
   founder_seqs = rep(founder_ref$founder, 10),
   ref_seq = founder_ref$ref
 )
@@ -274,18 +269,16 @@ ref_fitness$counts$mean_replicative_active
 
 ### Immune fitness
 
-Active immunity can be modeled by defining B-cell epitopes locations
-that can be recognized by the immune system. Nucleotide epitopes are
-translated into amino acids before immune fitness costs are calculated.
-An epitope is recognized only when it is present at least 100 times
-across the population (`n_for_imm` argument). Once an epitope is
-recognized, it undergoes affinity maturation for 75 generations
-(`days_full_potency`), at which time it reaches full potency. Epitopes
+Active immunity can be modeled by defining B-cell epitopes locations that can be
+recognized by the immune system. Nucleotide epitopes are translated into amino
+acids before immune fitness costs are calculated. An epitope is recognized only
+when it is present at least 100 times across the population (`n_for_imm`
+argument). Once an epitope is recognized, it undergoes affinity maturation for
+90 days (`days_full_potency`), at which time it reaches full potency. Epitopes
 are also cross-reactive.
 
-Cross-reactivity is sampled from a Beta distribution where alpha is 1
-and beta is the square of the Hamming distance to the nearest recognized
-epitope:
+Cross-reactivity is sampled from a Beta distribution where alpha is 1 and beta
+is the square of the Hamming distance to the nearest recognized epitope:
 
 ```{r}
 lapply(1:5, function(x) {
@@ -305,41 +298,36 @@ lapply(1:5, function(x) {
 
 ```{r}
 immune_fitness <- run_wavess(
-  inf_pop_size = inf_pop_size,
-  samp_scheme = samp_scheme,
+  inf_pop_size = pop,
+  samp_scheme = samp,
   founder_seqs = rep(founder_ref$founder, 10),
   epitope_locations = epitope_locations
 )
 ```
 
-The immune fitness here is now less than 1 after the immune system kicks
-in:
+The immune fitness here is now less than 1 after the immune system kicks in:
 
 ```{r}
 immune_fitness$counts$mean_immune_active
 ```
 
-Please note that the model is very sensitive to the maximum immune
-fitness cost for a given epitope.
+Please note that the model is very sensitive to the maximum immune fitness cost
+for a given epitope.
 
 ## Multiple selective pressures at once
 
-You can also include multiple selective pressures at once by using
-multiple of the arguments described above.
+You can also include multiple selective pressures at once by using multiple of
+the arguments described above.
 
-## Events defined by probabilities
+## Events defined by rates
 
-There are several events that can occur during within-host evolution
-that are defined by probabilities of occurrence. These include the
-probability of a mutation occurring at a site in a generation
-(`prob_mut`), the probability of a recombination event occurring between
-two adjacent sites in a generation (`prob_recomb`), and various
-probabilities related to latent cell dynamics (`prob_act_to_lat`,
-`prob_lat_to_act`, `prob_lat_prolif`, `prob_lat_die`). Each of these can
-be turned off by setting the respective probability value to 0. The
-simulation starts with 0 latent cells, so setting `prob_act_to_lat` will
-turn latent cell dynamics off. [**NOTE: these are now rates, not
-probabilities**]
+There are several events that can occur during within-host evolution that are
+defined by rates of occurrence (which are converted into per-generation
+probabilities). These include the mutation rate (`mut_rate`), the recombination
+rate (`recomb_rate`), and various rates related to latent cell dynamics
+(`act_to_lat`, `lat_to_act`, `lat_prolif`, `lat_die`). Each of these can be
+turned off by setting the respective rate value to 0. The simulation starts with
+0 latent cells, so setting `act_to_lat` will turn latent cell dynamics off.
 
 ## Seed
 
