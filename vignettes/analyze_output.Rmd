@@ -56,7 +56,7 @@ theme_set(theme_classic() +
 create_python_venv()
 
 pop <- define_growth_curve(n_gens = 500)
-samp <- define_sampling_scheme(sampling_frequency = 30, max_samp = 50) %>% 
+samp <- define_sampling_scheme(sampling_frequency = 30, max_samp = 50) %>%
   filter(day <= 500)
 
 founder_ref <- extract_seqs(hxb2_cons_founder,
