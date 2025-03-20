@@ -75,8 +75,6 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) {
     dplyr::bind_rows() |>
     dplyr::mutate(timepoint = as.numeric(as.character(.data$timepoint)))
 
-  print(dists)
-
   slopes <- dplyr::bind_rows(
     stats::lm(value ~ timepoint, dists |>
       dplyr::filter(.data$stat_name == "root_to_tip")) |>
