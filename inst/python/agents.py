@@ -821,9 +821,9 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         counts["latent_turned_active"].append(latent_nums[1]),
         counts["latent_died"].append(latent_nums[2]),
         counts["latent_proliferated"].append(latent_nums[3]),
-        # n_mut, number_recombination
+        # n_mut, number_recombinations
         counts["number_mutations"].append(var_nums[0]),
-        counts["number_dual_inf"].append(var_nums[1]),
+        counts["number_recombinations"].append(var_nums[1]),
         # mean_fitness_active, mean_conserved_active,
         # mean_immune_active, mean_replicative_active
         counts["mean_fitness_active"].append(fitness[0]),
@@ -889,7 +889,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             "latent_died": [],
             "latent_proliferated": [],
             "number_mutations": [],
-            "number_dual_inf": [],
+            "number_recombinations": [],
             "mean_fitness_active": [],
             "mean_conserved_active": [],
             "mean_immune_active": [],
@@ -924,7 +924,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         if n_sample_active[0] != 0:
             # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
             latent_nums = [0, 0, 0, 0]
-            # n_mut, number_recombination
+            # n_mut, number_recombinations
             var_nums = [0, 0]
             # mean_fitness_active, mean_conserved_active, mean_immune_active,
             # mean_replicative_active
@@ -947,7 +947,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     generator,
                 )
             # Productively infected cell dynamics
-            # n_mut, number_recombination
+            # n_mut, number_recombinations
             var_nums = self.get_next_gen_active(
                 prob_mut,
                 prob_recomb,
