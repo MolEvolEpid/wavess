@@ -12,8 +12,7 @@ nucleotide and the columns are the "to" nucleotide.
 }
 }
 \source{
-Zanini et al. 2017: \url{https://doi.org/10.1093/ve/vex003} Mansky 1996:
-\url{https://doi.org/10.1089/aid.1996.12.307}
+Zanini et al. 2017: \url{https://doi.org/10.1093/ve/vex003}
 }
 \usage{
 hiv_mut_rates

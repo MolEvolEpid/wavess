@@ -329,6 +329,26 @@ check_seq <- function(seq, chars, seq_type) {
   }
 }
 
+check_q_rate <- function(mat, mat_name){
+  check_is_matrix(mat, mat_name)
+  if (!all(rownames(mat) %in% c("A", "C", "G", "T")) ||
+      !all(c("A", "C", "G", "T") %in% rownames(mat))) {
+    stop(mat_name, " must have rownames A,C,G,T")
+  }
+  if (!all(colnames(mat) %in% c("A", "C", "G", "T")) ||
+      !all(c("A", "C", "G", "T") %in% colnames(mat))) {
+    stop(mat_name, " must have colnames A,C,G,T")
+  }
+  if (!all(rownames(mat) == colnames(mat))) {
+    stop("the row names and column names of ", mat_name, " must be in the same order")
+  }
+  sapply(mat, function(x) {
+    lapply(x, function(y) {
+      check_is_numeric(y, mat_name)
+    })
+  })
+}
+
 #' Check run_wavess inputs
 #'
 #' @inheritParams run_wavess
@@ -382,23 +402,7 @@ check_run_wavess_inputs <- function(inf_pop_size, samp_scheme,
   if (length(unique(sapply(as.list(founder_seqs), nchar))) != 1) {
     stop("All founder sequences must be the same length")
   }
-  check_is_matrix(q, "q")
-  if (!all(rownames(q) %in% c("A", "C", "G", "T")) ||
-    !all(c("A", "C", "G", "T") %in% rownames(q))) {
-    stop("q must have rownames A,C,G,T")
-  }
-  if (!all(colnames(q) %in% c("A", "C", "G", "T")) ||
-    !all(c("A", "C", "G", "T") %in% colnames(q))) {
-    stop("q must have colnames A,C,G,T")
-  }
-  if (!all(rownames(q) == colnames(q))) {
-    stop("the row names and column names of q must be in the same order")
-  }
-  sapply(q, function(x) {
-    lapply(x, function(y) {
-      check_is_numeric(y, "q")
-    })
-  })
+  check_q_rate(q, "q")
   if (!is.null(conserved_sites)) {
     check_seq(paste0(toupper(conserved_sites), collapse = ""), c("A", "C", "G", "T"), "conserved_sites")
     if (is.null(names(conserved_sites))) {

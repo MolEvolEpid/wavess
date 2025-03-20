@@ -7,8 +7,9 @@
 calc_q_from_rates(rates, mut_rate, generation_time = NULL)
 }
 \arguments{
-\item{rates}{Matrix of individual nucleotide substitution rates for each
-potential substitution.}
+\item{rates}{4x4 matrix of individual nucleotide substitution rates for each
+potential substitution (per-site per-generation or per-site per-day) with
+the following row and column names: A,C,G,T.}
 
 \item{mut_rate}{Overall per-site per-generation mutation rate.}
 
@@ -25,8 +26,8 @@ Method:
 \item If needed, convert rates per day to rates per generation
 \item Convert rates per generation to probabilities per generation
 \item Make diagonal such that rows of probability matrix p sum to 1
-\item Convert to q matrix, assuming a mutation rate t of mut_rate mutations/site/generation,
-by solving for q in the equation p = exp(qt)
+\item Convert to q matrix, assuming a mutation rate of mut_rate mutations/site/generation,
+by solving for q in the equation p = exp(q*mut_rate)
 }
 }
 \examples{

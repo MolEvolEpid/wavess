@@ -19,8 +19,3 @@ The \code{\link[=run_wavess]{run_wavess()}} function takes probabilities,
 but sometimes in the literature you find rates instead.
 This function allows you to convert that rate to a probability.
 }
-\examples{
-rate_to_probability(2.1)
-rate_to_probability(0.1)
-rate_to_probability(3.5e-5)
-}
