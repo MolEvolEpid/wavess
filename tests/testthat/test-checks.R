@@ -61,6 +61,7 @@ test_that("check_is_numeric works", {
 test_that("check_is_pos works", {
   expect_no_error(check_is_pos(1, "test"))
   expect_error(check_is_pos(0, "test"), "test must be a positive number")
+  expect_error(check_is_pos(-1, "test", ok0 = TRUE), "test must be a number")
 })
 
 test_that("check_is_df works", {
@@ -394,6 +395,18 @@ test_that("check_run_wavess_inputs works", {
     ),
     "conserved_cost must be in the range"
   )
+
+  expect_error(
+    check_run_wavess_inputs(
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
+      3.5e-5, 1.4e-5,
+      c("1" = "A", "10" = "C"), 0.99, NULL, 1,
+      NULL, 30, 0.01, 90,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "the maximum value of conserved_sites is greater than the length of the"
+  )
+
   expect_no_error(check_run_wavess_inputs(
     inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
@@ -457,6 +470,18 @@ test_that("check_run_wavess_inputs works", {
     ),
     "gen_full_potency must be a positive number"
   )
+
+  expect_warning(
+    check_run_wavess_inputs(
+      inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
+      3.5e-5, 1.4e-5,
+      NULL, 0.99, NULL, 1,
+      el, 30, 10000, 10,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "n_for_imm is greater than the maximum population size so there will be"
+  )
+
   expect_no_error(check_run_wavess_inputs(
     inf_pop_size, samp_scheme, rep("ATAA", 10), 1.2, hiv_q_mat,
     3.5e-5, 1.4e-5,
@@ -485,6 +510,45 @@ test_that("check_run_wavess_inputs works", {
     ),
     "All founder sequences must be the same length"
   )
+  inf_pop_size2 <- inf_pop_size
+  inf_pop_size2$generation <- sample(0:100)
+  expect_error(
+    check_run_wavess_inputs(
+      inf_pop_size2, samp_scheme, c("AGTT", rep("ATAA", 9)), 1.2, hiv_q_mat,
+      3.5e-5, 1.4e-5,
+      NULL, 0.99, NULL, 1,
+      NULL, 30, 0.01, 90,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "inf_pop_size"
+  )
+
+  samp_scheme2 <- samp_scheme
+  samp_scheme2$day[1] <- 200
+  expect_error(
+    check_run_wavess_inputs(
+      inf_pop_size, samp_scheme2, c("AGTT", rep("ATAA", 9)), 1.2, hiv_q_mat,
+      3.5e-5, 1.4e-5,
+      NULL, 0.99, NULL, 1,
+      NULL, 30, 0.01, 90,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "you requested to sample at a time after"
+  )
+
+  expect_error(
+    check_run_wavess_inputs(
+      inf_pop_size, samp_scheme, rep("ATAA", 9), 1.2, hiv_q_mat,
+      3.5e-5, 1.4e-5,
+      NULL, 0.99, NULL, 1,
+      NULL, 30, 0.01, 90,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "Initial population size must equal the number of founder sequences"
+  )
+
+
+
 })
 
 test_that("check_extract_seqs_inputs works", {
@@ -549,4 +613,14 @@ test_that("check_slice_aln_inputs works", {
     slice_aln(hxb2_cons_founder, start = 1, end = 10000),
     "end must be <= the length of the alignment"
   )
+})
+
+test_that('check_define_growth_curve_inputs works', {
+  expect_error(check_define_growth_curve_inputs(1,100,1,1),
+               "n0 must be a number ")
+})
+
+test_that('check_is_phylo works', {
+  expect_error(check_is_phylo(ape::rtree(100, rooted = FALSE), 'tr', rooted = TRUE),
+               "tr must be rooted")
 })

@@ -383,7 +383,7 @@ check_run_wavess_inputs <- function(inf_pop_size, samp_scheme,
   if (!all(inf_pop_size$generation == seq_len(nrow(inf_pop_size)) - 1)) {
     stop(
       "inf_pop_size$generation must be consecutive numbers from 0 to ",
-      "the number of rows in the data"
+      ", the number of rows in the data"
     )
   }
   check_is_df(samp_scheme, "samp_scheme")
