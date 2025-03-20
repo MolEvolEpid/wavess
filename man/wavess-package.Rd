@@ -6,6 +6,8 @@
 \alias{wavess-package}
 \title{wavess: Within-Host Agent-Based Viral Evolution Sequence Simulator}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Simulates within-host viral sequence evolution. Optionally includes recombination, a latent cell reservoir, and three types of selective pressures (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity).
 }
 \author{
