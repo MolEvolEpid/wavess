@@ -31,7 +31,7 @@ functions provide. However, we expect these functions to be sufficient
 for most users.
 
 | `run_wavess()` argument | `wavess` function to generate input              | Description                                                                                       |
-|----------------|-------------------|--------------------------------------|
+|-------------------------|--------------------------------------------------|---------------------------------------------------------------------------------------------------|
 | `inf_pop_size`          | `define_growth_curve()`                          | [Define active cell growth](#define-active-cell-growth)                                           |
 | `samp_scheme`           | `define_samp_scheme()`                           | [Define sampling scheme](#define-sampling-scheme)                                                 |
 | `founder_seqs`          | `extract_seqs()`                                 | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment)         |
