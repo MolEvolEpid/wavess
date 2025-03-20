@@ -115,7 +115,8 @@ immune response will not actually start until there are at least
 \item{seed}{Optional seed (default: NULL)}
 }
 \value{
-List including: tibble of counts, and alignment of sampled sequences
+List including: tibble of counts and mean fitness values, an alignment
+of sampled sequences, and fitness of the sampled sequences
 }
 \description{
 Simulate within-host evolution optionally including recombination (default:

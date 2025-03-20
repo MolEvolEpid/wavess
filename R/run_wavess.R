@@ -92,7 +92,8 @@
 #' @param lat_die Per-*day* rate that a latent cell dies (default: 0.01)
 #' @param seed Optional seed (default: NULL)
 #'
-#' @return List including: tibble of counts, and alignment of sampled sequences
+#' @return List including: tibble of counts and mean fitness values, an alignment
+#' of sampled sequences, and fitness of the sampled sequences
 #' @export
 #'
 #' @examples
