@@ -546,9 +546,6 @@ test_that("check_run_wavess_inputs works", {
     ),
     "Initial population size must equal the number of founder sequences"
   )
-
-
-
 })
 
 test_that("check_extract_seqs_inputs works", {
@@ -615,12 +612,16 @@ test_that("check_slice_aln_inputs works", {
   )
 })
 
-test_that('check_define_growth_curve_inputs works', {
-  expect_error(check_define_growth_curve_inputs(1,100,1,1),
-               "n0 must be a number ")
+test_that("check_define_growth_curve_inputs works", {
+  expect_error(
+    check_define_growth_curve_inputs(1, 100, 1, 1),
+    "n0 must be a number "
+  )
 })
 
-test_that('check_is_phylo works', {
-  expect_error(check_is_phylo(ape::rtree(100, rooted = FALSE), 'tr', rooted = TRUE),
-               "tr must be rooted")
+test_that("check_is_phylo works", {
+  expect_error(
+    check_is_phylo(ape::rtree(100, rooted = FALSE), "tr", rooted = TRUE),
+    "tr must be rooted"
+  )
 })

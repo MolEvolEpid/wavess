@@ -118,4 +118,3 @@ rate_to_probability <- function(rate, time = 1) {
   check_is_pos(time, "time")
   return(1 - exp(-rate * time))
 }
-

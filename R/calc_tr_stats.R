@@ -66,8 +66,8 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) {
       tibble::enframe() |>
       dplyr::mutate(stat_name = "tip_to_tip") |>
       dplyr::mutate(name = as.character(.data$name))
-    if(nrow(ttt) == 0){
-      warning('Generation ', y, ' has only one tip, cannot calculate diversity.')
+    if (nrow(ttt) == 0) {
+      warning("Generation ", y, " has only one tip, cannot calculate diversity.")
     }
     dplyr::bind_rows(rtt, ttt) |>
       dplyr::mutate(timepoint = y, .before = 1)

@@ -5,9 +5,9 @@
 #' @return error if inputs are incorrect
 #' @noRd
 check_define_growth_curve_inputs <- function(n_gens,
-                                           n0,
-                                           carry_cap,
-                                           max_growth_rate) {
+                                             n0,
+                                             carry_cap,
+                                             max_growth_rate) {
   check_is_pos(n_gens, "n_gens")
   check_is_pos(carry_cap, "carry_cap")
   check_is_numeric(n0, "n0")
@@ -334,14 +334,14 @@ check_seq <- function(seq, chars, seq_type) {
   }
 }
 
-check_q_rate <- function(mat, mat_name){
+check_q_rate <- function(mat, mat_name) {
   check_is_matrix(mat, mat_name)
   if (!all(rownames(mat) %in% c("A", "C", "G", "T")) ||
-      !all(c("A", "C", "G", "T") %in% rownames(mat))) {
+    !all(c("A", "C", "G", "T") %in% rownames(mat))) {
     stop(mat_name, " must have rownames A,C,G,T")
   }
   if (!all(colnames(mat) %in% c("A", "C", "G", "T")) ||
-      !all(c("A", "C", "G", "T") %in% colnames(mat))) {
+    !all(c("A", "C", "G", "T") %in% colnames(mat))) {
     stop(mat_name, " must have colnames A,C,G,T")
   }
   if (!all(rownames(mat) == colnames(mat))) {

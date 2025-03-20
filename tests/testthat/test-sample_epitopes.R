@@ -1,7 +1,8 @@
 test_that("sample_epitopes works", {
   set.seed(20240812)
   expect_message(epitopes <- sample_epitopes(
-    get_epitope_frequencies(env_features$Position - 1), max_fit_cost = 0.4
+    get_epitope_frequencies(env_features$Position - 1),
+    max_fit_cost = 0.4
   ))
   expect_equal(
     colnames(epitopes),
