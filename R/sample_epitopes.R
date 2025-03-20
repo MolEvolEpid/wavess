@@ -42,7 +42,7 @@ sample_epitopes <- function(epitope_probabilities,
                             end_aa_pos = NULL,
                             num_epitopes = 10,
                             aa_epitope_length = 10,
-                            max_fit_cost = 0.4,
+                            max_fit_cost = 0.3,
                             max_resamples = 100,
                             ref_founder_map = NULL) {
   check_sample_epitopes_inputs(
