@@ -7,8 +7,8 @@
 \format{
 \subsection{\code{env_features}}{
 
-A tibble of HIV env binding, contact, and neutralization sites curated by the
-LANL HIV database. The full Env feature dataset was subsetted to include only
+A tibble of HIV ENV binding, contact, and neutralization sites curated by the
+LANL HIV database. The full ENV feature dataset was subsetted to include only
 binding, contact, and neutralization sites. The most relevant column for us
 is the "position" column. Other columns are included in case it is useful for
 specific use cases. This particular data was last updated on 2024-10-01.
