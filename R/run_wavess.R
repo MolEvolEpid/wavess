@@ -102,8 +102,10 @@
 #' \dontrun{
 #' run_wavess(
 #'   define_growth_curve(n_gen = 50),
-#'   define_sampling_scheme(sampling_frequency_active = 10,
-#'   sampling_frequency_latent = 10, n_days = 50),
+#'   define_sampling_scheme(
+#'     sampling_frequency_active = 10,
+#'     sampling_frequency_latent = 10, n_days = 50
+#'   ),
 #'   rep("ATCG", 10)
 #' )
 #' }
@@ -164,11 +166,13 @@ run_wavess <- function(inf_pop_size,
       by = dplyr::join_by("generation")
     ) |>
     dplyr::rowwise() |>
-    dplyr::mutate(n_sample_active = ifelse(!is.na(.data$n_sample_active),
-      min(.data$active_cell_count, .data$n_sample_active),
-      0
-    ),
-    n_sample_latent = ifelse(is.na(.data$n_sample_latent), 0, .data$n_sample_latent)) |>
+    dplyr::mutate(
+      n_sample_active = ifelse(!is.na(.data$n_sample_active),
+        min(.data$active_cell_count, .data$n_sample_active),
+        0
+      ),
+      n_sample_latent = ifelse(is.na(.data$n_sample_latent), 0, .data$n_sample_latent)
+    ) |>
     dplyr::ungroup()
 
   # make sure founder sequences are all uppercase and in list format
@@ -217,8 +221,10 @@ run_wavess <- function(inf_pop_size,
     as.integer(pop_samp$active_cell_count[1])
   )
   # Last sampled generation (don't have to continue simulation after this)
-  last_sampled_gen <- max(pop_samp$generation[pop_samp$n_sample_active != 0],
-                          pop_samp$generation[pop_samp$n_sample_latent != 0])
+  last_sampled_gen <- max(
+    pop_samp$generation[pop_samp$n_sample_active != 0],
+    pop_samp$generation[pop_samp$n_sample_latent != 0]
+  )
 
   # Simulate within-host evolution
   out <- reticulate::py_to_r(host$loop_through_generations(
@@ -239,9 +245,9 @@ run_wavess <- function(inf_pop_size,
   out$counts <- out$counts |> dplyr::bind_rows()
   out$fitness <- out$fitness |> dplyr::bind_rows()
   out$seqs_active <- ape::as.DNAbin(t(sapply(out$seqs_active, function(x) strsplit(x, split = "")[[1]])))
-  if(length(out$seqs_latent) == 0){
+  if (length(out$seqs_latent) == 0) {
     out$seqs_latent <- NULL
-  }else{
+  } else {
     out$seqs_latent <- ape::as.DNAbin(t(sapply(out$seqs_latent, function(x) strsplit(x, split = "")[[1]])))
   }
 

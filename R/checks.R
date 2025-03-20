@@ -388,7 +388,7 @@ check_run_wavess_inputs <- function(inf_pop_size, samp_scheme,
   }
   check_is_df(samp_scheme, "samp_scheme")
   if (!all(c("day", "n_sample_active", "n_sample_latent") %in%
-           colnames(samp_scheme))) {
+    colnames(samp_scheme))) {
     stop(
       "samp_scheme must contain the columns ",
       "day, n_sample_active, n_sample_latent"
