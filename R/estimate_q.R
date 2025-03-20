@@ -107,15 +107,12 @@ calc_q_from_rates <- function(rates, mut_rate, generation_time = NULL) {
 
 #' Convert a rate to a probability
 #'
-#' The [run_wavess()] function takes probabilities,
-#' but sometimes in the literature you find rates instead.
-#' This function allows you to convert that rate to a probability.
-#'
 #' @param rate Rate to be converted
 #' @param time Time period (default: 1, e.g. 1 generation)
 #'
-#' @return
-#' Probability that at least one event occurs in the time period
+#' @return Probability that at least one event occurs in the time period,
+#'   assuming a Poisson process.
+#' @noRd
 rate_to_probability <- function(rate, time = 1) {
   check_is_numeric(rate, "rate")
   check_is_pos(time, "time")
