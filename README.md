@@ -5,7 +5,7 @@
 
 **Within-host agent-based viral evolution sequence simulator.**
 
-<a href='https://github.com/MolEvolEpid/wavess/'><img src='inst/logo/wavess-logo.pdf' align="right" height="120" /></a>
+<a href='https://github.com/MolEvolEpid/wavess/'><embed src='inst/logo/wavess-logo.pdf' align="right" height="120" /></a>
 
 <!-- badges: start -->
 
