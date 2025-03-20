@@ -58,8 +58,10 @@ test_that("run_wavess works", {
     "All founder sequences must be the same length"
   )
   set.seed(1234)
-  out <- run_wavess(inf_pop_size, samp_scheme, rep("ATCGAT", 10), generation_time = 1,
-                    conserved_sites = c('1' = 'A'), ref_seq = "GGGGGG", epitope_locations = tibble(epi_start_nt = 0, epi_end_nt = 3, max_fitness_cost = 0.3))
+  out <- run_wavess(inf_pop_size, samp_scheme, rep("ATCGAT", 10),
+    generation_time = 1,
+    conserved_sites = c("1" = "A"), ref_seq = "GGGGGG", epitope_locations = tibble(epi_start_nt = 0, epi_end_nt = 3, max_fitness_cost = 0.3)
+  )
   expect_equal(all(out$counts$mean_fitness_active != 1), TRUE)
   expect_equal(all(out$counts$mean_conserved_active == 1), TRUE)
   expect_equal(any(out$counts$mean_immune_active != 1), TRUE)
@@ -68,4 +70,4 @@ test_that("run_wavess works", {
   expect_equal(all(out$fitness$conserved == 1), TRUE)
   expect_equal(any(out$fitness$immune != 1), TRUE)
   expect_equal(all(out$fitness$replicative != 1), TRUE)
-  })
+})
