@@ -204,7 +204,7 @@ if __name__ == "__main__":
         "latent_died",
         "latent_proliferated",
         "number_mutations",
-        "number_dual_inf",
+        "number_recombinations",
         "mean_fitness_active",
         "mean_conserved_active",
         "mean_immune_active",
