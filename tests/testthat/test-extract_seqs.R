@@ -5,8 +5,8 @@ test_that("extract_seqs works", {
     list(founder = "ATGAGAGCGATGGGGATCAT", ref = NULL)
   )
   expect_equal(
-    extract_seqs(gp120, "B.US.2011.DEMB11US006.KC473833", start = 21, end = 40),
-    list(founder = "GAGGAATTGGCAACACTT", ref = NULL)
+    extract_seqs(gp120, "B.US.2011.DEMB11US006.KC473833", start = 1500),
+    list(founder = "AATTGAACCATTGGGAATAGCACCCACCAGGGCA", ref = NULL)
   )
   expect_equal(
     extract_seqs(gp120, "B.US.2011.DEMB11US006.KC473833",
