@@ -338,8 +338,8 @@ probabilities related to latent cell dynamics (`prob_act_to_lat`,
 `prob_lat_to_act`, `prob_lat_prolif`, `prob_lat_die`). Each of these can
 be turned off by setting the respective probability value to 0. The
 simulation starts with 0 latent cells, so setting `prob_act_to_lat` will
-turn latent cell dynamics off.
-[**NOTE: these are now rates, not probabilities**]
+turn latent cell dynamics off. [**NOTE: these are now rates, not
+probabilities**]
 
 ## Seed
 
