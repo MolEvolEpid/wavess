@@ -1,30 +1,35 @@
-#' Check generate_pop_samp
+#' Check define_growth_curve
 #'
-#' @inheritParams generate_pop_samp
+#' @inheritParams define_growth_curve
 #'
 #' @return error if inputs are incorrect
 #' @noRd
-check_generate_pop_samp_inputs <- function(n_gen,
-                                           carry_cap,
+check_define_growth_curve_inputs <- function(n_gens,
                                            n0,
-                                           max_growth_rate,
-                                           sampling_frequency, max_samp) {
-  check_is_pos(n_gen, "n_gen")
+                                           carry_cap,
+                                           max_growth_rate) {
+  check_is_pos(n_gens, "n_gens")
   check_is_pos(carry_cap, "carry_cap")
   check_is_numeric(n0, "n0")
   if (n0 > carry_cap) {
     stop("n0 must be a number \u2264carry_cap, but is ", n0)
   }
-  check_is_pos(max_growth_rate, "max_growth_rate")
+}
+
+#' Check define_sampling_scheme
+#'
+#' @inheritParams define_sampling_scheme
+#'
+#' @return error if inputs are incorrect
+#' @noRd
+check_define_sampling_scheme_inputs <- function(sampling_frequency,
+                                                max_samp,
+                                                n_days) {
   check_is_pos(sampling_frequency, "sampling_frequency")
   check_is_pos(max_samp, "max_samp")
-  if (sampling_frequency > n_gen) {
-    stop(
-      "sampling_frequency must be a number \u2264maximum generation, but is ",
-      sampling_frequency
-    )
-  }
+  check_is_pos(n_days, "n_days")
 }
+
 
 #' Check get_seq_pos inputs
 #'

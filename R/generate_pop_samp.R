@@ -16,7 +16,7 @@
 #' @examples
 #' define_growth_curve()
 define_growth_curve <- function(n_gens = 5000, n0 = 10, carry_cap = 2000, max_growth_rate = 0.3) {
-  # ADD CHECKS AND TESTS
+  check_define_growth_curve_inputs(n_gens, n0, carry_cap, max_growth_rate)
   n <- n0
   sapply(1:n_gens, function(x) {
     n <<- min(n + max_growth_rate * n * (carry_cap - n) / carry_cap, carry_cap)
@@ -50,7 +50,7 @@ define_growth_curve <- function(n_gens = 5000, n0 = 10, carry_cap = 2000, max_gr
 define_sampling_scheme <- function(sampling_frequency = 365,
                                    max_samp = 20,
                                    n_days = 3650) {
-  # ADD CHECKS AND TESTS
+  check_define_sampling_scheme_inputs(sampling_frequency, max_samp, n_days)
   tibble::tibble(
     day = 0:n_days,
     n_sample_active = ifelse(.data$day %% sampling_frequency == 0, max_samp, 0)
