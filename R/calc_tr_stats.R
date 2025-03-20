@@ -6,6 +6,9 @@
 #' @param timepoints Vector of time points named by tree tip label. All tip
 #' lables must be included in this vector. If you want to exclude certain tips,
 #' you must drop them from the tree prior to using this function.
+#' @param bl_thresh Branch length threshold under which branches are collapsed
+#' to calculate mean leaf depth (default: 1e-08). This is the `tol` argument in
+#'  [ape::di2multi()].
 #'
 #' @return Tibble including 3 tree summary statistics:
 #' - Mean leaf depth (normalized Sackin index)
@@ -24,7 +27,7 @@
 #' times <- sample(3, 100, replace = TRUE)
 #' names(times) <- tr$tip.label
 #' calc_tr_stats(tr, times)
-calc_tr_stats <- function(tr, timepoints, tol = 0) {
+calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) {
   check_is_phylo(tr, "tr")
   if (is.null(names(timepoints)) | !all(names(timepoints) %in% tr$tip.label)) {
     stop(
@@ -41,8 +44,8 @@ calc_tr_stats <- function(tr, timepoints, tol = 0) {
   }) |>
     dplyr::bind_rows() |>
     dplyr::summarize(
-      mean_divergence = mean(mean_rtt, na.rm = TRUE),
-      mean_diversity = mean(mean_ttt, na.rm = TRUE)
+      mean_divergence = mean(.data$mean_rtt, na.rm = TRUE),
+      mean_diversity = mean(.data$mean_ttt, na.rm = TRUE)
     ) |>
     unlist() |>
     unname()
@@ -62,7 +65,7 @@ calc_tr_stats <- function(tr, timepoints, tol = 0) {
     ttt <- d[upper.tri(d)] |>
       tibble::enframe() |>
       dplyr::mutate(stat_name = "tip_to_tip") |>
-      dplyr::mutate(name = as.character(name))
+      dplyr::mutate(name = as.character(.data$name))
     if(nrow(ttt) == 0){
       warning('Generation ', y, ' has only one tip, cannot calculate diversity.')
     }
@@ -70,23 +73,23 @@ calc_tr_stats <- function(tr, timepoints, tol = 0) {
       dplyr::mutate(timepoint = y, .before = 1)
   }) |>
     dplyr::bind_rows() |>
-    dplyr::mutate(timepoint = as.numeric(as.character(timepoint)))
+    dplyr::mutate(timepoint = as.numeric(as.character(.data$timepoint)))
 
   print(dists)
 
   slopes <- dplyr::bind_rows(
-    lm(value ~ timepoint, dists |>
-      dplyr::filter(stat_name == "root_to_tip")) |>
-      coef() |>
+    stats::lm(value ~ timepoint, dists |>
+      dplyr::filter(.data$stat_name == "root_to_tip")) |>
+      stats::coef() |>
       tibble::enframe() |>
       dplyr::mutate(type = "root_to_tip"),
-    lm(value ~ timepoint, dists |>
-      dplyr::filter(stat_name == "tip_to_tip")) |>
-      coef() |>
+    stats::lm(value ~ timepoint, dists |>
+      dplyr::filter(.data$stat_name == "tip_to_tip")) |>
+      stats::coef() |>
       tibble::enframe() |>
       dplyr::mutate(type = "tip_to_tip")
   ) |>
-    dplyr::filter(name == "timepoint")
+    dplyr::filter(.data$name == "timepoint")
 
   tibble::tibble(
     stat_name = c(
@@ -97,7 +100,7 @@ calc_tr_stats <- function(tr, timepoints, tol = 0) {
       "transition_score"
     ),
     stat_value = c(
-      treebalance::avgLeafDepI(ape::di2multi(tr, tol = tol)), # average leaf depth (normalized sackin)
+      treebalance::avgLeafDepI(ape::di2multi(tr, tol = bl_thresh)), # average leaf depth (normalized sackin)
       mean(tr$edge.length), # branch lengths
       mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch lengths
       mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)]), # external branch lengths

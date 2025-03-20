@@ -4,7 +4,7 @@
 \alias{calc_tr_stats}
 \title{Calculate tree summary statistics}
 \usage{
-calc_tr_stats(tr, timepoints, tol = 0)
+calc_tr_stats(tr, timepoints, bl_thresh = 1e-08)
 }
 \arguments{
 \item{tr}{Rooted phylogeny}
@@ -12,6 +12,10 @@ calc_tr_stats(tr, timepoints, tol = 0)
 \item{timepoints}{Vector of time points named by tree tip label. All tip
 lables must be included in this vector. If you want to exclude certain tips,
 you must drop them from the tree prior to using this function.}
+
+\item{bl_thresh}{Branch length threshold under which branches are collapsed
+to calculate mean leaf depth (default: 1e-08). This is the \code{tol} argument in
+\code{\link[ape:multi2di]{ape::di2multi()}}.}
 }
 \value{
 Tibble including 3 tree summary statistics:
