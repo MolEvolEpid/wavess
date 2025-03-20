@@ -17,12 +17,14 @@ you must drop them from the tree prior to using this function.}
 Tibble including 3 tree summary statistics:
 \itemize{
 \item Mean leaf depth (normalized Sackin index)
+\item Mean branch length
 \item Mean internal branch length
 \item Mean external branch length
-\item Timepoint transition score
-\item Mean tip-to-tip distance
-\item Mean divergence (per-generation root-to-tip distance)
-\item Mean diversity (per-generation tip-to-tip distance)
+\item Mean divergence (mean per-generation root-to-tip distance)
+\item Mean diversity (mean per-generation tip-to-tip distance)
+\item Divergence slope across timepoints
+\item Diversity slope across timepoints
+\item Timepoint transition score normalized by the number of timepoints
 }
 }
 \description{
