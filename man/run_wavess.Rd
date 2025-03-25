@@ -115,10 +115,11 @@ immune response will not actually start until there are at least
 \item{seed}{Optional seed (default: NULL)}
 }
 \value{
-List including: tibble of counts and mean fitness values, an alignment
-of sampled sequences, and fitness of the sampled sequences. If latent cells
-are sampled, then an alignment of the sampled latent cells will also be
-returned.
+List including: tibble of counts and mean fitness values, an alignment of
+sampled sequences, fitness of the sampled sequences, and tibbles of the
+recombination history of sampled sequences and the unique recombination events.
+If latent cells are sampled, then an alignment of the sampled latent cells will
+also be returned.
 }
 \description{
 Simulate within-host evolution optionally including recombination (default:
