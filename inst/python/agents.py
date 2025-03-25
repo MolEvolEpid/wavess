@@ -519,6 +519,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         reference_sequence,
         conserved_sites,
         replicative_cost,
+        gen,
     ):
         # Create a new list with the newly infected cells
         newly_infected = [None] * int(len(next_dually_infecting_viruses) / 2)
@@ -555,12 +556,9 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             )
 
             # Add a note about the recombination event
-            # TODO:
-            #   use newly_infected instead of index_of_cd4 ? just one parent cell for this event
-            #   include generation number -- pass `gen` in as an argument to dually_infect_cd4()
-            #   include breakpoint -- move this outside the loop over `breakpoints`
-            #   don't bother if the two parent sequences are identical
-            newly_infected[n_added].recombination_history.append([index_of_cd4_with_virus1, index_of_cd4_with_virus2])
+            if self.C[index_of_cd4_with_virus1].infecting_virus.nuc_sequence !=
+               self.C[index_of_cd4_with_virus2].infecting_virus.nuc_sequence:
+                newly_infected[n_added].recombination_history.append([gen, n_added, breakpoints])
 
             if len(conserved_sites):
                 # Get mutations in conserved sites for recombined virus
@@ -805,6 +803,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 reference_sequence,
                 conserved_sites,
                 replicative_cost,
+                gen,
             )
         )
 
