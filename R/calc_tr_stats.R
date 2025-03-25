@@ -39,13 +39,13 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08, resolve_timepoints 
   tr_poly <- ape::di2multi(tr, tol = bl_thresh)
 
   transitions <- NA # only 1 timepoint
-  if(dplyr::n_distinct(timepoints) > 1){
+  if (dplyr::n_distinct(timepoints) > 1) {
     tr_resolved <- tr
-    if(!ape::is.binary(tr_poly) & resolve_timepoints){
-    tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly, factor(timepoints), orderedChar = TRUE, stateBias = 'primitive')
-    tr_resolved <- ape::multi2di(tr_poly_ordered, random = FALSE)
+    if (!ape::is.binary(tr_poly) & resolve_timepoints) {
+      tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly, factor(timepoints), orderedChar = TRUE, stateBias = "primitive")
+      tr_resolved <- ape::multi2di(tr_poly_ordered, random = FALSE)
     }
-    transitions <- phangorn::parsimony(tr_resolved, phangorn::phyDat(factor(timepoints), type = "USER")) / (dplyr::n_distinct(timepoints)-1)
+    transitions <- phangorn::parsimony(tr_resolved, phangorn::phyDat(factor(timepoints), type = "USER")) / (dplyr::n_distinct(timepoints) - 1)
   }
 
   diverg_divers <- lapply(unique(timepoints), function(x) {
