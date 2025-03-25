@@ -242,23 +242,28 @@ run_wavess <- function(inf_pop_size,
 
   # Clean up recombination
   re <- unique(unlist(out[[2]]$recombhist, recursive = F))
-  match_events <- function(rl)
+  match_events <- function(rl) {
     sapply(rl, function(r) Position(function(x) identical(x, r), re, nomatch = NA))
+  }
   rh <- lapply(out[[2]]$recombhist, match_events)
-  recomb_events <- tibble::tibble(generation = sapply(re, function(x) x$gen),
-                          cell_id = sapply(re, function(x) x$num),
-                          breakpoints  = lapply(re, function(x) x$bp)
-                         ) |>
-                   dplyr::mutate(cell_id = paste0(generation, "_", cell_id)) |>
-                   dplyr::arrange(generation, cell_id)
-  recomb_hists <- tibble::tibble(generation = out[[2]]$generation,
-                                 seq_id = out[[2]]$seq_id,
-                                 history = rh) |>
-                  dplyr::rowwise() |>
-                  dplyr::mutate(is_recombinant = length(history) > 0) |>
-                  dplyr::ungroup()
-  match_descendants <- function(i)
+  recomb_events <- tibble::tibble(
+    generation = sapply(re, function(x) x$gen),
+    cell_id = sapply(re, function(x) x$num),
+    breakpoints = lapply(re, function(x) x$bp)
+  ) |>
+    dplyr::mutate(cell_id = paste0(generation, "_", cell_id)) |>
+    dplyr::arrange(generation, cell_id)
+  recomb_hists <- tibble::tibble(
+    generation = out[[2]]$generation,
+    seq_id = out[[2]]$seq_id,
+    history = rh
+  ) |>
+    dplyr::rowwise() |>
+    dplyr::mutate(is_recombinant = length(history) > 0) |>
+    dplyr::ungroup()
+  match_descendants <- function(i) {
     which(sapply(recomb_hists$history, function(x) i %in% x))
+  }
   recomb_events$descendants <- lapply(seq_len(nrow(recomb_events)), match_descendants)
   out[[2]]$recombhist <- NULL
 
