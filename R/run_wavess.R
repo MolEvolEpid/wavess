@@ -249,8 +249,7 @@ run_wavess <- function(inf_pop_size,
                           cell_id = sapply(re, function(x) x$num),
                           breakpoints  = lapply(re, function(x) x$bp)
                          ) |>
-                   dplyr::mutate(cell_id = paste0(generation, "_", cell_id)) |>
-                   dplyr::arrange(generation, cell_id)
+                   dplyr::mutate(cell_id = paste0(generation, "_", cell_id))
   recomb_hists <- tibble::tibble(generation = out[[2]]$generation,
                                  seq_id = out[[2]]$seq_id,
                                  history = rh) |>
