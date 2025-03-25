@@ -556,9 +556,10 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             )
 
             # Add a note about the recombination event
-            if self.C[index_of_cd4_with_virus1].infecting_virus.nuc_sequence !=
+            if self.C[index_of_cd4_with_virus1].infecting_virus.nuc_sequence != \
                self.C[index_of_cd4_with_virus2].infecting_virus.nuc_sequence:
-                newly_infected[n_added].recombination_history.append([gen, n_added, breakpoints])
+                newly_infected[n_added].recombination_history.append(
+                        {"gen" : gen, "num" : n_added, "bp" : breakpoints})
 
             if len(conserved_sites):
                 # Get mutations in conserved sites for recombined virus
@@ -861,7 +862,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 fitness["replicative"].append(
                     float(CD4.infecting_virus.replicative_fitness))
                 fitness["overall"].append(float(CD4.infecting_virus.fitness))
-                fitness["recombhist"].append(str(CD4.recombination_history))
+                fitness["recombhist"].append(CD4.recombination_history)
         return seqs, fitness
 
     def loop_through_generations(
@@ -933,7 +934,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             else:
                 fitness["replicative"].append(float(1))
                 fitness["overall"].append(float(1))
-            fitness["recombhist"].append(str([]))
+            fitness["recombhist"].append({})
                 
         seqs_latent = defaultdict(lambda: 0)
 
