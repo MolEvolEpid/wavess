@@ -7,7 +7,7 @@
 #' lables must be included in this vector. If you want to exclude certain tips,
 #' you must drop them from the tree prior to using this function.
 #' @param bl_thresh Branch length threshold under which branches are collapsed
-#' to calculate mean leaf depth (default: 1e-08). This is the `tol` argument in
+#' to prior to calculations (default: 1e-08). This is the `tol` argument in
 #'  [ape::di2multi()].
 #'
 #' @return Tibble including 3 tree summary statistics:
@@ -27,7 +27,7 @@
 #' times <- sample(3, 100, replace = TRUE)
 #' names(times) <- tr$tip.label
 #' calc_tr_stats(tr, times)
-calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) {
+calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08, resolve_timepoints = TRUE) {
   check_is_phylo(tr, "tr")
   if (is.null(names(timepoints)) | !all(names(timepoints) %in% tr$tip.label)) {
     stop(
@@ -36,7 +36,17 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) {
     )
   }
 
-  transitions <- phangorn::parsimony(tr, phangorn::phyDat(factor(timepoints), type = "USER")) / dplyr::n_distinct(timepoints)
+  tr_poly <- ape::di2multi(tr, tol = bl_thresh)
+
+  transitions <- NA # only 1 timepoint
+  if(dplyr::n_distinct(timepoints) > 1){
+    tr_resolved <- tr
+    if(!ape::is.binary(tr_poly) & resolve_timepoints){
+    tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly, factor(timepoints), orderedChar = TRUE, stateBias = 'primitive')
+    tr_resolved <- ape::multi2di(tr_poly_ordered, random = FALSE)
+    }
+    transitions <- phangorn::parsimony(tr_resolved, phangorn::phyDat(factor(timepoints), type = "USER")) / (dplyr::n_distinct(timepoints)-1)
+  }
 
   diverg_divers <- lapply(unique(timepoints), function(x) {
     calc_tr_dists(tr, names(timepoints)[timepoints == x]) |>
@@ -98,7 +108,7 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) {
       "transition_score"
     ),
     stat_value = c(
-      treebalance::avgLeafDepI(ape::di2multi(tr, tol = bl_thresh)), # average leaf depth (normalized sackin)
+      treebalance::avgLeafDepI(tr_poly), # average leaf depth (normalized sackin)
       mean(tr$edge.length), # branch lengths
       mean(tr$edge.length[tr$edge[, 2] > ape::Ntip(tr)]), # internal branch lengths
       mean(tr$edge.length[tr$edge[, 2] <= ape::Ntip(tr)]), # external branch lengths
