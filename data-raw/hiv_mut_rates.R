@@ -10,4 +10,5 @@ hiv_mut_rates <- as.matrix(data.frame(
   G = c(6e-6, 5e-7, 0, 3e-6),
   T = c(7e-7, 1.2e-5, 2e-6, 0)
 ))
+rownames(hiv_mut_rates) <- c("A", "C", "G", "T")
 usethis::use_data(hiv_mut_rates, overwrite = TRUE)

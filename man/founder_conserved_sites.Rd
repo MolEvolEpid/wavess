@@ -5,8 +5,9 @@
 \alias{founder_conserved_sites}
 \title{Example founder conserved sites}
 \format{
-\subsection{\code{founder_conserved_sites} Vector of conserved nucleotides for the}{
+\subsection{\code{founder_conserved_sites}}{
 
+Vector of conserved nucleotides for the
 gp120 gene of DEMB11US006 (founder), named by the sequence position (indexed at 0)
 }
 }

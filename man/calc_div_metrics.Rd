@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_div_metrics.R
 \name{calc_div_metrics}
 \alias{calc_div_metrics}
-\title{Calculate diversity and divergence}
+\title{Calculate sequence-based diversity and divergence}
 \usage{
 calc_div_metrics(aln, founder, gen)
 }

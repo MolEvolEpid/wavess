@@ -414,7 +414,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     ] = immune_strength_dict[most_similar] * rng.beta(
                         1, n_diff_min**2
                     )
-
+                    
         # Mark frequent epitopes as recognized
         for variant, frequency in aa_epitope_variants.items():
             if frequency >= n_for_imm:  # common enough to be recognized
@@ -830,9 +830,9 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         counts["latent_turned_active"].append(latent_nums[1]),
         counts["latent_died"].append(latent_nums[2]),
         counts["latent_proliferated"].append(latent_nums[3]),
-        # n_mut, number_recombination
+        # n_mut, number_recombinations
         counts["number_mutations"].append(var_nums[0]),
-        counts["number_dual_inf"].append(var_nums[1]),
+        counts["number_recombinations"].append(var_nums[1]),
         # mean_fitness_active, mean_conserved_active,
         # mean_immune_active, mean_replicative_active
         counts["mean_fitness_active"].append(fitness[0]),
@@ -844,29 +844,32 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
     def sample_viral_sequences(self, seqs, fitness, generation, n_to_samp, cell_type = 'active'):
         assert cell_type in ['active', 'latent'], "sampling cell type must be active or latent"
         c_sub = sample(self.C, int(n_to_samp))
-        # if cell_type is 'active':
-        #     c_sub = sample(self.C, int(n_to_samp))
-        # elif cell_type is 'latent':
-        #     c_sub = sample(self.L, int(n_to_samp))
+        if cell_type == 'active':
+            c_sub = sample(self.C, int(n_to_samp))
+        elif cell_type == 'latent':
+            c_sub = sample(self.L, int(n_to_samp))
         for index, CD4 in enumerate(c_sub):
             name = "gen" + str(generation)
+            name += "_" + cell_type
             name += "_" + str(index)
-            fitness["generation"].append(str(generation))
-            fitness["seq_id"].append(name)
-            fitness["immune"].append(float(CD4.infecting_virus.immune_fitness))
-            fitness["conserved"].append(
-                float(CD4.infecting_virus.conserved_fitness))
-            fitness["replicative"].append(
-                float(CD4.infecting_virus.replicative_fitness))
-            fitness["overall"].append(float(CD4.infecting_virus.fitness))
-            fitness["recombhist"].append(str(CD4.recombination_history))
             seqs[name] = CD4.infecting_virus.nuc_sequence
+            if cell_type == 'active':
+                fitness["generation"].append(str(generation))
+                fitness["seq_id"].append(name)
+                fitness["immune"].append(float(CD4.infecting_virus.immune_fitness))
+                fitness["conserved"].append(
+                    float(CD4.infecting_virus.conserved_fitness))
+                fitness["replicative"].append(
+                    float(CD4.infecting_virus.replicative_fitness))
+                fitness["overall"].append(float(CD4.infecting_virus.fitness))
+                fitness["recombhist"].append(str(CD4.recombination_history))
         return seqs, fitness
 
     def loop_through_generations(
         self,
         active_cell_count,
         n_sample_active,
+        n_sample_latent,
         last_sampled_gen,
         founder_seqs,
         nucleotides_order,
@@ -899,7 +902,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             "latent_died": [],
             "latent_proliferated": [],
             "number_mutations": [],
-            "number_dual_inf": [],
+            "number_recombinations": [],
             "mean_fitness_active": [],
             "mean_conserved_active": [],
             "mean_immune_active": [],
@@ -917,8 +920,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         }
 
         # put founders at top of fasta and fitness
-        seqs = founder_seqs
-        for fname, fseq in seqs.items():
+        seqs_active = founder_seqs
+        for fname, fseq in seqs_active.items():
             fitness["generation"].append('founder')
             fitness["seq_id"].append(fname)
             fitness["immune"].append(float(1))
@@ -932,19 +935,21 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 fitness["replicative"].append(float(1))
                 fitness["overall"].append(float(1))
             fitness["recombhist"].append(str([]))
+                
+        seqs_latent = defaultdict(lambda: 0)
 
         if n_sample_active[0] != 0:
             # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
             latent_nums = [0, 0, 0, 0]
-            # n_mut, number_recombination
+            # n_mut, number_recombinations
             var_nums = [0, 0]
             # mean_fitness_active, mean_conserved_active, mean_immune_active,
             # mean_replicative_active
             mean_fitness = self.summarize_fitness()
             counts = self.record_counts(
                 counts, 0, latent_nums, var_nums, mean_fitness)
-            seqs, fitness = self.sample_viral_sequences(
-                seqs, fitness, 0, min(int(n_sample_active[0]), len(seqs)))
+            seqs_active, fitness = self.sample_viral_sequences(
+                seqs_active, fitness, 0, min(int(n_sample_active[0]), len(seqs_active)))
 
         # Looping through generations until we sample everything we want
         for t in range(1, int(last_sampled_gen) + 1):
@@ -959,7 +964,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     generator,
                 )
             # Productively infected cell dynamics
-            # n_mut, number_recombination
+            # n_mut, number_recombinations
             var_nums = self.get_next_gen_active(
                 prob_mut,
                 prob_recomb,
@@ -982,7 +987,11 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 mean_fitness = self.summarize_fitness()
                 counts = self.record_counts(
                     counts, t, latent_nums, var_nums, mean_fitness)
-                seqs, fitness = self.sample_viral_sequences(
-                    seqs, fitness, t, min(int(n_sample_active[t]), active_cell_count[t]))
+                seqs_active, fitness = self.sample_viral_sequences(
+                    seqs_active, fitness, t, min(int(n_sample_active[t]), active_cell_count[t]))
+                    
+            if n_sample_latent[t] != 0:
+                seqs_latent, tmp = self.sample_viral_sequences(
+                    seqs_latent, None, t, min(int(n_sample_latent[t]), len(self.L)), 'latent')
 
-        return counts, fitness, seqs
+        return counts, fitness, seqs_active, dict(seqs_latent)

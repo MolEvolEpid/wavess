@@ -6,7 +6,7 @@ test_that("run_wavess works", {
   }
   hiv_env_flt_2022 <- ape::as.matrix.DNAbin(hiv_env_flt_2022)
   inf_pop_size <- define_growth_curve(n_gen = 200)
-  samp_scheme <- define_sampling_scheme(sampling_frequency = 50, n_days = 100)
+  samp_scheme <- define_sampling_scheme(sampling_frequency_active = 50, n_days = 100)
   expect_error(
     run_wavess(inf_pop_size, samp_scheme, c("ATCG", "ATTT")),
     "Initial population size must equal the number of founder sequences"
@@ -14,7 +14,7 @@ test_that("run_wavess works", {
   expect_error(
     run_wavess(
       define_growth_curve(n_gen = 50),
-      define_sampling_scheme(sampling_frequency = 10),
+      define_sampling_scheme(sampling_frequency_active = 10),
       rep("ATCG", 10)
     ),
     "you requested to sample at a time after max"
@@ -57,4 +57,18 @@ test_that("run_wavess works", {
     run_wavess(inf_pop_size, samp_scheme, c(rep("ATCG", 9), "A")),
     "All founder sequences must be the same length"
   )
+  set.seed(1234)
+  out <- run_wavess(inf_pop_size, samp_scheme, rep("ATCGAT", 10),
+    generation_time = 1,
+    conserved_sites = c("1" = "A"), ref_seq = "GGGGGG", epitope_locations = tibble::tibble(epi_start_nt = 0, epi_end_nt = 3, max_fitness_cost = 0.3)
+  )
+  expect_equal(all(out$counts$mean_fitness_active != 1), TRUE)
+  expect_equal(all(out$counts$mean_conserved_active == 1), TRUE)
+  expect_equal(any(out$counts$mean_immune_active != 1), TRUE)
+  expect_equal(all(out$counts$mean_replicative_active != 1), TRUE)
+  expect_equal(all(out$fitness$overall != 1), TRUE)
+  expect_equal(all(out$fitness$conserved == 1), TRUE)
+  expect_equal(any(out$fitness$immune != 1), TRUE)
+  expect_equal(all(out$fitness$replicative != 1), TRUE)
+  expect_no_error(run_wavess(inf_pop_size, define_sampling_scheme(sampling_frequency_active = 50, sampling_frequency_latent = 50, n_days = 100), rep("ATCG", 10), generation_time = 1))
 })

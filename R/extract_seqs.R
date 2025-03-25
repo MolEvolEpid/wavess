@@ -1,13 +1,13 @@
 #' Extract founder (and reference) sequence from an alignment
 #'
 #' @param founder_name Name of founder sequence in the alignment
-#' @param ref_name Optional name of reference sequence in the alignment.
-#' This can be used as input to the `ref_seq` argument in [run_wavess()]
-#' (default: NULL, i.e. no reference sequence is returned)
+#' @param ref_name Optional name of reference sequence in the alignment. This
+#'   can be used as input to the `ref_seq` argument in [run_wavess()] (default:
+#'   NULL, i.e. no reference sequence is returned)
 #' @inheritParams slice_aln
 #'
-#' @return List of founder sequence and optional reference sequence
-#' as character strings
+#' @return List of founder sequence and optional reference sequence as character
+#'   strings
 #' @export
 #'
 #' @examples

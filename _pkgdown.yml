@@ -14,11 +14,12 @@ articles:
 reference:
 - title: Pre-processing
   contents:
-  - generate_pop_samp
+  - define_growth_curve
+  - define_sampling_scheme
   - slice_aln
   - extract_seqs
   - estimate_q
-  - rate_to_probability
+  - calc_q_from_rates
   - identify_conserved_sites
   - get_epitope_frequencies
   - sample_epitopes
@@ -32,14 +33,12 @@ reference:
 - title: Output analysis
   contents:
   - calc_div_metrics
-  - calc_tr_summary_stats
-  - calc_int_over_ext
-  - calc_parsimony
+  - calc_tr_stats
 
 - title: Data
   contents:
   - hxb2_cons_founder
-  - hiv_q_mat
+  - hiv_mut_rates
   - founder_conserved_sites
   - hiv_env_flt_2022
   - env_features

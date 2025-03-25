@@ -17,7 +17,7 @@
 #' @param aa_epitope_length Amino acid epitope length
 #' @param max_fit_cost Maximum fitness cost of an epitope, must be in the range
 #'   [0,1) where 0 indicates no cost. 1, which indicates no ability to
-#'   survive, is not allowed (default: 0.4)
+#'   survive, is not allowed (default: 0.3)
 #' **note that the model output is very sensitive to this parameter**
 #' @param max_resamples Maximum number of resampling events to attempt; this is
 #'   to prevent an infinite loop (default: 100)
@@ -42,7 +42,7 @@ sample_epitopes <- function(epitope_probabilities,
                             end_aa_pos = NULL,
                             num_epitopes = 10,
                             aa_epitope_length = 10,
-                            max_fit_cost = 0.4,
+                            max_fit_cost = 0.3,
                             max_resamples = 100,
                             ref_founder_map = NULL) {
   check_sample_epitopes_inputs(

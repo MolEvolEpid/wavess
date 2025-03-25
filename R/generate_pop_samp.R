@@ -16,7 +16,7 @@
 #' @examples
 #' define_growth_curve()
 define_growth_curve <- function(n_gens = 5000, n0 = 10, carry_cap = 2000, max_growth_rate = 0.3) {
-  # ADD CHECKS AND TESTS
+  check_define_growth_curve_inputs(n_gens, n0, carry_cap, max_growth_rate)
   n <- n0
   sapply(1:n_gens, function(x) {
     n <<- min(n + max_growth_rate * n * (carry_cap - n) / carry_cap, carry_cap)
@@ -34,10 +34,14 @@ define_growth_curve <- function(n_gens = 5000, n0 = 10, carry_cap = 2000, max_gr
 #'
 #' Define which days to sample sequences, and how many sequences to sample
 #'
-#' @param sampling_frequency frequency in days at which to record
-#' sequences (and counts) (default: 365 days)
-#' @param max_samp maximum number of cells (and thus sequences) to sample in a
-#' given day (default: 20 sequences)
+#' @param sampling_frequency_active frequency in days at which to record
+#'   sequences from active cells (and counts) (default: 365 days)
+#' @param max_samp_active maximum number of cells (and thus sequences) to sample
+#'   from active cells in a given day (default: 20 sequences)
+#' @param sampling_frequency_latent frequency in days at which to record
+#'   sequences from latent cells (default: 365 days)
+#' @param max_samp_latent maximum number of cells (and thus sequences) to sample
+#'   from latent cells in a given day (default: 20 sequences)
 #' @param n_days day to end sampling (default: 3650)
 #'
 #' @return input growth curve tibble with one additional column
@@ -46,14 +50,17 @@ define_growth_curve <- function(n_gens = 5000, n0 = 10, carry_cap = 2000, max_gr
 #' @export
 #'
 #' @examples
-#' define_growth_curve()
-define_sampling_scheme <- function(sampling_frequency = 365,
-                                   max_samp = 20,
+#' define_sampling_scheme()
+define_sampling_scheme <- function(sampling_frequency_active = 365,
+                                   max_samp_active = 20,
+                                   sampling_frequency_latent = 365,
+                                   max_samp_latent = 20,
                                    n_days = 3650) {
-  # ADD CHECKS AND TESTS
+  check_define_sampling_scheme_inputs(sampling_frequency_active, max_samp_active, n_days)
   tibble::tibble(
     day = 0:n_days,
-    n_sample_active = ifelse(.data$day %% sampling_frequency == 0, max_samp, 0)
+    n_sample_active = ifelse(.data$day %% sampling_frequency_active == 0, max_samp_active, 0),
+    n_sample_latent = ifelse(.data$day %% sampling_frequency_latent == 0, max_samp_latent, 0)
   ) |>
-    dplyr::filter(.data$n_sample_active != 0)
+    dplyr::filter(.data$n_sample_active != 0 | .data$n_sample_latent != 0)
 }

@@ -48,7 +48,7 @@ generating the input data takes a while to run or if, rather than using
 the built-in `run_wavess()` function, you'd rather run it using a python
 command line script (see `vignette("python")` for details). We save the
 files to a directory called `input_data`. If you would like to do the
-same, you will have to create thet directory before running the file
+same, you will have to create that directory before running the file
 saving commands. For example:
 
 ```{r, create_dir}
@@ -92,6 +92,7 @@ In particular, we include the following example data in the package:
 -   `hxb2_cons_founder`: an alignment in `ape::DNAbin` format that
     includes the HIV full-genome sequence for the HXB2 reference
     sequence, the consensus sequence, and an example founder sequence.
+-   `hiv_mut_rates`: per-site per-day rates of change between specific nucleotides
 -   `hiv_env_flt_2022`: the first 10 sequences from the filtered HIV ENV
     alignment downloaded from the [LANL HIV sequence
     database](https://www.hiv.lanl.gov/content/sequence/NEWALIGN/align.html),
@@ -144,7 +145,7 @@ define_growth_curve()
 
 This will generate an infected cell population size following a logistic
 growth curve. By default, the starting population size (`n0`) is 10, the
-a carrying capacity (`carry_cap`) is 2000, the maximum growth rate
+carrying capacity (`carry_cap`) is 2000, the maximum growth rate
 (`max_growth_rate`) is 0.3, and the simulation is run for a maximum 5000
 generations (`n_gen`). All of these defaults can be changed by altering
 the input parameters of the function.
@@ -158,13 +159,13 @@ as long as sequences are being sampled):
 
 If you'd like to write this to a file:
 
-```{r, write_pop_samp}
+```{r, write_pop}
 write_csv(inf_pop_size, "input_data/inf_pop_size.csv")
 ```
 
 A couple notes:
 
--   The number of founders must equal the intial population size.
+-   The number of founders must equal the initial population size.
 -   Note that if you start with multiple different founder sequences,
     you may stochastically lose some of those sequences after generation
     0.  
@@ -187,7 +188,11 @@ inf_pop_size |>
 row is a *day* with the following columns:
 
 -   `day`: Each day on which to sample sequences
--   `n_sample_active`: Number of sequences from active cellsto sample
+-   `n_sample_active`: Number of sequences from active cells to sample
+    for that day (note that in the simulation output, this number may be
+    lower if the population size is smaller than the requested number of
+    sequences to sample)
+-   `n_sample_latent`: Number of sequences from latent cells to sample
     for that day (note that in the simulation output, this number may be
     lower if the population size is smaller than the requested number of
     sequences to sample)
@@ -207,10 +212,10 @@ This will lead to sampling a maximum of 20 sequences (`max_samp`) every
 Here is an example with sampling over a shorter time period, but more
 frequent sampling and fewer samples taken at each sampling event:
 
-```{r, generate_pop_samp2}
+```{r, samp_scheme}
 (samp_scheme <- define_sampling_scheme(
-  sampling_frequency = 30,
-  max_samp = 10,
+  sampling_frequency_active = 30,
+  max_samp_active = 10,
   n_days = 365
 ))
 ```
@@ -220,7 +225,7 @@ time, even if the growth curve continues for more generations.
 
 If you'd like to write this to a file:
 
-```{r, write_pop_samp}
+```{r, write_samp}
 write_csv(samp_scheme, "input_data/samp_scheme.csv")
 ```
 
@@ -242,7 +247,7 @@ will lead to an error. Rather, if you would like to simulate multiple
 founders, we recommend aligning all the founder sequences and then
 stripping gaps such that the alignment remains codon-aligned, especially
 if you plan to simulate immune fitness because epitopes are translated
-to amino acids to caclulate immune fitness costs.
+to amino acids to calculate immune fitness costs.
 
 This alignment is of the entire HIV genome, but we're only interested in
 the ENV gp120 gene, which we can subset to using the `start` and `end`
@@ -255,8 +260,6 @@ in HXB2 from
 (6225 and 7757). To get the start and end positions in our alignment, we
 can therefore find what alignment positions correspond to these HXB2
 coordinates:
-
-**(MAKE THIS INTO A FUNCTION?)**
 
 ```{r, get_start_end}
 gp120_start <- which(cumsum(as.character(
@@ -367,22 +370,20 @@ the vignette. Also, the rates related to latency are converted to
 probabilities for simulation, so we will convert them here before
 plotting.
 
-**Please note that we assume the probabilities are small for all latency
-parameters**, such that it is unlikely that multiple events (activate,
-die, proliferate) will occur to a single latent cell in a single [active
-cell] generation. If multiple events occur to a single latent cell, then
-the first event in this ordered list will be chosen as the event that
-occurred to the cell in that generation: cell becomes active, cell dies,
-cell proliferates.
+**Please note that we assume the rates (and thus per-generation probabilities)
+are small for all latency parameters**, such that it is unlikely that multiple
+events (activate, die, proliferate) will occur to a single latent cell in a
+single [active cell] generation. If multiple events occur to a single latent
+cell, then the first event in this ordered list will be chosen as the event that
+occurred to the cell in that generation: cell becomes active, cell dies, cell
+proliferates.
 
 ```{r, viz_latent}
 # set parameters to get latent curve
-generation_time <- 1.2
-# divide by generation time to get per-generation rate before converting to a probability
-to_latent <- rate_to_probability(0.001 / generation_time)
-to_active <- rate_to_probability(0.01 / generation_time)
-proliferation <- rate_to_probability(0.01 / generation_time)
-death <- rate_to_probability(0.01 / generation_time)
+to_latent <- 0.001
+to_active <- 0.01
+proliferation <- 0.01
+death <- 0.01
 
 # get latent cell count for each generation
 latent <- 0
@@ -457,7 +458,7 @@ Here is a plot of how the cost and number of mutations influences
 overall fitness:
 
 ```{r}
-costs <- c(0, 0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 0.9, 0.99)
+costs <- c(0, 0.001, 0.01, 0.1, 0.99)
 n_muts <- 0:100
 tibble(n_mut = sort(rep(n_muts, length(costs))), cost = rep(costs, length(n_muts))) %>%
   mutate(fitness = (1 - cost)**n_mut) %>%
@@ -521,9 +522,9 @@ We will use this alignment below.
 
 ### Identify conserved sites {#identify-conserved-sites}
 
-In `run_wavess()` you can provide a vector of conserved sites
-(`conserved_sites` argument). Mutations in conserved sites have a
-fitness cost defined by the `conserved_cost` argument.
+In `run_wavess()` you can provide a vector of conserved sites and the conserved
+nuceltoide (`conserved_sites` argument). Mutations away from a conserved
+nucleotide have a fitness cost defined by the `conserved_cost` argument.
 
 To generate a vector of conserved sites from an alignment, you can use
 the function `identify_conserved_sites()`, which outputs a data frame
@@ -559,7 +560,7 @@ For the example founder gp120 sequence we use in the package
 sites for this founder sequence (`founder_conserved_sites`) for ease of
 use.
 
-First, since the `hxb2_cons_founder` sequence is all of env, but we just
+First, since the `hxb2_cons_founder` sequence is all of *env*, but we just
 want to simulate gp120, we have to slice out that part of the alignment:
 
 ```{r, get_gp120}
