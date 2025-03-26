@@ -3,12 +3,13 @@
 #' See `vignette('analyze_output')` for more details.
 #'
 #' @param tr Rooted phylogeny
-#' @param timepoints Vector of time points named by tree tip label. All tip
-#' lables must be included in this vector. If you want to exclude certain tips,
-#' you must drop them from the tree prior to using this function.
+#' @param timepoints Factor vector of time points named by tree tip label. The
+#'   levels should be ordered correctly (most often by sampling time). All tip
+#'   lables must be included in this vector. If you want to exclude certain
+#'   tips, you must drop them from the tree prior to using this function.
 #' @param bl_thresh Branch length threshold under which branches are collapsed
-#' to prior to calculations (default: 1e-08). This is the `tol` argument in
-#'  [ape::di2multi()].
+#'   to prior to calculations (default: 1e-08). This is the `tol` argument in
+#'   [ape::di2multi()].
 #'
 #' @return Tibble including 3 tree summary statistics:
 #' - Mean leaf depth (normalized Sackin index)
@@ -24,14 +25,14 @@
 #'
 #' @examples
 #' tr <- ape::rtree(100)
-#' times <- sample(3, 100, replace = TRUE)
+#' times <- factor(sample(3, 100, replace = TRUE), levels = 1:3)
 #' names(times) <- tr$tip.label
 #' calc_tr_stats(tr, times)
 calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08, resolve_timepoints = TRUE) {
   check_is_phylo(tr, "tr")
-  if (is.null(names(timepoints)) | !all(names(timepoints) %in% tr$tip.label)) {
+  if (is.null(names(timepoints)) || !all(names(timepoints) %in% tr$tip.label) || !is.factor(timepoints)) {
     stop(
-      "timepoints must be a vector named by tr tip labels, ",
+      "timepoints must be a factor named by tr tip labels, ",
       "and must contain all tip labels."
     )
   }
@@ -42,8 +43,12 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08, resolve_timepoints 
   if(dplyr::n_distinct(timepoints) > 1){
     tr_resolved <- tr
     if(!ape::is.binary(tr_poly) & resolve_timepoints){
-    tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly, factor(timepoints), orderedChar = TRUE, stateBias = 'primitive')
-    tr_resolved <- ape::multi2di(tr_poly_ordered, random = FALSE)
+      # change timepoints to be factors from 1-n
+      trait <- factor(as.numeric(timepoints), levels = sort(unique(as.numeric(timepoints))))
+      names(trait) <- names(timepoints)
+
+      tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly, trait, orderedChar = TRUE, stateBias = 'primitive')
+      tr_resolved <- ape::multi2di(tr_poly_ordered, random = FALSE)
     }
     transitions <- phangorn::parsimony(tr_resolved, phangorn::phyDat(factor(timepoints), type = "USER")) / (dplyr::n_distinct(timepoints)-1)
   }
