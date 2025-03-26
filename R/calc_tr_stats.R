@@ -49,7 +49,7 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08, resolve_timepoints 
       tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly, trait, orderedChar = TRUE, stateBias = 'primitive')
       tr_resolved <- ape::multi2di(tr_poly_ordered, random = FALSE)
     }
-    transitions <- phangorn::parsimony(tr_resolved, phangorn::phyDat(factor(timepoints), type = "USER")) / (dplyr::n_distinct(timepoints) - 1)
+    transitions <- phangorn::parsimony(tr_resolved, phangorn::phyDat(timepoints, type = "USER")) / (dplyr::n_distinct(timepoints) - 1)
   }
 
   diverg_divers <- lapply(unique(timepoints), function(x) {
