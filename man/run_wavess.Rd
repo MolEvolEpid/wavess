@@ -151,8 +151,10 @@ inputs are which.
 \dontrun{
 run_wavess(
   define_growth_curve(n_gen = 50),
-  define_sampling_scheme(sampling_frequency_active = 10,
-  sampling_frequency_latent = 10, n_days = 50),
+  define_sampling_scheme(
+    sampling_frequency_active = 10,
+    sampling_frequency_latent = 10, n_days = 50
+  ),
   rep("ATCG", 10)
 )
 }

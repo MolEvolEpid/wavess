@@ -4,17 +4,18 @@
 \alias{calc_tr_stats}
 \title{Calculate tree summary statistics}
 \usage{
-calc_tr_stats(tr, timepoints, bl_thresh = 1e-08)
+calc_tr_stats(tr, timepoints, bl_thresh = 1e-08, resolve_timepoints = TRUE)
 }
 \arguments{
 \item{tr}{Rooted phylogeny}
 
-\item{timepoints}{Vector of time points named by tree tip label. All tip
-lables must be included in this vector. If you want to exclude certain tips,
-you must drop them from the tree prior to using this function.}
+\item{timepoints}{Factor vector of time points named by tree tip label. The
+levels should be ordered correctly (most often by sampling time). All tip
+lables must be included in this vector. If you want to exclude certain
+tips, you must drop them from the tree prior to using this function.}
 
 \item{bl_thresh}{Branch length threshold under which branches are collapsed
-to calculate mean leaf depth (default: 1e-08). This is the \code{tol} argument in
+to prior to calculations (default: 1e-08). This is the \code{tol} argument in
 \code{\link[ape:multi2di]{ape::di2multi()}}.}
 }
 \value{
@@ -36,7 +37,7 @@ See \code{vignette('analyze_output')} for more details.
 }
 \examples{
 tr <- ape::rtree(100)
-times <- sample(3, 100, replace = TRUE)
+times <- factor(sample(3, 100, replace = TRUE), levels = 1:3)
 names(times) <- tr$tip.label
 calc_tr_stats(tr, times)
 }
