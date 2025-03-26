@@ -43,11 +43,18 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08, resolve_timepoints 
   if (dplyr::n_distinct(timepoints) > 1) {
     tr_resolved <- tr
     if(!ape::is.binary(tr_poly) & resolve_timepoints){
+      tiplabs_map <- paste0('tmp', 1:length(timepoints))
+      names(tiplabs_map) <- names(timepoints)
       # change timepoints to be factors from 1-n
       trait <- factor(as.numeric(timepoints), levels = sort(unique(as.numeric(timepoints))))
-      names(trait) <- names(timepoints)
-      tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly, trait, orderedChar = TRUE, stateBias = 'primitive')
+      names(trait) <- paste0('tmp', 1:length(timepoints))
+      tr_poly_mod <- tr_poly
+      tr_poly_mod$tip.label <- unname(tiplabs_map[tr_poly_mod$tip.label])
+      tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly_mod, trait, orderedChar = TRUE, stateBias = 'primitive')
+      tiplabs_map <- setNames(names(tiplabs_map), tiplabs_map)
+      tr_poly_ordered$tip.label <- unname(tiplabs_map[tr_poly_ordered$tip.label])
       tr_resolved <- ape::multi2di(tr_poly_ordered, random = FALSE)
+      # tr_resolved$tip.label <- tiplabs_map
     }
     transitions <- phangorn::parsimony(tr_resolved, phangorn::phyDat(timepoints, type = "USER")) / (dplyr::n_distinct(timepoints) - 1)
   }
