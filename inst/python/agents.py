@@ -942,6 +942,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # Looping through generations until we sample everything we want
         for t in range(1, int(last_sampled_gen) + 1):
             # Only get latent reservoir dynamics if modeling
+            latent_nums = [0, 0, 0, 0]
             if prob_act_to_lat:
                 # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
                 latent_nums = self.get_next_gen_latent(
