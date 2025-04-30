@@ -175,7 +175,7 @@ are derived from the same sampling scheme, i.e. the same number of samples taken
 at the same time points post-infection.**
 
 ```{r, tr_summary_stats}
-calc_tr_stats(tr, factor(gens, levels = c('founder0', sort(unique(as.numeric(gens))))))
+calc_tr_stats(tr, factor(gens, levels = c("founder0", sort(unique(as.numeric(gens))))))
 ```
 
 
