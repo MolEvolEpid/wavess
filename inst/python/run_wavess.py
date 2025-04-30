@@ -163,10 +163,16 @@ if __name__ == "__main__":
     n_to_samp_active = pop_samp["n_sample_active"]
     n_to_samp_latent = pop_samp["n_sample_latent"]
     # Last sampled generation (don't have to continue simulation after this)
-    last_sampled_gen_active = [index for index,
-                        item in enumerate(n_to_samp_active) if item != 0][-1]
-    last_sampled_gen_latent = [index for index,
-                        item in enumerate(n_to_samp_latent) if item != 0][-1]
+    sampled_gens_active = [index for index, item in enumerate(n_to_samp_active) if item != 0]
+    sampled_gens_latent = [index for index, item in enumerate(n_to_samp_latent) if item != 0]
+    last_sampled_gen_active = 0
+    if len(sampled_gens_active) > 0:
+        last_sampled_gen_active = sampled_gens_active[-1]
+    last_sampled_gen_latent = 0
+    if len(sampled_gens_latent) > 0:
+        last_sampled_gen_latent = sampled_gens_latent[-1]
+    if last_sampled_gen_active == 0 and last_sampled_gen_latent == 0:
+        raise ValueError("at least one sequence must be sampled from the active or latent reservoir")
     last_sampled_gen = max(last_sampled_gen_active, last_sampled_gen_latent)
 
     # Loop through generations
