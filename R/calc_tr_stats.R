@@ -28,7 +28,7 @@
 #' times <- factor(sample(3, 100, replace = TRUE), levels = 1:3)
 #' names(times) <- tr$tip.label
 #' calc_tr_stats(tr, times)
-calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08, resolve_timepoints = TRUE) {
+calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) { #, resolve_timepoints = FALSE) {
   check_is_phylo(tr, "tr")
   if (is.null(names(timepoints)) || !all(names(timepoints) %in% tr$tip.label) || !is.factor(timepoints)) {
     stop(
@@ -42,20 +42,23 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08, resolve_timepoints 
   transitions <- NA # only 1 timepoint
   if (dplyr::n_distinct(timepoints) > 1) {
     tr_resolved <- tr
-    if(!ape::is.binary(tr_poly) & resolve_timepoints){
-      tiplabs_map <- paste0('tmp', 1:length(timepoints))
-      names(tiplabs_map) <- names(timepoints)
-      # change timepoints to be factors from 1-n
-      trait <- factor(as.numeric(timepoints), levels = sort(unique(as.numeric(timepoints))))
-      names(trait) <- paste0('tmp', 1:length(timepoints))
-      tr_poly_mod <- tr_poly
-      tr_poly_mod$tip.label <- unname(tiplabs_map[tr_poly_mod$tip.label])
-      tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly_mod, trait, orderedChar = TRUE, stateBias = 'primitive')
-      tiplabs_map <- setNames(names(tiplabs_map), tiplabs_map)
-      tr_poly_ordered$tip.label <- unname(tiplabs_map[tr_poly_ordered$tip.label])
-      tr_resolved <- ape::multi2di(tr_poly_ordered, random = FALSE)
-      # tr_resolved$tip.label <- tiplabs_map
-    }
+    # if(!ape::is.binary(tr_poly) & resolve_timepoints){
+    # @param resolve_timepoints Whether to resolve timepoints of polytomies using
+    #   [paleotree::resolveTreeChar()]; this makes the function run much slower
+    #   (default: FALSE)
+    #   #tiplabs_map <- paste0('tmp', 1:length(timepoints))
+    #   #names(tiplabs_map) <- names(timepoints)
+    #   # change timepoints to be factors from 1-n
+    #   trait <- factor(as.numeric(timepoints), levels = sort(unique(as.numeric(timepoints))))
+    #   names(trait) <- paste0('tmp', 1:length(timepoints))
+    #   #tr_poly_mod <- tr_poly
+    #   #tr_poly_mod$tip.label <- unname(tiplabs_map[tr_poly$tip.label])
+    #   tr_poly_ordered <- paleotree::resolveTreeChar(tr_poly, trait) #, orderedChar = TRUE, stateBias = 'primitive')
+    #   #tiplabs_map <- setNames(names(tiplabs_map), tiplabs_map)
+    #   #tr_poly_ordered$tip.label <- unname(tiplabs_map[tr_poly_ordered$tip.label])
+    #   tr_resolved <- ape::multi2di(tr_poly_ordered, random = FALSE)
+    #   # tr_resolved$tip.label <- tiplabs_map
+    # }
     transitions <- phangorn::parsimony(tr_resolved, phangorn::phyDat(timepoints, type = "USER")) / (dplyr::n_distinct(timepoints) - 1)
   }
 
