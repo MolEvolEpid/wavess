@@ -1,7 +1,6 @@
-url: ~
+url: https://molevolepid.github.io/wavess/
 template:
   bootstrap: 5
-
 articles:
 - title: Articles
   navbar: ~
@@ -10,7 +9,6 @@ articles:
   - run_wavess
   - analyze_output
   - python
-
 reference:
 - title: Pre-processing
   contents:
@@ -24,7 +22,6 @@ reference:
   - get_epitope_frequencies
   - sample_epitopes
   - map_ref_founder
-
 - title: Main simulator
   contents:
   - create_python_venv
@@ -34,7 +31,6 @@ reference:
   contents:
   - calc_div_metrics
   - calc_tr_stats
-
 - title: Data
   contents:
   - hxb2_cons_founder
@@ -42,3 +38,4 @@ reference:
   - founder_conserved_sites
   - hiv_env_flt_2022
   - env_features
+

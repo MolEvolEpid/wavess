@@ -41,3 +41,4 @@ Depends:
 LazyData: true
 VignetteBuilder: knitr
 SystemRequirements: python, numpy
+URL: https://molevolepid.github.io/wavess/
