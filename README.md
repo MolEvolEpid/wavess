@@ -5,8 +5,7 @@
 
 **Within-host agent-based viral evolution sequence simulator.**
 
-<a href='https://github.com/MolEvolEpid/wavess/'><img src='man/figures/logo.png' align="right" height="120" /></a>
-
+<!-- <a href='https://github.com/MolEvolEpid/wavess/'><img src='man/figures/logo.png' align="right" height="120" /></a> -->
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/MolEvolEpid/wavess/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MolEvolEpid/wavess/actions/workflows/R-CMD-check.yaml)
