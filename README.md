@@ -26,7 +26,7 @@ HIV gp120.
 ## Installation
 
 You can install the development version of wavess from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/MolEvolEpid/wavess) with:
 
 ``` r
 # install.packages("devtools")
