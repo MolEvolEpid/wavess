@@ -1,7 +1,7 @@
 test_that("calc_tr_summary_stats works", {
   expect_warning(tss <- calc_tr_stats(
     ape::read.tree(text = "((t2:1,t1:1):1,t3:1);"),
-    factor(c("t1" = 1, "t2" = 2, "t3" = 2), levels = c(1,2,3))
+    factor(c("t1" = 1, "t2" = 2, "t3" = 2), levels = c(1, 2, 3))
   ), "Generation 1 has only one tip, cannot calculate diversity.")
   expect_equal(tss$stat_name, c(
     "mean_leaf_depth",
@@ -14,7 +14,7 @@ test_that("calc_tr_summary_stats works", {
 
   tss <- calc_tr_stats(
     ape::read.tree(text = "((t2:1,t1:1):1,(t3:2,t4:2):1);"),
-    factor(c("t1" = 1, "t2" = 1, "t3" = 2, "t4" = 2), levels = c(1,2))
+    factor(c("t1" = 1, "t2" = 1, "t3" = 2, "t4" = 2), levels = c(1, 2))
   )
   expect_equal(tss$stat_value, c(2, 4 / 3, 1, 1.5, 2.5, 3, 1, 2, 1))
 
@@ -28,13 +28,10 @@ test_that("calc_tr_summary_stats works", {
   expect_error(
     calc_tr_stats(
       ape::read.tree(text = "((t2:1,t1:1):1,t3:1);"),
-      factor(c(1, "t2" = 2, "t3" = 2, "t4" = 3, "t5" = 3), levels = c(1,2,3))
+      factor(c(1, "t2" = 2, "t3" = 2, "t4" = 3, "t5" = 3), levels = c(1, 2, 3))
     ),
     "timepoints must be a factor named by tr tip labels, and must contain all tip labels."
   )
-
-
-
 })
 
 test_that("calc_tr_dists works", {
@@ -50,10 +47,11 @@ test_that("calc_tr_dists works", {
 
 calc_tr_stats(
   ape::read.tree(text = "((t2:1,t1:1):1,(t3:2,t4:2):1);"),
-  factor(c("t1" = 1, "t2" = 1, "t3" = 2, "t4" = 2), levels = c(1,2))
+  factor(c("t1" = 1, "t2" = 1, "t3" = 2, "t4" = 2), levels = c(1, 2))
 )
 
 calc_tr_stats(
   ape::read.tree(text = "((t2:1,t1:1):1,(t3:2,t4:2):1);"),
-  factor(c("t1" = 1, "t2" = 1, "t3" = 2, "t4" = 2), levels = c(1,2)), bl_thresh = 3
+  factor(c("t1" = 1, "t2" = 1, "t3" = 2, "t4" = 2), levels = c(1, 2)),
+  bl_thresh = 3
 )

@@ -28,7 +28,7 @@
 #' times <- factor(sample(3, 100, replace = TRUE), levels = 1:3)
 #' names(times) <- tr$tip.label
 #' calc_tr_stats(tr, times)
-calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) { #, resolve_timepoints = FALSE) {
+calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) { # , resolve_timepoints = FALSE) {
   check_is_phylo(tr, "tr")
   if (is.null(names(timepoints)) || !all(names(timepoints) %in% tr$tip.label) || !is.factor(timepoints)) {
     stop(
