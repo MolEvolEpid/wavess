@@ -18,7 +18,7 @@ optionally including recombination, a latent infected cell reservoir,
 and three types of selection (conserved sites, comparison to a fit
 sequence, and antibody-mediated immunity). The package also provides
 functions to pre-process data for input into the simulator, as well as
-post-processing functions to analyze the simulation output. Theh
+post-processing functions to analyze the simulation output. The
 post-processing functions can also be used on real data. The default
 settings for the simulator assume that the sequences being simulated are
 HIV gp120.
