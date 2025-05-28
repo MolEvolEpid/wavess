@@ -70,28 +70,33 @@ def create_epitope(start, end, max_fc):
 
 
 def get_substitution(old_nucleotide, new_nucleotides_order, probabilities):
-    if old_nucleotide == "A":
-        return choices(
-            new_nucleotides_order, probabilities[new_nucleotides_order.index(
-                "A")]
-        )[0]
-    elif old_nucleotide == "C":
-        return choices(
-            new_nucleotides_order, probabilities[new_nucleotides_order.index(
-                "C")]
-        )[0]
-    elif old_nucleotide == "G":
-        return choices(
-            new_nucleotides_order, probabilities[new_nucleotides_order.index(
-                "G")]
-        )[0]
-    elif old_nucleotide == "T":
-        return choices(
-            new_nucleotides_order, probabilities[new_nucleotides_order.index(
-                "T")]
-        )[0]
-    else:
-        raise Exception("Unknown nucleotide %s" % old_nucleotide)
+    try:
+        idx = new_nucleotides_order.index(old_nucleotide)
+    except ValueError:
+        raise Exception(f"Unknown nucleotide {old_nucleotide}")
+    return choices(new_nucleotides_order, probabilities[idx])[0]
+    # if old_nucleotide == "A":
+    #     return choices(
+    #         new_nucleotides_order, probabilities[new_nucleotides_order.index(
+    #             "A")]
+    #     )[0]
+    # elif old_nucleotide == "C":
+    #     return choices(
+    #         new_nucleotides_order, probabilities[new_nucleotides_order.index(
+    #             "C")]
+    #     )[0]
+    # elif old_nucleotide == "G":
+    #     return choices(
+    #         new_nucleotides_order, probabilities[new_nucleotides_order.index(
+    #             "G")]
+    #     )[0]
+    # elif old_nucleotide == "T":
+    #     return choices(
+    #         new_nucleotides_order, probabilities[new_nucleotides_order.index(
+    #             "T")]
+    #     )[0]
+    # else:
+    #     raise Exception("Unknown nucleotide %s" % old_nucleotide)
 
 
 def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, seed):
