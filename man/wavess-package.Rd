@@ -10,6 +10,13 @@
 
 Simulates within-host viral sequence evolution. Optionally includes recombination, a latent cell reservoir, and three types of selective pressures (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://molevolepid.github.io/wavess/}
+}
+
+}
 \author{
 \strong{Maintainer}: Zena Lapp \email{zenalapp@lanl.gov} (\href{https://orcid.org/0000-0003-4674-2176}{ORCID})
 
