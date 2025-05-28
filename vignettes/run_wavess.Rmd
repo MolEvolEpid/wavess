@@ -341,3 +341,8 @@ turned off by setting the respective rate value to 0. The simulation starts with
 ## Seed
 
 A seed can be set for reproducibility using the `seed` argument.
+
+## Next: analyzing the outputs
+
+Next, check out `vignette("analyze_output")` for various ways to visualize and
+analyze the output data.
