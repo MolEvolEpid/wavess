@@ -234,9 +234,9 @@ cells</li>
 <span><span class="co">#&gt;   generation active_cell_count latent_cell_count active_turned_latent</span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          0                10                 0                    0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        100              <span style="text-decoration: underline;">2</span>000               116                    2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        200              <span style="text-decoration: underline;">2</span>000               145                    2</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        300              <span style="text-decoration: underline;">2</span>000               178                    2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        100              <span style="text-decoration: underline;">2</span>000               110                    2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        200              <span style="text-decoration: underline;">2</span>000               147                    2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        300              <span style="text-decoration: underline;">2</span>000               180                    2</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: latent_turned_active &lt;int&gt;, latent_died &lt;int&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   latent_proliferated &lt;int&gt;, number_mutations &lt;int&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   number_recombinations &lt;int&gt;, mean_fitness_active &lt;dbl&gt;,</span></span></span>
@@ -305,7 +305,7 @@ format:</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Base composition:</span></span>
 <span><span class="co">#&gt;     a     c     g     t </span></span>
-<span><span class="co">#&gt; 0.370 0.165 0.222 0.243 </span></span>
+<span><span class="co">#&gt; 0.370 0.165 0.223 0.243 </span></span>
 <span><span class="co">#&gt; (Total: 120.24 kb)</span></span></code></pre></div>
 <p>Sequences from latent cells:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -389,7 +389,7 @@ that it’s not always 1 (although it may sometimes be 1 depending on the
 simulation, since the output is stochastic).</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">conserved_fitness</span><span class="op">$</span><span class="va">counts</span><span class="op">$</span><span class="va">mean_conserved_active</span></span>
-<span><span class="co">#&gt; [1] 1.000000 1.000000 0.999505 1.000000</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 1.000000 0.999505 1.000000 1.000000</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="comparison-to-a-reference">Comparison to a reference<a class="anchor" aria-label="anchor" href="#comparison-to-a-reference"></a>
@@ -409,7 +409,7 @@ strength of this fitness can be altered using the
 1:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ref_fitness</span><span class="op">$</span><span class="va">counts</span><span class="op">$</span><span class="va">mean_replicative_active</span></span>
-<span><span class="co">#&gt; [1] 0.8520756 0.8493573 0.8460892 0.8430956</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.8520756 0.8487760 0.8461982 0.8442606</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="immune-fitness">Immune fitness<a class="anchor" aria-label="anchor" href="#immune-fitness"></a>
@@ -451,7 +451,7 @@ epitope:</p>
 kicks in:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">immune_fitness</span><span class="op">$</span><span class="va">counts</span><span class="op">$</span><span class="va">mean_immune_active</span></span>
-<span><span class="co">#&gt; [1] 1.0000000 0.7033000 0.7284700 0.7380817</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 1.0000000 0.7093450 0.7141700 0.7293006</span></span></code></pre></div>
 <p>Please note that the model is very sensitive to the maximum immune
 fitness cost for a given epitope.</p>
 </div>
@@ -481,6 +481,12 @@ latent cell dynamics off.</p>
 </h2>
 <p>A seed can be set for reproducibility using the <code>seed</code>
 argument.</p>
+</div>
+<div class="section level2">
+<h2 id="next-analyzing-the-outputs">Next: analyzing the outputs<a class="anchor" aria-label="anchor" href="#next-analyzing-the-outputs"></a>
+</h2>
+<p>Next, check out <code><a href="../articles/analyze_output.html">vignette("analyze_output")</a></code> for various
+ways to visualize and analyze the output data.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
