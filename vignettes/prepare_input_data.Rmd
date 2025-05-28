@@ -686,7 +686,7 @@ Immune fitness in `wavess` is defined by epitope locations in the
 sequence, each of which can have a maximum fitness cost between 0 and 1.
 These are defined at the amino acid level, so they must both be within a
 nucleotide sequence that is translated to a protein and in the correct
-reading frame.
+reading frame. Note that, currently, epitope locations must all be the same length.
 
 While you can define your own epitope locations, we provide the function
 `sample_epitopes()` that, given epitope probabilities for each *amino

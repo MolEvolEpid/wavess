@@ -206,8 +206,8 @@ vignette `vignette("analyze_output")`.
 `run_wavess()` can simulate three types of selective pressure:
 
 -   Conserved sites fitness
--   Fitness relative to a "most fit" reference sequence
--   B-cell immune response
+-   Replicative fitness relative to a "most fit" reference sequence
+-   Immune response
 
 Note that all nucleotide positions related to fitness are expected to be indexed
 at 0. Including these requires additional inputs, which are described in more
@@ -255,9 +255,9 @@ the output is stochastic).
 conserved_fitness$counts$mean_conserved_active
 ```
 
-### Comparison to a reference
+### Replicative fitness
 
-To simulate fitness compared to a reference, you must provide a "most fit"
+To simulate replicative fitness, you must provide a "most fit"
 reference sequence to compare each simulated sequence to. The strength of this
 fitness can be altered using the `replicative_cost` argument.
 
@@ -278,16 +278,17 @@ ref_fitness$counts$mean_replicative_active
 
 ### Immune fitness
 
-Active immunity can be modeled by defining B-cell epitopes locations that can be
-recognized by the immune system. Nucleotide epitopes are translated into amino
+Active immunity can be modeled by defining epitopes locations that can be
+recognized by the immune system. Note that, currently, epitope locations must 
+all be the same length. Nucleotide epitopes are translated into amino
 acids before immune fitness costs are calculated. An epitope is recognized only
 when it is present at least 100 times across the population (`n_for_imm`
 argument). Once an epitope is recognized, it undergoes affinity maturation for
-90 days (`days_full_potency`), at which time it reaches full potency. Epitopes
+90 days (`days_full_potency`), at which time it reaches a maximum cost. Epitopes
 are also cross-reactive.
 
 Cross-reactivity is sampled from a Beta distribution where alpha is 1 and beta
-is the square of the Hamming distance to the nearest recognized epitope:
+is the square of the amino acid edit distance to the nearest recognized epitope:
 
 ```{r}
 lapply(1:5, function(x) {
