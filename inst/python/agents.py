@@ -184,13 +184,15 @@ def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, is_sparse, base_prob
 
         # Special positions
         special_idx = np.where(prob_recomb != base_prob)[0]
-        special_breakpoints = np.array([], dtype=int)
-        special_cells = np.array([], dtype=int)
+        special_breakpoints = []
+        special_cells = []
         for idx in special_idx:
             events = rng.random(num_cells) < prob_recomb[idx]
             cells = np.flatnonzero(events)
-            np.append(special_breakpoints, [idx] * len(cells))
-            np.append(special_cells, cells)
+            special_breakpoints.extend([idx] * len(cells))
+            special_cells.extend(cells)
+        special_breakpoints = np.array(special_breakpoints, dtype=int)
+        special_cells = np.array(special_cells, dtype=int)
 
         # Combine
         # need to add 1 because want breakpoint to be after base
