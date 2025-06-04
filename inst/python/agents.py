@@ -1,3 +1,4 @@
+import numpy as np
 from copy import deepcopy
 from random import seed
 from random import choices
@@ -97,30 +98,128 @@ def get_substitution(old_nucleotide, new_nucleotides_order, probabilities):
     #     )[0]
     # else:
     #     raise Exception("Unknown nucleotide %s" % old_nucleotide)
+    
 
+def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, is_sparse, base_prob, seed):
+    """
+    Efficient recombination breakpoint sampling that automatically chooses the fastest method.
 
-def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, seed):
+    If prob_recomb is:
+      - a scalar: uses constant-rate binomial sampling.
+      - an array where most entries are identical: uses a sparse-optimized method for the rare positions.
+      - otherwise, uses a fully vectorized method.
+
+    Args:
+        seq_len (int): Length of the genome sequence.
+        num_cells (int): Number of cells.
+        prob_recomb (float or array-like): Recombination probability per potential breakpoint.
+        seed (int): Seed for random number generation.
+        sparse_threshold (float): Fraction of non-base-rate entries below which to use the sparse method.
+
+    Returns:
+        num_cells_recomb (int): Number of dually infected cells in which recombination occurred.
+        cell_breakpoints (list): List of breakpoint lists for each cell.
+    """
     # Get random number generator
-    rng = default_rng(seed)
+    rng = np.random.default_rng(seed)
     # Number of potential breakpoints
-    n_potential_bps = int(seq_len * num_cells - num_cells)
-    # Number of cross-over events
-    n_recomb = int(rng.binomial(n_potential_bps, prob_recomb))
-    # Indices for cross-over events
-    indices = sample(range(n_potential_bps), n_recomb)
-    # Actual indices of cross-over events (have to skip numbers between cells)
-    corrected_indices = [x + x // (seq_len - 1) + 1 for x in indices]
-    # Cell in which cross-over event occurred
-    recomb_cells = [x // seq_len for x in corrected_indices]
-    # Recombination breakpoint in cell
-    breakpoints = [x % seq_len for x in corrected_indices]
-    # Total number of dually infected cells in which recombination occurred
-    num_cells_recomb = len(set(recomb_cells))
+    #n_potential_bps = int(seq_len * num_cells - num_cells)
+    #all_bp_indices = np.arange(n_potential_bps)
+
+    # Case 1: Constant rate (float or int)
+    #if isinstance(prob_recomb, (float, int)):
+        # Number of cross-over events
+        #recomb_positions = np.arange(seq_len - 1)
+        # n_recomb = rng.binomial(n_potential_bps, prob_recomb)
+        # # Indices for cross-over events
+        # if n_recomb > 0:
+        #     flat_indices = rng.choice(n_potential_bps, n_recomb, replace=False)
+        #     # Actual indices of cross-over events (have to skip numbers between cells)
+        #     # need to add 1 so that it breaks at the correct point (after the base)
+        #     breakpoints = recomb_positions[flat_indices % (seq_len - 1)] + 1 #flat_indices + flat_indices // (seq_len - 1) + 1 #[x + x // (seq_len - 1) + 1 for x in indices]
+        #     # Cell in which cross-over event occurred
+        #     recomb_cells = flat_indices // (seq_len - 1) #[x // seq_len for x in corrected_indices]
+        #     # Recombination breakpoint in cell
+        #     #breakpoints = corrected_indices % seq_len #[x % seq_len for x in corrected_indices]
+        #     # Total number of dually infected cells in which recombination occurred
+        #     num_cells_recomb = len(set(recomb_cells))
+        # else:
+        #     return 0, []
+        
+
+    # Case 2: Variable rate (array-like)
+    #else:
+        #per_site_probs = np.asarray(prob_recomb)
+
+    if is_sparse:
+            # --- Sparse-optimized method ---
+            
+        #n_recomb = rng.binomial(n_potential_bps, prob_recomb)
+        # Indices for cross-over events
+        #if n_recomb > 0:
+        #    flat_indices = rng.choice(n_potential_bps, n_recomb, replace=False)
+            # Actual indices of cross-over events (have to skip numbers between cells)
+            # need to add 1 so that it breaks at the correct point (after the base)
+        #    breakpoints = recomb_positions[flat_indices % (seq_len - 1)] + 1 #flat_indices + flat_indices // (seq_len - 1) + 1 #[x + x // (seq_len - 1) + 1 for x in indices]
+            # Cell in which cross-over event occurred
+        #    recomb_cells = flat_indices // (seq_len - 1) #[x // seq_len for x in corrected_indices]
+            # Recombination breakpoint in cell
+            #breakpoints = corrected_indices % seq_len #[x % seq_len for x in corrected_indices]
+            # Total number of dually infected cells in which recombination occurred
+            #num_cells_recomb = len(set(recomb_cells))
+        #else:
+        #    return 0, []
+            
+        # Bulk positions
+        bulk_positions = np.where(prob_recomb == base_prob)[0]
+        n_bulk = len(bulk_positions) * num_cells
+        n_recomb_bulk = rng.binomial(n_bulk, base_prob)
+        if n_recomb_bulk > 0:
+            flat_bulk_indices = rng.choice(n_bulk, n_recomb_bulk, replace=False)
+            bulk_breakpoints = bulk_positions[flat_bulk_indices % len(bulk_positions)]
+            bulk_cells = flat_bulk_indices // len(bulk_positions)
+        else:
+            bulk_breakpoints = np.array([], dtype=int)
+            bulk_cells = np.array([], dtype=int)
+
+        # Special positions
+        special_idx = np.where(prob_recomb != base_prob)[0]
+        special_breakpoints = np.array([], dtype=int)
+        special_cells = np.array([], dtype=int)
+        for idx in special_idx:
+            events = rng.random(num_cells) < prob_recomb[idx]
+            cells = np.flatnonzero(events)
+            np.append(special_breakpoints, [idx] * len(cells))
+            np.append(special_cells, cells)
+
+        # Combine
+        # need to add 1 because want breakpoint to be after base
+        breakpoints = np.concatenate([bulk_breakpoints, special_breakpoints]) + 1
+        recomb_cells = np.concatenate([bulk_cells, special_cells])
+
+        # Convert to flat indices for downstream calculation
+        # corrected_indices = all_genome_idx + 1 + all_cell_idx * seq_len
+        # recomb_cells = corrected_indices // seq_len
+        # breakpoints = corrected_indices % seq_len
+        num_cells_recomb = len(set(recomb_cells))
+
+    else:
+        # --- Fully vectorized method ---
+        per_bp_probs = np.tile(prob_recomb, num_cells)
+        events = rng.random(per_bp_probs.size) < per_bp_probs
+        flat_indices = np.flatnonzero(events)
+        corrected_indices = flat_indices + flat_indices // (seq_len - 1) + 1
+        recomb_cells = corrected_indices // seq_len
+        breakpoints = corrected_indices % seq_len
+        num_cells_recomb = len(set(recomb_cells))
+
     # Cross-over positions for each cell
     cell_breakpoints = defaultdict(list)
     for cell, breakpoint in zip(recomb_cells, breakpoints):
         cell_breakpoints[cell].append(breakpoint)
-    return num_cells_recomb, cell_breakpoints.values()
+    # print(num_cells_recomb)
+    # print(list(cell_breakpoints.values()))
+    return num_cells_recomb, list(cell_breakpoints.values())
 
 
 def get_recombined_sequence(sequence1, sequence2, breakpoints):
@@ -710,10 +809,13 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
         return num_to_make_latent, n_to_active, n_to_die, n_to_proliferate
 
+
     def get_next_gen_active(
         self,
         prob_mutation,
         prob_recombination,
+        recrate_is_sparse,
+        base_prob,
         n_active_next_gen,
         gen,
         seroconversion_time,
@@ -738,7 +840,11 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         total_nucleotides = num_active_cd4 * seq_len
         n_mut = rng.binomial(total_nucleotides, prob_mutation)
         # Distribute the mutations across all possible positions
-        positions_to_mutate = sample(range(total_nucleotides), n_mut)
+        #positions_to_mutate = sample(range(total_nucleotides), n_mut)
+        if n_mut > 0:
+            positions_to_mutate = rng.choice(total_nucleotides, n_mut, replace=False)
+        else:
+            positions_to_mutate = []
         self.mutate_virus_in_productive_CD4(
             positions_to_mutate,
             seq_len,
@@ -769,7 +875,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
         # Determine number of dual infections with recombination
         num_cells_recomb, cell_breakpoints = get_recomb_breakpoints(
-            seq_len, n_active_next_gen, prob_recombination, rng
+            seq_len, n_active_next_gen, prob_recombination, recrate_is_sparse, 
+            base_prob, rng
         )
 
         # Sample num_active_cd4 + num_cells_recomb virus variants based on relative fitness
@@ -930,6 +1037,27 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 fitness["overall"].append(float(1))
                 
         seqs_latent = defaultdict(lambda: 0)
+        
+        # determine type of recombination breakpoint method to do
+        seq_len = len(self.C[0].infecting_virus.nuc_sequence)
+        recrate_is_sparse = True
+        base_prob = prob_recomb
+        if isinstance(prob_recomb, (float, int)):
+            prob_recomb = np.full(seq_len - 1, prob_recomb)
+        else:
+            sparse_threshold = 0.05
+            if prob_recomb.shape[0] != seq_len - 1:
+                raise ValueError("Length of per-site recombination rate must be seq_len-1.")
+            # Check for sparseness: is there a dominant value?
+            probs, nprob = np.unique(prob_recomb, return_counts=True)
+            #if probs.size == 1:
+            #  prob_recomb = probs[0]
+            #else:
+            L = seq_len - 1
+            maxidx = np.argmax(nprob)
+            base_prob = probs[maxidx]
+            recrate_is_sparse = ((L - nprob[maxidx]) / L) < sparse_threshold
+
 
         if n_sample_active[0] != 0:
             # num_to_make_latent, num_to_activate, num_to_die, num_to_proliferate
@@ -962,6 +1090,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             var_nums = self.get_next_gen_active(
                 prob_mut,
                 prob_recomb,
+                recrate_is_sparse,
+                base_prob,
                 active_cell_count[t],
                 t,
                 seroconversion_time,

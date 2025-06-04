@@ -149,6 +149,18 @@ if __name__ == "__main__":
     if float(params["replicative_cost"]) < 0 or float(params["replicative_cost"]) >= 1:
       raise ValueError("replicative fitness cost must be in the range [0,1)")
 
+    # Prepare recombination rate (variable or constant)
+    prob_recomb = params["recomb_rate"]
+    seq_len = len(reference_sequence)
+    if isinstance(prob_recomb, (list, np.ndarray)):
+        # User provided an array for variable recombination rate
+        prob_recombination = np.asarray(prob_recomb) #1 - exp(-params["recomb_rate"])
+        if prob_recombination.shape[0] != seq_len - 1:
+            raise ValueError("Variable recombination rate must have length seq_len-1")
+    else:
+        # Use constant rate
+        prob_recombination = 1 - exp(-prob_recomb) 
+
     # Create host environment and add to viral sequences counter
     host = agents.create_host_env(
         founder_viruses,
@@ -186,7 +198,7 @@ if __name__ == "__main__":
         substitution_probabilities,
         # change to probabilities
         1 - exp(-params["mut_rate"]), 
-        1 - exp(-params["recomb_rate"]), 
+        prob_recombination, #1 - exp(-params["recomb_rate"]), 
         1 - exp(-params["act_to_lat"]/params["generation_time"]),
         1 - exp(-params["lat_to_act"]/params["generation_time"]),
         1 - exp(-params["lat_die"]/params["generation_time"]),

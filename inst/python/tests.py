@@ -74,21 +74,35 @@ def test_get_substitution():
 
 def test_get_recomb_breakpoints():
     rng = default_rng(1234)
-    nc, bp = get_recomb_breakpoints(3, 1, 1, rng)
+    nc, bp = get_recomb_breakpoints(3, 1, np.full(2, 1), True, 1, rng)
     assert nc == 1
-    assert list(bp) == [[1, 2]]
-    nc, bp = get_recomb_breakpoints(3, 2, 1, rng)
+    assert list(bp) == [[2, 1]]
+    nc, bp = get_recomb_breakpoints(3, 2, np.full(2, 1), True, 1, rng)
     assert nc == 2
-    assert list(bp) == [[1, 2], [2, 1]]
-    nc, bp = get_recomb_breakpoints(3, 2, 0.5, rng)
-    assert nc == 2
-    assert list(bp) == [[2], [2, 1]]
-    nc, bp = get_recomb_breakpoints(3, 2, 0.25, rng)
-    assert nc == 0
-    assert list(bp) == []
-    nc, bp = get_recomb_breakpoints(3, 3, 0.25, rng)
+    assert list(bp) == [[1, 2], [1, 2]]
+    nc, bp = get_recomb_breakpoints(3, 2, np.full(2, 0.5), True, 0.5, rng)
     assert nc == 1
     assert list(bp) == [[2]]
+    nc, bp = get_recomb_breakpoints(3, 2, np.full(2, 0.25), True, 0.25, rng)
+    assert nc == 2
+    assert list(bp) == [[2, 1], [1]]
+    nc, bp = get_recomb_breakpoints(3, 3, np.full(2, 0.25), True, 0.25, rng)
+    assert nc == 1
+    assert list(bp) == [[1, 2]]
+    nc, bp = get_recomb_breakpoints(3, 1, np.array([1, 1]), True, 1, rng)
+    assert nc == 1
+    assert list(bp) == [[1, 2]]
+    nc, bp = get_recomb_breakpoints(3, 1, np.array([1, 0]), True, 1, rng)
+    assert nc == 1
+    assert list(bp) == [[1]]
+    nc, bp = get_recomb_breakpoints(3, 1, np.array([0, 1]), True, 1, rng)
+    assert nc == 1
+    assert list(bp) == [[2]]
+    nc, bp = get_recomb_breakpoints(3, 1, np.array([0, 1]), False, 1, rng)
+    assert nc == 1
+    assert list(bp) == [[2]]
+
+# test_get_recomb_breakpoints()
 
 
 def test_get_recombined_sequence():
@@ -501,6 +515,8 @@ def test_get_next_gen_active():
     assert host.get_next_gen_active(
         0,
         0,
+        True,
+        0,
         2,
         40,
         30,
@@ -522,6 +538,8 @@ def test_get_next_gen_active():
     assert host.get_next_gen_active(
         0.5,
         0,
+        True,
+        0,
         10,
         40,
         30,
@@ -537,9 +555,11 @@ def test_get_next_gen_active():
         rng,
     ) == (5, 0)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(1)] == [
-        "GAA"]
+        "TAA"]
     assert host.get_next_gen_active(
         0.1,
+        0.1,
+        True,
         0.1,
         10,
         40,
@@ -554,8 +574,8 @@ def test_get_next_gen_active():
         epi,
         0.1,
         rng,
-    ) == (2, 2)
-    assert "GAA" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
+    ) == (1, 1)
+    assert "TAA" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
 
 
 def test_summarize_fitness():
@@ -698,5 +718,5 @@ def test_loop_through_generations():
                                                         1.0, 1.0, 1.0]}
     assert out[1] == {'generation': ['founder', '0', '1', '1', '2', '2', '2'], 'seq_id': ['founder0', 'gen0_active_0', 'gen1_active_0', 'gen1_active_1', 'gen2_active_0', 'gen2_active_1', 'gen2_active_2'], 'immune': [
         1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'conserved': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'replicative': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'overall': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
-    assert out[2] == {'founder0': 'AAA', 'gen0_active_0': 'AAA', 'gen1_active_0': 'AAG',
-                      'gen1_active_1': 'AAG', 'gen2_active_0': 'AAG', 'gen2_active_1': 'AAG', 'gen2_active_2': 'AAG'}
+    assert out[2] == {'founder0': 'AAA', 'gen0_active_0': 'AAA', 'gen1_active_0': 'GAA',
+                      'gen1_active_1': 'GAA', 'gen2_active_0': 'GAA', 'gen2_active_1': 'GAA', 'gen2_active_2': 'GAA'}
