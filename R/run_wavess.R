@@ -39,8 +39,8 @@
 #'   fitness, they are expected to be codon-aligned.
 #' @param generation_time Amount of time in days it takes a virus to complete
 #'   one full life cycle, from infecting one cell to exiting the cell and
-#'   infecting the next one (default: 1 day). Any inputs that are in days
-#'   will be converted to generations using this number.
+#'   infecting the next one (default: 1 day). Any inputs that are in days will
+#'   be converted to generations using this number.
 #' @param q Nucleotide substitution rate matrix Q with rows and columns named as
 #'   the nucleotides ACGT. Rows are from, columns are to. Can be generated using
 #'   the [estimate_q()] function. The default is to calculate the Q matrix using
@@ -81,8 +81,9 @@
 #'   an epitope to reach full potency, only relevant when epitope_locations is
 #'   not NULL (default: 90).
 #' @param mut_rate Mutation rate per-site, per-*generation* (default: 3.0e-5)
-#' @param recomb_rate Recombination rate per-site, per-*generation* (default:
-#'   1.4e-5)
+#' @param recomb_rate Effective recombination rate per-site, per-*generation*
+#'   (default: 1.4e-5). This rate is a combination of the rate of co-infection
+#'   and recombination.
 #' @param act_to_lat Per-*day* rate that an active cell becomes latent (default:
 #'   0.001). Set this to 0 if you don't want to model latent cell dynamics.
 #' @param lat_to_act Per-*day* rate that a latent cell becomes active (default:
@@ -92,10 +93,10 @@
 #' @param lat_die Per-*day* rate that a latent cell dies (default: 0.01)
 #' @param seed Optional seed (default: NULL)
 #'
-#' @return List including: tibble of counts and mean fitness values, an alignment
-#' of sampled sequences, and fitness of the sampled sequences. If latent cells
-#' are sampled, then an alignment of the sampled latent cells will also be
-#' returned.
+#' @return List including: tibble of counts and mean fitness values, an
+#'   alignment of sampled sequences, and fitness of the sampled sequences. If
+#'   latent cells are sampled, then an alignment of the sampled latent cells
+#'   will also be returned.
 #' @export
 #'
 #' @examples
