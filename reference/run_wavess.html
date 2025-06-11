@@ -147,8 +147,8 @@ fitness, they are expected to be codon-aligned.</p></dd>
 <dt id="arg-generation-time">generation_time<a class="anchor" aria-label="anchor" href="#arg-generation-time"></a></dt>
 <dd><p>Amount of time in days it takes a virus to complete
 one full life cycle, from infecting one cell to exiting the cell and
-infecting the next one (default: 1 day). Any inputs that are in days
-will be converted to generations using this number.</p></dd>
+infecting the next one (default: 1 day). Any inputs that are in days will
+be converted to generations using this number.</p></dd>
 
 
 <dt id="arg-mut-rate">mut_rate<a class="anchor" aria-label="anchor" href="#arg-mut-rate"></a></dt>
@@ -164,8 +164,9 @@ estimates of per-day rates from nearly neutral sites:
 
 
 <dt id="arg-recomb-rate">recomb_rate<a class="anchor" aria-label="anchor" href="#arg-recomb-rate"></a></dt>
-<dd><p>Recombination rate per-site, per-<em>generation</em> (default:
-1.4e-5)</p></dd>
+<dd><p>Effective recombination rate per-site, per-<em>generation</em>
+(default: 1.4e-5). This rate is a combination of the rate of co-infection
+and recombination.</p></dd>
 
 
 <dt id="arg-act-to-lat">act_to_lat<a class="anchor" aria-label="anchor" href="#arg-act-to-lat"></a></dt>
@@ -251,10 +252,10 @@ immune response will not actually start until there are at least
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>List including: tibble of counts and mean fitness values, an alignment
-of sampled sequences, and fitness of the sampled sequences. If latent cells
-are sampled, then an alignment of the sampled latent cells will also be
-returned.</p>
+    <p>List including: tibble of counts and mean fitness values, an
+alignment of sampled sequences, and fitness of the sampled sequences. If
+latent cells are sampled, then an alignment of the sampled latent cells
+will also be returned.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
