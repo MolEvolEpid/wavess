@@ -17,6 +17,7 @@ from csv import writer
 from math import exp
 import numpy as np
 import pandas as pd
+import os
 
 # Import custom classes and functions
 import agents
@@ -62,6 +63,20 @@ def get_nucleotide_substitution_probabilities(q_filename, mut_rate):
     return nucleotides_order, substitution_probabilities
 
 
+def load_recombination_rate(recomb_rate, seq_len):
+    if isinstance(recomb_rate, (float, int)):
+        return recomb_rate
+    elif isinstance(recomb_rate, str):
+        if not os.path.isfile(recomb_rate):
+            raise FileNotFoundError(f"Recombination rate file not found: {recomb_rate}")
+        arr = np.loadtxt(recomb_rate)
+        if arr.shape[0] != seq_len - 1:
+            raise ValueError(f"Expected {seq_len-1} rates in {recomb_rate}, found {arr.shape[0]}")
+        return arr
+    else:
+        raise TypeError("recomb_rate must be a float, int, or a filepath string")
+      
+      
 # Run model
 if __name__ == "__main__":
     if len(argv) != 3 and len(argv) != 4:
@@ -150,8 +165,8 @@ if __name__ == "__main__":
       raise ValueError("replicative fitness cost must be in the range [0,1)")
 
     # Prepare recombination rate (variable or constant)
-    prob_recomb = params["recomb_rate"]
     seq_len = len(reference_sequence)
+    prob_recomb = load_recombination_rate(params["recomb_rate"], seq_len)
     if isinstance(prob_recomb, (list, np.ndarray)):
         # User provided an array for variable recombination rate
         prob_recombination = np.asarray(prob_recomb) #1 - exp(-params["recomb_rate"])

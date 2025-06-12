@@ -76,28 +76,6 @@ def get_substitution(old_nucleotide, new_nucleotides_order, probabilities):
     except ValueError:
         raise Exception(f"Unknown nucleotide {old_nucleotide}")
     return choices(new_nucleotides_order, probabilities[idx])[0]
-    # if old_nucleotide == "A":
-    #     return choices(
-    #         new_nucleotides_order, probabilities[new_nucleotides_order.index(
-    #             "A")]
-    #     )[0]
-    # elif old_nucleotide == "C":
-    #     return choices(
-    #         new_nucleotides_order, probabilities[new_nucleotides_order.index(
-    #             "C")]
-    #     )[0]
-    # elif old_nucleotide == "G":
-    #     return choices(
-    #         new_nucleotides_order, probabilities[new_nucleotides_order.index(
-    #             "G")]
-    #     )[0]
-    # elif old_nucleotide == "T":
-    #     return choices(
-    #         new_nucleotides_order, probabilities[new_nucleotides_order.index(
-    #             "T")]
-    #     )[0]
-    # else:
-    #     raise Exception("Unknown nucleotide %s" % old_nucleotide)
     
 
 def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, is_sparse, base_prob, seed):
@@ -172,7 +150,7 @@ def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, is_sparse, base_prob
             
         # Bulk positions
         bulk_positions = np.where(prob_recomb == base_prob)[0]
-        n_bulk = len(bulk_positions) * num_cells
+        n_bulk = int(len(bulk_positions) * num_cells)
         n_recomb_bulk = rng.binomial(n_bulk, base_prob)
         if n_recomb_bulk > 0:
             flat_bulk_indices = rng.choice(n_bulk, n_recomb_bulk, replace=False)
@@ -219,8 +197,6 @@ def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, is_sparse, base_prob
     cell_breakpoints = defaultdict(list)
     for cell, breakpoint in zip(recomb_cells, breakpoints):
         cell_breakpoints[cell].append(breakpoint)
-    # print(num_cells_recomb)
-    # print(list(cell_breakpoints.values()))
     return num_cells_recomb, list(cell_breakpoints.values())
 
 
@@ -877,7 +853,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
         # Determine number of dual infections with recombination
         num_cells_recomb, cell_breakpoints = get_recomb_breakpoints(
-            seq_len, n_active_next_gen, prob_recombination, recrate_is_sparse, 
+            seq_len, int(n_active_next_gen), prob_recombination, recrate_is_sparse, 
             base_prob, rng
         )
 
@@ -1047,14 +1023,12 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         if isinstance(prob_recomb, (float, int)):
             prob_recomb = np.full(seq_len - 1, prob_recomb)
         else:
+            prob_recomb = np.array(prob_recomb)
             sparse_threshold = 0.05
             if prob_recomb.shape[0] != seq_len - 1:
-                raise ValueError("Length of per-site recombination rate must be seq_len-1.")
+                raise ValueError("Length of per-breakpoint recombination rate must be seq_len-1.")
             # Check for sparseness: is there a dominant value?
             probs, nprob = np.unique(prob_recomb, return_counts=True)
-            #if probs.size == 1:
-            #  prob_recomb = probs[0]
-            #else:
             L = seq_len - 1
             maxidx = np.argmax(nprob)
             base_prob = probs[maxidx]

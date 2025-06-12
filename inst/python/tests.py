@@ -102,6 +102,28 @@ def test_get_recomb_breakpoints():
     assert nc == 1
     assert list(bp) == [[2]]
 
+    seq_len = 5
+    num_cells = 3
+
+    # All zeros: should be no recombination
+    rates = np.zeros(seq_len - 1)
+    nc, bp = get_recomb_breakpoints(seq_len, num_cells, rates, True, 0, rng)
+    assert nc == 0
+    assert bp == []
+
+    # All ones: should always have maximum recombination
+    rates = np.ones(seq_len - 1)
+    nc, bp = get_recomb_breakpoints(seq_len, num_cells, rates, True, 1, rng)
+    assert nc >= 1
+    for bplist in bp:
+        for b in bplist:
+            assert 1 <= b <= seq_len - 1
+
+    # All unique rates (dense, not all equal or sparse)
+    rates = np.array([0.1, 0.2, 0.3, 0.4])
+    nc, bp = get_recomb_breakpoints(seq_len, num_cells, rates, False, 0, rng)
+    assert isinstance(bp, list)
+
 # test_get_recomb_breakpoints()
 
 
@@ -117,6 +139,14 @@ def test_get_recombined_sequence():
         get_recombined_sequence(seq1, seq2, [0])
     with pytest.raises(Exception):
         get_recombined_sequence(seq1, seq2, 1)
+        
+    seq1 = "ACGTACGT"
+    seq2 = "ACGTACGT"
+    # Try with various breakpoints
+    for breakpoints in ([], [1], [3, 5], [1, 3, 5, 7]):
+        out_seq, out_bp = get_recombined_sequence(seq1, seq2, breakpoints)
+        assert out_seq == seq1
+        assert out_seq == seq2
 
 
 def test_calc_seq_fitness():

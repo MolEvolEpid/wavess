@@ -339,6 +339,26 @@ rate (`recomb_rate`), and various rates related to latent cell dynamics
 turned off by setting the respective rate value to 0. The simulation starts with
 0 latent cells, so setting `act_to_lat` will turn latent cell dynamics off.
 
+### Variable recombination rate
+
+The recombination rate modeled by wavess is an effective recombination rate -
+one number that takes into account the rate of co-infection followed by
+recombination. By default, the recombination rate is the same across the entire
+sequence. This occurs whenever the input value is a single number. If you'd like
+to vary the recombination rate across the sequence, you can input a vector of
+rates where each element in the vector is a breakpoint-specific recombination
+rate. In this case, the length of the vector should be one fewer than the number
+of basepairs in the founder sequence. Here's an example:
+
+```{r}
+variable_recomb <- run_wavess(
+  inf_pop_size = pop,
+  samp_scheme = samp,
+  founder_seqs = rep(founder_ref$founder, 10),
+  recomb_rate = c(rep(1.5e-5, 1000), 1e-4, rep(1.5e-5, 501)))
+```
+
+
 ## Seed
 
 A seed can be set for reproducibility using the `seed` argument.

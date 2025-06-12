@@ -11,7 +11,7 @@ run_wavess(
   generation_time = 1,
   mut_rate = 3e-05,
   q = wavess::calc_q_from_rates(wavess::hiv_mut_rates, mut_rate, generation_time),
-  recomb_rate = 1.4e-05,
+  recomb_rate = 1.5e-05,
   act_to_lat = 0.001,
   lat_to_act = 0.01,
   lat_prolif = 0.01,
@@ -45,8 +45,8 @@ fitness, they are expected to be codon-aligned.}
 
 \item{generation_time}{Amount of time in days it takes a virus to complete
 one full life cycle, from infecting one cell to exiting the cell and
-infecting the next one (default: 1 day). Any inputs that are in days
-will be converted to generations using this number.}
+infecting the next one (default: 1 day). Any inputs that are in days will
+be converted to generations using this number.}
 
 \item{mut_rate}{Mutation rate per-site, per-\emph{generation} (default: 3.0e-5)}
 
@@ -56,8 +56,13 @@ the \code{\link[=estimate_q]{estimate_q()}} function. The default is to calculat
 estimates of per-day rates from nearly neutral sites:
 \code{wavess::calc_q_from_rates(wavess::hiv_mut_rates,mut_rate,generation_time)}.}
 
-\item{recomb_rate}{Recombination rate per-site, per-\emph{generation} (default:
-1.4e-5)}
+\item{recomb_rate}{Recombination rate per-breakpoint, per-\emph{generation}
+(default: 1.5e-5). This can be a single number or a numeric vector where
+each element in the vector is a breakpoint-specific recombination rate. If
+the input is a vector, the length of the vector should be one fewer than
+the number of basepairs in the founder sequence. Note that this rate is
+modeled as an effective recombination rate that includes the rate of
+co-infection followed by recombination.}
 
 \item{act_to_lat}{Per-\emph{day} rate that an active cell becomes latent (default:
 0.001). Set this to 0 if you don't want to model latent cell dynamics.}
@@ -115,10 +120,10 @@ immune response will not actually start until there are at least
 \item{seed}{Optional seed (default: NULL)}
 }
 \value{
-List including: tibble of counts and mean fitness values, an alignment
-of sampled sequences, and fitness of the sampled sequences. If latent cells
-are sampled, then an alignment of the sampled latent cells will also be
-returned.
+List including: tibble of counts and mean fitness values, an
+alignment of sampled sequences, and fitness of the sampled sequences. If
+latent cells are sampled, then an alignment of the sampled latent cells
+will also be returned.
 }
 \description{
 Simulate within-host evolution optionally including recombination (default:
