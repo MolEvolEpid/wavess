@@ -359,6 +359,12 @@ variable_recomb <- run_wavess(
 ```
 
 
+Note that inputting a vector for `recomb_rate` also allows you to simulate 
+reassortment of a segmented virus. In this case, the "recombination rate" 
+between two segments is the rate of co-infection followed by rassortment, and 
+the rate within a segment is the rate of co-infection followed by recombination 
+within that segment.
+
 ## Seed
 
 A seed can be set for reproducibility using the `seed` argument.
