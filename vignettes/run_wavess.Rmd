@@ -355,7 +355,8 @@ variable_recomb <- run_wavess(
   inf_pop_size = pop,
   samp_scheme = samp,
   founder_seqs = rep(founder_ref$founder, 10),
-  recomb_rate = c(rep(1.5e-5, 1000), 1e-4, rep(1.5e-5, 501)))
+  recomb_rate = c(rep(1.5e-5, 1000), 1e-4, rep(1.5e-5, 501))
+)
 ```
 
 
