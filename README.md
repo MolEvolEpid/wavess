@@ -23,6 +23,8 @@ post-processing functions can also be used on real data. The default
 settings for the simulator assume that the sequences being simulated are
 HIV gp120.
 
+Website: molevolepid.github.io/wavess/
+
 ## Installation
 
 You can install the development version of wavess from
