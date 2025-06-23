@@ -12,7 +12,8 @@ class HIV:
         self.conserved_sites_mutated = set()
 
         # Tracking different components of fitness
-        self.immune_fitness = 1
+        self.b_immune_fitness = 1
+        self.t_immune_fitness = 1
         self.conserved_fitness = 1
         self.replicative_fitness = 1
         self.fitness = 1

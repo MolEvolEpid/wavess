@@ -155,7 +155,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                             * time_to_full_potency
                         )
 
-    def update_immune_fitness(
+    def update_b_immune_fitness(
             self, epitopes, current_generation, time_to_full_potency):
         immune_strength_dict = {
             k: min((current_generation - v) / time_to_full_potency, 1)
@@ -185,14 +185,14 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     max_epitope_fitness_cost = max(
                         max_epitope_fitness_cost, timed_fitness
                     )
-            self.C[CD4_index].infecting_virus.immune_fitness = 1 - \
+            self.C[CD4_index].infecting_virus.b_immune_fitness = 1 - \
                 max_epitope_fitness_cost
 
     def get_fitness_of_infecting_virus(self, CD4_index):
 
         # Compute overall fitness
         viral_fitness = (
-            self.C[CD4_index].infecting_virus.immune_fitness
+            self.C[CD4_index].infecting_virus.b_immune_fitness
             * self.C[CD4_index].infecting_virus.conserved_fitness
             * self.C[CD4_index].infecting_virus.replicative_fitness
         )
@@ -488,7 +488,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     seed,
                 )
                 # Virus immune fitness
-                self.update_immune_fitness(epitopes, gen, time_to_full_potency)
+                self.update_b_immune_fitness(epitopes, gen, time_to_full_potency)
 
         # Compute fitness
         fitness = self.get_fitness()
@@ -538,7 +538,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         return (
             sum([x.infecting_virus.fitness for x in self.C]) / n_active,
             sum([x.infecting_virus.conserved_fitness for x in self.C]) / n_active,
-            sum([x.infecting_virus.immune_fitness for x in self.C]) / n_active,
+            sum([x.infecting_virus.b_immune_fitness for x in self.C]) / n_active,
             sum([x.infecting_virus.replicative_fitness for x in self.C])
             / n_active,
         )
@@ -579,7 +579,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             if cell_type == 'active':
                 fitness["generation"].append(str(generation))
                 fitness["seq_id"].append(name)
-                fitness["immune"].append(float(CD4.infecting_virus.immune_fitness))
+                fitness["immune"].append(float(CD4.infecting_virus.b_immune_fitness))
                 fitness["conserved"].append(
                     float(CD4.infecting_virus.conserved_fitness))
                 fitness["replicative"].append(
