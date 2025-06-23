@@ -3,12 +3,12 @@ from random import sample
 from random import choices
 from collections import defaultdict
 
-def get_substitution(old_nucleotide, new_nucleotides_order, probabilities):
+def get_substitution(old_nucleotide, subprob):
     try:
-        idx = new_nucleotides_order.index(old_nucleotide)
+        idx = subprob.order.index(old_nucleotide)
     except ValueError:
         raise Exception(f"Unknown nucleotide {old_nucleotide}")
-    return choices(new_nucleotides_order, probabilities[idx])[0]
+    return choices(subprob.order, subprob.probs[idx])[0]
 
 
 def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, seed):

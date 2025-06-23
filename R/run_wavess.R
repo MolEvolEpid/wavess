@@ -190,6 +190,7 @@ run_wavess <- function(inf_pop_size,
     data.frame(t(nt_sub_probs)),
     function(x) x
   ))
+  subprobs <- reticulate::dict(order = nucleotides_order, probs = substitution_probabilities)
 
   if (is.null(conserved_sites)) {
     conserved_sites <- reticulate::dict()
@@ -233,8 +234,9 @@ run_wavess <- function(inf_pop_size,
     pop_samp$n_sample_active,
     pop_samp$n_sample_latent,
     last_sampled_gen,
-    founder_seqs, nucleotides_order, substitution_probabilities,
-    prob_mut, prob_recomb,
+    founder_seqs,
+    #nucleotides_order, substitution_probabilities,
+    subprobs, prob_mut, prob_recomb,
     prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
     conserved_sites, conserved_cost, ref_seq, replicative_cost,
     epitope_locations, gen_immune_start, n_for_imm, gen_full_potency,

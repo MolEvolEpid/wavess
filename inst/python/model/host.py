@@ -5,6 +5,7 @@ from random import sample
 from numpy import where
 from collections import defaultdict
 from collections import Counter
+from collections import namedtuple
 
 from model.virus import HIV
 from model.cells import InfectedCD4
@@ -349,7 +350,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         self,
         positions_to_mutate,
         viral_sequence_length,
-        nucleotides_order,
+        #nucleotides_order,
         substitution_probabilities,
         conserved_sites,
         cost_per_mutation_in_conserved_site,
@@ -365,7 +366,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             )  # Find cell and position to mutate
             self.C[cell_number].infecting_virus.mutate(
                 viral_seq_position,
-                nucleotides_order,
+                #nucleotides_order,
                 substitution_probabilities,
                 conserved_sites,
                 cost_per_mutation_in_conserved_site,
@@ -440,7 +441,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         n_active_next_gen,
         gen,
         seroconversion_time,
-        nucleotides_order,
+        #nucleotides_order,
         substitution_probabilities,
         conserved_sites,
         time_to_full_potency,
@@ -465,7 +466,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         self.mutate_virus_in_productive_CD4(
             positions_to_mutate,
             seq_len,
-            nucleotides_order,
+            #nucleotides_order,
             substitution_probabilities,
             conserved_sites,
             cost_per_mutation_in_conserved_site,
@@ -590,7 +591,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         n_sample_latent,
         last_sampled_gen,
         founder_seqs,
-        nucleotides_order,
+        #nucleotides_order,
         substitution_probabilities,
         prob_mut,
         prob_recomb,
@@ -666,6 +667,12 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 counts, 0, latent_nums, var_nums, mean_fitness)
             seqs_active, fitness = self.sample_viral_sequences(
                 seqs_active, fitness, 0, min(int(n_sample_active[0]), len(seqs_active)))
+                
+        if isinstance(substitution_probabilities, dict):
+            # Create the namedtuple type
+            SubProb = namedtuple("SubProb", substitution_probabilities.keys())
+            # Convert dict to namedtuple
+            substitution_probabilities = SubProb(**substitution_probabilities)
 
         # Looping through generations until we sample everything we want
         for t in range(1, int(last_sampled_gen) + 1):
@@ -688,7 +695,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 active_cell_count[t],
                 t,
                 seroconversion_time,
-                nucleotides_order,
+                #nucleotides_order,
                 substitution_probabilities,
                 conserved_sites,
                 gen_full_potency,

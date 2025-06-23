@@ -29,7 +29,7 @@ class HIV:
     def mutate(
         self,
         position_to_mutate,
-        nucleotides_order,
+        #nucleotides_order,
         substitution_probabilities,
         conserved_sites,
         cost_per_mutation_in_conserved_site,
@@ -39,7 +39,8 @@ class HIV:
         # Figure out what the mutation is based on mutation probabilities
         old_nucleotide = self.nuc_sequence[position_to_mutate]
         new_nucleotide = get_substitution(
-            old_nucleotide, nucleotides_order, substitution_probabilities
+            old_nucleotide, #nucleotides_order, 
+            substitution_probabilities
         )
         # Fastest way I can find to mutate - add part before to new nt to part
         # after

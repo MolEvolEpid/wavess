@@ -1,6 +1,7 @@
 from scipy.linalg import expm
 from numpy import fill_diagonal
 from numpy import sum as npsum
+from collections import namedtuple
 
 from model.virus import HIV
 from model.host import HostEnv
@@ -38,8 +39,10 @@ def calc_nt_sub_probs_from_q(q, mut_rate):
 
     # Get probabilities as a list of tuples
     probabilities = sub_probs.tolist()
+    
+    SubProb = namedtuple('SubProb', ['order', 'probs'])
 
-    return new_nucleotides_order, probabilities
+    return SubProb(order=new_nucleotides_order, probs=probabilities) #new_nucleotides_order, probabilities
 
 
 def create_host_env(founder_seqs, ref_seq, replicative_cost, initial_cell_count):

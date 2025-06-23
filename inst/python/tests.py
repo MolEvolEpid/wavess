@@ -1,9 +1,17 @@
 import pytest
 from random import seed
 from numpy.random import default_rng
+from random import sample
+from collections import defaultdict
 
 from run_wavess import *
-from agents import *
+from model.seed import set_python_seed
+from model.prep import prep_ref_conserved, calc_nt_sub_probs_from_q, create_host_env, create_epitope, Epitope
+from model.variation import get_substitution, get_recomb_breakpoints, get_recombined_sequence, muts_rel_ref, get_conserved_sites_mutated
+from model.fitness import calc_seq_fitness, normalize
+from model.virus import HIV
+from model.cells import InfectedCD4
+from model.host import HostEnv
 
 # Functions outside of any class
 
@@ -59,15 +67,15 @@ def test_get_nucleotide_substitution_probabilities():
 
 def test_get_substitution():
     seed(123)
-    new_nt_order, probs = get_nucleotide_substitution_probabilities(
+    subprobs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
-    assert get_substitution("A", new_nt_order, probs) == "C"
-    assert get_substitution("C", new_nt_order, probs) == "A"
-    assert get_substitution("G", new_nt_order, probs) == "A"
-    assert get_substitution("T", new_nt_order, probs) == "A"
+    assert get_substitution("A", subprobs) == "C"
+    assert get_substitution("C", subprobs) == "A"
+    assert get_substitution("G", subprobs) == "A"
+    assert get_substitution("T", subprobs) == "A"
     with pytest.raises(Exception):
-        get_substitution("X", new_nt_order, probs)
+        get_substitution("X", subprobs)
     with pytest.raises(Exception):
         get_substitution("A")
 
@@ -171,34 +179,34 @@ def test_HIV():
 
 def test_mutate():
     seed(123)
-    new_nt_order, probs = get_nucleotide_substitution_probabilities(
+    subprobs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     reference_sequence = ""
     hiv = HIV("AAA", reference_sequence, 1)
-    hiv.mutate(0, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 1)
+    hiv.mutate(0, subprobs, {1: 'A'}, 0.99, reference_sequence, 1)
     assert hiv.nuc_sequence == "CAA"
     assert hiv.conserved_sites_mutated == set()
     assert hiv.replicative_fitness == 1
     reference_sequence = "AAA"
-    hiv.mutate(1, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 0.1)
+    hiv.mutate(1, subprobs, {1: 'A'}, 0.99, reference_sequence, 0.1)
     assert hiv.nuc_sequence == "CCA"
     assert hiv.conserved_sites_mutated == set([1])
     assert (
         hiv.replicative_fitness == (1-0.1)**2
     )  # don't account for conserved sites here, it's done in advance
-    hiv.mutate(0, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 0.1)
+    hiv.mutate(0, subprobs, {1: 'A'}, 0.99, reference_sequence, 0.1)
     assert hiv.nuc_sequence == "TCA"
     assert hiv.conserved_sites_mutated == set([1])
     assert hiv.replicative_fitness == (1-0.1)**2
 
-    hiv.mutate(1, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 0.1)
+    hiv.mutate(1, subprobs, {1: 'A'}, 0.99, reference_sequence, 0.1)
     assert hiv.nuc_sequence == "TAA"
     assert hiv.conserved_sites_mutated == set(
         [])  # now allow it to mutate back
     assert hiv.replicative_fitness == (1-0.1)
 
-    hiv.mutate(1, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 0.1)
+    hiv.mutate(1, subprobs, {1: 'A'}, 0.99, reference_sequence, 0.1)
     assert hiv.nuc_sequence == "TGA"
     assert hiv.conserved_sites_mutated == set([1])
     assert hiv.replicative_fitness == (1-0.1)**2
@@ -305,7 +313,7 @@ def test_update_immune_fitness():
 def test_get_fitness_of_infecting_virus():
     seed(123)
     rng = default_rng(1234)
-    new_nt_order, probs = get_nucleotide_substitution_probabilities(
+    subprobs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     reference_sequence = ""
@@ -319,7 +327,7 @@ def test_get_fitness_of_infecting_virus():
     assert host.get_fitness_of_infecting_virus(0) == 1
     assert host.C[0].infecting_virus.fitness == 1
     host.C[0].infecting_virus.mutate(
-        1, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 1
+        1, subprobs, {1: 'A'}, 0.99, reference_sequence, 1
     )
     assert host.get_fitness_of_infecting_virus(
         0) == (1 - 0) * (1 - 0) * (1-0.99)
@@ -347,7 +355,7 @@ def test_get_fitness_of_infecting_virus():
 
 def test_singly_infect_cd4():
     seed(123)
-    new_nt_order, probs = get_nucleotide_substitution_probabilities(
+    subprobs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     reference_sequence = "AAA"
@@ -362,10 +370,10 @@ def test_singly_infect_cd4():
         "AAA",
     ]
     newly_infected[0].infecting_virus.mutate(
-        0, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 1
+        0, subprobs, {1: 'A'}, 0.99, reference_sequence, 1
     )
     newly_infected[1].infecting_virus.mutate(
-        1, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 1
+        1, subprobs, {1: 'A'}, 0.99, reference_sequence, 1
     )
     assert [newly_infected[i].infecting_virus.nuc_sequence for i in range(2)] == [
         "AGG",
@@ -374,7 +382,7 @@ def test_singly_infect_cd4():
 
 
 def test_dually_infect_cd4():
-    new_nt_order, probs = get_nucleotide_substitution_probabilities(
+    subprobs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     reference_sequence = "AAA"
@@ -386,7 +394,7 @@ def test_dually_infect_cd4():
         [0, 1, 0, 2], [[1], [1, 2]], 3, 0.99, reference_sequence, set([2]), 0.1
     )
     host.C[0].infecting_virus.mutate(
-        0, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 0.1
+        0, subprobs, {1: 'A'}, 0.99, reference_sequence, 0.1
     )
     assert [newly_infected[i].infecting_virus.nuc_sequence for i in range(2)] == [
         "GTT",
@@ -430,31 +438,31 @@ def test_latent_active_CD4():
 
 def test_mutate_virus_in_productive_CD4():
     seed(123)
-    new_nt_order, probs = get_nucleotide_substitution_probabilities(
+    subprobs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     reference_sequence = "AAA"
     host = HostEnv([HIV(seq, reference_sequence, 1)
                    for seq in ["AAA"] * 10], 10)
     host.mutate_virus_in_productive_CD4(
-        [1], 3, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 1
+        [1], 3, subprobs, {1: 'A'}, 0.99, reference_sequence, 1
     )
     assert host.C[0].infecting_virus.nuc_sequence == "ACA"
     assert host.C[0].infecting_virus.conserved_sites_mutated == set([1])
     assert host.C[1].infecting_virus.nuc_sequence == "AAA"
     assert host.C[1].infecting_virus.conserved_sites_mutated == set()
     host.mutate_virus_in_productive_CD4(
-        [4, 9], 3, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 1
+        [4, 9], 3, subprobs, {1: 'A'}, 0.99, reference_sequence, 1
     )
     assert host.C[0].infecting_virus.nuc_sequence == "ACA"
     assert host.C[1].infecting_virus.nuc_sequence == "ACA"
     assert host.C[2].infecting_virus.nuc_sequence == "AAA"
     assert host.C[3].infecting_virus.nuc_sequence == "GAA"
     with pytest.raises(Exception):
-        host.mutate_virus_in_productive_CD4(1, 3, new_nt_order, probs, [1], 1)
+        host.mutate_virus_in_productive_CD4(1, 3, subprobs, [1], 1)
     with pytest.raises(Exception):
         host.mutate_virus_in_productive_CD4(
-            [300000], 3, new_nt_order, probs, {1: 'A'}, 1)
+            [300000], 3, subprobs, {1: 'A'}, 1)
 
 
 def test_get_next_gen_latent():
@@ -486,17 +494,17 @@ def test_get_next_gen_latent():
 def test_get_next_gen_active():
     seed(1234)
     rng = default_rng(1234)
-    new_nt_order, probs = get_nucleotide_substitution_probabilities(
+    subprobs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     reference_sequence = "AAA"
     epi = [Epitope(0, 3, 0.3)]
     host = HostEnv([HIV(seq, reference_sequence, 1) for seq in ["GGG"] * 3], 3)
     host.C[0].infecting_virus.mutate(
-        0, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 0.1
+        0, subprobs, {1: 'A'}, 0.99, reference_sequence, 0.1
     )
     host.C[1].infecting_virus.mutate(
-        0, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 0.1
+        0, subprobs, {1: 'A'}, 0.99, reference_sequence, 0.1
     )
     assert host.get_next_gen_active(
         0,
@@ -504,8 +512,7 @@ def test_get_next_gen_active():
         2,
         40,
         30,
-        new_nt_order,
-        probs,
+        subprobs,
         {1: 'A'},
         30,
         0.99,
@@ -525,8 +532,7 @@ def test_get_next_gen_active():
         10,
         40,
         30,
-        new_nt_order,
-        probs,
+        subprobs,
         {1: 'A'},
         30,
         0.99,
@@ -544,8 +550,7 @@ def test_get_next_gen_active():
         10,
         40,
         30,
-        new_nt_order,
-        probs,
+        subprobs,
         {1: 'A'},
         30,
         0.99,
@@ -560,7 +565,7 @@ def test_get_next_gen_active():
 
 def test_summarize_fitness():
     seed(1234)
-    new_nt_order, probs = get_nucleotide_substitution_probabilities(
+    subprobs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     reference_sequence = "AAA"
@@ -574,7 +579,7 @@ def test_summarize_fitness():
         "AAA",
     ]
     host.C[1].infecting_virus.mutate(
-        1, new_nt_order, probs, {1: 'A'}, 0.99, reference_sequence, 0.1
+        1, subprobs, {1: 'A'}, 0.99, reference_sequence, 0.1
     )
     assert [
         host.C[i].infecting_virus.replicative_fitness for i in range(len(host.C))
@@ -655,7 +660,7 @@ def test_sample_viral_sequences():
 
 def test_loop_through_generations():
     g = set_python_seed(12)
-    new_nt_order, probs = get_nucleotide_substitution_probabilities(
+    subprobs = get_nucleotide_substitution_probabilities(
         "../extdata/hiv_q_mat.csv", 3.5e-5
     )
     host = create_host_env({"founder0": "AAA"}, "AAA", 1, 1)
@@ -664,8 +669,7 @@ def test_loop_through_generations():
                                         [0, 1, 1],
                                         2,
                                         {"founder0": "AAA"},
-                                        new_nt_order,
-                                        probs,
+                                        subprobs,
                                         0.1,
                                         0,
                                         0.1,

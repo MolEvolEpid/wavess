@@ -57,9 +57,10 @@ def get_conserved_sites(conserved_sites_filename):
 def get_nucleotide_substitution_probabilities(q_filename, mut_rate):
     # Read nucleotide substitution probabilities
     q = read_csv(q_filename, index_col="nt_from")
-    nucleotides_order, substitution_probabilities = agents.calc_nt_sub_probs_from_q(
-        q, mut_rate)
-    return nucleotides_order, substitution_probabilities
+    # nucleotides_order, substitution_probabilities = agents.calc_nt_sub_probs_from_q(
+    #     q, mut_rate)
+    subprobs = agents.calc_nt_sub_probs_from_q(q, mut_rate)
+    return subprobs #nucleotides_order, substitution_probabilities
 
 
 # Run model
@@ -114,10 +115,9 @@ if __name__ == "__main__":
         founder_viruses["founder" + str(i)] = v
 
     # Nucleotide substitution probabilities
-    nucleotides_order, substitution_probabilities = (
-        get_nucleotide_substitution_probabilities(
-            input_files["q"], params["mut_rate"])
-    )
+    #nucleotides_order, substitution_probabilities = (
+    subprobs = get_nucleotide_substitution_probabilities(input_files["q"], params["mut_rate"])
+    #)
 
     ## Optional inputs related to selection ##
 
@@ -182,8 +182,9 @@ if __name__ == "__main__":
         n_to_samp_latent,
         last_sampled_gen,
         founder_viruses,
-        nucleotides_order,
-        substitution_probabilities,
+        subprobs,
+        #nucleotides_order,
+        #substitution_probabilities,
         # change to probabilities
         1 - exp(-params["mut_rate"]), 
         1 - exp(-params["recomb_rate"]), 
