@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 
 # Import custom classes and functions
-import agents
+import model.__init__ as agents
 
 # Functions to read in data
 
