@@ -3,7 +3,13 @@ from random import seed
 from numpy.random import default_rng
 
 from run_wavess import *
-from agents import *
+from model.prep import *
+from model.cells import *
+from model.fitness import *
+from model.host import *
+from model.seed import *
+from model.variation import *
+from model.virus import *
 
 # Functions outside of any class
 

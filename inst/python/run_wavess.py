@@ -20,7 +20,7 @@ import pandas as pd
 import os
 
 # Import custom classes and functions
-import agents
+import model.__init__ as agents
 
 # Functions to read in data
 

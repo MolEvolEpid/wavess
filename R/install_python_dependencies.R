@@ -179,7 +179,7 @@ use_python_venv <- function() {
   }
 
   reticulate::use_virtualenv(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))
-  return(reticulate::import_from_path("agents",
+  return(reticulate::import_from_path("model",
     system.file("python", package = "wavess"),
     convert = FALSE
   ))
