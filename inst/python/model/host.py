@@ -150,12 +150,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                             * config.gen_full_potency
                         )
 
-<<<<<<< HEAD
-    def update_b_immune_fitness(
-            self, epitopes, current_generation, time_to_full_potency):
-=======
-    def update_immune_fitness(self, current_generation, config):
->>>>>>> variable_recombination
+    def update_b_immune_fitness(self, current_generation, config):
         immune_strength_dict = {
             k: min((current_generation - v) / config.gen_full_potency, 1)
             for k, v in self.epitopes_recognition_generation.items()
