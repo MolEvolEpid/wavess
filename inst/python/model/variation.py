@@ -11,21 +11,21 @@ def get_substitution(old_nucleotide, subprob):
     return choices(subprob.order, subprob.probs[idx])[0]
 
 
-def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, seed):
+def get_recomb_breakpoints(num_cells, config):
     # Get random number generator
-    rng = default_rng(seed)
+    rng = default_rng(config.generator)
     # Number of potential breakpoints
-    n_potential_bps = int(seq_len * num_cells - num_cells)
+    n_potential_bps = int(config.seq_len * num_cells - num_cells)
     # Number of cross-over events
-    n_recomb = int(rng.binomial(n_potential_bps, prob_recomb))
+    n_recomb = int(rng.binomial(n_potential_bps, config.prob_recomb))
     # Indices for cross-over events
     indices = sample(range(n_potential_bps), n_recomb)
     # Actual indices of cross-over events (have to skip numbers between cells)
-    corrected_indices = [x + x // (seq_len - 1) + 1 for x in indices]
+    corrected_indices = [x + x // (config.seq_len - 1) + 1 for x in indices]
     # Cell in which cross-over event occurred
-    recomb_cells = [x // seq_len for x in corrected_indices]
+    recomb_cells = [x // config.seq_len for x in corrected_indices]
     # Recombination breakpoint in cell
-    breakpoints = [x % seq_len for x in corrected_indices]
+    breakpoints = [x % config.seq_len for x in corrected_indices]
     # Total number of dually infected cells in which recombination occurred
     num_cells_recomb = len(set(recomb_cells))
     # Cross-over positions for each cell

@@ -213,19 +213,24 @@ run_wavess <- function(inf_pop_size,
     })
   }
 
-  # Set seed
-  generator <- agents$set_python_seed(seed)
-
-  # Create host environment and initialize infected cells
-  host <- agents$create_host_env(
-    founder_seqs,
-    ref_seq, replicative_cost,
-    as.integer(pop_samp$active_cell_count[1])
-  )
   # Last sampled generation (don't have to continue simulation after this)
   last_sampled_gen <- max(
     pop_samp$generation[pop_samp$n_sample_active != 0],
     pop_samp$generation[pop_samp$n_sample_latent != 0]
+  )
+
+  config <- agents$Config(last_sampled_gen, founder_seqs,
+                          subprobs, prob_mut, prob_recomb,
+                          prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
+                          conserved_sites, conserved_cost,
+                          ref_seq, replicative_cost,
+                          epitope_locations, gen_immune_start, n_for_imm, gen_full_potency,
+                          seed)
+
+  # Create host environment and initialize infected cells
+  host <- agents$create_host_env(
+    config,
+    as.integer(pop_samp$active_cell_count[1])
   )
 
   # Simulate within-host evolution
@@ -233,15 +238,7 @@ run_wavess <- function(inf_pop_size,
     pop_samp$active_cell_count,
     pop_samp$n_sample_active,
     pop_samp$n_sample_latent,
-    last_sampled_gen,
-    founder_seqs,
-    #nucleotides_order, substitution_probabilities,
-    subprobs, prob_mut, prob_recomb,
-    prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
-    conserved_sites, conserved_cost, ref_seq, replicative_cost,
-    epitope_locations, gen_immune_start, n_for_imm, gen_full_potency,
-    generator
-  ))
+    config))
 
   # Fix up output
   names(out) <- c("counts", "fitness", "seqs_active", "seqs_latent")

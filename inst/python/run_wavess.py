@@ -81,7 +81,6 @@ if __name__ == "__main__":
     s = None
     if len(argv) == 4:
         s = argv[3]
-    generator = agents.set_python_seed(s)
 
     # Read in config file
     config = safe_load(open(argv[1]))
@@ -116,7 +115,7 @@ if __name__ == "__main__":
 
     # Nucleotide substitution probabilities
     #nucleotides_order, substitution_probabilities = (
-    subprobs = get_nucleotide_substitution_probabilities(input_files["q"], params["mut_rate"])
+    substitution_probabilities = get_nucleotide_substitution_probabilities(input_files["q"], params["mut_rate"])
     #)
 
     ## Optional inputs related to selection ##
@@ -149,14 +148,6 @@ if __name__ == "__main__":
     if float(params["replicative_cost"]) < 0 or float(params["replicative_cost"]) >= 1:
       raise ValueError("replicative fitness cost must be in the range [0,1)")
 
-    # Create host environment and add to viral sequences counter
-    host = agents.create_host_env(
-        founder_viruses,
-        reference_sequence,
-        float(params["replicative_cost"]),
-        int(pop_samp.loc[0]["active_cell_count"]),
-    )
-
     # Active cell counts for each generation
     active_cell_count = pop_samp["active_cell_count"]
     # Number of cells to sample for each generation
@@ -174,33 +165,28 @@ if __name__ == "__main__":
     if last_sampled_gen_active == 0 and last_sampled_gen_latent == 0:
         raise ValueError("at least one sequence must be sampled from the active or latent reservoir")
     last_sampled_gen = max(last_sampled_gen_active, last_sampled_gen_latent)
+    
+    model_config = agents.Config(last_sampled_gen, founder_viruses, substitution_probabilities,
+                                 1 - exp(-params["mut_rate"]), 1 - exp(-params["recomb_rate"]),
+                                 1 - exp(-params["act_to_lat"]/params["generation_time"]),
+                                 1 - exp(-params["lat_to_act"]/params["generation_time"]),
+                                 1 - exp(-params["lat_die"]/params["generation_time"]),
+                                 1 - exp(-params["lat_prolif"]/params["generation_time"]),
+                                 conserved_sites, params["conserved_cost"],
+                                 reference_sequence, float(params["replicative_cost"]),
+                                 epitope_locations, params["immune_start_day"]/params["generation_time"],
+                                 params["n_for_imm"], params["time_to_full_potency"]/params["generation_time"],
+                                 s)
+                                 
+    # Create host environment and add to viral sequences counter
+    host = agents.create_host_env(model_config, int(pop_samp.loc[0]["active_cell_count"]))
 
     # Loop through generations
     counts, fitness, seqs_active, seqs_latent = host.loop_through_generations(
         active_cell_count,
         n_to_samp_active,
         n_to_samp_latent,
-        last_sampled_gen,
-        founder_viruses,
-        subprobs,
-        #nucleotides_order,
-        #substitution_probabilities,
-        # change to probabilities
-        1 - exp(-params["mut_rate"]), 
-        1 - exp(-params["recomb_rate"]), 
-        1 - exp(-params["act_to_lat"]/params["generation_time"]),
-        1 - exp(-params["lat_to_act"]/params["generation_time"]),
-        1 - exp(-params["lat_die"]/params["generation_time"]),
-        1 - exp(-params["lat_prolif"]/params["generation_time"]),
-        conserved_sites,
-        params["conserved_cost"],
-        reference_sequence,
-        float(params["replicative_cost"]),
-        epitope_locations,
-        params["immune_start_day"]/params["generation_time"],
-        params["n_for_imm"],
-        params["time_to_full_potency"]/params["generation_time"],
-        generator
+        model_config
     )
 
     # Make directories if they don't exist
