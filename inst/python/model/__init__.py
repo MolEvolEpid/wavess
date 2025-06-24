@@ -5,3 +5,4 @@ from model.fitness import calc_seq_fitness, normalize
 from model.virus import HIV
 from model.cells import InfectedCD4
 from model.host import HostEnv
+from model.config import Config

@@ -4,15 +4,15 @@ from random import choices
 from collections import defaultdict
 import numpy as np
 
-def get_substitution(old_nucleotide, new_nucleotides_order, probabilities):
+def get_substitution(old_nucleotide, subprob):
     try:
-        idx = new_nucleotides_order.index(old_nucleotide)
+        idx = subprob.order.index(old_nucleotide)
     except ValueError:
         raise Exception(f"Unknown nucleotide {old_nucleotide}")
-    return choices(new_nucleotides_order, probabilities[idx])[0]
+    return choices(subprob.order, subprob.probs[idx])[0]
 
 
-def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, is_sparse, base_prob, seed):
+def get_recomb_breakpoints(num_cells, config):
     """
     Efficient recombination breakpoint sampling that automatically chooses the fastest method.
 
@@ -33,13 +33,13 @@ def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, is_sparse, base_prob
         cell_breakpoints (list): List of breakpoint lists for each cell.
     """
     # Get random number generator
-    rng = default_rng(seed)
+    rng = default_rng(config.generator)
 
-    if is_sparse: # --- Sparse-optimized method ---
+    if config.recrate_is_sparse: # --- Sparse-optimized method ---
         # Bulk positions
-        bulk_positions = np.where(prob_recomb == base_prob)[0]
+        bulk_positions = np.where(config.prob_recomb == config.base_prob)[0]
         n_bulk = int(len(bulk_positions) * num_cells)
-        n_recomb_bulk = rng.binomial(n_bulk, base_prob)
+        n_recomb_bulk = rng.binomial(n_bulk, config.base_prob)
         if n_recomb_bulk > 0:
             flat_bulk_indices = rng.choice(n_bulk, n_recomb_bulk, replace=False)
             bulk_breakpoints = bulk_positions[flat_bulk_indices % len(bulk_positions)]
@@ -49,11 +49,11 @@ def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, is_sparse, base_prob
             bulk_cells = np.array([], dtype=int)
 
         # Special positions
-        special_idx = np.where(prob_recomb != base_prob)[0]
+        special_idx = np.where(config.prob_recomb != config.base_prob)[0]
         special_breakpoints = []
         special_cells = []
         for idx in special_idx:
-            events = rng.random(num_cells) < prob_recomb[idx]
+            events = rng.random(num_cells) < config.prob_recomb[idx]
             cells = np.flatnonzero(events)
             special_breakpoints.extend([idx] * len(cells))
             special_cells.extend(cells)
@@ -70,12 +70,12 @@ def get_recomb_breakpoints(seq_len, num_cells, prob_recomb, is_sparse, base_prob
 
     else:
         # --- Fully vectorized method ---
-        per_bp_probs = np.tile(prob_recomb, num_cells)
+        per_bp_probs = np.tile(config.prob_recomb, num_cells)
         events = rng.random(per_bp_probs.size) < per_bp_probs
         flat_indices = np.flatnonzero(events)
-        corrected_indices = flat_indices + flat_indices // (seq_len - 1) + 1
-        recomb_cells = corrected_indices // seq_len
-        breakpoints = corrected_indices % seq_len
+        corrected_indices = flat_indices + flat_indices // (config.seq_len - 1) + 1
+        recomb_cells = corrected_indices // config.seq_len
+        breakpoints = corrected_indices % config.seq_len
         num_cells_recomb = len(set(recomb_cells))
 
     # Cross-over positions for each cell
