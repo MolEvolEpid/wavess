@@ -223,13 +223,15 @@ run_wavess <- function(inf_pop_size,
     pop_samp$generation[pop_samp$n_sample_latent != 0]
   )
 
-  config <- agents$Config(last_sampled_gen, founder_seqs,
-                          subprobs, prob_mut, prob_recomb,
-                          prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
-                          conserved_sites, conserved_cost,
-                          ref_seq, replicative_cost,
-                          epitope_locations, gen_immune_start, n_for_imm, gen_full_potency,
-                          seed)
+  config <- agents$Config(
+    last_sampled_gen, founder_seqs,
+    subprobs, prob_mut, prob_recomb,
+    prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
+    conserved_sites, conserved_cost,
+    ref_seq, replicative_cost,
+    epitope_locations, gen_immune_start, n_for_imm, gen_full_potency,
+    seed
+  )
 
   # Create host environment and initialize infected cells
   host <- agents$create_host_env(
@@ -242,7 +244,8 @@ run_wavess <- function(inf_pop_size,
     pop_samp$active_cell_count,
     pop_samp$n_sample_active,
     pop_samp$n_sample_latent,
-    config))
+    config
+  ))
 
   # Fix up output
   names(out) <- c("counts", "fitness", "seqs_active", "seqs_latent")
