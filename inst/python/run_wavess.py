@@ -34,10 +34,27 @@ def read_b_epitopes(filename):
     for row in epitopes_df.itertuples():
         if float(row[3]) < 0 or float(row[3]) >= 1:
             raise ValueError("maximum immune fitness cost must be in the range [0,1)")
-        epitopes.append(agents.Epitope(
+        epitopes.append(agents.BEpitope(
             int(row[1]), int(row[2]), float(row[3])))
     return epitopes
 
+# epitope, start, escape position, recognized_aa
+def read_t_epitopes(filename):
+    epitopes_df = read_csv(filename)
+    starts = []
+    positions = []
+    aas = []
+    for row in epitopes_df.itertuples():
+        #if float(row[3]) < 0 or float(row[3]) >= 1:
+        #    raise ValueError("maximum immune fitness cost must be in the range [0,1)")
+        starts.append(int(row[1]))
+        positions.append(int(row[2]))
+        aas.append(row[3])
+    epitopes = []
+    for start in set(starts):
+        epitopes.append(agents.TEpitope(
+            start, np.array(positions)[np.array(starts) == start], np.array(aas)[np.array(starts) == start]))
+    return epitopes
 
 def get_sequences(filename):
     founder_virus_sequences = [
@@ -151,9 +168,13 @@ if __name__ == "__main__":
                 founder_viruses, reference_sequence, conserved_sites)
 
     # Epitope start positions and max fitness cost.
-    epitope_locations = None
-    if input_files["epitope_locations"] != "":
-        epitope_locations = read_b_epitopes(input_files["epitope_locations"])
+    b_epitope_locations = None
+    if input_files["b_epitope_locations"] != "":
+        b_epitope_locations = read_b_epitopes(input_files["b_epitope_locations"])
+        
+    t_epitope_locations = None
+    if input_files["t_epitope_locations"] != "":
+        t_epitope_locations = read_t_epitopes(input_files["t_epitope_locations"])
 
     # Initialize parameters
     
@@ -201,8 +222,9 @@ if __name__ == "__main__":
                                  1 - exp(-params["lat_prolif"]/params["generation_time"]),
                                  conserved_sites, params["conserved_cost"],
                                  reference_sequence, float(params["replicative_cost"]),
-                                 epitope_locations, params["immune_start_day"]/params["generation_time"],
-                                 params["n_for_imm"], params["time_to_full_potency"]/params["generation_time"],
+                                 b_epitope_locations, params["b_immune_start_day"]/params["generation_time"],
+                                 params["b_n_for_imm"], params["b_time_to_full_potency"]/params["generation_time"],
+                                 t_epitope_locations, params["t_max_immune_cost"], params["t_time_to_full_potency"]/params["generation_time"],
                                  s)
                                  
     # Create host environment and add to viral sequences counter
@@ -230,7 +252,8 @@ if __name__ == "__main__":
         "number_recombinations",
         "mean_fitness_active",
         "mean_conserved_active",
-        "mean_immune_active",
+        "mean_b_immune_active",
+        "mean_t_immune_active",
         "mean_replicative_active",
     ]
     with open(argv[2] + "counts.csv", "w") as outfile:
@@ -242,7 +265,8 @@ if __name__ == "__main__":
     keys = [
         "generation",
         "seq_id",
-        "immune",
+        "b_immune",
+        "t_immune",
         "conserved",
         "replicative",
         "overall",

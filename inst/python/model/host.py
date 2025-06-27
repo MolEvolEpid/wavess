@@ -40,53 +40,14 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             self.epitopes_recognition_generation
         )
         return return_str
+      
 
-    # Translate nucleotide sequence to amino acid sequence
-    # Nucleotide sequence length must be a multiple of 3
-    # Modified from https://www.geeksforgeeks.org/dna-protein-python-3/
-    def translate(self, seq_to_translate):
-        table = {
-            "ATA": "I", "ATC": "I", "ATT": "I",
-            "ATG": "M",
-            "ACA": "T", "ACC": "T", "ACG": "T", "ACT": "T",
-            "AAC": "N", "AAT": "N",
-            "AAA": "K", "AAG": "K",
-            "AGC": "S", "AGT": "S",
-            "AGA": "R", "AGG": "R",
-            "CTA": "L", "CTC": "L", "CTG": "L", "CTT": "L",
-            "CCA": "P", "CCC": "P", "CCG": "P", "CCT": "P",
-            "CAC": "H", "CAT": "H",
-            "CAA": "Q", "CAG": "Q",
-            "CGA": "R", "CGC": "R", "CGG": "R", "CGT": "R",
-            "GTA": "V", "GTC": "V", "GTG": "V", "GTT": "V",
-            "GCA": "A", "GCC": "A", "GCG": "A", "GCT": "A",
-            "GAC": "D", "GAT": "D",
-            "GAA": "E", "GAG": "E",
-            "GGA": "G", "GGC": "G", "GGG": "G", "GGT": "G",
-            "TCA": "S", "TCC": "S", "TCG": "S", "TCT": "S",
-            "TTC": "F", "TTT": "F",
-            "TTA": "L", "TTG": "L",
-            "TAC": "Y", "TAT": "Y",
-            "TAA": "_", "TAG": "_",
-            "TGC": "C", "TGT": "C",
-            "TGA": "_",
-            "TGG": "W",
-        }
-        assert (
-            len(seq_to_translate) % 3 == 0
-        ), "The nucleotide sequence length is not a multiple of 3"
-        protein = ""
-        for i in range(0, len(seq_to_translate), 3):
-            codon = seq_to_translate[i: i + 3]
-            protein += table[codon]
-        return protein
-
-    def update_epitopes_recognized(self, current_generation, config):
+    def update_b_epitopes_recognized(self, current_generation, config):
         # Get random number generator
         rng = default_rng(config.generator)
         # Immune strengths
         immune_strength_dict = {
-            k: min((current_generation - v) / config.gen_full_potency, 1)
+            k: min((current_generation - v) / config.b_gen_full_potency, 1)
             for k, v in self.epitopes_recognition_generation.items()
         }
         # Number of active infected cells
@@ -98,7 +59,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # Track frequency of epitope sequence variants in sample
         epitope_variants = defaultdict(lambda: 0)
         for seq, freq in seqs.items():
-            for epi in config.epitope_locations:
+            for epi in config.b_epitope_locations:
                 epitope_variants[seq[epi.start: epi.end]] += freq
 
         # Translate epitopes, get frequencies, and store translations
@@ -106,7 +67,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         for variant, frequency in epitope_variants.items():
             # Translate and add to dictionary if new variant
             if variant not in self.epitope_variants_translated:
-                self.epitope_variants_translated[variant] = self.translate(
+                self.epitope_variants_translated[variant] = translate(
                     variant)
             # Add variant frequency to dictionary
             aa_epitope_variants[self.epitope_variants_translated[variant]] += frequency
@@ -135,7 +96,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                     
         # Mark frequent epitopes as recognized
         for variant, frequency in aa_epitope_variants.items():
-            if frequency >= config.n_for_imm:  # common enough to be recognized
+            if frequency >= config.b_n_for_imm:  # common enough to be recognized
                 if (
                     variant not in self.epitopes_recognition_generation
                 ):  # if first time epitope is being recognized
@@ -147,18 +108,18 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                         self.epitopes_recognition_generation[variant] = int(
                             current_generation
                             - self.cross_reactive_epitope_cost_frac[variant]
-                            * config.gen_full_potency
+                            * config.b_gen_full_potency
                         )
 
     def update_b_immune_fitness(self, current_generation, config):
         immune_strength_dict = {
-            k: min((current_generation - v) / config.gen_full_potency, 1)
+            k: min((current_generation - v) / config.b_gen_full_potency, 1)
             for k, v in self.epitopes_recognition_generation.items()
         }
         for CD4_index in range(len(self.C)):
             # Fitness cost due to immune response
             max_epitope_fitness_cost = 0  # by default the virus is super fit
-            for epi in config.epitope_locations:
+            for epi in config.b_epitope_locations:
                 # get translated epitope
                 epitope_sequence = self.epitope_variants_translated[
                     self.C[CD4_index].infecting_virus.nuc_sequence[epi.start: epi.end]
@@ -182,11 +143,13 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             self.C[CD4_index].infecting_virus.b_immune_fitness = 1 - \
                 max_epitope_fitness_cost
 
+    
     def get_fitness_of_infecting_virus(self, CD4_index):
-
+        
         # Compute overall fitness
         viral_fitness = (
             self.C[CD4_index].infecting_virus.b_immune_fitness
+            * self.C[CD4_index].infecting_virus.t_immune_fitness
             * self.C[CD4_index].infecting_virus.conserved_fitness
             * self.C[CD4_index].infecting_virus.replicative_fitness
         )
@@ -286,6 +249,11 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                         config.conserved_cost
                     )
                 )
+                
+            # Update t-cell epitope recognition
+            # if mutation is at a t-cell epitope recognition location, check to see if virus is still recognized
+            if len(config.t_epitope_locations): 
+                newly_infected[n_added].infecting_virus.determine_t_recognition(config)
 
             # Update replicative fitness for recombined virus
             if len(config.ref_seq):
@@ -403,13 +371,29 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             positions_to_mutate = []
         self.mutate_virus_in_productive_CD4(positions_to_mutate, config)
 
-        if config.epitope_locations is not None:
+        if config.b_epitope_locations is not None:
             # Update immune response
-            if gen >= config.seroconversion_time:
+            if gen >= config.b_seroconversion_time:
                 # Epitope recognition
-                self.update_epitopes_recognized(gen, config)
+                self.update_b_epitopes_recognized(gen, config)
                 # Virus immune fitness
                 self.update_b_immune_fitness(gen, config)
+
+        if config.t_epitope_locations is not None:
+            for CD4_index in range(len(self.C)):
+                #if not self.C[CD4_index].infecting_virus.recognized_by_t:
+                    #self.C[CD4_index].infecting_virus.t_immune_fitness = 1  
+                #else:
+                    if gen >= config.t_gen_full_potency:
+                        self.C[CD4_index].infecting_virus.t_immune_fitness = (1 - config.t_max_imm) ** self.C[CD4_index].infecting_virus.recognized_by_t
+                    else: 
+                        self.C[CD4_index].infecting_virus.t_immune_fitness = (1 - config.t_max_imm * gen / config.t_gen_full_potency) ** self.C[CD4_index].infecting_virus.recognized_by_t
+  
+        # WHY IS IT NOT EXACTLY 2000? BECAUSE OF LATENT CELLS?
+        # NOT HAPPENING FAST ENOUGH. MIGHT NEED TO HAVE MORE GROWTH AT BEGINNING?
+        # AND THEN COST CAN MODULATE HOW QUICKLY IT TAKES OVER?
+        print(gen)
+        print(Counter([self.C[CD4_index].infecting_virus.recognized_by_t for CD4_index in range(len(self.C))]))
 
         # Compute fitness
         fitness = self.get_fitness()
@@ -452,6 +436,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             sum([x.infecting_virus.fitness for x in self.C]) / n_active,
             sum([x.infecting_virus.conserved_fitness for x in self.C]) / n_active,
             sum([x.infecting_virus.b_immune_fitness for x in self.C]) / n_active,
+            sum([x.infecting_virus.t_immune_fitness for x in self.C]) / n_active,
             sum([x.infecting_virus.replicative_fitness for x in self.C])
             / n_active,
         )
@@ -473,8 +458,9 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # mean_immune_active, mean_replicative_active
         counts["mean_fitness_active"].append(fitness[0]),
         counts["mean_conserved_active"].append(fitness[1]),
-        counts["mean_immune_active"].append(fitness[2]),
-        counts["mean_replicative_active"].append(fitness[3])
+        counts["mean_b_immune_active"].append(fitness[2]),
+        counts["mean_t_immune_active"].append(fitness[3]),
+        counts["mean_replicative_active"].append(fitness[4])
         return counts
 
     def sample_viral_sequences(self, seqs, fitness, generation, n_to_samp, cell_type = 'active'):
@@ -492,7 +478,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             if cell_type == 'active':
                 fitness["generation"].append(str(generation))
                 fitness["seq_id"].append(name)
-                fitness["immune"].append(float(CD4.infecting_virus.b_immune_fitness))
+                fitness["b_immune"].append(float(CD4.infecting_virus.b_immune_fitness))
+                fitness["t_immune"].append(float(CD4.infecting_virus.t_immune_fitness))
                 fitness["conserved"].append(
                     float(CD4.infecting_virus.conserved_fitness))
                 fitness["replicative"].append(
@@ -515,14 +502,16 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             "number_recombinations": [],
             "mean_fitness_active": [],
             "mean_conserved_active": [],
-            "mean_immune_active": [],
+            "mean_b_immune_active": [],
+            "mean_t_immune_active": [],
             "mean_replicative_active": [],
         }
 
         fitness = {
             "generation": [],
             "seq_id": [],
-            "immune": [],
+            "b_immune": [],
+            "t_immune": [],
             "conserved": [],
             "replicative": [],
             "overall": []
@@ -533,7 +522,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         for fname, fseq in seqs_active.items():
             fitness["generation"].append('founder')
             fitness["seq_id"].append(fname)
-            fitness["immune"].append(float(1))
+            fitness["b_immune"].append(float(1))
+            fitness["t_immune"].append(float(1)) # UPDATE!!!
             fitness["conserved"].append(float(1))
             if len(config.ref_seq):
                 repfit = calc_seq_fitness(muts_rel_ref(
@@ -551,7 +541,8 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             latent_nums = [0, 0, 0, 0]
             # n_mut, number_recombinations
             var_nums = [0, 0]
-            # mean_fitness_active, mean_conserved_active, mean_immune_active,
+            # mean_fitness_active, mean_conserved_active, 
+            # mean_b_immune_active, mean_t_immune_active
             # mean_replicative_active
             mean_fitness = self.summarize_fitness()
             counts = self.record_counts(

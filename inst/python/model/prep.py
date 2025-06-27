@@ -50,10 +50,10 @@ def create_host_env(config, initial_cell_count):
     return HostEnv(founder_viruses, initial_cell_count)
 
 
-def create_epitope(start, end, max_fc):
-    return Epitope(int(start), int(end), float(max_fc))
+def create_b_epitope(start, end, max_fc):
+    return BEpitope(int(start), int(end), float(max_fc))
   
-class Epitope:
+class BEpitope:
     def __init__(self, start, end, max_fitness):
         self.start = start
         self.end = end
@@ -62,4 +62,13 @@ class Epitope:
     def __repr__(self):
         return "(%s to %s, maxfit: %s)" % (
             self.start, self.end, self.max_fitness)
+            
+class TEpitope:
+    def __init__(self, start, escape_positions, recognized_aa):
+        self.start = start
+        self.end = start + max(escape_positions)*3
+        self.escape_positions = dict(zip(escape_positions, recognized_aa))
+        
+    def __repr__(self):
+        return "(start: %s, escape positions: %s)" % (self.start, self.escape_positions)
 

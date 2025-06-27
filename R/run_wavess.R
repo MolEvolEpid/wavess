@@ -213,7 +213,7 @@ run_wavess <- function(inf_pop_size,
   }
   if (!is.null(epitope_locations)) {
     epitope_locations <- apply(epitope_locations, 1, function(x) {
-      agents$create_epitope(x[1], x[2], x[3])
+      agents$create_b_epitope(x[1], x[2], x[3])
     })
   }
 

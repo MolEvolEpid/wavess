@@ -10,7 +10,8 @@ class Config:
         substitution_probabilities, prob_mut, prob_recomb,
         prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
         conserved_sites, conserved_cost, ref_seq, replicative_cost,
-        epitope_locations, seroconversion_time, n_for_imm, gen_full_potency,
+        b_epitope_locations, seroconversion_time, n_for_imm, b_gen_full_potency,
+        t_epitope_locations, t_max_imm, t_gen_full_potency,
         seed
     ):
         self.last_sampled_gen = last_sampled_gen
@@ -60,9 +61,24 @@ class Config:
         self.ref_seq = ref_seq
         self.replicative_cost = replicative_cost
         
-        self.epitope_locations = epitope_locations
-        self.seroconversion_time = seroconversion_time
-        self.n_for_imm = n_for_imm
-        self.gen_full_potency = gen_full_potency
+        self.b_epitope_locations = b_epitope_locations
+        self.b_seroconversion_time = seroconversion_time
+        self.b_n_for_imm = n_for_imm
+        self.b_gen_full_potency = b_gen_full_potency
+        
+        self.t_epitope_locations = t_epitope_locations
+        self.t_max_imm = t_max_imm
+        self.t_gen_full_potency = t_gen_full_potency
+        
+        t_epitope_mask = np.full(self.seq_len, -1, dtype=int)
+        recognition_motifs = []
+        epi_num = 0
+        for epi in self.t_epitope_locations:
+            for position in epi.escape_positions:
+                t_epitope_mask[(epi.start + (position-1)*3):(epi.start + (position-1)*3+3)] = epi_num
+            recognition_motifs.append(''.join([epi.escape_positions[pos] if pos in epi.escape_positions else 'N' for pos in range(1, max(epi.escape_positions.keys())+1)]))
+            epi_num += 1
+        self.t_epitope_mask = t_epitope_mask
+        self.t_recognition_motifs = recognition_motifs
 
         self.generator = set_python_seed(seed)
