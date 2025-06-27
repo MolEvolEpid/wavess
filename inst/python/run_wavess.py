@@ -64,18 +64,18 @@ def get_nucleotide_substitution_probabilities(q_filename, mut_rate):
     return subprobs #nucleotides_order, substitution_probabilities
 
 
-def load_recombination_rate(recomb_rate, seq_len):
-    if isinstance(recomb_rate, (float, int)):
-        return recomb_rate
-    elif isinstance(recomb_rate, str):
-        if not os.path.isfile(recomb_rate):
-            raise FileNotFoundError(f"Recombination rate file not found: {recomb_rate}")
-        arr = np.loadtxt(recomb_rate)
-        if arr.shape[0] != seq_len - 1:
-            raise ValueError(f"Expected {seq_len-1} rates in {recomb_rate}, found {arr.shape[0]}")
-        return arr
+def var_rate_to_prob(var_rate, expected_len):
+    if isinstance(var_rate, (float, int)):
+        return 1 - exp(-var_rate), var_rate
+    elif isinstance(var_rate, str):
+        if not os.path.isfile(var_rate):
+            raise FileNotFoundError(f"File not found: {var_rate}")
+        arr = np.loadtxt(var_rate)
+        if arr.shape[0] != expected_len:
+            raise ValueError(f"Expected {expected_len} rates in {var_rate}, found {arr.shape[0]}")
+        return 1 - np.exp(-arr), np.mean(arr)
     else:
-        raise TypeError("recomb_rate must be a float, int, or a filepath string")
+        raise TypeError("Recombination and mutation rates must be a float, int, or a filepath string")
       
       
 # Run model
@@ -128,11 +128,6 @@ if __name__ == "__main__":
     for i, v in enumerate(founder_virus_sequences):
         founder_viruses["founder" + str(i)] = v
 
-    # Nucleotide substitution probabilities
-    #nucleotides_order, substitution_probabilities = (
-    substitution_probabilities = get_nucleotide_substitution_probabilities(input_files["q"], params["mut_rate"])
-    #)
-
     ## Optional inputs related to selection ##
 
     # Conserved sites
@@ -163,17 +158,13 @@ if __name__ == "__main__":
     if float(params["replicative_cost"]) < 0 or float(params["replicative_cost"]) >= 1:
       raise ValueError("replicative fitness cost must be in the range [0,1)")
 
-    # Prepare recombination rate (variable or constant)
+    # Prepare mutation and recombination rates (variable or constant)
     seq_len = len(reference_sequence)
-    prob_recomb = load_recombination_rate(params["recomb_rate"], seq_len)
-    if isinstance(prob_recomb, (list, np.ndarray)):
-        # User provided an array for variable recombination rate
-        prob_recombination = np.asarray(prob_recomb) #1 - exp(-params["recomb_rate"])
-        if prob_recombination.shape[0] != seq_len - 1:
-            raise ValueError("Variable recombination rate must have length seq_len-1")
-    else:
-        # Use constant rate
-        prob_recombination = 1 - exp(-prob_recomb) 
+    prob_mut, mean_mut_rate = var_rate_to_prob(params["mut_rate"], seq_len)
+    prob_recomb, mean_recomb_rate = var_rate_to_prob(params["recomb_rate"], seq_len-1)
+    # Nucleotide substitution probabilities
+    substitution_probabilities = get_nucleotide_substitution_probabilities(input_files["q"], mean_mut_rate)
+
 
     # Active cell counts for each generation
     active_cell_count = pop_samp["active_cell_count"]
@@ -193,8 +184,15 @@ if __name__ == "__main__":
         raise ValueError("at least one sequence must be sampled from the active or latent reservoir")
     last_sampled_gen = max(last_sampled_gen_active, last_sampled_gen_latent)
     
+    mut_rate_scalar = params["mut_rate_scalar"]
+    if mut_rate_scalar != "":
+        mut_rate_scalar = np.loadtxt(mut_rate_scalar)
+        assert mut_rate_scalar.shape[0] >= last_sampled_gen, "Expected mut_rate_scalar to have same length as number of generations"
+    else:
+        mut_rate_scalar = None
+
     model_config = agents.Config(last_sampled_gen, founder_viruses, substitution_probabilities,
-                                 1 - exp(-params["mut_rate"]), prob_recombination, #1 - exp(-params["recomb_rate"]),
+                                 prob_mut, mut_rate_scalar, prob_recomb,
                                  1 - exp(-params["act_to_lat"]/params["generation_time"]),
                                  1 - exp(-params["lat_to_act"]/params["generation_time"]),
                                  1 - exp(-params["lat_die"]/params["generation_time"]),

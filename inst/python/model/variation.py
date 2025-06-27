@@ -4,29 +4,28 @@ from random import choices
 from collections import defaultdict
 import numpy as np
 
+
 def get_substitution(old_nucleotide, subprob):
     try:
         idx = subprob.order.index(old_nucleotide)
     except ValueError:
         raise Exception(f"Unknown nucleotide {old_nucleotide}")
     return choices(subprob.order, subprob.probs[idx])[0]
+  
 
-
-def get_recomb_breakpoints(num_cells, config):
+def get_var_positions(num_cells, var_type, config, gen = None):
     """
-    Efficient recombination breakpoint sampling that automatically chooses the fastest method.
+    Efficient mutation position and recombination breakpoint sampling that automatically chooses the fastest method.
 
-    If prob_recomb is:
+    If prob is:
       - a scalar: uses constant-rate binomial sampling.
       - an array where most entries are identical: uses a sparse-optimized method for the rare positions.
       - otherwise, uses a fully vectorized method.
 
     Args:
-        seq_len (int): Length of the genome sequence.
         num_cells (int): Number of cells.
-        prob_recomb (float or array-like): Recombination probability per potential breakpoint.
-        seed (int): Seed for random number generation.
-        sparse_threshold (float): Fraction of non-base-rate entries below which to use the sparse method.
+        var_type: mutation or recombination
+        config: config
 
     Returns:
         num_cells_recomb (int): Number of dually infected cells in which recombination occurred.
@@ -34,55 +33,73 @@ def get_recomb_breakpoints(num_cells, config):
     """
     # Get random number generator
     rng = default_rng(config.generator)
+    
+    assert var_type in ['mutation', 'recombination']
+    
+    if var_type == 'mutation':
+        prob = config.prob_mut
+        base_prob = config.base_prob_mut 
+        is_sparse = config.mutrate_is_sparse 
+        if config.mut_rate_scalar is not None:
+            prob = prob * config.mut_rate_scalar[gen]
+            base_prob = base_prob * config.mut_rate_scalar[gen]
+    else: #if var_type == 'recombination':
+        prob = config.prob_recomb
+        base_prob = config.base_prob_recomb
+        is_sparse = config.recrate_is_sparse 
 
-    if config.recrate_is_sparse: # --- Sparse-optimized method ---
+    if is_sparse: # --- Sparse-optimized method ---
         # Bulk positions
-        bulk_positions = np.where(config.prob_recomb == config.base_prob)[0]
+        bulk_positions = np.where(prob == base_prob)[0]
         n_bulk = int(len(bulk_positions) * num_cells)
-        n_recomb_bulk = rng.binomial(n_bulk, config.base_prob)
-        if n_recomb_bulk > 0:
-            flat_bulk_indices = rng.choice(n_bulk, n_recomb_bulk, replace=False)
-            bulk_breakpoints = bulk_positions[flat_bulk_indices % len(bulk_positions)]
-            bulk_cells = flat_bulk_indices // len(bulk_positions)
-        else:
-            bulk_breakpoints = np.array([], dtype=int)
-            bulk_cells = np.array([], dtype=int)
+        n_var_bulk = rng.binomial(n_bulk, base_prob)
+        flat_bulk_indices = rng.choice(n_bulk, n_var_bulk, replace=False)
+        bulk_var_positions = bulk_positions[flat_bulk_indices % len(bulk_positions)]
+        bulk_cells = flat_bulk_indices // len(bulk_positions)
 
         # Special positions
-        special_idx = np.where(config.prob_recomb != config.base_prob)[0]
-        special_breakpoints = []
+        special_idx = np.where(prob != base_prob)[0]
+        special_positions = []
         special_cells = []
         for idx in special_idx:
-            events = rng.random(num_cells) < config.prob_recomb[idx]
+            events = rng.random(num_cells) < prob[idx]
             cells = np.flatnonzero(events)
-            special_breakpoints.extend([idx] * len(cells))
+            special_positions.extend([idx] * len(cells))
             special_cells.extend(cells)
-        special_breakpoints = np.array(special_breakpoints, dtype=int)
+        special_positions = np.array(special_positions, dtype=int)
         special_cells = np.array(special_cells, dtype=int)
 
         # Combine
-        # need to add 1 because want breakpoint to be after base
-        breakpoints = np.concatenate([bulk_breakpoints, special_breakpoints]) + 1
-        recomb_cells = np.concatenate([bulk_cells, special_cells])
+        positions = np.concatenate([bulk_var_positions, special_positions]) 
+        # need to add 1 for recombinations because want breakpoint to be after base
+        if var_type == 'recombination':
+            positions += 1
+        cells = np.concatenate([bulk_cells, special_cells])
 
         # Convert to flat indices for downstream calculation
-        num_cells_recomb = len(set(recomb_cells))
+        num_cells_var = len(set(cells))
 
     else:
         # --- Fully vectorized method ---
-        per_bp_probs = np.tile(config.prob_recomb, num_cells)
+        per_bp_probs = np.tile(prob, num_cells)
         events = rng.random(per_bp_probs.size) < per_bp_probs
         flat_indices = np.flatnonzero(events)
-        corrected_indices = flat_indices + flat_indices // (config.seq_len - 1) + 1
-        recomb_cells = corrected_indices // config.seq_len
-        breakpoints = corrected_indices % config.seq_len
-        num_cells_recomb = len(set(recomb_cells))
+        if var_type == 'recombination':
+            corrected_indices = flat_indices + flat_indices // (config.seq_len - 1) + 1
+        else:
+            corrected_indices = flat_indices + flat_indices // (config.seq_len) 
+        cells = corrected_indices // config.seq_len
+        positions = corrected_indices % config.seq_len
+        #cells, positions = divmod(
+        #        corrected_indices, config.seq_len
+        #    )  # Find cell and position to mutate
+        num_cells_var = len(set(cells))
 
-    # Cross-over positions for each cell
-    cell_breakpoints = defaultdict(list)
-    for cell, breakpoint in zip(recomb_cells, breakpoints):
-        cell_breakpoints[cell].append(breakpoint)
-    return num_cells_recomb, list(cell_breakpoints.values())
+    # Var positions for each cell
+    cell_positions = defaultdict(list)
+    for cell, position in zip(cells, positions):
+        cell_positions[cell].append(position)
+    return num_cells_var, cell_positions
 
 
 def get_recombined_sequence(sequence1, sequence2, breakpoints):

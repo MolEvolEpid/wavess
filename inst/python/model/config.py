@@ -7,7 +7,7 @@ from model.seed import set_python_seed
 
 class Config:
     def __init__(self, last_sampled_gen, founder_seqs, 
-        substitution_probabilities, prob_mut, prob_recomb,
+        substitution_probabilities, prob_mut, mut_rate_scalar, prob_recomb,
         prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
         conserved_sites, conserved_cost, ref_seq, replicative_cost,
         epitope_locations, seroconversion_time, n_for_imm, gen_full_potency,
@@ -22,30 +22,15 @@ class Config:
             SubProb = namedtuple("SubProb", substitution_probabilities.keys())
             # Convert dict to namedtuple
             substitution_probabilities = SubProb(**substitution_probabilities)
-        
+            
         self.substitution_probabilities = substitution_probabilities
-        self.prob_mut = prob_mut
+            
+        # determine type of mutation method to do 
+        self.prob_mut, self.base_prob_mut, self.mutrate_is_sparse = self.check_sparsity(prob_mut, self.seq_len)
+        self.mut_rate_scalar = mut_rate_scalar
         
         # determine type of recombination breakpoint method to do
-        recrate_is_sparse = True
-        base_prob = prob_recomb
-        if isinstance(prob_recomb, (float, int)):
-            prob_recomb = np.full(self.seq_len - 1, prob_recomb)
-        else:
-            prob_recomb = np.array(prob_recomb)
-            sparse_threshold = 0.05
-            if prob_recomb.shape[0] != self.seq_len - 1:
-                raise ValueError("Length of per-breakpoint recombination rate must be seq_len-1.")
-            # Check for sparseness: is there a dominant value?
-            probs, nprob = np.unique(prob_recomb, return_counts=True)
-            L = self.seq_len - 1
-            maxidx = np.argmax(nprob)
-            base_prob = probs[maxidx]
-            recrate_is_sparse = ((L - nprob[maxidx]) / L) < sparse_threshold
-        
-        self.prob_recomb = prob_recomb
-        self.base_prob = base_prob
-        self.recrate_is_sparse = recrate_is_sparse
+        self.prob_recomb, self.base_prob_recomb, self.recrate_is_sparse = self.check_sparsity(prob_recomb, self.seq_len-1)
         
         self.prob_act_to_lat = prob_act_to_lat
         self.prob_lat_to_act = prob_lat_to_act
@@ -66,3 +51,21 @@ class Config:
         self.gen_full_potency = gen_full_potency
 
         self.generator = set_python_seed(seed)
+        
+    def check_sparsity(self, prob, length):
+        if isinstance(prob, (float, int)):
+            base_prob = prob
+            prob = np.full(length, prob)
+            is_sparse = True
+        else:
+            prob = np.array(prob)
+            sparse_threshold = 0.05
+            if prob.shape[0] != length:
+                raise ValueError("Length of rates must be seq_len for mutations or seq_len-1 for recombinations.")
+            # Check for sparseness: is there a dominant value?
+            probs, nprob = np.unique(prob, return_counts=True)
+            maxidx = np.argmax(nprob)
+            base_prob = probs[maxidx]
+            is_sparse = ((length - nprob[maxidx]) / length) < sparse_threshold
+        return prob, base_prob, is_sparse
+      

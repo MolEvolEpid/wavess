@@ -329,11 +329,14 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # Positions to mutate are given assuming all viral sequences are concatenated
         # We need to identify the right cell number and position within each
         # viral sequence, and initiate the mutation
-        for pos in positions_to_mutate:
-            cell_number, viral_seq_position = divmod(
-                pos, config.seq_len
-            )  # Find cell and position to mutate
-            self.C[cell_number].infecting_virus.mutate(viral_seq_position, config)  # Initiate mutation
+        for cell, pos_list in positions_to_mutate.items():
+            #cell_number, viral_seq_position = divmod(
+            #    pos, config.seq_len
+            #)  # Find cell and position to mutate
+            #cell_number = pos // config.seq_len
+            #viral_seq_position = pos % config.seq_len
+            for pos in pos_list:
+              self.C[cell].infecting_virus.mutate(pos, config)  # Initiate mutation
 
     def get_next_gen_latent(self, config):
         # ***************************** Latent reservoir dynamics *************
@@ -391,17 +394,19 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         rng = default_rng(config.generator)
         # Mutate virus in productively infected cells
         # Identify number of mutations
-        num_active_cd4 = len(self.C)
+        #num_active_cd4 = len(self.C)
         #seq_len = len(self.C[0].infecting_virus.nuc_sequence)
-        total_nucleotides = num_active_cd4 * config.seq_len
-        n_mut = rng.binomial(total_nucleotides, config.prob_mut)
+        #total_nucleotides = num_active_cd4 * config.seq_len
+        #n_mut = rng.binomial(total_nucleotides, config.prob_mut)
         # Distribute the mutations across all possible positions
         #positions_to_mutate = sample(range(total_nucleotides), n_mut)
-        if n_mut > 0:
-            positions_to_mutate = rng.choice(total_nucleotides, n_mut, replace=False)
-        else:
-            positions_to_mutate = []
+        n_cells_mut, positions_to_mutate = get_var_positions(len(self.C), 'mutation', config, gen) #rng.choice(total_nucleotides, n_mut, replace=False)
         self.mutate_virus_in_productive_CD4(positions_to_mutate, config)
+        n_mut = sum([len(positions) for positions in positions_to_mutate.values()])
+        
+        # Determine number of dual infections with recombination
+        num_cells_recomb, cell_breakpoints = get_var_positions(int(n_active_next_gen), 'recombination', config)
+        cell_breakpoints = list(cell_breakpoints.values())
 
         if config.epitope_locations is not None:
             # Update immune response
@@ -413,9 +418,6 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
         # Compute fitness
         fitness = self.get_fitness()
-
-        # Determine number of dual infections with recombination
-        num_cells_recomb, cell_breakpoints = get_recomb_breakpoints(int(n_active_next_gen), config)
 
         # Sample num_active_cd4 + num_cells_recomb virus variants based on relative fitness
         # We normalize the fitness values. The next generation of CD4s will be infected by virions according to this
