@@ -15,7 +15,7 @@ parameters:
     generation_time: 1 # Generation time in days
     # Diversity-generating mechanisms
     mut_rate: 4.0e-5 # Mutation rate per site per generation. If path to file, expect variable rate across genome
-    mut_rate_scalar: "" # If path to a file, scalar of mutation rate for each generation. "", i.e. empty string, = no change across generations
+    mut_rate_scalar: 1 # Scalar of mutation rate for each generation. If path to file, expect variable scaling factor over time
     recomb_rate: 1.5e-5 # Recombination rate per site per generation. If path to file, expect variable rate across genome
     # Latent cell dynamics
     act_to_lat: 0.001 # Per-day rate that an infected cell will become latent
