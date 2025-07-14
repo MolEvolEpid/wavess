@@ -42,7 +42,9 @@ def load_rate_file(rate, expected_length, gteq = False):
         if not os.path.isfile(rate):
             raise FileNotFoundError(f"Rate file not found: {rate}")
         arr = np.loadtxt(rate)
-        if not gteq:
+        if arr.shape == ():
+            arr = float(arr)   
+        elif not gteq:
             if arr.shape[0] != expected_length:
                 raise ValueError(f"Expected {expected_length} rates in {rate}, found {arr.shape[0]}")
         else:
