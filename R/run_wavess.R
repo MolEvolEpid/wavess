@@ -192,14 +192,16 @@ run_wavess <- function(inf_pop_size,
   pd <- reticulate::import("pandas")
 
   # prep everything for simulation
-  config <- agents$Config(generation_time, last_sampled_gen, founder_seqs,
-                          pd$DataFrame(q, index = rownames(q), columns = colnames(q)),
-                          mut_rate, 1, recomb_rate, # no variable mutation rate in R version right now
-                          act_to_lat, lat_to_act, lat_die, lat_prolif,
-                          conserved_sites, conserved_cost,
-                          ref_seq, replicative_cost,
-                          epitope_locations, immune_start_day, n_for_imm, days_full_potency,
-                          seed)
+  config <- agents$Config(
+    generation_time, last_sampled_gen, founder_seqs,
+    pd$DataFrame(q, index = rownames(q), columns = colnames(q)),
+    mut_rate, 1, recomb_rate, # no variable mutation rate in R version right now
+    act_to_lat, lat_to_act, lat_die, lat_prolif,
+    conserved_sites, conserved_cost,
+    ref_seq, replicative_cost,
+    epitope_locations, immune_start_day, n_for_imm, days_full_potency,
+    seed
+  )
 
   # Simulate within-host evolution
   out <- reticulate::py_to_r(config$host$loop_through_generations(
