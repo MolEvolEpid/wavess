@@ -202,7 +202,8 @@ run_wavess <- function(inf_pop_size,
     pop_samp$active_cell_count,
     pop_samp$n_sample_active,
     pop_samp$n_sample_latent,
-    config))
+    config
+  ))
 
   # Fix up output
   names(out) <- c("counts", "fitness", "seqs_active", "seqs_latent")
