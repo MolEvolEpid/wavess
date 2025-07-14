@@ -21,46 +21,16 @@ import pandas as pd
 # Import custom classes and functions
 import model.__init__ as agents
 
-# Functions to read in data
-
-# Epitopes file has the following columns (tab-delimited)
-# col 1 -> epi_start
-# col 2 -> epi_end
-# col_3 -> max_fitness
-def read_b_epitopes(filename):
-    epitopes_df = read_csv(filename)
-    epitopes = []
-    for row in epitopes_df.itertuples():
-        if float(row[3]) < 0 or float(row[3]) >= 1:
-            raise ValueError("maximum immune fitness cost must be in the range [0,1)")
-        epitopes.append(agents.Epitope(
-            int(row[1]), int(row[2]), float(row[3])))
-    return epitopes
-
-
+# Function to read in sequence data
 def get_sequences(filename):
     founder_virus_sequences = [
         str(fasta.seq).upper() for fasta in SeqIO.parse(open(filename), "fasta")
     ]
     # The lengths of the founder sequences must be the same
-    len_founder = len(founder_virus_sequences[0])
     assert False not in [
-        len(i) == len_founder for i in founder_virus_sequences
+        len(i) == len(founder_virus_sequences[0]) for i in founder_virus_sequences
     ], "Founder virus sequences must be of the same length"
     return founder_virus_sequences
-
-
-def get_conserved_sites(conserved_sites_filename):
-    return read_csv(conserved_sites_filename, header=0).set_index("position")["nucleotide"].to_dict()
-
-
-def get_nucleotide_substitution_probabilities(q_filename, mut_rate):
-    # Read nucleotide substitution probabilities
-    q = read_csv(q_filename, index_col="nt_from")
-    # nucleotides_order, substitution_probabilities = agents.calc_nt_sub_probs_from_q(
-    #     q, mut_rate)
-    subprobs = agents.calc_nt_sub_probs_from_q(q, mut_rate)
-    return subprobs #nucleotides_order, substitution_probabilities
 
 
 # Run model
@@ -114,31 +84,26 @@ if __name__ == "__main__":
         founder_viruses["founder" + str(i)] = v
 
     # Nucleotide substitution probabilities
-    #nucleotides_order, substitution_probabilities = (
-    substitution_probabilities = get_nucleotide_substitution_probabilities(input_files["q"], params["mut_rate"])
-    #)
+    q_matrix = read_csv(input_files["q"], index_col="nt_from")
 
     ## Optional inputs related to selection ##
 
     # Conserved sites
     conserved_sites = {}
     if input_files["conserved_sites"] != "":
-        conserved_sites = get_conserved_sites(input_files["conserved_sites"])
+        conserved_sites = read_csv(input_files["conserved_sites"], header=0).set_index("position")["nucleotide"].to_dict() #get_conserved_sites(
 
     # Reference sequence
     reference_sequence = ""
     if input_files["ref_seq"] != "":
         reference_sequence = get_sequences(input_files["ref_seq"])[0]
-        if len(conserved_sites):
-            # remove conserved sites that are different between the reference and any founder,
-            # and mask any conserved sites with a - in the reference
-            reference_sequence, conserved_sites = agents.prep_ref_conserved(
-                founder_viruses, reference_sequence, conserved_sites)
 
     # Epitope start positions and max fitness cost.
+    # Epitopes file has the following columns (tab-delimited)
+    # col 1 -> epi_start, col 2 -> epi_end, col_3 -> max_fitness
     epitope_locations = None
     if input_files["epitope_locations"] != "":
-        epitope_locations = read_b_epitopes(input_files["epitope_locations"])
+        epitope_locations = read_csv(input_files["epitope_locations"])
 
     # Initialize parameters
     
@@ -166,23 +131,17 @@ if __name__ == "__main__":
         raise ValueError("at least one sequence must be sampled from the active or latent reservoir")
     last_sampled_gen = max(last_sampled_gen_active, last_sampled_gen_latent)
     
-    model_config = agents.Config(last_sampled_gen, founder_viruses, substitution_probabilities,
-                                 1 - exp(-params["mut_rate"]), 1 - exp(-params["recomb_rate"]),
-                                 1 - exp(-params["act_to_lat"]/params["generation_time"]),
-                                 1 - exp(-params["lat_to_act"]/params["generation_time"]),
-                                 1 - exp(-params["lat_die"]/params["generation_time"]),
-                                 1 - exp(-params["lat_prolif"]/params["generation_time"]),
+    model_config = agents.Config(params["generation_time"], last_sampled_gen, founder_viruses, q_matrix,
+                                 params["mut_rate"], params["recomb_rate"],
+                                 params["act_to_lat"], params["lat_to_act"], params["lat_die"], params["lat_prolif"],
                                  conserved_sites, params["conserved_cost"],
                                  reference_sequence, float(params["replicative_cost"]),
-                                 epitope_locations, params["immune_start_day"]/params["generation_time"],
-                                 params["n_for_imm"], params["time_to_full_potency"]/params["generation_time"],
+                                 epitope_locations, params["immune_start_day"],
+                                 params["n_for_imm"], params["time_to_full_potency"],
                                  s)
-                                 
-    # Create host environment and add to viral sequences counter
-    host = agents.create_host_env(model_config, int(pop_samp.loc[0]["active_cell_count"]))
 
     # Loop through generations
-    counts, fitness, seqs_active, seqs_latent = host.loop_through_generations(
+    counts, fitness, seqs_active, seqs_latent = model_config.host.loop_through_generations(
         active_cell_count,
         n_to_samp_active,
         n_to_samp_latent,
@@ -195,19 +154,10 @@ if __name__ == "__main__":
 
     # Write counts to csv
     keys = [
-        "generation",
-        "active_cell_count",
-        "latent_cell_count",
-        "active_turned_latent",
-        "latent_turned_active",
-        "latent_died",
-        "latent_proliferated",
-        "number_mutations",
-        "number_recombinations",
-        "mean_fitness_active",
-        "mean_conserved_active",
-        "mean_immune_active",
-        "mean_replicative_active",
+        "generation", "active_cell_count", "latent_cell_count",
+        "active_turned_latent", "latent_turned_active", "latent_died", "latent_proliferated",
+        "number_mutations", "number_recombinations",
+        "mean_fitness_active", "mean_conserved_active", "mean_immune_active", "mean_replicative_active",
     ]
     with open(argv[2] + "counts.csv", "w") as outfile:
         w = writer(outfile)
