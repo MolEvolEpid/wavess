@@ -9,7 +9,7 @@ run_wavess(
   samp_scheme,
   founder_seqs,
   generation_time = 1,
-  mut_rate = 3e-05,
+  mut_rate = 4e-05,
   q = wavess::calc_q_from_rates(wavess::hiv_mut_rates, mut_rate, generation_time),
   recomb_rate = 1.5e-05,
   act_to_lat = 0.001,
