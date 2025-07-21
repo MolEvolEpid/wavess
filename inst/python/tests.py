@@ -3,10 +3,11 @@ from random import seed
 from numpy.random import default_rng
 from random import sample
 from collections import defaultdict
+import pandas as pd
 
 from run_wavess import *
 from model.seed import set_python_seed
-from model.prep import prep_ref_conserved, calc_nt_sub_probs_from_q, create_host_env, create_epitope, Epitope
+from model.epitope import BEpitope, TEpitope
 from model.variation import get_substitution, get_recomb_breakpoints, get_recombined_sequence, muts_rel_ref, get_conserved_sites_mutated
 from model.fitness import calc_seq_fitness, normalize
 from model.virus import HIV
@@ -14,93 +15,151 @@ from model.cells import InfectedCD4
 from model.host import HostEnv
 from model.config import Config
 
-# Functions outside of any class
 
+q = read_csv("../extdata/hiv_q_mat.csv", index_col="nt_from")
+#pd.DataFrame({'A': {'A': -1.3935601992358562, 'C': 0.9167813093518908, 'G': 2.933888073407108, 'T': 0.5499598145717008}, 'C': {'A': 0.165021502856394, 'C': -3.2089352256667243, 'G': 0.0182889027942411, 'T': 1.8338005458527384}, 'G': {'A': 1.100214466648487, 'C': 0.0915971984019693, 'G': -3.318923580552964, 'T': 0.550113237779834}, 'T': {'A': 0.1283242296110112, 'C': 2.200556717904873, 'G': 0.366746604293706, 'T': -2.9338735982413424}})
+
+
+# Functions outside of any class
 
 def test_set_python_seed():
     assert isinstance(set_python_seed(None), np.random._generator.Generator)
     g = set_python_seed(1)
     assert sample(range(1000), 1) == [137]
     assert g.binomial(1000, 0.1) == 100
+    
 
+# def test_create_epitope():
+#     epitope = create_epitope(10, 20, 0.4)
+#     assert vars(epitope) == {'start': 10, 'end': 20, 'max_fitness': 0.4}
+
+
+# Functions in Config
 
 def test_prep_ref_conserved():
-    assert prep_ref_conserved({'founder0': 'AAA'}, 'AAA', {}) == ('AAA', {})
-    assert prep_ref_conserved({'founder0': 'AAA'}, 'AAA', {
-                              0: 'a'}) == ('-AA', {0: 'a'})
-    assert prep_ref_conserved({'founder0': 'TAA'}, 'AAA', {
-                              0: 'a'}) == ('AAA', {})
-    assert prep_ref_conserved({'founder0': 'TAA', 'founder1': 'TAA'}, 'AAA', {
-                              0: 'a', 2: 'c'}) == ('AA-', {2: 'c'})
-    assert prep_ref_conserved({'founder0': 'TAA', 'founder1': 'AAT'}, 'AAA', {
-                              0: 'a', 2: 'c'}) == ('AAA', {})
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 0, 0,
+          0, 0, 0, 0,
+          {}, 0, "AAA", 1,
+          None, 0, 0, 0,
+          0)
+    assert (config.ref_seq, config.conserved_sites) == ('AAA', {})
+    config.prep_ref_conserved() 
+    assert (config.ref_seq, config.conserved_sites) == ('AAA', {})
+    config.conserved_sites = {0: 'a'}
+    config.prep_ref_conserved() 
+    assert (config.ref_seq, config.conserved_sites) == ('-AA', {0: 'a'})
+    config.founder_seqs = {'founder0': 'TAA'}
+    config.ref_seq = 'AAA'
+    config.prep_ref_conserved() 
+    assert (config.ref_seq, config.conserved_sites) == ('AAA', {})
+    config.founder_seqs = {'founder0': 'TAA', 'founder1': 'TAA'}
+    config.conserved_sites = {0: 'a', 2: 'c'}
+    config.prep_ref_conserved() 
+    assert (config.ref_seq, config.conserved_sites) == ('AA-', {2: 'c'})
+    config.founder_seqs = {'founder0': 'TAA', 'founder1': 'AAT'}
+    config.ref_seq = 'AAA'
+    config.conserved_sites = {0: 'a', 2: 'c'}
+    config.prep_ref_conserved() 
+    assert (config.ref_seq, config.conserved_sites) == ('AAA', {})
 
 
 def test_create_host_env():
-    config = Config(None, {"founder0": "AAA"}, 
-        None, None, 0, 
-        None, None, None, None,
-        {}, None, "AAA", 1,
-        None, None, None, None,
-        None)
-    host = create_host_env(config, 1)
-    assert host.C[0].active
-    assert host.C[0].infecting_virus.nuc_sequence == "AAA"
-    config.founder_seqs = {"founder0": "AAA", "founder1": "GGG"}
-    host = create_host_env(config, 2)
-    assert host.C[0].infecting_virus.nuc_sequence == "AAA"
-    assert host.C[1].infecting_virus.nuc_sequence == "GGG"
-    with pytest.raises(Exception):
-        create_host_env(config, 10)
-    with pytest.raises(Exception):
-        create_host_env(config, 1)
-
-
-def test_create_epitope():
-    epitope = create_epitope(10, 20, 0.4)
-    assert vars(epitope) == {'start': 10, 'end': 20, 'max_fitness': 0.4}
+# <<<<<<< HEAD
+#     config = Config(None, {"founder0": "AAA"}, 
+#         None, None, 0, 
+#         None, None, None, None,
+#         {}, None, "AAA", 1,
+#         None, None, None, None,
+#         None)
+#     host = create_host_env(config, 1)
+#     assert host.C[0].active
+#     assert host.C[0].infecting_virus.nuc_sequence == "AAA"
+#     config.founder_seqs = {"founder0": "AAA", "founder1": "GGG"}
+#     host = create_host_env(config, 2)
+#     assert host.C[0].infecting_virus.nuc_sequence == "AAA"
+#     assert host.C[1].infecting_virus.nuc_sequence == "GGG"
+#     with pytest.raises(Exception):
+#         create_host_env(config, 10)
+#     with pytest.raises(Exception):
+#         create_host_env(config, 1)
+# 
+# 
+# def test_create_epitope():
+#     epitope = create_epitope(10, 20, 0.4)
+#     assert vars(epitope) == {'start': 10, 'end': 20, 'max_fitness': 0.4}
+# =======
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 0, 0,
+          0, 0, 0, 0,
+          {}, 0, "AAA", 1,
+          None, 0, 0, 0,
+          0)
+    assert config.host.C[0].active
+    assert config.host.C[0].infecting_virus.nuc_sequence == "AAA"
+    config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"}, 
+          q, 0, 0,
+          0, 0, 0, 0,
+          {}, 0, "AAA", 1,
+          None, 0, 0, 0,
+          0)
+    assert config.host.C[0].infecting_virus.nuc_sequence == "AAA"
+    assert config.host.C[1].infecting_virus.nuc_sequence == "GGG"
+# >>>>>>> refactor_code
 
 
 def test_get_nucleotide_substitution_probabilities():
-    nt_sub_probs = get_nucleotide_substitution_probabilities(
-        "../extdata/hiv_q_mat.csv", 3.5e-5
-    )
-    assert nt_sub_probs[0] == ("A", "C", "G", "T")
-    assert nt_sub_probs[1][1] == [0.2857040450786617, 0.0, 0.02855551755714605, 0.6857404373641922]
-    with pytest.raises(Exception):
-        get_nucleotide_substitution_probabilities("", 3.5e-5)
-    with pytest.raises(Exception):
-        get_nucleotide_substitution_probabilities(0, 3.5e-5)
-
+    config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"}, 
+          q, 3.5e-5, 0,
+          0, 0, 0, 0,
+          {}, 0, "AAA", 1,
+          None, 0, 0, 0,
+          0)
+    assert config.substitution_probabilities[0] == ("A", "C", "G", "T")
+    assert config.substitution_probabilities[1][1] == [0.2857040450786617, 0.0, 0.02855551755714605, 0.6857404373641922]
+    
 
 def test_get_substitution():
     seed(123)
-    subprobs = get_nucleotide_substitution_probabilities(
-        "../extdata/hiv_q_mat.csv", 3.5e-5
-    )
-    assert get_substitution("A", subprobs) == "C"
-    assert get_substitution("C", subprobs) == "A"
-    assert get_substitution("G", subprobs) == "A"
-    assert get_substitution("T", subprobs) == "A"
+    config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"}, 
+          q, 3.5e-5, 0,
+          0, 0, 0, 0,
+          {}, 0, "AAA", 1,
+          None, 0, 0, 0,
+          0)
+    assert get_substitution("A", config.substitution_probabilities) != "A"
+    assert get_substitution("C", config.substitution_probabilities) != "C"
+    assert get_substitution("G", config.substitution_probabilities) != "G"
+    assert get_substitution("T", config.substitution_probabilities) != "T"
     with pytest.raises(Exception):
-        get_substitution("X", subprobs)
+        get_substitution("X", config.substitution_probabilities)
     with pytest.raises(Exception):
         get_substitution("A")
 
 
 def test_get_recomb_breakpoints():
-    config = Config(None, {"founder0": "AAA"}, 
-            None, None, np.full(2, 1),
-            None, None, None, None,
-            {}, None, "AAA", 1,
-            None, None, None, None,
-            1234)
+# <<<<<<< HEAD
+#     config = Config(None, {"founder0": "AAA"}, 
+#             None, None, np.full(2, 1),
+#             None, None, None, None,
+#             {}, None, "AAA", 1,
+#             None, None, None, None,
+#             1234)
+# =======
+    config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {}, 0, "AAA", 1,
+          None, 0, 0, 0,
+          0)
+# >>>>>>> refactor_code
     nc, bp = get_recomb_breakpoints(1, config)
     assert nc == 1
     assert list(bp) == [[2, 1]]
     nc, bp = get_recomb_breakpoints(2, config)
     assert nc == 2
     assert list(bp) == [[1, 2], [1, 2]]
+# <<<<<<< HEAD
     config.recrate_is_sparse = True
     config.prob_recomb = np.full(2, 0.5)
     config.base_prob = 0.5
@@ -170,16 +229,28 @@ def test_get_recomb_breakpoints():
     nc, bp = get_recomb_breakpoints(6, config)
     assert nc == 2
     assert list(bp) == [[1], [2]]
+# =======
+#     config.prob_recomb = 0.5
+#     nc, bp = get_recomb_breakpoints(3, config)
+#     assert nc == 1
+#     assert list(bp) == [[1]]
+# >>>>>>> refactor_code
     config.prob_recomb = 0
     config.base_prob = 0
     nc, bp = get_recomb_breakpoints(2, config)
     assert nc == 0
     assert list(bp) == []
     config.prob_recomb = 0.25
+# <<<<<<< HEAD
     config.base_prob = 0
     nc, bp = get_recomb_breakpoints(3, config)
     assert nc == 2
     assert list(bp) == [[2], [1]]
+# =======
+#     nc, bp = get_recomb_breakpoints(8, config)
+#     assert nc == 1
+#     assert list(bp) == [[2]]
+# >>>>>>> refactor_code
 
 
 def test_get_recombined_sequence():
@@ -188,7 +259,6 @@ def test_get_recombined_sequence():
     seq2 = "TTT"
     assert get_recombined_sequence(seq1, seq2, [1]) == ("ATT", [1])
     assert get_recombined_sequence(seq1, seq2, [1, 2]) == ("ATA", [1, 2])
-    print(get_recombined_sequence(seq1[0], seq2[0], [2]))
     with pytest.raises(Exception):
         get_recombined_sequence(seq1[0], seq2[0], [1])
     with pytest.raises(Exception):
@@ -256,11 +326,11 @@ def test_Epitopes():
 
 
 def test_HIV():
-    config = Config(None, {"founder0": "AAA"}, 
-          None, None, 1,
-          None, None, None, None,
-          {}, None, "AAA", 0.99,
-          None, None, None, None,
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {}, 0, "AAA", 0.99,
+          None, 0, 0, 0,
           1234)
     hiv = HIV("AAT", config)
     assert repr(hiv) == "HIV with sequence AAT"
@@ -277,15 +347,12 @@ def test_HIV():
 
 def test_mutate():
     seed(123)
-    subprobs = get_nucleotide_substitution_probabilities(
-        "../extdata/hiv_q_mat.csv", 3.5e-5
-    )
-    config = Config(None, {"founder0": "AAA"}, 
-            subprobs, None, 1,
-            None, None, None, None,
-            {1: 'A'}, 0.99, "", 1,
-            None, None, None, None,
-            1234)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.00, "AAA", 0,
+          None, 0, 0, 0,
+          1234)
     hiv = HIV("AAA", config)
     hiv.mutate(0, config)
     assert hiv.nuc_sequence == "TAA"
@@ -326,12 +393,12 @@ def test_mutate():
 
 
 def test_InfectedCD4():
-    config = Config(None, {"founder0": "AAA"}, 
-              None, None, 1,
-              None, None, None, None,
-              {1: 'A'}, 0.99, "AAA", 1,
-              None, None, None, None,
-              1234)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0,
+          None, 0, 0, 0,
+          1234)
     hiv = HIV("AAA", config)
     inf_cell = InfectedCD4(hiv, True)
     assert repr(inf_cell) == "Infected CD4. Active: True. HIV with sequence AAA"
@@ -346,12 +413,12 @@ def test_InfectedCD4():
 
 
 def test_HostEnv():
-    config = Config(None, {"founder0": "AAA"}, 
-            None, None, 1,
-            None, None, None, None,
-            {1: 'A'}, 0.99, "", 1,
-            None, None, None, None,
-            1234)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0,
+          None, 0, 0, 0,
+          1234)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAA"] * 10], 10)
     assert (
@@ -374,13 +441,12 @@ def test_HostEnv():
 
 
 def test_translate():
-    config = Config(None, {"founder0": "AAA"}, 
-            None, None, 1,
-            None, None, None, None,
-            {1: 'A'}, 0.99, "ATGATTGTGTAG", 1,
-            None, None, None, None,
-            1234)
-    reference_sequence = "ATGATTGTGTAG"
+    config = Config(1, 0, {"founder0": "ATGATTGTGTAG"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "ATGATTGTGTAG", 0,
+          None, 0, 0, 0,
+          1234)
     hiv = [HIV("ATGATTGTGTAG", config)]
     host = HostEnv(hiv, 1)
     assert host.translate(hiv[0].nuc_sequence) == "MIV_"
@@ -390,17 +456,16 @@ def test_translate():
 
 
 def test_update_epitopes_recognized():
-    config = Config(None, {"founder0": "AAA"}, 
-            None, None, 1,
-            None, None, None, None,
-            {1: 'A'}, 0.99, "AAAAAAAAA", 1,
-            [Epitope(0, 3, 0.3)], None, 2, 30,
-            1234)
+    config = Config(1, 0, {"founder0": "AAAAAAAAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAAAAAAAA", 0,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 2, 30,
+          1234)
     # rng = default_rng(1234)
     # reference_sequence = "AAAAAAAAA"
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAAAAAAAA"] * 11], 11)
-    # epi = [Epitope(0, 3, 0.3)]
     # immune_response_num = 2
     host.update_epitopes_recognized(
         10, config)
@@ -422,16 +487,13 @@ def test_update_epitopes_recognized():
 
 
 def test_update_immune_fitness():
-    #rng = default_rng(1234)
-    # reference_sequence = "AAAAAAAAA"
-    config = Config(None, {"founder0": "AAA"}, 
-            None, None, 1,
-            None, None, None, None,
-            {1: 'A'}, 0.99, "AAAAAAAAA", 1,
-            [Epitope(0, 3, 0.2), Epitope(4, 7, 0.3)], None, 0.1, 90,
-            1234)
-    # epi = [Epitope(0, 3, 0.2), Epitope(4, 7, 0.3)]
-    # time_to_full_potency = 90
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0,
+          pd.DataFrame({'start': [0, 4], 'end': [3, 7], 'maxepi': [0.2, 0.3]}),
+          0, 0.1, 90,
+          1234)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAAAAAAAA"] * 11], 11)
     host.update_epitopes_recognized(10, config)
@@ -445,15 +507,12 @@ def test_update_immune_fitness():
 def test_get_fitness_of_infecting_virus():
     #seed(123)
     #rng = default_rng(1234)
-    subprobs = get_nucleotide_substitution_probabilities(
-        "../extdata/hiv_q_mat.csv", 3.5e-5
-    )
-    config = Config(None, {"founder0": "AAA"}, 
-            subprobs, None, 1,
-            None, None, None, None,
-            {1: 'A'}, 0.99, "", 1,
-            [Epitope(0, 3, 0.3)], None, 10, 30,
-            1234)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
+          1234)
     hiv = HIV("AAA", config)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAA"] * 11], 11)
@@ -483,15 +542,12 @@ def test_get_fitness_of_infecting_virus():
 
 
 def test_singly_infect_cd4():
-    subprobs = get_nucleotide_substitution_probabilities(
-          "../extdata/hiv_q_mat.csv", 3.5e-5
-      )
-    config = Config(None, {"founder0": "AAA"}, 
-              subprobs, None, 1,
-              None, None, None, None,
-              {1: 'A'}, 0.99, "AAA", 1,
-              [Epitope(0, 3, 0.3)], None, 10, 30,
-              123)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
+          123)
     # seed(123)
     
     # reference_sequence = "AAA"
@@ -514,15 +570,12 @@ def test_singly_infect_cd4():
 
 
 def test_dually_infect_cd4():
-    subprobs = get_nucleotide_substitution_probabilities(
-        "../extdata/hiv_q_mat.csv", 3.5e-5
-    )
-    config = Config(None, {"founder0": "AAA"}, 
-              subprobs, None, 1,
-              None, None, None, None,
-              {1: 'A'}, 0.99, "AAA", 0.1,
-              [Epitope(0, 3, 0.3)], None, 10, 30,
-              123)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
+          123)
     host = HostEnv([HIV(seq, config) for seq in ["AAA"] * 3], 3)
     host.C[0].infecting_virus.nuc_sequence = "GGG"
     host.C[1].infecting_virus.nuc_sequence = "TTT"
@@ -538,16 +591,16 @@ def test_dually_infect_cd4():
     ] == [1, (1-0.99)]
     assert [
         newly_infected[i].infecting_virus.replicative_fitness for i in range(2)
-    ] == [(1-0.1)**3, (1-0.1)**2]
+    ] == [(1-0.1)**2, (1-0.1)**2]
 
 
 def test_latent_active_CD4():
-    config = Config(None, {"founder0": "AAA"}, 
-              None, None, 1,
-              None, None, None, None,
-              {1: 'A'}, 0.99, "AAA", 0.1,
-              [Epitope(0, 3, 0.3)], None, 10, 30,
-              123)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
+          123)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAA"] * 10], 10)
     assert len(host.C) == 10
@@ -576,15 +629,12 @@ def test_latent_active_CD4():
 
 def test_mutate_virus_in_productive_CD4():
     seed(123)
-    subprobs = get_nucleotide_substitution_probabilities(
-        "../extdata/hiv_q_mat.csv", 3.5e-5
-    )
-    config = Config(None, {"founder0": "AAA"}, 
-              subprobs, None, 1,
-              None, None, None, None,
-              {1: 'A'}, 0.99, "AAA", 0.1,
-              [Epitope(0, 3, 0.3)], None, 10, 30,
-              123)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
+          123)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAA"] * 10], 10)
     host.mutate_virus_in_productive_CD4([1], config)
@@ -604,13 +654,12 @@ def test_mutate_virus_in_productive_CD4():
 
 
 def test_get_next_gen_latent():
-    seed(1234)
-    config = Config(None, {"founder0": "AAA"}, 
-              None, None, 1,
-              1, 0.00001, 0, 0,
-              {1: 'A'}, 0.99, "AAA", 0.1,
-              [Epitope(0, 3, 0.3)], None, 10, 30,
-              1234)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          100, 0.00001, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
+          1234)
     host = HostEnv([HIV(seq, config) for seq in ["GGG"] * 3], 3)
     assert host.get_next_gen_latent(config) == (2, 0, 0, 0)
     assert host.L[0].active == False
@@ -654,17 +703,12 @@ def test_get_next_gen_latent():
 
 
 def test_get_next_gen_active():
-    # seed(1234)
-    # rng = default_rng(1234)
-    subprobs = get_nucleotide_substitution_probabilities(
-        "../extdata/hiv_q_mat.csv", 3.5e-5
-    )
-    config = Config(None, {"founder0": "AAA"}, 
-              subprobs, 0, 0,
-              None, None, None, None,
-              {1: 'A'}, 0.99, "TTT", 0.1,
-              [Epitope(0, 3, 0.3)], 30, 0.2, 30,
-              1234)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 0,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "TTT", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
+          1234)
     host = HostEnv([HIV(seq, config) for seq in ["GGG"] * 3], 3)
     host.C[0].infecting_virus.mutate(0, config)
     host.C[1].infecting_virus.mutate(0, config)
@@ -673,28 +717,27 @@ def test_get_next_gen_active():
         "TGG", "GGG"]
     assert [host.C[i].infecting_virus.fitness for i in range(2)] == [(1-0.1)**2, (1-0.1)**3]
     config.prob_mut = 0.5
-    assert host.get_next_gen_active(10, 40, config) == (5, 0)
-    print(host.C)
+    assert host.get_next_gen_active(10, 40, config) == (3, 0)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(1)] == [
         "GAA"]
     config.prob_mut = 0.1
     config.prob_recomb = 0.1
+# <<<<<<< HEAD
     config.base_prob = 0.1
     assert host.get_next_gen_active(10, 40, config) == (6, 1)
+# =======
+#     assert host.get_next_gen_active(10, 40, config) == (2, 2)
+# >>>>>>> refactor_code
     assert "GAA" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
 
 
 def test_summarize_fitness():
-    seed(1234)
-    subprobs = get_nucleotide_substitution_probabilities(
-        "../extdata/hiv_q_mat.csv", 3.5e-5
-    )
-    config = Config(None, {"founder0": "AAA"}, 
-              subprobs, 0, 0,
-              None, None, None, None,
-              {1: 'A'}, 0.99, "AAA", 0.1,
-              [Epitope(0, 3, 0.3)], 30, 0.2, 30,
-              1234)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
+          1234)
     host = HostEnv([HIV(seq, config)
                    for seq in ["GGG", "AAA"] * 2], 4)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(len(host.C))] == [
@@ -706,7 +749,7 @@ def test_summarize_fitness():
     host.C[1].infecting_virus.mutate(1, config)
     assert [
         host.C[i].infecting_virus.replicative_fitness for i in range(len(host.C))
-    ] == [(1-0.1)**3, (1-0.1)**1, (1-0.1)**3, 1]
+    ] == [(1-0.1)**2, 1, (1-0.1)**2, 1]
     assert [
         host.C[i].infecting_virus.conserved_fitness for i in range(len(host.C))
     ] == [1, (1-0.99), 1, 1]
@@ -715,12 +758,12 @@ def test_summarize_fitness():
     ] == [1, 1, 1, 1]
     host.get_fitness()
     assert [host.C[i].infecting_virus.fitness for i in range(len(host.C))] == [
-        (1-0.1)**3,
-        (1 - 0) * (1-0.1)**1 * (1-0.99),
-        (1-0.1)**3,
+        (1-0.1)**2,
+        (1-0.99),
+        (1-0.1)**2,
         1.0,
     ]
-    assert host.summarize_fitness() == (0.61675, 0.7525, 1.0, 0.8395)
+    assert host.summarize_fitness() == (0.6575, 0.7525, 1.0, 0.905)
 
 
 def test_record_counts():
@@ -739,19 +782,18 @@ def test_record_counts():
         "mean_immune_active": [],
         "mean_replicative_active": [],
     }
-    config = Config(None, {"founder0": "AAA"}, 
-              None, 0, 0,
-              None, None, None, None,
-              {1: 'A'}, 0.99, "AAA", 0.1,
-              [Epitope(0, 3, 0.3)], 30, 0.2, 30,
-              1234)
-    host = create_host_env(config, 1)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "TTT", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
+          1234)
     assert list(
-        host.record_counts(
+        config.host.record_counts(
             counts, 1, (1, 2, 3, 4), (5, 6), (7, 8, 9, 10)).values()) == [
         [1], [1], [0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10]]
     assert list(
-        host.record_counts(
+        config.host.record_counts(
             counts, 2, (11, 12, 13, 14), (15, 16), (17, 18, 19, 20)).values()) == [
         [
             1, 2], [
@@ -770,13 +812,12 @@ def test_record_counts():
 
 
 def test_sample_viral_sequences():
-    config = Config(None, {"founder0": "AAA"}, 
-                None, 0, 0,
-                None, None, None, None,
-                {1: 'A'}, 0.99, "AAA", 0.1,
-                [Epitope(0, 3, 0.3)], 30, 0.2, 30,
-                1234)
-    host = create_host_env(config, 1)
+    config = Config(1, 0, {"founder0": "AAA"}, 
+          q, 3.5e-5, 100,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
+          1234)
     fitness = {
         "generation": [],
         "seq_id": [],
@@ -785,7 +826,7 @@ def test_sample_viral_sequences():
         "replicative": [],
         "overall": []
     }
-    assert host.sample_viral_sequences(
+    assert config.host.sample_viral_sequences(
         config.founder_seqs,
         fitness,
         1,
@@ -793,18 +834,13 @@ def test_sample_viral_sequences():
 
 
 def test_loop_through_generations():
-    g = set_python_seed(12)
-    subprobs = get_nucleotide_substitution_probabilities(
-        "../extdata/hiv_q_mat.csv", 3.5e-5
-    )
-    config = Config(2, {"founder0": "AAA"}, 
-              subprobs, 0.1, 0,
-              None, None, None, None,
-              {}, 0.99, "AAA", 0,
-              [Epitope(0, 3, 0.3)], 30, 0.2, 30,
-              1234)
-    host = create_host_env(config, 1)
-    out = host.loop_through_generations([1, 2, 3], [1, 2, 3], [0, 1, 1], config)
+    config = Config(1, 2, {"founder0": "AAA"}, 
+          q, 3.5e-5, 0,
+          0, 0, 0, 0,
+          {1: 'A'}, 0.99, "AAA", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
+          1234)
+    out = config.host.loop_through_generations([1, 2, 3], [1, 2, 3], [0, 1, 1], config)
     assert out[0] == {
         'generation': [
             0, 1, 2], 'active_cell_count': [
@@ -814,7 +850,7 @@ def test_loop_through_generations():
                         0, 0, 0], 'latent_died': [
                             0, 0, 0], 'latent_proliferated': [
                                 0, 0, 0], 'number_mutations': [
-                                    0, 2, 0], 'number_recombinations': [
+                                    0, 0, 0], 'number_recombinations': [
                                         0, 0, 0], 'mean_fitness_active': [
                                             1.0, 1.0, 1.0], 'mean_conserved_active': [
                                                 1.0, 1.0, 1.0], 'mean_immune_active': [
@@ -822,5 +858,10 @@ def test_loop_through_generations():
                                                         1.0, 1.0, 1.0]}
     assert out[1] == {'generation': ['founder', '0', '1', '1', '2', '2', '2'], 'seq_id': ['founder0', 'gen0_active_0', 'gen1_active_0', 'gen1_active_1', 'gen2_active_0', 'gen2_active_1', 'gen2_active_2'], 'immune': [
         1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'conserved': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'replicative': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'overall': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
+# <<<<<<< HEAD
     assert out[2] == {'founder0': 'AAA', 'gen0_active_0': 'AAA', 'gen1_active_0': 'ATC',
                       'gen1_active_1': 'ATC', 'gen2_active_0': 'ATC', 'gen2_active_1': 'ATC', 'gen2_active_2': 'ATC'}
+# =======
+#     assert out[2] == {'founder0': 'AAA', 'gen0_active_0': 'AAA', 'gen1_active_0': 'AAA',
+#                       'gen1_active_1': 'AAA', 'gen2_active_0': 'AAA', 'gen2_active_1': 'AAA', 'gen2_active_2': 'AAA'}
+# >>>>>>> refactor_code

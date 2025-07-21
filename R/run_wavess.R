@@ -149,20 +149,6 @@ run_wavess <- function(inf_pop_size,
   # initiate python virtual environment
   agents <- use_python_venv()
 
-  # convert rates to probabilities
-  # these are in generations already
-  prob_mut <- rate_to_probability(mut_rate)
-  prob_recomb <- rate_to_probability(recomb_rate)
-  # these are in days, so we convert to generations first
-  prob_act_to_lat <- rate_to_probability(act_to_lat / generation_time)
-  prob_lat_to_act <- rate_to_probability(lat_to_act / generation_time)
-  prob_lat_prolif <- rate_to_probability(lat_prolif / generation_time)
-  prob_lat_die <- rate_to_probability(lat_die / generation_time)
-
-  # convert days to generations
-  gen_full_potency <- days_full_potency / generation_time
-  gen_immune_start <- immune_start_day / generation_time
-
   pop_samp <- inf_pop_size |>
     dplyr::left_join(
       samp_scheme |>
@@ -185,17 +171,6 @@ run_wavess <- function(inf_pop_size,
   # TODO - MAKE USER INPUT NAMED VECTOR
   names(founder_seqs) <- paste0("founder", seq_along(founder_seqs) - 1)
 
-  # convert q matrix to substitution probabilities
-  # TODO - CHANGE THIS TO BE PYTHON FUNCTION?
-  nt_sub_probs <- calc_nt_sub_probs_from_q(q, mut_rate)
-  # Get nucleotide substitution probabilities in right format
-  nucleotides_order <- rownames(nt_sub_probs)
-  substitution_probabilities <- unname(lapply(
-    data.frame(t(nt_sub_probs)),
-    function(x) x
-  ))
-  subprobs <- reticulate::dict(order = nucleotides_order, probs = substitution_probabilities)
-
   if (is.null(conserved_sites)) {
     conserved_sites <- reticulate::dict()
   } else {
@@ -205,16 +180,6 @@ run_wavess <- function(inf_pop_size,
     ref_seq <- ""
   } else {
     ref_seq <- toupper(ref_seq)
-    if (!is.null(conserved_sites)) {
-      prep_out <- reticulate::py_to_r(agents$prep_ref_conserved(founder_seqs, ref_seq, conserved_sites))
-      ref_seq <- prep_out[[1]]
-      conserved_sites <- prep_out[[2]]
-    }
-  }
-  if (!is.null(epitope_locations)) {
-    epitope_locations <- apply(epitope_locations, 1, function(x) {
-      agents$create_b_epitope(x[1], x[2], x[3])
-    })
   }
 
   # Last sampled generation (don't have to continue simulation after this)
@@ -223,26 +188,26 @@ run_wavess <- function(inf_pop_size,
     pop_samp$generation[pop_samp$n_sample_latent != 0]
   )
 
-  config <- agents$Config(last_sampled_gen, founder_seqs,
-                          subprobs, prob_mut, prob_recomb,
-                          prob_act_to_lat, prob_lat_to_act, prob_lat_die, prob_lat_prolif,
+  # to read q matrix properly
+  pd <- reticulate::import("pandas")
+
+  # prep everything for simulation
+  config <- agents$Config(generation_time, last_sampled_gen, founder_seqs,
+                          pd$DataFrame(q, index = rownames(q), columns = colnames(q)),
+                          mut_rate, recomb_rate,
+                          act_to_lat, lat_to_act, lat_die, lat_prolif,
                           conserved_sites, conserved_cost,
                           ref_seq, replicative_cost,
-                          epitope_locations, gen_immune_start, n_for_imm, gen_full_potency,
+                          epitope_locations, immune_start_day, n_for_imm, days_full_potency,
                           seed)
 
-  # Create host environment and initialize infected cells
-  host <- agents$create_host_env(
-    config,
-    as.integer(pop_samp$active_cell_count[1])
-  )
-
   # Simulate within-host evolution
-  out <- reticulate::py_to_r(host$loop_through_generations(
+  out <- reticulate::py_to_r(config$host$loop_through_generations(
     pop_samp$active_cell_count,
     pop_samp$n_sample_active,
     pop_samp$n_sample_latent,
-    config))
+    config
+  ))
 
   # Fix up output
   names(out) <- c("counts", "fitness", "seqs_active", "seqs_latent")

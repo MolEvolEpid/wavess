@@ -373,7 +373,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
 
         if config.b_epitope_locations is not None:
             # Update immune response
-            if gen >= config.b_seroconversion_time:
+            if gen >= config.b_immune_start_gen:
                 # Epitope recognition
                 self.update_b_epitopes_recognized(gen, config)
                 # Virus immune fitness
