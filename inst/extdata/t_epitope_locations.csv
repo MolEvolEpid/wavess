@@ -1,5 +1,5 @@
-start,escape_position,recognized_aa
-100,2,L
-100,9,L
-1000,2,S
-1000,9,L
+start,days_to_full_potency,escape_position,recognized_aa
+100,2,2,L
+100,2,9,L
+1000,20,2,S
+1000,20,9,L

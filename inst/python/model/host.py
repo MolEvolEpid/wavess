@@ -249,11 +249,6 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                         config.conserved_cost
                     )
                 )
-                
-            # Update t-cell epitope recognition
-            # if mutation is at a t-cell epitope recognition location, check to see if virus is still recognized
-            if len(config.t_epitope_locations): 
-                newly_infected[n_added].infecting_virus.determine_t_recognition(config)
 
             # Update replicative fitness for recombined virus
             if len(config.ref_seq):
@@ -370,7 +365,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         else:
             positions_to_mutate = []
         self.mutate_virus_in_productive_CD4(positions_to_mutate, config)
-
+        
         if config.b_epitope_locations is not None:
             # Update immune response
             if gen >= config.b_immune_start_gen:
@@ -379,21 +374,22 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
                 # Virus immune fitness
                 self.update_b_immune_fitness(gen, config)
 
+        # t immune fitness depends on generation so have to update every time
         if config.t_epitope_locations is not None:
             for CD4_index in range(len(self.C)):
-                #if not self.C[CD4_index].infecting_virus.recognized_by_t:
-                    #self.C[CD4_index].infecting_virus.t_immune_fitness = 1  
-                #else:
-                    if gen >= config.t_gen_full_potency:
-                        self.C[CD4_index].infecting_virus.t_immune_fitness = (1 - config.t_max_imm) ** self.C[CD4_index].infecting_virus.recognized_by_t
-                    else: 
-                        self.C[CD4_index].infecting_virus.t_immune_fitness = (1 - config.t_max_imm * gen / config.t_gen_full_potency) ** self.C[CD4_index].infecting_virus.recognized_by_t
-  
+                # THIS IS A LOT SLOWER NOW BECAUSE EACH EPITOPE CAN HAVE A DIFFERENT TIME TO MAX POTENCY
+                # SO CAN'T JUST UPDATE IT WHEN THERE'S A MUTATION IN AN EPITOPE
+                # CAN PROBABLY MAKE IT FASTER BECAUSE AT SOME POINT THEY'LL ALL BE THE SAME
+                self.C[CD4_index].infecting_virus.determine_t_recognition(gen, config)
+            # self.C[CD4_index].infecting_virus.recognized_by_t
+            # if gen >= config.t_gen_full_potency:
+            #     self.C[CD4_index].infecting_virus.t_immune_fitness = (1 - config.t_max_imm) ** self.C[CD4_index].infecting_virus.recognized_by_t
+            # else:
+            #     self.C[CD4_index].infecting_virus.t_immune_fitness = (1 - config.t_max_imm * gen / config.t_gen_full_potency) ** self.C[CD4_index].infecting_virus.recognized_by_t
+
         # WHY IS IT NOT EXACTLY 2000? BECAUSE OF LATENT CELLS?
-        # NOT HAPPENING FAST ENOUGH. MIGHT NEED TO HAVE MORE GROWTH AT BEGINNING?
-        # AND THEN COST CAN MODULATE HOW QUICKLY IT TAKES OVER?
-        print(gen)
-        print(Counter([self.C[CD4_index].infecting_virus.recognized_by_t for CD4_index in range(len(self.C))]))
+        # print(gen)
+        # print(Counter([self.C[CD4_index].infecting_virus.t_immune_fitness for CD4_index in range(len(self.C))]))
 
         # Compute fitness
         fitness = self.get_fitness()

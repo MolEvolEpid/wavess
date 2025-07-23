@@ -32,4 +32,4 @@ parameters:
     b_n_for_imm: 100 # Number new viral antigen must reach to initiate immune response against corresponding epitope
     b_days_to_full_potency: 90 # Number of days for a new immune response to reach full potency
     t_max_immune_cost: 0.75 # THINK ABOUT THIS NUMBER Maximum immune cost for T cells (when presented by MHC)
-    t_days_to_full_potency: 14 # LIT SEARCH!!! Number of days for a new immune response to reach full potency
+    t_days_to_full_potency: 21 # Number of days for a new immune response to reach full potency

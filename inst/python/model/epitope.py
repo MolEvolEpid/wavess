@@ -9,10 +9,11 @@ class BEpitope:
             self.start, self.end, self.max_fitness)
             
 class TEpitope:
-    def __init__(self, start, escape_positions, recognized_aa):
+    def __init__(self, start, gen_full_potency, escape_positions, recognized_aa):
         self.start = start
         self.end = start + max(escape_positions)*3
+        self.gen_full_potency = gen_full_potency
         self.escape_positions = dict(zip(escape_positions, recognized_aa))
-        
+
     def __repr__(self):
         return "(start: %s, escape positions: %s)" % (self.start, self.escape_positions)

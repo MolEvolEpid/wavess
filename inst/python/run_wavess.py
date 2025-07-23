@@ -168,7 +168,7 @@ if __name__ == "__main__":
                                  reference_sequence, float(params["replicative_cost"]),
                                  b_epitope_locations, params["b_immune_start_day"],
                                  params["b_n_for_imm"], params["b_days_to_full_potency"],
-                                 t_epitope_locations, params["t_max_immune_cost"], params["t_days_to_full_potency"],
+                                 t_epitope_locations, params["t_max_immune_cost"], #params["t_days_to_full_potency"],
                                  s)
 
     # Loop through generations

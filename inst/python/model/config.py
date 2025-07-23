@@ -18,7 +18,7 @@ class Config:
         act_to_lat_rate, lat_to_act_rate, lat_die_rate, lat_prolif_rate,
         conserved_sites, conserved_cost, ref_seq, replicative_cost,
         b_epitope_locations, b_immune_start_day, b_n_for_imm, b_days_full_potency,
-        t_epitope_locations, t_max_imm, t_days_full_potency,
+        t_epitope_locations, t_max_imm, #t_days_full_potency,
         seed
     ):
         self.last_sampled_gen = last_sampled_gen
@@ -76,20 +76,22 @@ class Config:
         
         # epitope, start, escape position, recognized_aa
         starts = []
+        t_days_to_full_potency = []
         positions = []
         aas = []
         for row in t_epitope_locations.itertuples():
             starts.append(int(row[1]))
-            positions.append(int(row[2]))
-            aas.append(row[3])
+            t_days_to_full_potency.append(int(row[2]))
+            positions.append(int(row[3]))
+            aas.append(row[4])
         epitopes = []
         for start in set(starts):
             epitopes.append(TEpitope(
-                start, np.array(positions)[np.array(starts) == start], np.array(aas)[np.array(starts) == start]))
+                start, np.unique(np.array(t_days_to_full_potency)[np.array(starts) == start])[0] / generation_time, np.array(positions)[np.array(starts) == start], np.array(aas)[np.array(starts) == start]))
         self.t_epitope_locations = epitopes
-        
+
         self.t_max_imm = t_max_imm
-        self.t_gen_full_potency = t_days_full_potency / generation_time
+        # self.t_gen_full_potency = t_days_full_potency / generation_time
         
         t_epitope_mask = np.full(self.seq_len, -1, dtype=int)
         recognition_motifs = []
