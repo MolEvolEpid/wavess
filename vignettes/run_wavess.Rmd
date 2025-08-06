@@ -77,7 +77,7 @@ simulation doesn't take too long to run.
 
 ```{r setup}
 pop <- define_growth_curve(n_gens = 300)
-samp <- define_sampling_scheme(sampling_frequency_active = 100, sampling_frequency_latent = 100) %>% filter(day <= 300)
+samp <- define_sampling_scheme(sampling_frequency_active = 100, sampling_frequency_latent = 100) |> filter(day <= 300)
 founder_ref <- extract_seqs(hxb2_cons_founder,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "CON_B(1295)",
