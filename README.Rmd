@@ -61,3 +61,13 @@ Please see the following vignettes for examples:
 - Analyzing the output: `vignette("analyze_output")`
 - Running the python script: `vignette("python")`
 
+## Contributing
+
+You are of course welcome to fork the package for your own use. If you would
+like for your changes to be incorporated into the latest version of `wavess`,
+please open an [issue](https://github.com/MolEvolEpid/wavess/issues) related to
+your proposed change, create a [pull
+request](https://github.com/MolEvolEpid/wavess/pulls) with the implemented
+change, or reach out to tkl@lanl.gov, nsambaturu@binghamton.edu, or
+zenalapp@lanl.gov.
+
