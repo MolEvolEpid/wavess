@@ -70,7 +70,7 @@ to prior to calculations (default: 1e-08). This is the <code>tol</code> argument
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Tibble including 3 tree summary statistics:</p><ul><li><p>Mean leaf depth (normalized Sackin index)</p></li>
+    <p>Tibble including tree summary statistics:</p><ul><li><p>Mean leaf depth (normalized Sackin index)</p></li>
 <li><p>Mean branch length</p></li>
 <li><p>Mean internal branch length</p></li>
 <li><p>Mean external branch length</p></li>
@@ -78,7 +78,7 @@ to prior to calculations (default: 1e-08). This is the <code>tol</code> argument
 <li><p>Mean diversity (mean per-generation tip-to-tip distance)</p></li>
 <li><p>Divergence slope across timepoints</p></li>
 <li><p>Diversity slope across timepoints</p></li>
-<li><p>Timepoint transition score normalized by the number of timepoints</p></li>
+<li><p>Mean number of lineages through time</p></li>
 </ul></div>
 
     <div class="section level2">
@@ -90,15 +90,15 @@ to prior to calculations (default: 1e-08). This is the <code>tol</code> argument
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 9 × 2</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   stat_name        stat_value</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mean_leaf_depth     8.43   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mean_bl             0.527  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> mean_int_bl         0.509  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> mean_ext_bl         0.544  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> mean_divergence     4.22   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> mean_diversity      7.00   </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> divergence_slope   -<span style="color: #BB0000;">0.003</span><span style="color: #BB0000; text-decoration: underline;">26</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> diversity_slope    -<span style="color: #BB0000;">0.041</span><span style="color: #BB0000; text-decoration: underline;">3</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> transition_score   22.5    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mean_leaf_depth       8.37 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mean_bl               0.527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> mean_int_bl           0.548</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> mean_ext_bl           0.506</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> mean_divergence       4.74 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> mean_diversity        7.65 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">7</span> divergence_slope      0.288</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">8</span> diversity_slope       0.429</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">9</span> mean_ltt             22.5  </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
