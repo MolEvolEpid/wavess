@@ -44,6 +44,14 @@ You can install the development version of wavess from [GitHub](https://github.c
 devtools::install_github("MolEvolEpid/wavess")
 ```
 
+This will not install the vignettes locally. If you'd like to install the 
+vignettes locally, you can use the command:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("MolEvolEpid/wavess", build_vignettes = TRUE, force = TRUE)
+```
+
 ## Vignettes
 
 Please see the following vignettes for examples:

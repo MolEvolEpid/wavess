@@ -3,7 +3,7 @@
 
 # wavess
 
-**Within-host agent-based virus evolution sequence simulator.**
+**Within-host agent-based viral evolution sequence simulator.**
 
 <!-- <a href='https://github.com/MolEvolEpid/wavess/'><img src='man/figures/logo.png' align="right" height="120" /></a> -->
 <!-- badges: start -->
@@ -13,7 +13,7 @@
 coverage](https://codecov.io/gh/MolEvolEpid/wavess/branch/main/graph/badge.svg)](https://app.codecov.io/gh/MolEvolEpid/wavess?branch=main)
 <!-- badges: end -->
 
-The goal of wavess is to simulate within-host virus sequence evolution
+The goal of wavess is to simulate within-host viral sequence evolution
 optionally including recombination, a latent infected cell reservoir,
 and three types of selection (conserved sites, comparison to a fit
 sequence, and antibody-mediated immunity). The package also provides
@@ -23,8 +23,6 @@ post-processing functions can also be used on real data. The default
 settings for the simulator assume that the sequences being simulated are
 HIV gp120.
 
-Website: [molevolepid.github.io/wavess/](https://molevolepid.github.io/wavess/)
-
 ## Installation
 
 You can install the development version of wavess from
@@ -33,6 +31,14 @@ You can install the development version of wavess from
 ``` r
 # install.packages("devtools")
 devtools::install_github("MolEvolEpid/wavess")
+```
+
+This will not install the vignettes locally. If you’d like to install
+the vignettes locally, you can use the command:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("MolEvolEpid/wavess", build_vignettes = TRUE, force = TRUE)
 ```
 
 ## Vignettes
