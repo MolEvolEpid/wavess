@@ -36,7 +36,6 @@ for most users.
 | `samp_scheme`           | `define_samp_scheme()`                           | [Define sampling scheme](#define-sampling-scheme)                                                 |
 | `founder_seqs`          | `extract_seqs()`                                 | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment)         |
 | `q`                     | `estimate_q()`                                   | [Determine nucleotide substitution probabilities](#estimate-q-matrix)                             |
-| `prob_*`                | `rate_to_prob()`                                 | [Convert rate to probability](#convert-rate-to-probability)                                       |
 | `conserved_sites`       | `identify_conserved_sites()`                     | [Identify conserved sites](#identify-conserved-sites)                                             |
 | `ref_seq`               | `identify_conserved_sites()`, `extract_seqs()`   | [Get reference sequence that is considered to be the best replicator](#find-a-consensus-sequence) |
 | `epitope_locations`     | `get_epitope_frequencies()`, `sample_epitopes()` | [Sample epitopes](#sample-epitopes)                                                               |
@@ -124,7 +123,7 @@ and some are in units of days. We made these decisions mainly based on
 what information is most readily available in the literature related to
 each parameter value.
 
-### Define active cell growth {#define-active-cell}
+### Define active cell growth {#define-active-cell-growth}
 
 `run_wavess()` requires a `inf_pop_size` data frame as input where each
 row is a generation with the following columns:
