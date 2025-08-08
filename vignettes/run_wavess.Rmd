@@ -1,8 +1,8 @@
 ---
-title: "Simulate within-host evolution with `wavess`"
+title: "Simulate within-host evolution with wavess"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Simulate within-host evolution with `wavess`}
+  %\VignetteIndexEntry{Simulate within-host evolution with wavess}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
