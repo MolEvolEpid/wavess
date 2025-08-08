@@ -14,6 +14,8 @@ Simulates within-host virus sequence evolution. Optionally includes recombinatio
 Useful links:
 \itemize{
   \item \url{https://molevolepid.github.io/wavess/}
+  \item \url{https://github.com/MolEvolEpid/wavess}
+  \item Report bugs at \url{https://github.com/MolEvolEpid/wavess/issues}
 }
 
 }
