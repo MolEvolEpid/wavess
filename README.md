@@ -3,7 +3,7 @@
 
 # wavess
 
-**Within-host agent-based viral evolution sequence simulator.**
+**Within-host adaptive viral evolution sequence simulator.**
 
 <!-- <a href='https://github.com/MolEvolEpid/wavess/'><img src='man/figures/logo.png' align="right" height="120" /></a> -->
 <!-- badges: start -->
