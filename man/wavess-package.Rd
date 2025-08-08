@@ -4,11 +4,11 @@
 \name{wavess-package}
 \alias{wavess}
 \alias{wavess-package}
-\title{wavess: Within-Host Agent-Based Viral Evolution Sequence Simulator}
+\title{wavess: Within-Host Adaptive Virus Evolution Sequence Simulator}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Simulates within-host viral sequence evolution. Optionally includes recombination, a latent cell reservoir, and three types of selective pressures (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity).
+Simulates within-host virus sequence evolution. Optionally includes recombination, a latent cell reservoir, and three types of selective pressures (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity).
 }
 \seealso{
 Useful links:
@@ -18,11 +18,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Zena Lapp \email{zenalapp@lanl.gov} (\href{https://orcid.org/0000-0003-4674-2176}{ORCID})
+\strong{Maintainer}: Zena Lapp \email{zenalapp@lanl.gov} (\href{https://orcid.org/0000-0003-4674-2176}{ORCID}) [copyright holder]
 
 Authors:
 \itemize{
-  \item Narmada Sambaturu \email{narmada.sambaturu@gmail.com} (\href{https://orcid.org/0000-0002-2570-3699}{ORCID})
+  \item Narmada Sambaturu \email{narmada.sambaturu@gmail.com} (\href{https://orcid.org/0000-0002-2570-3699}{ORCID}) [copyright holder]
 }
 
 Other contributors:
