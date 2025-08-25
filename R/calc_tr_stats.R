@@ -11,7 +11,7 @@
 #'   to prior to calculations (default: 1e-08). This is the `tol` argument in
 #'   [ape::di2multi()].
 #'
-#' @return Tibble including 3 tree summary statistics:
+#' @return Tibble including tree summary statistics:
 #' - Mean leaf depth (normalized Sackin index)
 #' - Mean branch length
 #' - Mean internal branch length
@@ -20,7 +20,7 @@
 #' - Mean diversity (mean per-generation tip-to-tip distance)
 #' - Divergence slope across timepoints
 #' - Diversity slope across timepoints
-#' - Timepoint transition score normalized by the number of timepoints
+#' - Mean number of lineages through time
 #' @export
 #'
 #' @examples
@@ -119,7 +119,7 @@ calc_tr_stats <- function(tr, timepoints, bl_thresh = 1e-08) { # , resolve_timep
       "mean_int_bl", "mean_ext_bl",
       "mean_divergence", "mean_diversity",
       "divergence_slope", "diversity_slope",
-      "transition_score"
+      "mean_ltt"
     ),
     stat_value = c(
       treebalance::avgLeafDepI(tr_poly), # average leaf depth (normalized sackin)

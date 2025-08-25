@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-wavess is a agent-based discrete-time within-host evolution simulator.
+wavess is an individual-based discrete-time within-host evolution simulator.
 We assume that all virus life cycles within the infection are
 synchronized into generations. Each generation is one full virus life
 cycle, from infecting one cell to exiting the cell and infecting the
@@ -36,7 +36,6 @@ for most users.
 | `samp_scheme`           | `define_samp_scheme()`                           | [Define sampling scheme](#define-sampling-scheme)                                                 |
 | `founder_seqs`          | `extract_seqs()`                                 | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment)         |
 | `q`                     | `estimate_q()`                                   | [Determine nucleotide substitution probabilities](#estimate-q-matrix)                             |
-| `prob_*`                | `rate_to_prob()`                                 | [Convert rate to probability](#convert-rate-to-probability)                                       |
 | `conserved_sites`       | `identify_conserved_sites()`                     | [Identify conserved sites](#identify-conserved-sites)                                             |
 | `ref_seq`               | `identify_conserved_sites()`, `extract_seqs()`   | [Get reference sequence that is considered to be the best replicator](#find-a-consensus-sequence) |
 | `epitope_locations`     | `get_epitope_frequencies()`, `sample_epitopes()` | [Sample epitopes](#sample-epitopes)                                                               |
@@ -124,7 +123,7 @@ and some are in units of days. We made these decisions mainly based on
 what information is most readily available in the literature related to
 each parameter value.
 
-### Define active cell growth {#define-active-cell}
+### Define active cell growth {#define-active-cell-growth}
 
 `run_wavess()` requires a `inf_pop_size` data frame as input where each
 row is a generation with the following columns:
@@ -407,7 +406,7 @@ active_latent_counts <- lapply(inf_pop_size$active_cell_count, function(x) {
 
 # Plot (latent) cell counts
 active_latent_counts |>
-  filter(gen <= 300) %>%
+  filter(gen <= 300) |>
   pivot_longer(c(Active, Latent)) |>
   ggplot(aes(x = gen, y = value, col = name)) +
   geom_line() +
@@ -460,8 +459,8 @@ overall fitness:
 ```{r}
 costs <- c(0, 0.001, 0.01, 0.1, 0.99)
 n_muts <- 0:100
-tibble(n_mut = sort(rep(n_muts, length(costs))), cost = rep(costs, length(n_muts))) %>%
-  mutate(fitness = (1 - cost)**n_mut) %>%
+tibble(n_mut = sort(rep(n_muts, length(costs))), cost = rep(costs, length(n_muts))) |>
+  mutate(fitness = (1 - cost)**n_mut) |>
   ggplot(aes(x = n_mut, y = fitness, col = factor(cost))) +
   geom_line() +
   geom_point() +
@@ -732,7 +731,7 @@ which returns a tibble with three columns:
 We can visualize it as follows:
 
 ```{r}
-epi_probs %>%
+epi_probs |>
   ggplot(aes(x = aa_position, y = epitope_probability)) +
   geom_col() +
   labs(x = "HXB2 amino acid position", y = "Epitope probability")
@@ -791,7 +790,7 @@ epitope_locations |>
   geom_point() +
   labs(x = "Epitope start position", y = "Max fitness cost")
 
-epitope_locations %>%
+epitope_locations %>% # using . in next line, so have to use dplyr pipe instead of base R pipe
   ggplot(aes(x = seq_len(nrow(.)), y = max_fitness_cost, col = epi_start_nt)) +
   geom_point() +
   scale_x_continuous(breaks = 1:10) +

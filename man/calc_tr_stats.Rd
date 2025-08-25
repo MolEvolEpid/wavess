@@ -19,7 +19,7 @@ to prior to calculations (default: 1e-08). This is the \code{tol} argument in
 \code{\link[ape:multi2di]{ape::di2multi()}}.}
 }
 \value{
-Tibble including 3 tree summary statistics:
+Tibble including tree summary statistics:
 \itemize{
 \item Mean leaf depth (normalized Sackin index)
 \item Mean branch length
@@ -29,7 +29,7 @@ Tibble including 3 tree summary statistics:
 \item Mean diversity (mean per-generation tip-to-tip distance)
 \item Divergence slope across timepoints
 \item Diversity slope across timepoints
-\item Timepoint transition score normalized by the number of timepoints
+\item Mean number of lineages through time
 }
 }
 \description{

@@ -119,7 +119,7 @@ Fitness relative to a reference sequence:
 Immune fitness:
 
 - `seroconversion_time`: seroconversion time in generations; immunity considered only at this generation onward
-- `immune_response_proportion`: proportion new viral antigen must reach to initiate immune response against corresponding epitope
+- `immune_response_proportion`: proportion new virus antigen must reach to initiate immune response against corresponding epitope
 - `time_to_full_potency`: number of generations for a new immune response to reach full potency
 
 ### Running `run_wavess.py`
