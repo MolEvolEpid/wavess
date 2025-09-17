@@ -57,15 +57,6 @@ class Config:
             self.base_prob = probs[maxidx]
             self.recrate_is_sparse = ((L - nprob[maxidx]) / L) < sparse_threshold
         
-        self.conserved_sites = {int(k): v.upper() for k, v in conserved_sites.items()}
-        self.conserved_cost = conserved_cost
-        
-        self.ref_seq = ref_seq
-        self.replicative_cost = replicative_cost
-        
-        if(len(ref_seq) > 0):
-            self.prep_ref_conserved() # MAKE A TEST TO BE SURE THIS WORKS
-        
         self.b_epitope_locations = b_epitope_locations
         if b_epitope_locations is not None:
             self.b_epitope_locations = [BEpitope(int(epi[1]), int(epi[2]), float(epi[3])) for epi in b_epitope_locations.itertuples()]
@@ -103,6 +94,16 @@ class Config:
             epi_num += 1
         self.t_epitope_mask = t_epitope_mask
         self.t_recognition_motifs = recognition_motifs
+        
+        
+        self.conserved_sites = {int(k): v.upper() for k, v in conserved_sites.items()}
+        self.conserved_cost = conserved_cost
+        
+        self.ref_seq = ref_seq
+        self.replicative_cost = replicative_cost
+        
+        if(len(ref_seq) > 0):
+            self.prep_ref_conserved() # MAKE A TEST TO BE SURE THIS WORKS
         
         # Get founder viruses
         founder_viruses = [HIV(seq, self) for seq in self.founder_seqs.values()]
@@ -144,6 +145,9 @@ class Config:
         for f in founder_virus_sequences:
             diff_sites.update({i for i, (left, right) in enumerate(
                 zip(self.ref_seq, f)) if left != right})
+        # t epitope escape positions also cannot be conserved so add these to the list
+        diff_sites.update(np.where(self.t_epitope_mask >= 0)[0])
+        # pop these out of conserved if they exist in there
         [self.conserved_sites.pop(x, None) for x in diff_sites]
         # mask conserved sites so they aren't included in replicative fitness computation
         self.ref_seq = "".join(
