@@ -113,9 +113,13 @@ class Config:
         self.generator = set_python_seed(seed)
 
 
-    # Probability that at least one event occurs in the time period assuming a Poisson process
+    # Probability that an odd number of events occur in the time period assuming a Poisson process
+    # asked chatgpt then checked on wikipedia and with wolfram alpha
+    # this also means that if there are n bases between two bases in the sequence 
+    # (e.g. if you're modeling pol and env), then you can input the rate as (n+1)*base_rate 
+    # (assuming independence)
     def rate_to_probability(self, rate, time = 1):
-        return 1 - exp(-rate * time)
+        return (1 - exp(-2 * rate * time))/2 
     
     def calc_nt_sub_probs_from_q(self):
         # Convert to probabilities
@@ -145,8 +149,6 @@ class Config:
         for f in founder_virus_sequences:
             diff_sites.update({i for i, (left, right) in enumerate(
                 zip(self.ref_seq, f)) if left != right})
-        # t epitope escape positions also cannot be conserved so add these to the list
-        diff_sites.update(np.where(self.t_epitope_mask >= 0)[0])
         # pop these out of conserved if they exist in there
         [self.conserved_sites.pop(x, None) for x in diff_sites]
         # mask conserved sites so they aren't included in replicative fitness computation
