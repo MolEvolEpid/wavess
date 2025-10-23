@@ -5,7 +5,7 @@
 #' https://github.com/quanteda/spacyr/blob/master/R/spacy_install.R
 #'
 #' The dependencies are python, some base python packages (copy, random,
-#' collections), numpy, and scipy.
+#' collections), numpy, scipy, and pandas.
 #'
 #' @param ask logical; ask whether to proceed during the installation. By
 #'   default, questions are only asked in interactive sessions.

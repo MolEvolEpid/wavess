@@ -20,7 +20,7 @@ https://github.com/quanteda/spacyr/blob/master/R/spacy_install.R
 }
 \details{
 The dependencies are python, some base python packages (copy, random,
-collections), and numpy.
+collections), numpy, scipy, and pandas.
 
 The function checks whether a suitable installation of Python is
 present on the system and installs one via \code{\link[reticulate:install_python]{reticulate::install_python()}}
