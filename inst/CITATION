@@ -1,10 +1,12 @@
-@article{sambaturu2025wavess,
-  title={wavess: An R package for simulation of adaptive within-host virus sequence evolution},
-  author={Sambaturu, Narmada and Lapp, Zena and Tria, Fernando DK and Romero-Severson, Ethan and Molina-Par{\'\i}s, Carmen and Leitner, Thomas},
-  journal={PLOS Computational Biology},
-  volume={21},
-  number={9},
-  pages={e1013437},
-  year={2025},
-  publisher={Public Library of Science San Francisco, CA USA}
-}
+bibentry(
+  "Article",
+  title="wavess: An R package for simulation of adaptive within-host virus sequence evolution",
+  author="Sambaturu, Narmada and Lapp, Zena and Tria, Fernando DK and Romero-Severson, Ethan and Molina-Paris, Carmen and Leitner, Thomas",
+  journal="PLOS Computational Biology",
+  volume=21,
+  number=9,
+  pages="e1013437",
+  year=2025,
+  publisher="Public Library of Science San Francisco, CA USA",
+  doi="https://doi.org/10.1371/journal.pcbi.1013437"
+)
