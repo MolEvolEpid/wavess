@@ -26,6 +26,10 @@ HIV gp120.
 Website:
 [molevolepid.github.io/wavess/](https://molevolepid.github.io/wavess/)
 
+Manuscript: [wavess: An R package for simulation of adaptive within-host
+virus sequence
+evolution](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437)
+
 ## Installation
 
 You can install the development version of wavess from
@@ -54,6 +58,12 @@ see the following vignettes for examples:
 - Running wavess: `vignette("run_wavess")`
 - Analyzing the output: `vignette("analyze_output")`
 - Running the python script: `vignette("python")`
+
+## Citation
+
+``` r
+citation("wavess")
+```
 
 ## Contributing
 
