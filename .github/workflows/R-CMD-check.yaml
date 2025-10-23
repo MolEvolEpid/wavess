@@ -24,7 +24,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
-          - {os: ubuntu-latest,  r: 'oldrel-1'}
+          #- {os: ubuntu-latest,  r: 'oldrel-1'} this one is failing for ggtree right now
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
@@ -50,5 +50,5 @@ jobs:
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
-        continue-on-error: ${{ matrix.config.r == 'oldrel-1' }}
+        #continue-on-error: ${{ matrix.config.r == 'oldrel-1' }}
 
