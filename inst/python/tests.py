@@ -65,6 +65,7 @@ def test_prep_ref_conserved():
 
 
 def test_create_host_env():
+<<<<<<< HEAD
 # <<<<<<< HEAD
 #     config = Config(None, {"founder0": "AAA"}, 
 #         None, None, 0, 
@@ -89,6 +90,25 @@ def test_create_host_env():
 #     epitope = create_epitope(10, 20, 0.4)
 #     assert vars(epitope) == {'start': 10, 'end': 20, 'max_fitness': 0.4}
 # =======
+=======
+    config = Config(1, None, {"founder0": "AAA"}, 
+        q, 3.5e-5, 0, 
+        0, 0, 0, 0,
+        {}, None, "AAA", 1,
+        None, 0, 0, 0,
+        None)
+    assert config.host.C[0].active
+    assert config.host.C[0].infecting_virus.nuc_sequence == "AAA"
+    config = Config(1, None,  {"founder0": "AAA", "founder1": "GGG"}, 
+        q, 3.5e-5, 0, 
+        0, 0, 0, 0,
+        {}, None, "AAA", 1,
+        None, 0, 0, 0,
+        None)
+    assert config.host.C[0].infecting_virus.nuc_sequence == "AAA"
+    assert config.host.C[1].infecting_virus.nuc_sequence == "GGG"
+
+>>>>>>> variable_recombination
     config = Config(1, 0, {"founder0": "AAA"}, 
           q, 0, 0,
           0, 0, 0, 0,
@@ -105,7 +125,10 @@ def test_create_host_env():
           0)
     assert config.host.C[0].infecting_virus.nuc_sequence == "AAA"
     assert config.host.C[1].infecting_virus.nuc_sequence == "GGG"
+<<<<<<< HEAD
 # >>>>>>> refactor_code
+=======
+>>>>>>> variable_recombination
 
 
 def test_get_nucleotide_substitution_probabilities():
@@ -138,6 +161,7 @@ def test_get_substitution():
 
 
 def test_get_recomb_breakpoints():
+<<<<<<< HEAD
 # <<<<<<< HEAD
 #     config = Config(None, {"founder0": "AAA"}, 
 #             None, None, np.full(2, 1),
@@ -147,12 +171,18 @@ def test_get_recomb_breakpoints():
 #             1234)
 # =======
     config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"}, 
+=======
+    config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"},
+>>>>>>> variable_recombination
           q, 3.5e-5, 100,
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
           0)
+<<<<<<< HEAD
 # >>>>>>> refactor_code
+=======
+>>>>>>> variable_recombination
     nc, bp = get_recomb_breakpoints(1, config)
     assert nc == 1
     assert list(bp) == [[2, 1]]
@@ -165,16 +195,18 @@ def test_get_recomb_breakpoints():
     config.base_prob = 0.5
     nc, bp = get_recomb_breakpoints(2, config)
     assert nc == 1
-    assert list(bp) == [[2]]
+    assert list(bp) == [[1, 2]]
     config.prob_recomb = np.full(2, 0.25)
     config.base_prob = 0.25
     nc, bp = get_recomb_breakpoints(2, config)
     assert nc == 2
-    assert list(bp) == [[2, 1], [1]]
-    nc, bp = get_recomb_breakpoints(3, config)
+    assert list(bp) == [[2], [2]]
+    config.prob_recomb = np.full(2, 0.5)
+    config.base_prob = 0.5
+    nc, bp = get_recomb_breakpoints(5, config)
     assert nc == 1
-    assert list(bp) == [[1, 2]]
-    config.prob_recomb = np.array([1, 1])
+    assert list(bp) == [[2]]
+    config.prob_recomb = np.array([1,1])
     config.base_prob = 1
     nc, bp = get_recomb_breakpoints(1, config)
     assert nc == 1
@@ -220,13 +252,14 @@ def test_get_recomb_breakpoints():
 
     nc, bp = get_recomb_breakpoints(1, config)
     assert nc == 1
-    assert list(bp) == [[1, 2]]
+    assert list(bp) == [[2]]
     nc, bp = get_recomb_breakpoints(3, config)
-    assert nc == 2
-    assert list(bp) == [[2], [1]]
+    assert nc == 4
+    assert list(bp) == [[1], [1], [1], [1]]
     config.prob_recomb = 0.5
     config.base_prob = 0.5
     nc, bp = get_recomb_breakpoints(6, config)
+<<<<<<< HEAD
     assert nc == 2
     assert list(bp) == [[1], [2]]
 # =======
@@ -235,12 +268,17 @@ def test_get_recomb_breakpoints():
 #     assert nc == 1
 #     assert list(bp) == [[1]]
 # >>>>>>> refactor_code
+=======
+    assert nc == 3
+    assert list(bp) == [[1, 2], [2], [2]]
+>>>>>>> variable_recombination
     config.prob_recomb = 0
     config.base_prob = 0
     nc, bp = get_recomb_breakpoints(2, config)
     assert nc == 0
     assert list(bp) == []
     config.prob_recomb = 0.25
+<<<<<<< HEAD
 # <<<<<<< HEAD
     config.base_prob = 0
     nc, bp = get_recomb_breakpoints(3, config)
@@ -251,10 +289,15 @@ def test_get_recomb_breakpoints():
 #     assert nc == 1
 #     assert list(bp) == [[2]]
 # >>>>>>> refactor_code
+=======
+    config.base_prob = 0
+    nc, bp = get_recomb_breakpoints(3, config)
+    assert nc == 1
+    assert list(bp) == [[1]]
+>>>>>>> variable_recombination
 
 
 def test_get_recombined_sequence():
-    # seed(123)
     seq1 = "AAA"
     seq2 = "TTT"
     assert get_recombined_sequence(seq1, seq2, [1]) == ("ATT", [1])
@@ -709,19 +752,20 @@ def test_get_next_gen_active():
           {1: 'A'}, 0.99, "TTT", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
           1234)
-    host = HostEnv([HIV(seq, config) for seq in ["GGG"] * 3], 3)
+    host = HostEnv([HIV(seq, config) for seq in ["AAA"] * 3], 3)
     host.C[0].infecting_virus.mutate(0, config)
     host.C[1].infecting_virus.mutate(0, config)
     assert host.get_next_gen_active(2, 40, config) == (0, 0)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(2)] == [
-        "TGG", "GGG"]
+        "TAA", "AAA"]
     assert [host.C[i].infecting_virus.fitness for i in range(2)] == [(1-0.1)**2, (1-0.1)**3]
     config.prob_mut = 0.5
     assert host.get_next_gen_active(10, 40, config) == (3, 0)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(1)] == [
-        "GAA"]
+        "CAA"]
     config.prob_mut = 0.1
     config.prob_recomb = 0.1
+<<<<<<< HEAD
 # <<<<<<< HEAD
     config.base_prob = 0.1
     assert host.get_next_gen_active(10, 40, config) == (6, 1)
@@ -729,6 +773,11 @@ def test_get_next_gen_active():
 #     assert host.get_next_gen_active(10, 40, config) == (2, 2)
 # >>>>>>> refactor_code
     assert "GAA" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
+=======
+    config.base_prob = 0.1
+    assert host.get_next_gen_active(10, 40, config) == (3, 0)
+    assert "CAA" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
+>>>>>>> variable_recombination
 
 
 def test_summarize_fitness():
@@ -858,6 +907,7 @@ def test_loop_through_generations():
                                                         1.0, 1.0, 1.0]}
     assert out[1] == {'generation': ['founder', '0', '1', '1', '2', '2', '2'], 'seq_id': ['founder0', 'gen0_active_0', 'gen1_active_0', 'gen1_active_1', 'gen2_active_0', 'gen2_active_1', 'gen2_active_2'], 'immune': [
         1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'conserved': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'replicative': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'overall': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
+<<<<<<< HEAD
 # <<<<<<< HEAD
     assert out[2] == {'founder0': 'AAA', 'gen0_active_0': 'AAA', 'gen1_active_0': 'ATC',
                       'gen1_active_1': 'ATC', 'gen2_active_0': 'ATC', 'gen2_active_1': 'ATC', 'gen2_active_2': 'ATC'}
@@ -865,3 +915,7 @@ def test_loop_through_generations():
 #     assert out[2] == {'founder0': 'AAA', 'gen0_active_0': 'AAA', 'gen1_active_0': 'AAA',
 #                       'gen1_active_1': 'AAA', 'gen2_active_0': 'AAA', 'gen2_active_1': 'AAA', 'gen2_active_2': 'AAA'}
 # >>>>>>> refactor_code
+=======
+    assert out[2] == {'founder0': 'AAA', 'gen0_active_0': 'AAA', 'gen1_active_0': 'AAA',
+                      'gen1_active_1': 'AAA', 'gen2_active_0': 'AAA', 'gen2_active_1': 'AAA', 'gen2_active_2': 'AAA'}
+>>>>>>> variable_recombination
