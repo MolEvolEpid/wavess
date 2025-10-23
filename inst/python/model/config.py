@@ -86,9 +86,13 @@ class Config:
         self.generator = set_python_seed(seed)
 
 
-    # Probability that at least one event occurs in the time period assuming a Poisson process
+    # Probability that an odd number of events occurs in the time period assuming a Poisson process
+    # asked chatgpt then checked on wikipedia and with wolfram alpha
+    # this also means that if there are n bases between two bases in the sequence 
+    # (e.g. if you're modeling pol and env), then you can input the rate as (n+1)*base_rate 
+    # (assuming independence)
     def rate_to_probability(self, rate, time = 1):
-        return 1 - np.exp(-rate * time)
+        return (1 - np.exp(-2 * rate * time))/2 
     
     def calc_nt_sub_probs_from_q(self):
         # Convert to probabilities
