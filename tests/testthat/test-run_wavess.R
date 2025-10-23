@@ -71,7 +71,9 @@ test_that("run_wavess works", {
   expect_equal(any(out$fitness$immune != 1), TRUE)
   expect_equal(all(out$fitness$replicative != 1), TRUE)
   expect_no_error(run_wavess(inf_pop_size, define_sampling_scheme(sampling_frequency_active = 50, sampling_frequency_latent = 50, n_days = 100), rep("ATCG", 10), generation_time = 1))
-  expect_no_error(run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10), recomb_rate = c(0,1,0.5)))
-  expect_error(run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10), recomb_rate = c(0,1)),
-               "Length of per-breakpoint recombination rate must be seq_len-1")
+  expect_no_error(run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10), recomb_rate = c(0, 1, 0.5)))
+  expect_error(
+    run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10), recomb_rate = c(0, 1)),
+    "Length of per-breakpoint recombination rate must be seq_len-1"
+  )
 })
