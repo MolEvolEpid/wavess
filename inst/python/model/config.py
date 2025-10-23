@@ -116,7 +116,7 @@ class Config:
         self.generator = set_python_seed(seed)
 
 
-    # Probability that an odd number of events occur in the time period assuming a Poisson process
+    # Probability that an odd number of events occurs in the time period assuming a Poisson process
     # asked chatgpt then checked on wikipedia and with wolfram alpha
     # this also means that if there are n bases between two bases in the sequence 
     # (e.g. if you're modeling pol and env), then you can input the rate as (n+1)*base_rate 

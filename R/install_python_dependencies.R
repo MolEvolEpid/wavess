@@ -5,7 +5,7 @@
 #' https://github.com/quanteda/spacyr/blob/master/R/spacy_install.R
 #'
 #' The dependencies are python, some base python packages (copy, random,
-#' collections), and numpy.
+#' collections), numpy, and scipy.
 #'
 #' @param ask logical; ask whether to proceed during the installation. By
 #'   default, questions are only asked in interactive sessions.
@@ -79,7 +79,7 @@ create_python_venv <- function(ask = interactive(),
   }
   reticulate::use_virtualenv(Sys.getenv("WAVESS_PYTHON", unset = "r-wavess"))
 
-  dependencies <- c("pandas")
+  dependencies <- c("numpy", "scipy", "pandas")
 
   installed <- c()
   for (dep in dependencies) {
@@ -173,6 +173,26 @@ use_python_venv <- function() {
   )$package) {
     stop(
       "numpy was not found in your environment. ",
+      "Use `create_python_venv()`",
+      "to get started."
+    )
+  }
+
+  if (!"scipy" %in% reticulate::py_list_packages(
+    Sys.getenv("WAVESS_PYTHON", unset = "r-wavess")
+  )$package) {
+    stop(
+      "scipy was not found in your environment. ",
+      "Use `create_python_venv()`",
+      "to get started."
+    )
+  }
+
+  if (!"pandas" %in% reticulate::py_list_packages(
+    Sys.getenv("WAVESS_PYTHON", unset = "r-wavess")
+  )$package) {
+    stop(
+      "pandas was not found in your environment. ",
       "Use `create_python_venv()`",
       "to get started."
     )
