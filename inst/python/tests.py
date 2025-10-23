@@ -131,18 +131,27 @@ def test_get_substitution():
 
 def test_get_recomb_breakpoints():
     config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"},
-          q, 3.5e-5, 100,
+          q, 3.5e-5, 100, 
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
           0)
+    assert (config.prob_recomb == np.full(2, 0.5)).all() # probability of an odd number of recombinations
+    config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"},
+          q, 3.5e-5, np.array([0, 100]), 
+          0, 0, 0, 0,
+          {}, 0, "AAA", 1,
+          None, 0, 0, 0,
+          0)
+    assert (config.prob_recomb == np.array([0, 0.5])).all()
+    # force prob_recomb to be 1
+    config.prob_recomb = np.full(2, 1)
     nc, bp = get_recomb_breakpoints(1, config)
     assert nc == 1
-    assert list(bp) == [[2, 1]]
+    assert list(bp) == [[1, 2]]
     nc, bp = get_recomb_breakpoints(2, config)
     assert nc == 2
     assert list(bp) == [[1, 2], [1, 2]]
-# <<<<<<< HEAD
     config.recrate_is_sparse = True
     config.prob_recomb = np.full(2, 0.5)
     config.base_prob = 0.5
@@ -164,6 +173,7 @@ def test_get_recomb_breakpoints():
     nc, bp = get_recomb_breakpoints(1, config)
     assert nc == 1
     assert list(bp) == [[1, 2]]
+    
     config.prob_recomb = np.array([1, 0])
     nc, bp = get_recomb_breakpoints(1, config)
     assert nc == 1
@@ -224,6 +234,14 @@ def test_get_recomb_breakpoints():
     nc, bp = get_recomb_breakpoints(3, config)
     assert nc == 1
     assert list(bp) == [[1]]
+    
+    with pytest.raises(ValueError):
+      Config(1, 0, {"founder0": "AAA", "founder1": "GGG"},
+          q, 3.5e-5, np.full(0, 10), 
+          0, 0, 0, 0,
+          {}, 0, "AAA", 1,
+          None, 0, 0, 0,
+          0)
 
 
 def test_get_recombined_sequence():
@@ -353,6 +371,11 @@ def test_mutate():
     assert hiv.nuc_sequence == "AGA"
     assert hiv.conserved_sites_mutated == set([1])
     assert hiv.replicative_fitness == (1-0.1)**1
+    
+    hiv.mutate(1, config) # mutate back
+    assert hiv.nuc_sequence == "AAA"
+    assert hiv.conserved_sites_mutated == set()
+    
     with pytest.raises(Exception):
         hiv.mutate(10, config)
     with pytest.raises(Exception):
@@ -804,8 +827,8 @@ def test_sample_viral_sequences():
 def test_loop_through_generations():
     config = Config(1, 2, {"founder0": "AAA"}, 
           q, 3.5e-5, 0,
-          0, 0, 0, 0,
-          {1: 'A'}, 0.99, "AAA", 0.1,
+          0.1, 0, 0, 0,
+          {1: 'A'}, 0.99, "", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
           1234)
     out = config.host.loop_through_generations([1, 2, 3], [1, 2, 3], [0, 1, 1], config)
@@ -813,8 +836,8 @@ def test_loop_through_generations():
         'generation': [
             0, 1, 2], 'active_cell_count': [
             1, 2, 3], 'latent_cell_count': [
-                0, 0, 0], 'active_turned_latent': [
-                    0, 0, 0], 'latent_turned_active': [
+                0, 0, 1], 'active_turned_latent': [
+                    0, 0, 1], 'latent_turned_active': [
                         0, 0, 0], 'latent_died': [
                             0, 0, 0], 'latent_proliferated': [
                                 0, 0, 0], 'number_mutations': [
@@ -828,3 +851,12 @@ def test_loop_through_generations():
         1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'conserved': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'replicative': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'overall': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
     assert out[2] == {'founder0': 'AAA', 'gen0_active_0': 'AAA', 'gen1_active_0': 'AAA',
                       'gen1_active_1': 'AAA', 'gen2_active_0': 'AAA', 'gen2_active_1': 'AAA', 'gen2_active_2': 'AAA'}
+    
+    config = Config(1, 2, {"founder0": "AAA"}, 
+          q, 3.5e-5, 0,
+          0.001, 0, 0, 0,
+          {1: 'A'}, 0.99, "ACA", 0.1,
+          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
+          1234)
+    out = config.host.loop_through_generations([1, 2, 3], [1, 2, 3], [0, 1, 1], config)
+    assert out[0]['mean_replicative_active'] == [0.9,0.9,0.9]
