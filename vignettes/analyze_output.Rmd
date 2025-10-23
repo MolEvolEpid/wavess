@@ -56,7 +56,7 @@ theme_set(theme_classic() +
 create_python_venv()
 
 pop <- define_growth_curve(n_gens = 500)
-samp <- define_sampling_scheme(sampling_frequency_active = 30, max_samp_active = 50) %>%
+samp <- define_sampling_scheme(sampling_frequency_active = 30, max_samp_active = 50) |>
   filter(day <= 500)
 
 founder_ref <- extract_seqs(hxb2_cons_founder,
@@ -161,8 +161,8 @@ phylogenetic summary statistics:
     the Sackin index normalized by the number of tree tips.
 -   The the mean branch length, mean internal branch length, and mean
     external branch length.
--   The transition score of the phylogeny with the tips labeled as
-    timepoints, normalized by the. number of timepoints. 
+-   The mean number of lineages through time, normalized by the number of 
+    timepoints minus one. 
 -   The mean per-generation divergence (root-to-tip distance) and diversity 
     (tip-to-tip distance).
 -   The slope of divergence and diversity over time.

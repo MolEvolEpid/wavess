@@ -1,10 +1,10 @@
 Package: wavess
-Title: Within-Host Agent-Based Viral Evolution Sequence Simulator
-Version: 0.0.0.9000
+Title: Within-Host Adaptive Virus Evolution Sequence Simulator
+Version: 1.0.0
 Authors@R: 
-    c(person(given="Zena", family="Lapp", email="zenalapp@lanl.gov", role = c("aut", "cre"),
+    c(person(given="Zena", family="Lapp", email="zenalapp@lanl.gov", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-4674-2176")),
-      person(given="Narmada", family="Sambaturu", email="narmada.sambaturu@gmail.com", role = c("aut"),
+      person(given="Narmada", family="Sambaturu", email="narmada.sambaturu@gmail.com", role = c("aut", "cph"),
            comment = c(ORCID = "0000-0002-2570-3699")),
       person(given="Kenneth", family="Benoit", role = c("cph"), 
       comment = c(ORCID = "0000-0002-0797-564X", code = 'python install')), 
@@ -12,7 +12,7 @@ Authors@R:
       comment = c(ORCID = "0000-0002-3323-6330", code = 'python install')),
       person(given="Johannes", family="Gruber", role = "cph", 
       comment = c(ORCID = "0000-0001-9177-1772", code = 'python install')))
-Description: Simulates within-host viral sequence evolution. Optionally includes
+Description: Simulates within-host virus sequence evolution. Optionally includes
     recombination, a latent cell reservoir, and three types of selective pressures 
     (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity). 
 License: file LICENSE
@@ -41,4 +41,5 @@ Depends:
 LazyData: true
 VignetteBuilder: knitr
 SystemRequirements: python, numpy
-URL: https://molevolepid.github.io/wavess/
+URL: https://molevolepid.github.io/wavess/, https://github.com/MolEvolEpid/wavess
+BugReports: https://github.com/MolEvolEpid/wavess/issues

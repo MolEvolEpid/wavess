@@ -3,7 +3,7 @@
 
 # wavess
 
-**Within-host agent-based virus evolution sequence simulator.**
+**Within-host adaptive virus evolution sequence simulator.**
 
 <!-- <a href='https://github.com/MolEvolEpid/wavess/'><img src='man/figures/logo.png' align="right" height="120" /></a> -->
 <!-- badges: start -->
@@ -36,6 +36,14 @@ You can install the development version of wavess from
 devtools::install_github("MolEvolEpid/wavess")
 ```
 
+This will not install the vignettes locally. If you’d like to install
+the vignettes locally, you can use the command:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("MolEvolEpid/wavess", build_vignettes = TRUE, force = TRUE)
+```
+
 ## Vignettes
 
 Please see the following vignettes for examples:
@@ -44,3 +52,14 @@ Please see the following vignettes for examples:
 - Running wavess: `vignette("run_wavess")`
 - Analyzing the output: `vignette("analyze_output")`
 - Running the python script: `vignette("python")`
+
+## Contributing
+
+You are of course welcome to fork the package for your own use. If you
+would like for your changes to be incorporated into the latest version
+of `wavess`, please open an
+[issue](https://github.com/MolEvolEpid/wavess/issues) related to your
+proposed change, create a [pull
+request](https://github.com/MolEvolEpid/wavess/pulls) with the
+implemented change, or reach out to <tkl@lanl.gov>,
+<nsambaturu@binghamton.edu>, or <zenalapp@lanl.gov>.
