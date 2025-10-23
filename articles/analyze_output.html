@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">wavess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Analyze wavess output</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/v1.0.0/vignettes/analyze_output.Rmd" class="external-link"><code>vignettes/analyze_output.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/main/vignettes/analyze_output.Rmd" class="external-link"><code>vignettes/analyze_output.Rmd</code></a></small>
       <div class="d-none name"><code>analyze_output.Rmd</code></div>
     </div>
 
@@ -134,7 +134,7 @@ code, or else you’ll get an error telling you to do so.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1234</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">theme_set</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">theme_set</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>strip.background <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># if needed</span></span>
@@ -150,7 +150,12 @@ code, or else you’ll get an error telling you to do so.</p>
 <span><span class="co">#&gt; Virtual environment 'r-wavess' successfully created.</span></span>
 <span><span class="co">#&gt; Using virtual environment 'r-wavess' ...</span></span>
 <span><span class="co">#&gt; + /home/runner/.virtualenvs/r-wavess/bin/python -m pip install --upgrade --no-user scipy</span></span>
-<span><span class="co">#&gt; Installation of scipy version 1.16.1 complete.</span></span>
+<span><span class="co">#&gt; Installation of scipy version 1.16.2 complete.</span></span>
+<span><span class="co">#&gt; Using virtual environment 'r-wavess' ...</span></span>
+<span><span class="co">#&gt; + /home/runner/.virtualenvs/r-wavess/bin/python -m pip install --upgrade --no-user pandas</span></span>
+<span><span class="co">#&gt; Installation of pandas version 2.3.3 complete.</span></span>
+<span><span class="co">#&gt; Warning in create_python_venv(): Skipped installation of the following</span></span>
+<span><span class="co">#&gt; packages: numpy Use `force` to force installation or update.</span></span>
 <span></span>
 <span><span class="va">pop</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/define_growth_curve.html">define_growth_curve</a></span><span class="op">(</span>n_gens <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
 <span><span class="va">samp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/define_sampling_scheme.html">define_sampling_scheme</a></span><span class="op">(</span>sampling_frequency_active <span class="op">=</span> <span class="fl">30</span>, max_samp_active <span class="op">=</span> <span class="fl">50</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -209,22 +214,22 @@ calculations <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/
 <span><span class="co">#&gt;    gen   diversity divergence</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 0       0         0       </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 30      0.001<span style="text-decoration: underline;">04</span>   0.000<span style="text-decoration: underline;">532</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 60      0.001<span style="text-decoration: underline;">79</span>   0.000<span style="text-decoration: underline;">918</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 90      0.002<span style="text-decoration: underline;">81</span>   0.001<span style="text-decoration: underline;">44</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 120     0.005<span style="text-decoration: underline;">44</span>   0.003<span style="text-decoration: underline;">19</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 150     0.006<span style="text-decoration: underline;">60</span>   0.004<span style="text-decoration: underline;">19</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 180     0.007<span style="text-decoration: underline;">23</span>   0.004<span style="text-decoration: underline;">78</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 210     0.007<span style="text-decoration: underline;">69</span>   0.005<span style="text-decoration: underline;">15</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 240     0.008<span style="text-decoration: underline;">93</span>   0.005<span style="text-decoration: underline;">85</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 270     0.011<span style="text-decoration: underline;">6</span>    0.007<span style="text-decoration: underline;">17</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> 300     0.012<span style="text-decoration: underline;">3</span>    0.007<span style="text-decoration: underline;">66</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> 330     0.012<span style="text-decoration: underline;">3</span>    0.008<span style="text-decoration: underline;">64</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> 360     0.013<span style="text-decoration: underline;">3</span>    0.008<span style="text-decoration: underline;">96</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> 390     0.014<span style="text-decoration: underline;">9</span>    0.009<span style="text-decoration: underline;">34</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> 420     0.012<span style="text-decoration: underline;">7</span>    0.008<span style="text-decoration: underline;">46</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> 450     0.012<span style="text-decoration: underline;">1</span>    0.008<span style="text-decoration: underline;">86</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> 480     0.015<span style="text-decoration: underline;">8</span>    0.010<span style="text-decoration: underline;">8</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 30      0.001<span style="text-decoration: underline;">30</span>   0.000<span style="text-decoration: underline;">705</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 60      0.002<span style="text-decoration: underline;">38</span>   0.001<span style="text-decoration: underline;">25</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 90      0.003<span style="text-decoration: underline;">88</span>   0.002<span style="text-decoration: underline;">08</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 120     0.005<span style="text-decoration: underline;">31</span>   0.002<span style="text-decoration: underline;">86</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 150     0.006<span style="text-decoration: underline;">70</span>   0.003<span style="text-decoration: underline;">62</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 180     0.007<span style="text-decoration: underline;">72</span>   0.004<span style="text-decoration: underline;">38</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 210     0.007<span style="text-decoration: underline;">26</span>   0.004<span style="text-decoration: underline;">36</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 240     0.008<span style="text-decoration: underline;">17</span>   0.005<span style="text-decoration: underline;">24</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 270     0.009<span style="text-decoration: underline;">44</span>   0.005<span style="text-decoration: underline;">60</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> 300     0.012<span style="text-decoration: underline;">1</span>    0.007<span style="text-decoration: underline;">12</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> 330     0.014<span style="text-decoration: underline;">6</span>    0.009<span style="text-decoration: underline;">71</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> 360     0.015<span style="text-decoration: underline;">1</span>    0.011<span style="text-decoration: underline;">2</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> 390     0.017<span style="text-decoration: underline;">9</span>    0.012<span style="text-decoration: underline;">2</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> 420     0.019<span style="text-decoration: underline;">3</span>    0.011<span style="text-decoration: underline;">9</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> 450     0.019<span style="text-decoration: underline;">1</span>    0.011<span style="text-decoration: underline;">7</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> 480     0.021<span style="text-decoration: underline;">6</span>    0.013<span style="text-decoration: underline;">5</span></span></span></code></pre></div>
 <p>As can be seen, the diversity of founder0 and generation 0 are NaN.
 This is because there is only one sampled sequence at those timepoints,
 so diversity cannot be computed.</p>
@@ -257,27 +262,51 @@ long time to run - longer than it would take to run IQ-TREE.)</p>
 <span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/bionj.html" class="external-link">bionj</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ape/man/dist.dna.html" class="external-link">dist.dna</a></span><span class="op">(</span><span class="va">seqs_active</span>, model <span class="op">=</span> <span class="st">"TN93"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>  model <span class="op">=</span> <span class="st">"GTR+I+R(4)"</span>, rearrangement <span class="op">=</span> <span class="st">"none"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; optimize edge weights:  -7685.642 --&gt; -7634.551 </span></span>
-<span><span class="co">#&gt; optimize rate matrix:  -7634.551 --&gt; -7348.021 </span></span>
-<span><span class="co">#&gt; optimize invariant sites:  -7348.021 --&gt; -7095.98 </span></span>
-<span><span class="co">#&gt; optimize free rate parameters:  -7095.98 --&gt; -6424.452 </span></span>
-<span><span class="co">#&gt; optimize edge weights:  -6424.452 --&gt; -6420.2 </span></span>
-<span><span class="co">#&gt; optimize rate matrix:  -6420.2 --&gt; -6419.492 </span></span>
-<span><span class="co">#&gt; optimize invariant sites:  -6419.492 --&gt; -6419.492 </span></span>
-<span><span class="co">#&gt; optimize free rate parameters:  -6419.492 --&gt; -6419.288 </span></span>
-<span><span class="co">#&gt; optimize edge weights:  -6419.288 --&gt; -6419.286 </span></span>
-<span><span class="co">#&gt; optimize rate matrix:  -6419.286 --&gt; -6419.284 </span></span>
-<span><span class="co">#&gt; optimize invariant sites:  -6419.284 --&gt; -6419.284 </span></span>
-<span><span class="co">#&gt; optimize free rate parameters:  -6419.284 --&gt; -6419.282 </span></span>
-<span><span class="co">#&gt; optimize edge weights:  -6419.282 --&gt; -6419.282 </span></span>
-<span><span class="co">#&gt; optimize rate matrix:  -6419.282 --&gt; -6419.282 </span></span>
-<span><span class="co">#&gt; optimize invariant sites:  -6419.282 --&gt; -6419.282 </span></span>
-<span><span class="co">#&gt; optimize free rate parameters:  -6419.282 --&gt; -6419.282 </span></span>
-<span><span class="co">#&gt; optimize edge weights:  -6419.282 --&gt; -6419.282 </span></span>
-<span><span class="co">#&gt; optimize rate matrix:  -6419.282 --&gt; -6419.282 </span></span>
-<span><span class="co">#&gt; optimize invariant sites:  -6419.282 --&gt; -6419.282 </span></span>
-<span><span class="co">#&gt; optimize free rate parameters:  -6419.282 --&gt; -6419.282 </span></span>
-<span><span class="co">#&gt; optimize edge weights:  -6419.282 --&gt; -6419.282</span></span>
+<span><span class="co">#&gt; optimize edge weights:  -8695.359 --&gt; -8629.877 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -8629.877 --&gt; -8318.683 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -8318.683 --&gt; -8021.469 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -8021.469 --&gt; -7397.918 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7397.918 --&gt; -7396.594 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7396.594 --&gt; -7393.582 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7393.582 --&gt; -7393.582 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7393.582 --&gt; -7383.328 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7383.328 --&gt; -7382.81 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7382.81 --&gt; -7382.797 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7382.797 --&gt; -7382.797 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7382.797 --&gt; -7376.082 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7376.082 --&gt; -7375.892 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7375.892 --&gt; -7375.603 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7375.603 --&gt; -7375.603 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7375.603 --&gt; -7373.518 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7373.518 --&gt; -7373.421 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7373.421 --&gt; -7373.281 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7373.281 --&gt; -7373.281 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7373.281 --&gt; -7372.963 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7372.963 --&gt; -7372.947 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7372.947 --&gt; -7372.946 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7372.946 --&gt; -7372.946 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7372.946 --&gt; -7372.847 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7372.847 --&gt; -7372.841 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7372.841 --&gt; -7372.841 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7372.841 --&gt; -7372.841 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7372.841 --&gt; -7372.813 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7372.813 --&gt; -7372.811 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7372.811 --&gt; -7372.811 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7372.811 --&gt; -7372.811 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7372.811 --&gt; -7372.803 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7372.803 --&gt; -7372.802 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7372.802 --&gt; -7372.802 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7372.802 --&gt; -7372.802 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7372.802 --&gt; -7372.798 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7372.798 --&gt; -7372.798 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7372.798 --&gt; -7372.798 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7372.798 --&gt; -7372.798 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7372.798 --&gt; -7372.795 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7372.795 --&gt; -7372.795 </span></span>
+<span><span class="co">#&gt; optimize rate matrix:  -7372.795 --&gt; -7372.795 </span></span>
+<span><span class="co">#&gt; optimize invariant sites:  -7372.795 --&gt; -7372.795 </span></span>
+<span><span class="co">#&gt; optimize free rate parameters:  -7372.795 --&gt; -7372.793 </span></span>
+<span><span class="co">#&gt; optimize edge weights:  -7372.793 --&gt; -7372.793</span></span>
 <span></span>
 <span><span class="va">tr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ape/man/root.html" class="external-link">root</a></span><span class="op">(</span><span class="va">pml_out</span><span class="op">$</span><span class="va">tree</span>, <span class="st">"founder0"</span>, resolve.root <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">gens</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">gsub</a></span><span class="op">(</span><span class="st">"gen|_.*"</span>, <span class="st">""</span>, <span class="va">tr</span><span class="op">$</span><span class="va">tip.label</span><span class="op">)</span></span>
@@ -287,6 +316,26 @@ long time to run - longer than it would take to run IQ-TREE.)</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_treescale.html" class="external-link">geom_treescale</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"Generation"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: `aes_()` was deprecated in ggplot2 3.0.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">ggtree</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/YuLab-SMU/ggtree/issues&gt;</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
+<span><span class="co">#&gt; Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
+<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Problematic arguments:</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> as.Date = as.Date</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> yscale_mapping = yscale_mapping</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> hang = hang</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
+<span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">ggtree</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/YuLab-SMU/ggtree/issues&gt;</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
 <span><span class="co">#&gt; Warning in unique(as.numeric(gens)): NAs introduced by coercion</span></span></code></pre></div>
 <p><img src="analyze_output_files/figure-html/plot_tree-1.png" width="700"></p>
 </div>
@@ -324,15 +373,15 @@ post-infection.</strong></p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 2</span></span></span>
 <span><span class="co">#&gt;   stat_name        stat_value</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mean_leaf_depth  24.3      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> mean_bl           0.001<span style="text-decoration: underline;">47</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> mean_int_bl       0.001<span style="text-decoration: underline;">18</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> mean_ext_bl       0.001<span style="text-decoration: underline;">75</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> mean_divergence   0.007<span style="text-decoration: underline;">66</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> mean_diversity    0.014<span style="text-decoration: underline;">3</span>   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> divergence_slope  0.000<span style="text-decoration: underline;">048</span>0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> diversity_slope   0.000<span style="text-decoration: underline;">067</span>3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> mean_ltt         10.6</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mean_leaf_depth  15.9      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> mean_bl           0.001<span style="text-decoration: underline;">75</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> mean_int_bl       0.001<span style="text-decoration: underline;">32</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> mean_ext_bl       0.002<span style="text-decoration: underline;">18</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> mean_divergence   0.008<span style="text-decoration: underline;">06</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> mean_diversity    0.017<span style="text-decoration: underline;">1</span>   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> divergence_slope  0.000<span style="text-decoration: underline;">052</span>4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> diversity_slope   0.000<span style="text-decoration: underline;">090</span>4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> mean_ltt         12.4</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

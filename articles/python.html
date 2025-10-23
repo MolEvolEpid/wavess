@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">wavess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Running wavess in Python</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/v1.0.0/vignettes/python.Rmd" class="external-link"><code>vignettes/python.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/main/vignettes/python.Rmd" class="external-link"><code>vignettes/python.Rmd</code></a></small>
       <div class="d-none name"><code>python.Rmd</code></div>
     </div>
 
@@ -157,13 +157,22 @@ amino acids to calculate the immune fitness cost. This information can
 be generated using the functions [get_epitope_frequencies()] and
 [sample_epitopes()]. If this is an empty string provided, then immune
 fitness costs are not included.</li>
+<li>
+<code>recomb_rates</code>: file with one fewer rows than the length
+of the founder sequence. The value in each row corresponds to the
+breakpoint-specific recombination rate along the sequence. Note that
+this rate is modeled as an effective recombination rate that includes
+the rate of co-infection followed by recombination. This file is only
+needed if the recombination rate varies across the sequence.</li>
 </ul>
 <p><strong>Parameters:</strong></p>
 <p>Diversity-generating mechanisms:</p>
 <ul>
 <li>
 <code>mut_rate</code>: Mutation rate per site per generation</li>
-<li>`recomb_rate``: Recombination rate per site per generation</li>
+<li>`recomb_rate``: Recombination rate per site per generation (or file
+where each row is a breakpoint-specific recombination rate, if you want
+to model a variable recombination rate across the sequence)</li>
 </ul>
 <p>Latent cell dynamics:</p>
 <ul>
@@ -231,13 +240,16 @@ sequences for each generation. See <code><a href="../articles/run_wavess.html">v
 for more details about the outputs.</p>
 <p>Example output files can be found in
 <code>inst/python/wavess_output/</code>.</p>
+<p>If you want to run an example of modeling a variable recombination
+rate, then in <code>config.yaml</code>, replace the recombination rate
+with <code>../extdata/recomb_rates.txt</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="python-tests">Python tests<a class="anchor" aria-label="anchor" href="#python-tests"></a>
 </h3>
 <p>To run the tests for the Python part of the code, navigate to
 <code>inst/python</code> and run:</p>
-<pre><code>pytest tests.py --cov --cov-report=html</code></pre>
+<pre><code>pytest tests.py --cov=. --cov=model --cov-report=html</code></pre>
 <p>You can then look at the coverage report in
 <code>htmlcov/index.html</code>.</p>
 </div>

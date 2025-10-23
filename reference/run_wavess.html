@@ -41,7 +41,7 @@ arguments."><meta property="og:image" content="https://molevolepid.github.io/wav
 
     <a class="navbar-brand me-2" href="../index.html">wavess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,7 +69,7 @@ arguments."><meta property="og:image" content="https://molevolepid.github.io/wav
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Run wavess</h1>
-      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/v1.0.0/R/run_wavess.R" class="external-link"><code>R/run_wavess.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/main/R/run_wavess.R" class="external-link"><code>R/run_wavess.R</code></a></small>
       <div class="d-none name"><code>run_wavess.Rd</code></div>
     </div>
 
@@ -103,7 +103,7 @@ arguments.</p>
 <span>  generation_time <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  mut_rate <span class="op">=</span> <span class="fl">3e-05</span>,</span>
 <span>  q <span class="op">=</span> <span class="fu">wavess</span><span class="fu">::</span><span class="fu"><a href="calc_q_from_rates.html">calc_q_from_rates</a></span><span class="op">(</span><span class="fu">wavess</span><span class="fu">::</span><span class="va"><a href="hiv_mut_rates.html">hiv_mut_rates</a></span>, <span class="va">mut_rate</span>, <span class="va">generation_time</span><span class="op">)</span>,</span>
-<span>  recomb_rate <span class="op">=</span> <span class="fl">1.4e-05</span>,</span>
+<span>  recomb_rate <span class="op">=</span> <span class="fl">1.5e-05</span>,</span>
 <span>  act_to_lat <span class="op">=</span> <span class="fl">0.001</span>,</span>
 <span>  lat_to_act <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  lat_prolif <span class="op">=</span> <span class="fl">0.01</span>,</span>
@@ -165,9 +165,13 @@ estimates of per-day rates from nearly neutral sites:
 
 
 <dt id="arg-recomb-rate">recomb_rate<a class="anchor" aria-label="anchor" href="#arg-recomb-rate"></a></dt>
-<dd><p>Effective recombination rate per-site, per-<em>generation</em>
-(default: 1.4e-5). This rate is a combination of the rate of co-infection
-and recombination.</p></dd>
+<dd><p>Recombination rate per-breakpoint, per-<em>generation</em>
+(default: 1.5e-5). This can be a single number or a numeric vector where
+each element in the vector is a breakpoint-specific recombination rate. If
+the input is a vector, the length of the vector should be one fewer than
+the number of basepairs in the founder sequence. Note that this rate is
+modeled as an effective recombination rate that includes the rate of
+co-infection followed by recombination.</p></dd>
 
 
 <dt id="arg-act-to-lat">act_to_lat<a class="anchor" aria-label="anchor" href="#arg-act-to-lat"></a></dt>

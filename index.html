@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">wavess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,6 +71,8 @@
 <!-- badges: start -->
 
 <p>The goal of wavess is to simulate within-host virus sequence evolution optionally including recombination, a latent infected cell reservoir, and three types of selection (conserved sites, comparison to a fit sequence, and antibody-mediated immunity). The package also provides functions to pre-process data for input into the simulator, as well as post-processing functions to analyze the simulation output. The post-processing functions can also be used on real data. The default settings for the simulator assume that the sequences being simulated are HIV gp120.</p>
+<p>Website: <a href="https://molevolepid.github.io/wavess/">molevolepid.github.io/wavess/</a></p>
+<p>Manuscript: <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437" class="external-link">wavess: An R package for simulation of adaptive within-host virus sequence evolution</a></p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -78,7 +80,7 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"MolEvolEpid/wavess"</span><span class="op">)</span></span></code></pre></div>
-<p>This will not install the vignettes locally. If you’d like to install the vignettes locally, you can use the command:</p>
+<p>This will not install the vignettes locally, but you can still see the vignettes on the <a href="https://molevolepid.github.io/wavess/">website</a>. If you’d like to install the vignettes locally, you can use the command:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"MolEvolEpid/wavess"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -86,7 +88,7 @@
 <div class="section level2">
 <h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<p>Please see the following vignettes for examples:</p>
+<p>Please go to the <a href="https://molevolepid.github.io/wavess/">website</a> and see the following vignettes for examples:</p>
 <ul>
 <li>Preparing input data: <code><a href="articles/prepare_input_data.html">vignette("prepare_input_data")</a></code>
 </li>
@@ -97,6 +99,12 @@
 <li>Running the python script: <code><a href="articles/python.html">vignette("python")</a></code>
 </li>
 </ul>
+</div>
+<div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"wavess"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
