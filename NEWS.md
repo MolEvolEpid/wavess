@@ -1,3 +1,3 @@
-# wavess (development version)
+# wavess 1.0.0
 
 * Initial version.

@@ -1,8 +1,8 @@
 ---
-title: "Simulate within-host evolution with `wavess`"
+title: "Simulate within-host evolution with wavess"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Simulate within-host evolution with `wavess`}
+  %\VignetteIndexEntry{Simulate within-host evolution with wavess}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-wavess is a agent-based discrete-time within-host evolution simulator. We assume
+wavess is an individual-based discrete-time within-host evolution simulator. We assume
 that all virus life cycles within the infection are synchronized into
 generations. Each generation is one full virus life cycle, from infecting a cell
 to exiting the cell.
@@ -77,7 +77,7 @@ simulation doesn't take too long to run.
 
 ```{r setup}
 pop <- define_growth_curve(n_gens = 300)
-samp <- define_sampling_scheme(sampling_frequency_active = 100, sampling_frequency_latent = 100) %>% filter(day <= 300)
+samp <- define_sampling_scheme(sampling_frequency_active = 100, sampling_frequency_latent = 100) |> filter(day <= 300)
 founder_ref <- extract_seqs(hxb2_cons_founder,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "CON_B(1295)",

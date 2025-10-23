@@ -8,7 +8,7 @@ test_that("calc_tr_summary_stats works", {
     "mean_bl", "mean_int_bl", "mean_ext_bl",
     "mean_divergence", "mean_diversity",
     "divergence_slope", "diversity_slope",
-    "transition_score"
+    "mean_ltt"
   ))
   expect_equal(tss$stat_value, c(5 / 3, 1, 1, 1, 1.75, 3, -0.500000000000001, NA, 1))
 
