@@ -366,6 +366,10 @@ between two segments is the rate of co-infection followed by rassortment, and
 the rate within a segment is the rate of co-infection followed by recombination 
 within that segment.
 
+Alternatively, if you want to model two genes separated by n bases that are not 
+modeled (i.e. not included in the founder sequence), then the recombination rate 
+between the two genes is base_rate*(n+1). 
+
 ## Seed
 
 A seed can be set for reproducibility using the `seed` argument.

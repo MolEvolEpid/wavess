@@ -91,13 +91,20 @@ as the nucleotide sequences are translated to amino acids to calculate the
 immune fitness cost. This information can be generated using the functions
 [get_epitope_frequencies()] and [sample_epitopes()]. If this is an empty string
 provided, then immune fitness costs are not included.
+- `recomb_rates`: file with one fewer rows than the length of the founder sequence.
+The value in each row corresponds to the breakpoint-specific recombination rate 
+along the sequence. Note that this rate is modeled as an effective recombination 
+rate that includes the rate of co-infection followed by recombination. This file
+is only needed if the recombination rate varies across the sequence.
 
 **Parameters:**
 
 Diversity-generating mechanisms:
 
 - `mut_rate`: Mutation rate per site per generation
-- `recomb_rate``: Recombination rate per site per generation
+- `recomb_rate``: Recombination rate per site per generation (or file where each
+row is a breakpoint-specific recombination rate, if you want to model a variable 
+recombination rate across the sequence)
 
 Latent cell dynamics:
 
@@ -146,6 +153,9 @@ generation. See `vignette("run_wavess")` for more details about the outputs.
 
 Example output files can be found in `inst/python/wavess_output/`.
 
+If you want to run an example of modeling a variable recombination rate, then in 
+`config.yaml`, replace the recombination rate with `../extdata/recomb_rates.txt`. 
+
 
 ### Python tests
 
@@ -153,7 +163,7 @@ To run the tests for the Python part of the code, navigate to `inst/python` and
 run:
 
 ```
-pytest tests.py --cov --cov-report=html
+pytest tests.py --cov=. --cov=model --cov-report=html
 ```
 
 You can then look at the coverage report in `htmlcov/index.html`.
