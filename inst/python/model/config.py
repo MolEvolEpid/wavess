@@ -33,6 +33,8 @@ class Config:
         # convert rates to per-generation probabilities
         # these are in generations already
         self.prob_mut = self.rate_to_probability(mut_rate)
+        if np.ndim(recomb_rate) != 0:
+            recomb_rate = np.asarray(recomb_rate)
         self.prob_recomb = self.rate_to_probability(recomb_rate)
         # these are in days, so we convert to generations first
         self.prob_act_to_lat = self.rate_to_probability(act_to_lat_rate / generation_time)
@@ -43,6 +45,7 @@ class Config:
         # determine type of recombination breakpoint method to do
         self.recrate_is_sparse = True
         self.base_prob = self.prob_recomb
+
         if isinstance(self.prob_recomb, (float, int)):
             self.prob_recomb = np.full(self.seq_len - 1, self.prob_recomb)
         else:
@@ -54,6 +57,7 @@ class Config:
             probs, nprob = np.unique(self.prob_recomb, return_counts=True)
             L = self.seq_len - 1
             maxidx = np.argmax(nprob)
+
             self.base_prob = probs[maxidx]
             self.recrate_is_sparse = ((L - nprob[maxidx]) / L) < sparse_threshold
         
@@ -95,7 +99,6 @@ class Config:
         self.t_epitope_mask = t_epitope_mask
         self.t_recognition_motifs = recognition_motifs
         
-        
         self.conserved_sites = {int(k): v.upper() for k, v in conserved_sites.items()}
         self.conserved_cost = conserved_cost
         
@@ -119,7 +122,7 @@ class Config:
     # (e.g. if you're modeling pol and env), then you can input the rate as (n+1)*base_rate 
     # (assuming independence)
     def rate_to_probability(self, rate, time = 1):
-        return (1 - exp(-2 * rate * time))/2 
+        return (1 - np.exp(-2 * rate * time))/2 
     
     def calc_nt_sub_probs_from_q(self):
         # Convert to probabilities

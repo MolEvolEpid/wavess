@@ -35,6 +35,8 @@ def get_sequences(filename):
     ], "Founder virus sequences must be of the same length"
     return founder_virus_sequences
 
+
+# Function to load recombination rate
 def load_recombination_rate(recomb_rate, seq_len):
     if isinstance(recomb_rate, (float, int)):
         return recomb_rate
@@ -133,15 +135,7 @@ if __name__ == "__main__":
 
     # Prepare recombination rate (variable or constant)
     seq_len = len(reference_sequence)
-    prob_recomb = load_recombination_rate(params["recomb_rate"], seq_len)
-    if isinstance(prob_recomb, (list, np.ndarray)):
-        # User provided an array for variable recombination rate
-        prob_recombination = np.asarray(prob_recomb) #1 - exp(-params["recomb_rate"])
-        if prob_recombination.shape[0] != seq_len - 1:
-            raise ValueError("Variable recombination rate must have length seq_len-1")
-    else:
-        # Use constant rate
-        prob_recombination = 1 - exp(-prob_recomb) 
+    recomb_rate = load_recombination_rate(params["recomb_rate"], seq_len)
 
     # Active cell counts for each generation
     active_cell_count = pop_samp["active_cell_count"]
@@ -162,7 +156,7 @@ if __name__ == "__main__":
     last_sampled_gen = max(last_sampled_gen_active, last_sampled_gen_latent)
     
     model_config = agents.Config(params["generation_time"], last_sampled_gen, founder_viruses, q_matrix,
-                                 params["mut_rate"], params["recomb_rate"],
+                                 params["mut_rate"], recomb_rate,
                                  params["act_to_lat"], params["lat_to_act"], params["lat_die"], params["lat_prolif"],
                                  conserved_sites, params["conserved_cost"],
                                  reference_sequence, float(params["replicative_cost"]),
@@ -173,10 +167,7 @@ if __name__ == "__main__":
 
     # Loop through generations
     counts, fitness, seqs_active, seqs_latent = model_config.host.loop_through_generations(
-        active_cell_count,
-        n_to_samp_active,
-        n_to_samp_latent,
-        model_config
+        active_cell_count, n_to_samp_active, n_to_samp_latent, model_config
     )
 
     # Make directories if they don't exist
