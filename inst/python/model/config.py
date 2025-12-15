@@ -69,35 +69,37 @@ class Config:
         # convert days to generations
         self.b_gen_full_potency = b_days_full_potency / generation_time
         
-        # epitope, start, escape position, recognized_aa
-        starts = []
-        t_days_to_full_potency = []
-        positions = []
-        aas = []
-        for row in t_epitope_locations.itertuples():
-            starts.append(int(row[1]))
-            t_days_to_full_potency.append(int(row[2]))
-            positions.append(int(row[3]))
-            aas.append(row[4])
-        epitopes = []
-        for start in set(starts):
-            epitopes.append(TEpitope(
-                start, np.unique(np.array(t_days_to_full_potency)[np.array(starts) == start])[0] / generation_time, np.array(positions)[np.array(starts) == start], np.array(aas)[np.array(starts) == start]))
-        self.t_epitope_locations = epitopes
-
+        self.t_epitope_locations = t_epitope_locations
         self.t_max_imm = t_max_imm
-        # self.t_gen_full_potency = t_days_full_potency / generation_time
-        
-        t_epitope_mask = np.full(self.seq_len, -1, dtype=int)
-        recognition_motifs = []
-        epi_num = 0
-        for epi in self.t_epitope_locations:
-            for position in epi.escape_positions:
-                t_epitope_mask[(epi.start + (position-1)*3):(epi.start + (position-1)*3+3)] = epi_num
-            recognition_motifs.append(''.join([epi.escape_positions[pos] if pos in epi.escape_positions else 'N' for pos in range(1, max(epi.escape_positions.keys())+1)]))
-            epi_num += 1
-        self.t_epitope_mask = t_epitope_mask
-        self.t_recognition_motifs = recognition_motifs
+        self.t_epitope_mask = None
+        self.t_recognition_motifs = None
+        # epitope, start, escape position, recognized_aa
+        if t_epitope_locations is not None:
+            starts = []
+            t_days_to_full_potency = []
+            positions = []
+            aas = []
+            for row in t_epitope_locations.itertuples():
+                starts.append(int(row[1]))
+                t_days_to_full_potency.append(int(row[2]))
+                positions.append(int(row[3]))
+                aas.append(row[4])
+            epitopes = []
+            for start in set(starts):
+                epitopes.append(TEpitope(
+                    start, np.unique(np.array(t_days_to_full_potency)[np.array(starts) == start])[0] / generation_time, np.array(positions)[np.array(starts) == start], np.array(aas)[np.array(starts) == start]))
+            self.t_epitope_locations = epitopes
+
+            t_epitope_mask = np.full(self.seq_len, -1, dtype=int)
+            recognition_motifs = []
+            epi_num = 0
+            for epi in self.t_epitope_locations:
+                for position in epi.escape_positions:
+                    t_epitope_mask[(epi.start + (position-1)*3):(epi.start + (position-1)*3+3)] = epi_num
+                recognition_motifs.append(''.join([epi.escape_positions[pos] if pos in epi.escape_positions else 'N' for pos in range(1, max(epi.escape_positions.keys())+1)]))
+                epi_num += 1
+            self.t_epitope_mask = t_epitope_mask
+            self.t_recognition_motifs = recognition_motifs
         
         self.conserved_sites = {int(k): v.upper() for k, v in conserved_sites.items()}
         self.conserved_cost = conserved_cost
