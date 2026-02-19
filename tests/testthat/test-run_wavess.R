@@ -57,6 +57,18 @@ test_that("run_wavess works", {
       max_fitness_cost = 0.4
     )
   ))
+  # simple T-cell epitope example: one epitope, one escape position
+  t_locs <- tibble::tibble(
+    start = 0L,
+    days_to_full_potency = 21L,
+    escape_position = 1L,
+    recognized_aa = "A"
+  )
+  expect_no_error(run_wavess(
+    inf_pop_size, samp_scheme, rep("ATCGAT", 10),
+    t_epitope_locations = t_locs,
+    t_max_immune_cost = 0.5
+  ))
   # samp_scheme$active_cell_count[1] <- 2
   expect_no_error(run_wavess(inf_pop_size, samp_scheme, c(rep("ATCG", 9), "AAAA")))
   expect_error(
