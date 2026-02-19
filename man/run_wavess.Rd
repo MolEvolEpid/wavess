@@ -20,6 +20,10 @@ run_wavess(
   conserved_cost = 0.99,
   ref_seq = NULL,
   replicative_cost = 0.001,
+  b_epitope_locations = NULL,
+  b_immune_start_day = 0,
+  b_n_for_imm = 100,
+  b_days_full_potency = 90,
   epitope_locations = NULL,
   n_for_imm = 100,
   days_full_potency = 90,
@@ -96,7 +100,7 @@ to a reference sequence)}
 is not NULL, must be in the range [0,1) where 0 indicates no cost. 1, which
 indicates no ability to survive, is not allowed (default: 0.001)}
 
-\item{epitope_locations}{Optional tibble of B-cell epitope locations and maximum
+\item{b_epitope_locations}{Tibble of B-cell epitope locations and maximum
 fitness costs with columns epi_start_nt, epi_end_nt, max_fitness_cost.
 These epitopes are expected to be indexed at 0 and in a protein in the
 correct reading frame, as the nucleotide sequences are translated to amino
@@ -106,18 +110,28 @@ ability to survive. This epitope location tibble can be generated using the
 functions \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and \code{\link[=sample_epitopes]{sample_epitopes()}}. (default:
 NULL, i.e. no B-cell immune fitness costs)}
 
-\item{n_for_imm}{Number of infected cells that must contain a given sequence
-for that sequence to be recognized by the B-cell immune system, only
-relevant when \code{epitope_locations} is not NULL (default: 100).}
-
-\item{days_full_potency}{Number of \emph{days} it takes for a B-cell immune
-response to an epitope to reach full potency, only relevant when
-\code{epitope_locations} is not NULL (default: 90).}
-
-\item{immune_start_day}{\emph{Day} to start checking for a B-cell immune
-response, only relevant when \code{epitope_locations} is not NULL (default: 0,
+\item{b_immune_start_day}{\emph{Day} to start checking for a B-cell immune
+response, only relevant when \code{b_epitope_locations} is not NULL (default: 0,
 but note that the immune response will not actually start until there are
-at least \code{n_for_imm} cells in the active population).}
+at least \code{b_n_for_imm} cells in the active population).}
+
+\item{b_n_for_imm}{Number of infected cells that must contain a given sequence
+for that sequence to be recognized by the B-cell immune system, only
+relevant when \code{b_epitope_locations} is not NULL (default: 100).}
+
+\item{b_days_full_potency}{Number of \emph{days} it takes for a B-cell immune
+response to an epitope to reach full potency, only relevant when
+\code{b_epitope_locations} is not NULL (default: 90).}
+
+\item{epitope_locations}{Deprecated; use \code{b_epitope_locations} instead. If
+both \code{epitope_locations} and \code{b_epitope_locations} are supplied,
+\code{b_epitope_locations} will be used.}
+
+\item{n_for_imm}{Deprecated; use \code{b_n_for_imm} instead.}
+
+\item{days_full_potency}{Deprecated; use \code{b_days_full_potency} instead.}
+
+\item{immune_start_day}{Deprecated; use \code{b_immune_start_day} instead.}
 
 \item{t_epitope_locations}{Optional tibble of T-cell epitope locations and
 escape information with columns start (nucleotide start position, indexed
