@@ -55,8 +55,39 @@ test_that("run_wavess works", {
     b_epitope_locations = tibble::tibble(
       epi_start_nt = 0, epi_end_nt = 3,
       max_fitness_cost = 0.4
-    )
+    ),
+    b_n_for_imm = 100,
+    b_days_full_potency = 90,
+    b_immune_start_day = 0
   ))
+
+  expect_warning(run_wavess(
+    inf_pop_size, samp_scheme, rep("ATCG", 10),
+    epitope_locations = tibble::tibble(
+      epi_start_nt = 0, epi_end_nt = 3,
+      max_fitness_cost = 0.4
+    )
+  ),
+  "`epitope_locations` is deprecated")
+
+  expect_warning(run_wavess(
+    inf_pop_size, samp_scheme, rep("ATCG", 10),
+    immune_start_day = 10
+  ),
+  "`immune_start_day` is deprecated")
+
+  expect_warning(run_wavess(
+    inf_pop_size, samp_scheme, rep("ATCG", 10),
+    n_for_imm = 10
+  ),
+  "`n_for_imm` is deprecated")
+
+  expect_warning(run_wavess(
+    inf_pop_size, samp_scheme, rep("ATCG", 10),
+    days_full_potency = 10
+  ),
+  "`days_full_potency` is deprecated")
+
   # simple T-cell epitope example: one epitope, one escape position
   t_locs <- tibble::tibble(
     start = 0L,
