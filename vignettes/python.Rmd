@@ -65,11 +65,12 @@ that defines various parameters and includes paths to input files.
 
 **File inputs (example data in `inst/extdata/`):**
 
-- `pop_samp`: csv with columns generation, active_cell_count, n_sample_active.
+- `inf_pop_size`: csv with columns generation, active_cell_count.
 Note that the initial active cell population size in the first generation must
 be the same as the number of input founder sequences (because it simply _is_ the
-input founder sequences). Can be generated using the [generate_pop_samp()]
-function.
+input founder sequences). Can be generated using the [define_growth_curve()] function.
+- `samp_scheme`: csv with columns day, n_sample_active, n_sample_latent. Can be 
+generated using the [define_samp_scheme()] function.
 - `founder_seqs`: fasta file of founder sequence(s). The founder sequence(s) may
 only contain the characters ACGT, and no gaps are allowed. When modeling immune
 fitness, they are expected to be codon-aligned.
@@ -99,27 +100,28 @@ escape_position (amino acid position within the epitope, indexed starting at 1),
 and recognized_aa (amino acid considered recognized by the immune system at
 that escape position). If this is an empty string, then T-cell immune fitness
 costs are not included.
-- `recomb_rates`: file with one fewer rows than the length of the founder sequence.
-The value in each row corresponds to the breakpoint-specific recombination rate 
-along the sequence. Note that this rate is modeled as an effective recombination 
-rate that includes the rate of co-infection followed by recombination. This file
-is only needed if the recombination rate varies across the sequence.
 
 **Parameters:**
+
+- `generation_time`: generation time in days
 
 Diversity-generating mechanisms:
 
 - `mut_rate`: Mutation rate per site per generation
 - `recomb_rate``: Recombination rate per site per generation (or file where each
 row is a breakpoint-specific recombination rate, if you want to model a variable 
-recombination rate across the sequence)
+recombination rate across the sequence).  If a file, it must have one fewer rows 
+than the length of the founder sequence.
+The value in each row corresponds to the breakpoint-specific recombination rate 
+along the sequence. Note that this rate includes the rate of co-infection 
+followed by recombination.
 
 Latent cell dynamics:
 
-- `prob_act_to_lat`: probability of infected cell becoming latent
-- `prob_lat_to_act`: probability that a latent cell will become active
-- `prob_lat_prolif`: probability that a latent cell will proliferate (based on central memory cells)
-- `prob_lat_die`: probability that a latent cell will die
+- `act_to_lat`: per-day rate that an infected cell will become latent
+- `lat_to_act`: per-day rate that a latent cell will become active
+- `lat_prolif`: per-day rate that a latent cell will proliferate
+- `lat_die`: per-day rate that a latent cell will die
 
 Parameters related to fitness:
 
@@ -129,7 +131,7 @@ Conserved sites:
 
 Fitness relative to a reference sequence:
 
-- `rep_exp`: exponent for replicative fitness function
+- `replicative_cost`: fitness cost per difference from reference
 
 Immune fitness:
 
