@@ -263,6 +263,22 @@ test_that("check_run_wavess_inputs works", {
     NULL, 0.5,
     0.001, 0.01, 0.01, 0.01, NULL
   ))
+  bad_t <- tibble::tibble(
+    start = 0L,
+    days_to_full_potency = 21L,
+    escape_position = 1L
+  )
+  expect_error(
+    check_run_wavess_inputs(
+      inf_pop_size, samp_scheme, fs, 1.2, hiv_q_mat,
+      3.5e-5, 1.4e-5,
+      NULL, 0.99, NULL, 1,
+      NULL, 30, 0.01, 90,
+      bad_t, 0.5,
+      0.001, 0.01, 0.01, 0.01, NULL
+    ),
+    "t_epitope_locations must contain the columns"
+  )
   expect_error(
     check_run_wavess_inputs(
       inf_pop_size, samp_scheme |> dplyr::mutate(n_sample_active = 0), fs, 1.2, hiv_q_mat,

@@ -61,7 +61,7 @@
 #' @param replicative_cost Replicative fitness cost, only relevant when ref_seq
 #'   is not NULL, must be in the range [0,1) where 0 indicates no cost. 1, which
 #'   indicates no ability to survive, is not allowed (default: 0.001)
-#' @param epitope_locations Optional tibble of B-cell epitope locations and maximum
+#' @param b_epitope_locations Tibble of B-cell epitope locations and maximum
 #'   fitness costs with columns epi_start_nt, epi_end_nt, max_fitness_cost.
 #'   These epitopes are expected to be indexed at 0 and in a protein in the
 #'   correct reading frame, as the nucleotide sequences are translated to amino
@@ -70,16 +70,22 @@
 #'   ability to survive. This epitope location tibble can be generated using the
 #'   functions [get_epitope_frequencies()] and [sample_epitopes()]. (default:
 #'   NULL, i.e. no B-cell immune fitness costs)
-#' @param immune_start_day *Day* to start checking for a B-cell immune
-#'   response, only relevant when `epitope_locations` is not NULL (default: 0,
+#' @param b_immune_start_day *Day* to start checking for a B-cell immune
+#'   response, only relevant when `b_epitope_locations` is not NULL (default: 0,
 #'   but note that the immune response will not actually start until there are
-#'   at least `n_for_imm` cells in the active population).
-#' @param n_for_imm Number of infected cells that must contain a given sequence
+#'   at least `b_n_for_imm` cells in the active population).
+#' @param b_n_for_imm Number of infected cells that must contain a given sequence
 #'   for that sequence to be recognized by the B-cell immune system, only
-#'   relevant when `epitope_locations` is not NULL (default: 100).
-#' @param days_full_potency Number of *days* it takes for a B-cell immune
+#'   relevant when `b_epitope_locations` is not NULL (default: 100).
+#' @param b_days_full_potency Number of *days* it takes for a B-cell immune
 #'   response to an epitope to reach full potency, only relevant when
-#'   `epitope_locations` is not NULL (default: 90).
+#'   `b_epitope_locations` is not NULL (default: 90).
+#' @param epitope_locations Deprecated; use `b_epitope_locations` instead. If
+#'   both `epitope_locations` and `b_epitope_locations` are supplied,
+#'   `b_epitope_locations` will be used.
+#' @param immune_start_day Deprecated; use `b_immune_start_day` instead.
+#' @param n_for_imm Deprecated; use `b_n_for_imm` instead.
+#' @param days_full_potency Deprecated; use `b_days_full_potency` instead.
 #' @param t_epitope_locations Optional tibble of T-cell epitope locations and
 #'   escape information with columns start (nucleotide start position, indexed
 #'   at 0), days_to_full_potency (days to reach full immune potency for that
@@ -140,6 +146,10 @@ run_wavess <- function(inf_pop_size,
                        conserved_cost = 0.99,
                        ref_seq = NULL,
                        replicative_cost = 0.001,
+                       b_epitope_locations = NULL,
+                       b_immune_start_day = 0,
+                       b_n_for_imm = 100,
+                       b_days_full_potency = 90,
                        epitope_locations = NULL,
                        n_for_imm = 100,
                        days_full_potency = 90,
@@ -147,13 +157,58 @@ run_wavess <- function(inf_pop_size,
                        t_epitope_locations = NULL,
                        t_max_immune_cost = 0.5,
                        seed = NULL) {
+
+  # Handle deprecated B-cell arguments and prefer new b_* versions
+  # Epitope locations
+  if (!missing(b_epitope_locations) && !is.null(b_epitope_locations)) {
+    if (!missing(epitope_locations) && !is.null(epitope_locations)) {
+      warning("`epitope_locations` is deprecated; using `b_epitope_locations` instead.", call. = FALSE)
+    }
+    epitope_locations_use <- b_epitope_locations
+  } else {
+    epitope_locations_use <- epitope_locations
+    if (!missing(epitope_locations) && !is.null(epitope_locations)) {
+      warning("`epitope_locations` is deprecated; please use `b_epitope_locations` instead.", call. = FALSE)
+    }
+  }
+
+  # B-cell immune start day
+  if (!missing(b_immune_start_day)) {
+    immune_start_day_use <- b_immune_start_day
+  } else {
+    immune_start_day_use <- immune_start_day
+  }
+  if (!missing(immune_start_day) && immune_start_day != b_immune_start_day) {
+    warning("`immune_start_day` is deprecated; please use `b_immune_start_day` instead.", call. = FALSE)
+  }
+
+  # B-cell n_for_imm
+  if (!missing(b_n_for_imm)) {
+    n_for_imm_use <- b_n_for_imm
+  } else {
+    n_for_imm_use <- n_for_imm
+  }
+  if (!missing(n_for_imm) && n_for_imm != b_n_for_imm) {
+    warning("`n_for_imm` is deprecated; please use `b_n_for_imm` instead.", call. = FALSE)
+  }
+
+  # B-cell days_full_potency
+  if (!missing(b_days_full_potency)) {
+    days_full_potency_use <- b_days_full_potency
+  } else {
+    days_full_potency_use <- days_full_potency
+  }
+  if (!missing(days_full_potency) && days_full_potency != b_days_full_potency) {
+    warning("`days_full_potency` is deprecated; please use `b_days_full_potency` instead.", call. = FALSE)
+  }
+
   check_run_wavess_inputs(
     inf_pop_size, samp_scheme, founder_seqs, generation_time, q,
     mut_rate, recomb_rate,
     conserved_sites, conserved_cost,
     ref_seq, replicative_cost,
-    epitope_locations, immune_start_day,
-    n_for_imm, days_full_potency,
+    epitope_locations_use, immune_start_day_use,
+    n_for_imm_use, days_full_potency_use,
     t_epitope_locations, t_max_immune_cost,
     act_to_lat, lat_to_act,
     lat_prolif, lat_die,
@@ -213,7 +268,7 @@ run_wavess <- function(inf_pop_size,
     act_to_lat, lat_to_act, lat_die, lat_prolif,
     conserved_sites, conserved_cost,
     ref_seq, replicative_cost,
-    epitope_locations, immune_start_day, n_for_imm, days_full_potency,
+    epitope_locations_use, immune_start_day_use, n_for_imm_use, days_full_potency_use,
     t_epitope_locations, t_max_immune_cost,
     seed
   )

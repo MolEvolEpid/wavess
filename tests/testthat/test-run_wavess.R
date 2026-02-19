@@ -52,7 +52,7 @@ test_that("run_wavess works", {
   ))
   expect_no_error(run_wavess(
     inf_pop_size, samp_scheme, rep("ATCG", 10),
-    epitope_locations = tibble::tibble(
+    b_epitope_locations = tibble::tibble(
       epi_start_nt = 0, epi_end_nt = 3,
       max_fitness_cost = 0.4
     )
@@ -80,7 +80,7 @@ test_that("run_wavess works", {
     generation_time = 1,
     conserved_sites = c("1" = "A"),
     ref_seq = "GGGGGG",
-    epitope_locations = tibble::tibble(
+    b_epitope_locations = tibble::tibble(
       epi_start_nt = 0, epi_end_nt = 3, max_fitness_cost = 0.3
     )
   )

@@ -149,7 +149,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
         # Compute overall fitness
         viral_fitness = (
             self.C[CD4_index].infecting_virus.b_immune_fitness
-            * self.C[CD4_index].infecting_virus.t_immune_fitness
+            * float(self.C[CD4_index].infecting_virus.t_immune_fitness)
             * self.C[CD4_index].infecting_virus.conserved_fitness
             * self.C[CD4_index].infecting_virus.replicative_fitness
         )
@@ -432,7 +432,7 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             sum([x.infecting_virus.fitness for x in self.C]) / n_active,
             sum([x.infecting_virus.conserved_fitness for x in self.C]) / n_active,
             sum([x.infecting_virus.b_immune_fitness for x in self.C]) / n_active,
-            sum([x.infecting_virus.t_immune_fitness for x in self.C]) / n_active,
+            sum([float(x.infecting_virus.t_immune_fitness) for x in self.C]) / n_active,
             sum([x.infecting_virus.replicative_fitness for x in self.C])
             / n_active,
         )
@@ -567,5 +567,5 @@ class HostEnv:  # This is the 'compartment' where the model dynamics take place
             if n_sample_latent[t] != 0:
                 seqs_latent, tmp = self.sample_viral_sequences(
                     seqs_latent, None, t, min(int(n_sample_latent[t]), len(self.L)), 'latent')
-
+                  
         return counts, fitness, seqs_active, dict(seqs_latent)
