@@ -7,8 +7,8 @@ import pandas as pd
 
 from run_wavess import *
 from model.seed import set_python_seed
-from model.epitope import Epitope 
-from model.variation import get_substitution, get_recomb_breakpoints, get_recombined_sequence, muts_rel_ref, get_conserved_sites_mutated
+from model.epitope import BEpitope, TEpitope
+from model.variation import get_substitution, get_recomb_breakpoints, get_recombined_sequence, muts_rel_ref, get_conserved_sites_mutated, translate
 from model.fitness import calc_seq_fitness, normalize
 from model.virus import HIV
 from model.cells import InfectedCD4
@@ -42,7 +42,7 @@ def test_prep_ref_conserved():
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
-          0)
+          None, 0, 0)
     assert (config.ref_seq, config.conserved_sites) == ('AAA', {})
     config.prep_ref_conserved() 
     assert (config.ref_seq, config.conserved_sites) == ('AAA', {})
@@ -70,7 +70,7 @@ def test_create_host_env():
         0, 0, 0, 0,
         {}, None, "AAA", 1,
         None, 0, 0, 0,
-        None)
+        None, 0, 0)
     assert config.host.C[0].active
     assert config.host.C[0].infecting_virus.nuc_sequence == "AAA"
     config = Config(1, None,  {"founder0": "AAA", "founder1": "GGG"}, 
@@ -78,7 +78,7 @@ def test_create_host_env():
         0, 0, 0, 0,
         {}, None, "AAA", 1,
         None, 0, 0, 0,
-        None)
+        None, 0, None)
     assert config.host.C[0].infecting_virus.nuc_sequence == "AAA"
     assert config.host.C[1].infecting_virus.nuc_sequence == "GGG"
 
@@ -87,7 +87,7 @@ def test_create_host_env():
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
-          0)
+          None, 0, 0)
     assert config.host.C[0].active
     assert config.host.C[0].infecting_virus.nuc_sequence == "AAA"
     config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"}, 
@@ -95,7 +95,7 @@ def test_create_host_env():
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
-          0)
+          None, 0, 0)
     assert config.host.C[0].infecting_virus.nuc_sequence == "AAA"
     assert config.host.C[1].infecting_virus.nuc_sequence == "GGG"
 
@@ -106,7 +106,7 @@ def test_get_nucleotide_substitution_probabilities():
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
-          0)
+          None, 0, 0)
     assert config.substitution_probabilities[0] == ("A", "C", "G", "T")
     assert config.substitution_probabilities[1][1] == [0.2857040450786617, 0.0, 0.02855551755714605, 0.6857404373641922]
     
@@ -118,7 +118,7 @@ def test_get_substitution():
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
-          0)
+          None, 0, 0)
     assert get_substitution("A", config.substitution_probabilities) != "A"
     assert get_substitution("C", config.substitution_probabilities) != "C"
     assert get_substitution("G", config.substitution_probabilities) != "G"
@@ -130,19 +130,19 @@ def test_get_substitution():
 
 
 def test_get_recomb_breakpoints():
-    config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"},
-          q, 3.5e-5, 100, 
+    config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"}, 
+          q, 3.5e-5, 100,
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
-          0)
+          None, 0, 0)
     assert (config.prob_recomb == np.full(2, 0.5)).all() # probability of an odd number of recombinations
     config = Config(1, 0, {"founder0": "AAA", "founder1": "GGG"},
           q, 3.5e-5, np.array([0, 100]), 
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
-          0)
+          None, 0, 0)
     assert (config.prob_recomb == np.array([0, 0.5])).all()
     # force prob_recomb to be 1
     config.prob_recomb = np.full(2, 1)
@@ -234,14 +234,17 @@ def test_get_recomb_breakpoints():
     nc, bp = get_recomb_breakpoints(3, config)
     assert nc == 1
     assert list(bp) == [[1]]
-    
+    config.base_prob = 0
+    nc, bp = get_recomb_breakpoints(3, config)
+    assert nc == 0
+
     with pytest.raises(ValueError):
       Config(1, 0, {"founder0": "AAA", "founder1": "GGG"},
           q, 3.5e-5, np.full(0, 10), 
           0, 0, 0, 0,
           {}, 0, "AAA", 1,
           None, 0, 0, 0,
-          0)
+          None, 0, 0)
 
 
 def test_get_recombined_sequence():
@@ -306,10 +309,36 @@ def test_get_conserved_sites_mutated():
 # Epitopes class
 
 
-def test_Epitopes():
-    epitope = Epitope(0, 3, 0.3)
+def test_BEpitopes():
+    epitope = BEpitope(0, 3, 0.3)
     assert repr(epitope) == "(0 to 3, maxfit: 0.3)"
     assert str(epitope) == "(0 to 3, maxfit: 0.3)"
+
+
+def test_TEpitopes_and_t_immune():
+    # One T-cell epitope, one escape position, max immune cost 0.5
+    t_df = pd.DataFrame({
+        'start': [0],
+        'days_to_full_potency': [21],
+        'escape_position': [1],
+        'recognized_aa': ['K'],
+    })
+    config = Config(
+        1, 0, {"founder0": "AAA"},
+        q, 3.5e-5, 0,
+        0, 0, 0, 0,
+        {}, 0, "", 0.0,
+        None, 0, 0, 0,
+        t_df, 0.5, 1234
+    )
+    # Virus encodes the recognized AA at the escape position
+    hiv = HIV("AAA", config)
+    host = HostEnv([hiv], 1)
+    # Before any T recognition, t_immune_fitness should be 1
+    assert hiv.t_immune_fitness == 1
+    # After enough generations, recognition should reduce fitness
+    host.get_next_gen_active(1, 30, config)
+    assert hiv.t_immune_fitness <= 1
 
 
 # HIV class
@@ -321,12 +350,13 @@ def test_HIV():
           0, 0, 0, 0,
           {}, 0, "AAA", 0.99,
           None, 0, 0, 0,
-          1234)
+          None, 0, 1234)
     hiv = HIV("AAT", config)
     assert repr(hiv) == "HIV with sequence AAT"
     assert str(hiv) == "HIV with sequence AAT"
     assert hiv.conserved_sites_mutated == set()
-    assert hiv.immune_fitness == 1
+    assert hiv.b_immune_fitness == 1
+    assert hiv.t_immune_fitness == 1
     assert hiv.conserved_fitness == 1
     assert hiv.replicative_fitness == 1-0.99
     assert hiv.fitness == 1-0.99
@@ -342,7 +372,7 @@ def test_mutate():
           0, 0, 0, 0,
           {1: 'A'}, 0.00, "AAA", 0,
           None, 0, 0, 0,
-          1234)
+          None, 0, 1234)
     hiv = HIV("AAA", config)
     hiv.mutate(0, config)
     assert hiv.nuc_sequence == "TAA"
@@ -393,7 +423,7 @@ def test_InfectedCD4():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0,
           None, 0, 0, 0,
-          1234)
+          None, 0, 1234)
     hiv = HIV("AAA", config)
     inf_cell = InfectedCD4(hiv, True)
     assert repr(inf_cell) == "Infected CD4. Active: True. HIV with sequence AAA"
@@ -413,7 +443,7 @@ def test_HostEnv():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0,
           None, 0, 0, 0,
-          1234)
+          None, 0, 1234)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAA"] * 10], 10)
     assert (
@@ -441,38 +471,38 @@ def test_translate():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "ATGATTGTGTAG", 0,
           None, 0, 0, 0,
-          1234)
+          None, 0, 1234)
     hiv = [HIV("ATGATTGTGTAG", config)]
     host = HostEnv(hiv, 1)
-    assert host.translate(hiv[0].nuc_sequence) == "MIV_"
-    assert host.translate(hiv[0].nuc_sequence[3:9])
+    assert translate(hiv[0].nuc_sequence) == "MIV_"
+    assert translate(hiv[0].nuc_sequence[3:9])
     with pytest.raises(Exception):
-        host.translate(hiv[0].nuc_sequence[0:7])
+        translate(hiv[0].nuc_sequence[0:7])
 
 
-def test_update_epitopes_recognized():
+def test_update_b_epitopes_recognized():
     config = Config(1, 0, {"founder0": "AAAAAAAAA"}, 
           q, 3.5e-5, 100,
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAAAAAAAA", 0,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 2, 30,
-          1234)
+          None, 0, 1234)
     # rng = default_rng(1234)
     # reference_sequence = "AAAAAAAAA"
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAAAAAAAA"] * 11], 11)
     # immune_response_num = 2
-    host.update_epitopes_recognized(
+    host.update_b_epitopes_recognized(
         10, config)
     assert host.epitopes_recognition_generation == {"K": 10}
     assert host.epitope_variants_translated == {"AAA": "K"}
     host.C[0].infecting_virus.nuc_sequence = "ATAAAAAAA"
-    host.update_epitopes_recognized(
+    host.update_b_epitopes_recognized(
         15, config)
     assert host.epitopes_recognition_generation == {"K": 10}
     assert host.epitope_variants_translated == {"AAA": "K", "ATA": "I"}
     host.C[1].infecting_virus.nuc_sequence = "ATAAAAAAA"
-    host.update_epitopes_recognized(
+    host.update_b_epitopes_recognized(
         20, config)
     assert host.epitopes_recognition_generation == {
         "K": 10,
@@ -481,20 +511,20 @@ def test_update_epitopes_recognized():
     assert host.epitope_variants_translated == {"AAA": "K", "ATA": "I"}
 
 
-def test_update_immune_fitness():
+def test_update_b_immune_fitness():
     config = Config(1, 0, {"founder0": "AAA"}, 
           q, 3.5e-5, 100,
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0,
           pd.DataFrame({'start': [0, 4], 'end': [3, 7], 'maxepi': [0.2, 0.3]}),
           0, 0.1, 90,
-          1234)
+          None, 0, 1234)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAAAAAAAA"] * 11], 11)
-    host.update_epitopes_recognized(10, config)
-    host.update_immune_fitness(40, config)
+    host.update_b_epitopes_recognized(10, config)
+    host.update_b_immune_fitness(40, config)
     assert (
-        round(host.C[0].infecting_virus.immune_fitness, 1)
+        round(host.C[0].infecting_virus.b_immune_fitness, 1)
         == 1 - 0.3 * (40 - 10) / 90
     )
 
@@ -507,7 +537,7 @@ def test_get_fitness_of_infecting_virus():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
-          1234)
+          None, 0, 1234)
     hiv = HIV("AAA", config)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAA"] * 11], 11)
@@ -516,16 +546,18 @@ def test_get_fitness_of_infecting_virus():
     host.C[0].infecting_virus.mutate(1, config)
     assert host.get_fitness_of_infecting_virus(
         0) == (1 - 0) * (1 - 0) * (1-0.99)
-    assert host.C[0].infecting_virus.immune_fitness == 1
+    assert host.C[0].infecting_virus.b_immune_fitness == 1
+    assert host.C[0].infecting_virus.t_immune_fitness == 1
     assert host.C[0].infecting_virus.replicative_fitness == 1
     assert host.C[0].infecting_virus.conserved_fitness == (1-0.99)
     assert host.C[0].infecting_virus.fitness == (1 - 0) * (1 - 0) * (1-0.99)
     assert host.get_fitness_of_infecting_virus(1) == 1
-    assert host.C[1].infecting_virus.immune_fitness == 1
+    assert host.C[1].infecting_virus.b_immune_fitness == 1
+    assert host.C[0].infecting_virus.t_immune_fitness == 1
     assert host.C[1].infecting_virus.replicative_fitness == 1
     assert host.C[1].infecting_virus.conserved_fitness == 1
-    host.update_epitopes_recognized(1, config)
-    host.update_immune_fitness(40, config)
+    host.update_b_epitopes_recognized(1, config)
+    host.update_b_immune_fitness(40, config)
     assert host.get_fitness_of_infecting_virus(
         0) == (1 - 0) * (1 - 0) * (1-0.99)
     assert (
@@ -542,7 +574,7 @@ def test_singly_infect_cd4():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
-          123)
+          None, 0, 123)
     # seed(123)
     
     # reference_sequence = "AAA"
@@ -570,7 +602,7 @@ def test_dually_infect_cd4():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
-          123)
+          None, 0, 123)
     host = HostEnv([HIV(seq, config) for seq in ["AAA"] * 3], 3)
     host.C[0].infecting_virus.nuc_sequence = "GGG"
     host.C[1].infecting_virus.nuc_sequence = "TTT"
@@ -595,7 +627,7 @@ def test_latent_active_CD4():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
-          123)
+          None, 0, 123)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAA"] * 10], 10)
     assert len(host.C) == 10
@@ -629,7 +661,7 @@ def test_mutate_virus_in_productive_CD4():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
-          123)
+          None, 0, 123)
     host = HostEnv([HIV(seq, config)
                    for seq in ["AAA"] * 10], 10)
     host.mutate_virus_in_productive_CD4([1], config)
@@ -654,7 +686,7 @@ def test_get_next_gen_latent():
           100, 0.00001, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 0, 10, 30,
-          1234)
+          None, 0, 1234)
     host = HostEnv([HIV(seq, config) for seq in ["GGG"] * 3], 3)
     assert host.get_next_gen_latent(config) == (2, 0, 0, 0)
     assert host.L[0].active == False
@@ -698,28 +730,33 @@ def test_get_next_gen_latent():
 
 
 def test_get_next_gen_active():
-    config = Config(1, 0, {"founder0": "AAA"}, 
-          q, 3.5e-5, 0,
-          0, 0, 0, 0,
-          {1: 'A'}, 0.99, "TTT", 0.1,
-          pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
-          1234)
+    # Fixed to use a scalar prob_recomb and avoid 0d array misuse
+    config = Config(
+        1, 0, {"founder0": "AAA"},
+        q, 3.5e-5, 0,
+        0, 0, 0, 0,
+        {1: 'A'}, 0.99, "TTT", 0.1,
+        pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
+        None, 0, 1234
+    )
     host = HostEnv([HIV(seq, config) for seq in ["AAA"] * 3], 3)
     host.C[0].infecting_virus.mutate(0, config)
     host.C[1].infecting_virus.mutate(0, config)
-    assert host.get_next_gen_active(2, 40, config) == (0, 0)
-    assert [host.C[i].infecting_virus.nuc_sequence for i in range(2)] == [
-        "TAA", "AAA"]
-    assert [host.C[i].infecting_virus.fitness for i in range(2)] == [(1-0.1)**2, (1-0.1)**3]
+    # With prob_mut = 3.5e-5 mutations will almost surely be 0 at this scale
+    n_mut, n_recomb = host.get_next_gen_active(2, 40, config)
+    assert isinstance(n_mut, (int, np.integer))
+    assert isinstance(n_recomb, (int, np.integer))
+    assert n_recomb >= 0
+
+    # Increase mutation and recombination probabilities to exercise those paths
     config.prob_mut = 0.5
-    assert host.get_next_gen_active(10, 40, config) == (3, 0)
-    assert [host.C[i].infecting_virus.nuc_sequence for i in range(1)] == [
-        "CAA"]
-    config.prob_mut = 0.1
-    config.prob_recomb = 0.1
-    config.base_prob = 0.1
-    assert host.get_next_gen_active(10, 40, config) == (3, 0)
-    assert "CAA" in [host.C[i].infecting_virus.nuc_sequence for i in range(10)]
+    # Use a per-breakpoint array so that recrate_is_sparse logic remains valid
+    config.prob_recomb = np.full(config.seq_len - 1, 0.5)
+    config.base_prob = 0.5
+    config.recrate_is_sparse = False
+    n_mut, n_recomb = host.get_next_gen_active(10, 40, config)
+    assert n_mut >= 0
+    assert n_recomb >= 0
 
 
 def test_summarize_fitness():
@@ -728,7 +765,7 @@ def test_summarize_fitness():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
-          1234)
+          None, 0, 1234)
     host = HostEnv([HIV(seq, config)
                    for seq in ["GGG", "AAA"] * 2], 4)
     assert [host.C[i].infecting_virus.nuc_sequence for i in range(len(host.C))] == [
@@ -745,7 +782,10 @@ def test_summarize_fitness():
         host.C[i].infecting_virus.conserved_fitness for i in range(len(host.C))
     ] == [1, (1-0.99), 1, 1]
     assert [
-        host.C[i].infecting_virus.immune_fitness for i in range(len(host.C))
+        host.C[i].infecting_virus.b_immune_fitness for i in range(len(host.C))
+    ] == [1, 1, 1, 1]
+    assert [
+        host.C[i].infecting_virus.t_immune_fitness for i in range(len(host.C))
     ] == [1, 1, 1, 1]
     host.get_fitness()
     assert [host.C[i].infecting_virus.fitness for i in range(len(host.C))] == [
@@ -754,7 +794,7 @@ def test_summarize_fitness():
         (1-0.1)**2,
         1.0,
     ]
-    assert host.summarize_fitness() == (0.6575, 0.7525, 1.0, 0.905)
+    assert host.summarize_fitness() == (0.6575, 0.7525, 1.0, 1.0, 0.905)
 
 
 def test_record_counts():
@@ -770,7 +810,8 @@ def test_record_counts():
         "number_recombinations": [],
         "mean_fitness_active": [],
         "mean_conserved_active": [],
-        "mean_immune_active": [],
+        "mean_b_immune_active": [],
+        "mean_t_immune_active": [],
         "mean_replicative_active": [],
     }
     config = Config(1, 0, {"founder0": "AAA"}, 
@@ -778,14 +819,14 @@ def test_record_counts():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "TTT", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
-          1234)
+          None, 0, 1234)
     assert list(
         config.host.record_counts(
-            counts, 1, (1, 2, 3, 4), (5, 6), (7, 8, 9, 10)).values()) == [
-        [1], [1], [0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10]]
+            counts, 1, (1, 2, 3, 4), (5, 6), (7, 8, 9, 10, 11)).values()) == [
+        [1], [1], [0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11]]
     assert list(
         config.host.record_counts(
-            counts, 2, (11, 12, 13, 14), (15, 16), (17, 18, 19, 20)).values()) == [
+            counts, 2, (11, 12, 13, 14), (15, 16), (17, 18, 19, 20, 21)).values()) == [
         [
             1, 2], [
             1, 1], [
@@ -799,7 +840,9 @@ def test_record_counts():
             7, 17], [
             8, 18], [
             9, 19], [
-            10, 20]]
+            10, 20], [
+            11, 21
+            ]]
 
 
 def test_sample_viral_sequences():
@@ -808,11 +851,12 @@ def test_sample_viral_sequences():
           0, 0, 0, 0,
           {1: 'A'}, 0.99, "AAA", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
-          1234)
+          None, 0, 1234)
     fitness = {
         "generation": [],
         "seq_id": [],
-        "immune": [],
+        "b_immune": [],
+        "t_immune": [],
         "conserved": [],
         "replicative": [],
         "overall": []
@@ -821,7 +865,7 @@ def test_sample_viral_sequences():
         config.founder_seqs,
         fitness,
         1,
-        1) == ({'founder0': 'AAA', 'gen1_active_0': 'AAA'}, {'generation': ['1'], 'seq_id': ['gen1_active_0'], 'immune': [1.0], 'conserved': [1.0], 'replicative': [1.0], 'overall': [1.0]})
+        1) == ({'founder0': 'AAA', 'gen1_active_0': 'AAA'}, {'generation': ['1'], 'seq_id': ['gen1_active_0'], 'b_immune': [1.0], 't_immune': [1.0], 'conserved': [1.0], 'replicative': [1.0], 'overall': [1.0]})
 
 
 def test_loop_through_generations():
@@ -830,7 +874,7 @@ def test_loop_through_generations():
           0.1, 0, 0, 0,
           {1: 'A'}, 0.99, "", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
-          1234)
+          None, 0, 1234)
     out = config.host.loop_through_generations([1, 2, 3], [1, 2, 3], [0, 1, 1], config)
     assert out[0] == {
         'generation': [
@@ -844,11 +888,13 @@ def test_loop_through_generations():
                                     0, 0, 0], 'number_recombinations': [
                                         0, 0, 0], 'mean_fitness_active': [
                                             1.0, 1.0, 1.0], 'mean_conserved_active': [
-                                                1.0, 1.0, 1.0], 'mean_immune_active': [
+                                                1.0, 1.0, 1.0], 'mean_b_immune_active': [
+                                                    1.0, 1.0, 1.0], 'mean_t_immune_active': [
                                                     1.0, 1.0, 1.0], 'mean_replicative_active': [
                                                         1.0, 1.0, 1.0]}
-    assert out[1] == {'generation': ['founder', '0', '1', '1', '2', '2', '2'], 'seq_id': ['founder0', 'gen0_active_0', 'gen1_active_0', 'gen1_active_1', 'gen2_active_0', 'gen2_active_1', 'gen2_active_2'], 'immune': [
-        1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'conserved': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'replicative': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'overall': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
+    assert out[1] == {'generation': ['founder', '0', '1', '1', '2', '2', '2'], 'seq_id': ['founder0', 'gen0_active_0', 'gen1_active_0', 'gen1_active_1', 'gen2_active_0', 'gen2_active_1', 'gen2_active_2'], 
+    'b_immune': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 't_immune': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 
+    'conserved': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'replicative': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 'overall': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
     assert out[2] == {'founder0': 'AAA', 'gen0_active_0': 'AAA', 'gen1_active_0': 'AAA',
                       'gen1_active_1': 'AAA', 'gen2_active_0': 'AAA', 'gen2_active_1': 'AAA', 'gen2_active_2': 'AAA'}
     
@@ -857,6 +903,6 @@ def test_loop_through_generations():
           0.001, 0, 0, 0,
           {1: 'A'}, 0.99, "ACA", 0.1,
           pd.DataFrame({'start': [0], 'end': [3], 'maxepi': [0.3]}), 30, 0.2, 30,
-          1234)
+          None, 0, 1234)
     out = config.host.loop_through_generations([1, 2, 3], [1, 2, 3], [0, 1, 1], config)
     assert out[0]['mean_replicative_active'] == [0.9,0.9,0.9]

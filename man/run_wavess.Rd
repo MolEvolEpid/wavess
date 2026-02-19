@@ -20,10 +20,16 @@ run_wavess(
   conserved_cost = 0.99,
   ref_seq = NULL,
   replicative_cost = 0.001,
+  b_epitope_locations = NULL,
+  b_immune_start_day = 0,
+  b_n_for_imm = 100,
+  b_days_full_potency = 90,
   epitope_locations = NULL,
   n_for_imm = 100,
   days_full_potency = 90,
   immune_start_day = 0,
+  t_epitope_locations = NULL,
+  t_max_immune_cost = 0.5,
   seed = NULL
 )
 }
@@ -94,28 +100,51 @@ to a reference sequence)}
 is not NULL, must be in the range [0,1) where 0 indicates no cost. 1, which
 indicates no ability to survive, is not allowed (default: 0.001)}
 
-\item{epitope_locations}{Tibble of epitope locations and maximum fitness
-costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These
-epitopes are expected to be indexed at 0 and in a protein in the correct
-reading frame, as the nucleotide sequences are translated to amino acids to
-calculate the immune fitness cost. The maximum fitness cost must be in the
-range [0,1) where 0 indicates no cost. 1, which indicates no ability to
-survive. This epitope location tibble can be generated using the functions
-\code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and \code{\link[=sample_epitopes]{sample_epitopes()}}. (default: NULL, i.e.
-no immune fitness costs)}
+\item{b_epitope_locations}{Tibble of B-cell epitope locations and maximum
+fitness costs with columns epi_start_nt, epi_end_nt, max_fitness_cost.
+These epitopes are expected to be indexed at 0 and in a protein in the
+correct reading frame, as the nucleotide sequences are translated to amino
+acids to calculate the B-cell immune fitness cost. The maximum fitness cost
+must be in the range [0,1) where 0 indicates no cost. 1, which indicates no
+ability to survive. This epitope location tibble can be generated using the
+functions \code{\link[=get_epitope_frequencies]{get_epitope_frequencies()}} and \code{\link[=sample_epitopes]{sample_epitopes()}}. (default:
+NULL, i.e. no B-cell immune fitness costs)}
 
-\item{n_for_imm}{Number of infected cells that must contain a given sequence
-for that sequence to be recognized by the immune system, only relevant when
-epitope_locations is not NULL (default: 100).}
+\item{b_immune_start_day}{\emph{Day} to start checking for a B-cell immune
+response, only relevant when \code{b_epitope_locations} is not NULL (default: 0,
+but note that the immune response will not actually start until there are
+at least \code{b_n_for_imm} cells in the active population).}
 
-\item{days_full_potency}{Number of \emph{days} it takes for an immune response to
-an epitope to reach full potency, only relevant when epitope_locations is
-not NULL (default: 90).}
+\item{b_n_for_imm}{Number of infected cells that must contain a given sequence
+for that sequence to be recognized by the B-cell immune system, only
+relevant when \code{b_epitope_locations} is not NULL (default: 100).}
 
-\item{immune_start_day}{\emph{Day} to start checking for an immune response, only
-relevant when epitope_locations is not NULL (default: 0, but note that the
-immune response will not actually start until there are at least
-\code{n_for_imm} cells in the active population).}
+\item{b_days_full_potency}{Number of \emph{days} it takes for a B-cell immune
+response to an epitope to reach full potency, only relevant when
+\code{b_epitope_locations} is not NULL (default: 90).}
+
+\item{epitope_locations}{Deprecated; use \code{b_epitope_locations} instead. If
+both \code{epitope_locations} and \code{b_epitope_locations} are supplied,
+\code{b_epitope_locations} will be used.}
+
+\item{n_for_imm}{Deprecated; use \code{b_n_for_imm} instead.}
+
+\item{days_full_potency}{Deprecated; use \code{b_days_full_potency} instead.}
+
+\item{immune_start_day}{Deprecated; use \code{b_immune_start_day} instead.}
+
+\item{t_epitope_locations}{Optional tibble of T-cell epitope locations and
+escape information with columns start (nucleotide start position, indexed
+at 0), days_to_full_potency (days to reach full immune potency for that
+epitope), escape_position (amino acid position within the epitope, indexed
+starting at 1), and recognized_aa (amino acid considered recognized by the
+immune system at that escape position). When provided, these are used to
+compute an additional T-cell immune fitness cost. (default: NULL, i.e. no
+T-cell immune fitness costs)}
+
+\item{t_max_immune_cost}{Maximum fitness cost per recognized T-cell epitope,
+must be in the range [0,1) where 0 indicates no cost. 1, which indicates no
+ability to survive, is not allowed (default: 0.5).}
 
 \item{seed}{Optional seed (default: NULL)}
 }
@@ -127,23 +156,23 @@ will also be returned.
 }
 \description{
 Simulate within-host evolution optionally including recombination (default:
-on), latency (default: on), and fitness costs (default: off). The three
+on), latency (default: on), and fitness costs (default: off). The four
 fitness costs that can be simulated are conserved sites, fitness relative to
-a reference sequence, and antibody-based immune fitness costs. Nucleotide
-positions for conserved and immune fitness are expected to be indexed at 0.
-Please note that the default arguments were set with the the HIV \emph{env} gp120
-gene in mind. If you'd like to simulate something else, you will likely have
-to modify certain parameters. However, if you are interested in this gene in
-particular, you can probably use most of the defaults including the founder
-and reference sequences provided as examples. However, by default no fitness
-costs are modeled. We recommend including fitness to obtain a realistic model
-output. To model these, you can use the pre-processing functions (see
-\code{vignette('prepare_input_data')}) to generate the relevant inputs. Also, the
-parameters for latent probabilities are assumed to be small, such that it is
-unlikely that multiple events (activate, die, proliferate) will occur to a
-single latent cell in a single (active cell) generation. See
-\code{vignette('run_wavess')} for more details about the simulator and input
-arguments.
+a reference sequence, B-cell immune fitness costs, and T-cell immune fitness
+costs. Nucleotide positions for conserved and immune fitness are expected to
+be indexed at 0. Please note that the default arguments were set with the the
+HIV \emph{env} gp120 gene in mind. If you'd like to simulate something else, you
+will likely have to modify certain parameters. However, if you are interested
+in this gene in particular, you can probably use most of the defaults
+including the founder and reference sequences provided as examples. However,
+by default no fitness costs are modeled. We recommend including fitness to
+obtain a realistic model output. To model these, you can use the
+pre-processing functions (see \code{vignette('prepare_input_data')}) to generate
+the relevant inputs. Also, the parameters for latent probabilities are
+assumed to be small, such that it is unlikely that multiple events (activate,
+die, proliferate) will occur to a single latent cell in a single (active
+cell) generation. See \code{vignette('run_wavess')} for more details about the
+simulator and input arguments.
 }
 \details{
 Also note that some of the inputs are expected to be in units of

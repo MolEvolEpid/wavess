@@ -1,6 +1,6 @@
 Package: wavess
 Title: Within-Host Adaptive Virus Evolution Sequence Simulator
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: 
     c(person(given="Zena", family="Lapp", email="zenalapp@lanl.gov", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0003-4674-2176")),
@@ -13,8 +13,8 @@ Authors@R:
       person(given="Johannes", family="Gruber", role = "cph", 
       comment = c(ORCID = "0000-0001-9177-1772", code = 'python install')))
 Description: Simulates within-host virus sequence evolution. Optionally includes
-    recombination, a latent cell reservoir, and three types of selective pressures 
-    (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity). 
+    recombination, a latent cell reservoir, and four types of selective pressures 
+    (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell and T-cell immunity). 
 License: file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -37,7 +37,7 @@ Imports:
     tidyr,
     treebalance
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5)
 LazyData: true
 VignetteBuilder: knitr
 SystemRequirements: python, numpy

@@ -134,3 +134,44 @@ def get_conserved_sites_mutated(v1_muts, v2_muts, cross_over_positions, seq_len)
                 next_strand = 1
 
     return muts_in_conserved
+  
+
+# Translate nucleotide sequence to amino acid sequence
+# Nucleotide sequence length must be a multiple of 3
+# Modified from https://www.geeksforgeeks.org/dna-protein-python-3/
+def translate(seq_to_translate):
+    table = {
+        "ATA": "I", "ATC": "I", "ATT": "I",
+        "ATG": "M",
+        "ACA": "T", "ACC": "T", "ACG": "T", "ACT": "T",
+        "AAC": "N", "AAT": "N",
+        "AAA": "K", "AAG": "K",
+        "AGC": "S", "AGT": "S",
+        "AGA": "R", "AGG": "R",
+        "CTA": "L", "CTC": "L", "CTG": "L", "CTT": "L",
+        "CCA": "P", "CCC": "P", "CCG": "P", "CCT": "P",
+        "CAC": "H", "CAT": "H",
+        "CAA": "Q", "CAG": "Q",
+        "CGA": "R", "CGC": "R", "CGG": "R", "CGT": "R",
+        "GTA": "V", "GTC": "V", "GTG": "V", "GTT": "V",
+        "GCA": "A", "GCC": "A", "GCG": "A", "GCT": "A",
+        "GAC": "D", "GAT": "D",
+        "GAA": "E", "GAG": "E",
+        "GGA": "G", "GGC": "G", "GGG": "G", "GGT": "G",
+        "TCA": "S", "TCC": "S", "TCG": "S", "TCT": "S",
+        "TTC": "F", "TTT": "F",
+        "TTA": "L", "TTG": "L",
+        "TAC": "Y", "TAT": "Y",
+        "TAA": "_", "TAG": "_",
+        "TGC": "C", "TGT": "C",
+        "TGA": "_",
+        "TGG": "W",
+    }
+    assert (
+        len(seq_to_translate) % 3 == 0
+    ), "The nucleotide sequence length is not a multiple of 3"
+    protein = ""
+    for i in range(0, len(seq_to_translate), 3):
+        codon = seq_to_translate[i: i + 3]
+        protein += table[codon]
+    return protein

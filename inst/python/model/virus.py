@@ -1,5 +1,5 @@
 from model.fitness import calc_seq_fitness
-from model.variation import muts_rel_ref, get_substitution
+from model.variation import muts_rel_ref, get_substitution, translate
 
 class HIV:
     def __init__(self, nuc_seq, config):
@@ -12,7 +12,8 @@ class HIV:
         self.conserved_sites_mutated = set()
 
         # Tracking different components of fitness
-        self.immune_fitness = 1
+        self.b_immune_fitness = 1
+        self.t_immune_fitness = 1 # SHOULD THIS START AT 1 IN GEN ZERO OR ALREADY LESS? COST WILL INCREASE QUICKLY REGARDLESS
         self.conserved_fitness = 1
         self.replicative_fitness = 1
         self.fitness = 1
@@ -20,11 +21,23 @@ class HIV:
             self.replicative_fitness = calc_seq_fitness(muts_rel_ref(
                 self.nuc_sequence, config.ref_seq), config.replicative_cost)
             self.fitness = self.replicative_fitness
-       
+            
 
     def __repr__(self):
         return_str = "HIV with sequence %s" % self.nuc_sequence
         return return_str
+      
+    # MAKE CONSERVED SITES AT EPITOPE LOCATIONS NOT CONSERVED IN PREP?
+    # SHOULD THIS FUNCTION BE IN THE HOST INSTEAD?
+    def determine_t_recognition(self, current_generation, config):
+        n_epitopes = len(config.t_epitope_locations)
+        self.t_immune_fitness = 1
+        for epi in config.t_epitope_locations:
+            virus_epitope = list(translate(self.nuc_sequence[epi.start:epi.end]))
+            virus_epitope = ''.join([virus_epitope[pos-1] if pos in epi.escape_positions else 'N' for pos in range(1, max(epi.escape_positions.keys())+1)])
+            if virus_epitope in config.t_recognition_motifs:
+                self.t_immune_fitness *= 1-(config.t_max_imm if current_generation >= epi.gen_full_potency else config.t_max_imm * current_generation / epi.gen_full_potency)
+
 
     def mutate(self, position_to_mutate, config):
         # Figure out what the mutation is based on mutation probabilities
@@ -61,3 +74,4 @@ class HIV:
             if prev_comp != (ref_base == new_nucleotide):
                 self.replicative_fitness = calc_seq_fitness(muts_rel_ref(
                     self.nuc_sequence, config.ref_seq), config.replicative_cost)
+                    

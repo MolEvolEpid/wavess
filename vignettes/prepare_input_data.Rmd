@@ -38,7 +38,8 @@ for most users.
 | `q`                     | `estimate_q()`                                   | [Determine nucleotide substitution probabilities](#estimate-q-matrix)                             |
 | `conserved_sites`       | `identify_conserved_sites()`                     | [Identify conserved sites](#identify-conserved-sites)                                             |
 | `ref_seq`               | `identify_conserved_sites()`, `extract_seqs()`   | [Get reference sequence that is considered to be the best replicator](#find-a-consensus-sequence) |
-| `epitope_locations`     | `get_epitope_frequencies()`, `sample_epitopes()` | [Sample epitopes](#sample-epitopes)                                                               |
+| `b_epitope_locations`     | `get_epitope_frequencies()`, `sample_epitopes()` | [Sample epitopes](#sample-epitopes) |
+| `t_epitope_locations`     |  | [Identify T epitopes](#get-t-epitopes) |
 
 Each of the sections below goes into more detail.
 
@@ -777,7 +778,7 @@ You can input this into `sample_epitopes()`, which will then return
 nucleotide positions relative to the founder sequence (instead of HXB2):
 
 ```{r, epi_locs}
-(epitope_locations <- sample_epitopes(epi_probs,
+(b_epitope_locations <- sample_epitopes(epi_probs,
   ref_founder_map = ref_founder_map
 ))
 ```
@@ -785,12 +786,12 @@ nucleotide positions relative to the founder sequence (instead of HXB2):
 Here are two ways to visualize the epitopes:
 
 ```{r, plot_epi}
-epitope_locations |>
+b_epitope_locations |>
   ggplot(aes(x = epi_start_nt, y = max_fitness_cost)) +
   geom_point() +
   labs(x = "Epitope start position", y = "Max fitness cost")
 
-epitope_locations %>% # using . in next line, so have to use dplyr pipe instead of base R pipe
+b_epitope_locations %>% # using . in next line, so have to use dplyr pipe instead of base R pipe
   ggplot(aes(x = seq_len(nrow(.)), y = max_fitness_cost, col = epi_start_nt)) +
   geom_point() +
   scale_x_continuous(breaks = 1:10) +
@@ -800,8 +801,62 @@ epitope_locations %>% # using . in next line, so have to use dplyr pipe instead 
 To write them to a file:
 
 ```{r, write_epi}
-write_csv(epitope_locations, "input_data/epitope_locations.csv")
+write_csv(b_epitope_locations, "input_data/b_epitope_locations.csv")
 ```
+
+## Identify T epitopes {#get-t-epitopes}
+
+In addition to B-cell epitopes, `wavess` can also model T-cell immune
+responses. For this, we require information about predicted or known
+T-cell epitopes, including when each epitope reaches full potency and
+which amino acids are recognized by the immune system at specific
+positions.
+
+The T-cell epitope input for `run_wavess()` is a tibble (or data frame)
+with four columns:
+
+-   `start`: nucleotide start position of the epitope in the founder
+    sequence (indexed at 0)
+-   `days_to_full_potency`: number of days for the immune response
+    against that epitope to reach full potency
+-   `escape_position`: amino acid position within the epitope (indexed
+    starting at 1)
+-   `recognized_aa`: amino acid at that escape position that is
+    recognized by the immune system
+
+Here is an example:
+
+```{r, tcell-example}
+t_epitope_locations <- data.frame(
+  start = c(303, 303, 345, 345, 828, 828),
+  days_to_full_potency = c(4, 4, 11, 11, 4, 4),
+  escape_position = c(2, 9, 2, 9, 2, 9),
+  recognized_aa = c("M", "L", "P", "L", "A", "L")
+)
+
+t_epitope_locations
+```
+
+There are three epitopes with different days to full potency, 
+each with the ability to escape at the anchor positions. 
+
+These inputs can be written to a CSV file
+for use with the Python command-line interface:
+
+```{r, write_t_epi}
+write_csv(t_epitope_locations, "input_data/t_epitope_locations.csv")
+```
+
+One way to get the above information is by predicting T-cell epitopes in the founder sequence for a given
+set of HLA molecules using [NetMHCpan on the IEDB website](https://nextgen-tools.iedb.org/pipeline?tool=tc1).
+More information on how we use the NetMHCpan output to identify epitopes can be found here (LINK TO PAPER ONCE UP!), and
+[here](https://github.com/MolEvolEpid/wavess_ctl_manuscript/blob/main/wavess_modeling/scripts/prep_inputs.R) is the code we used to generate the input files. 
+
+
+You can now use both `b_epitope_locations.csv` and
+`t_epitope_locations.csv` in the Python `config.yaml`, or pass
+`t_epitope_locations` directly to the R `run_wavess()` function (see
+`vignette("run_wavess")`).
 
 ## On to simulations
 

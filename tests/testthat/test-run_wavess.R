@@ -4,7 +4,6 @@ test_that("run_wavess works", {
   ))) {
     skip("wavess python module not available for testing")
   }
-  hiv_env_flt_2022 <- ape::as.matrix.DNAbin(hiv_env_flt_2022)
   inf_pop_size <- define_growth_curve(n_gen = 200)
   samp_scheme <- define_sampling_scheme(sampling_frequency_active = 50, n_days = 100)
   expect_error(
@@ -22,8 +21,14 @@ test_that("run_wavess works", {
   out <- run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10), generation_time = 1)
   expect_equal(out$counts$generation, c(0, 50, 100))
   expect_equal(out$counts$active_cell_count, c(10, 2000, 2000))
-  expect_equal(dim(out$counts), c(3, 13))
-  expect_equal(dim(out$seqs), c(60, 4))
+  expect_true(all(c(
+    "mean_fitness_active",
+    "mean_conserved_active",
+    "mean_b_immune_active",
+    "mean_t_immune_active",
+    "mean_replicative_active"
+  ) %in% colnames(out$counts)))
+  expect_equal(dim(out$seqs_active), c(60, 4))
   no_lat <- run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10), act_to_lat = 0)
   expect_equal(unique(no_lat$counts$latent_cell_count), 0)
   expect_equal(unique(no_lat$counts$active_turned_latent), 0)
@@ -45,11 +50,63 @@ test_that("run_wavess works", {
   expect_no_error(run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10),
     conserved_sites = c("1" = "a", "2" = "c")
   ))
-  expect_no_error(run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10),
-    epitope_locations = tibble::tibble(
+  expect_no_error(run_wavess(
+    inf_pop_size, samp_scheme, rep("ATCG", 10),
+    b_epitope_locations = tibble::tibble(
       epi_start_nt = 0, epi_end_nt = 3,
       max_fitness_cost = 0.4
-    )
+    ),
+    b_n_for_imm = 100,
+    b_days_full_potency = 90,
+    b_immune_start_day = 0
+  ))
+
+  expect_warning(
+    run_wavess(
+      inf_pop_size, samp_scheme, rep("ATCG", 10),
+      epitope_locations = tibble::tibble(
+        epi_start_nt = 0, epi_end_nt = 3,
+        max_fitness_cost = 0.4
+      )
+    ),
+    "`epitope_locations` is deprecated"
+  )
+
+  expect_warning(
+    run_wavess(
+      inf_pop_size, samp_scheme, rep("ATCG", 10),
+      immune_start_day = 10
+    ),
+    "`immune_start_day` is deprecated"
+  )
+
+  expect_warning(
+    run_wavess(
+      inf_pop_size, samp_scheme, rep("ATCG", 10),
+      n_for_imm = 10
+    ),
+    "`n_for_imm` is deprecated"
+  )
+
+  expect_warning(
+    run_wavess(
+      inf_pop_size, samp_scheme, rep("ATCG", 10),
+      days_full_potency = 10
+    ),
+    "`days_full_potency` is deprecated"
+  )
+
+  # simple T-cell epitope example: one epitope, one escape position
+  t_locs <- tibble::tibble(
+    start = 0L,
+    days_to_full_potency = 21L,
+    escape_position = 1L,
+    recognized_aa = "A"
+  )
+  expect_no_error(run_wavess(
+    inf_pop_size, samp_scheme, rep("ATCGAT", 10),
+    t_epitope_locations = t_locs,
+    t_max_immune_cost = 0.5
   ))
   # samp_scheme$active_cell_count[1] <- 2
   expect_no_error(run_wavess(inf_pop_size, samp_scheme, c(rep("ATCG", 9), "AAAA")))
@@ -60,15 +117,19 @@ test_that("run_wavess works", {
   set.seed(1234)
   out <- run_wavess(inf_pop_size, samp_scheme, rep("ATCGAT", 10),
     generation_time = 1,
-    conserved_sites = c("1" = "A"), ref_seq = "GGGGGG", epitope_locations = tibble::tibble(epi_start_nt = 0, epi_end_nt = 3, max_fitness_cost = 0.3)
+    conserved_sites = c("1" = "A"),
+    ref_seq = "GGGGGG",
+    b_epitope_locations = tibble::tibble(
+      epi_start_nt = 0, epi_end_nt = 3, max_fitness_cost = 0.3
+    )
   )
   expect_equal(all(out$counts$mean_fitness_active != 1), TRUE)
   expect_equal(all(out$counts$mean_conserved_active == 1), TRUE)
-  expect_equal(any(out$counts$mean_immune_active != 1), TRUE)
+  expect_equal(any(out$counts$mean_b_immune_active != 1), TRUE)
   expect_equal(all(out$counts$mean_replicative_active != 1), TRUE)
   expect_equal(all(out$fitness$overall != 1), TRUE)
   expect_equal(all(out$fitness$conserved == 1), TRUE)
-  expect_equal(any(out$fitness$immune != 1), TRUE)
+  expect_equal(any(out$fitness$b_immune != 1), TRUE)
   expect_equal(all(out$fitness$replicative != 1), TRUE)
   expect_no_error(run_wavess(inf_pop_size, define_sampling_scheme(sampling_frequency_active = 50, sampling_frequency_latent = 50, n_days = 100), rep("ATCG", 10), generation_time = 1))
   expect_no_error(run_wavess(inf_pop_size, samp_scheme, rep("ATCG", 10), recomb_rate = c(0, 1, 0.5)))

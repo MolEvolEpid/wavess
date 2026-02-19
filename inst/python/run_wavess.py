@@ -22,6 +22,8 @@ import os
 # Import custom classes and functions
 import model.__init__ as agents
 
+# Functions to read in data
+
 # Function to read in sequence data
 def get_sequences(filename):
     founder_virus_sequences = [
@@ -32,6 +34,7 @@ def get_sequences(filename):
         len(i) == len(founder_virus_sequences[0]) for i in founder_virus_sequences
     ], "Founder virus sequences must be of the same length"
     return founder_virus_sequences
+
 
 # Function to load recombination rate
 def load_recombination_rate(recomb_rate, seq_len):
@@ -114,11 +117,13 @@ if __name__ == "__main__":
         reference_sequence = get_sequences(input_files["ref_seq"])[0]
 
     # Epitope start positions and max fitness cost.
-    # Epitopes file has the following columns (tab-delimited)
-    # col 1 -> epi_start, col 2 -> epi_end, col_3 -> max_fitness
-    epitope_locations = None
-    if input_files["epitope_locations"] != "":
-        epitope_locations = read_csv(input_files["epitope_locations"])
+    b_epitope_locations = None
+    if input_files["b_epitope_locations"] != "":
+        b_epitope_locations = read_csv(input_files["b_epitope_locations"])
+        
+    t_epitope_locations = None
+    if input_files["t_epitope_locations"] != "":
+        t_epitope_locations = read_csv(input_files["t_epitope_locations"])
 
     # Initialize parameters
     
@@ -150,14 +155,14 @@ if __name__ == "__main__":
         raise ValueError("at least one sequence must be sampled from the active or latent reservoir")
     last_sampled_gen = max(last_sampled_gen_active, last_sampled_gen_latent)
     
-
     model_config = agents.Config(params["generation_time"], last_sampled_gen, founder_viruses, q_matrix,
                                  params["mut_rate"], recomb_rate,
                                  params["act_to_lat"], params["lat_to_act"], params["lat_die"], params["lat_prolif"],
                                  conserved_sites, params["conserved_cost"],
                                  reference_sequence, float(params["replicative_cost"]),
-                                 epitope_locations, params["immune_start_day"],
-                                 params["n_for_imm"], params["time_to_full_potency"],
+                                 b_epitope_locations, params["b_immune_start_day"],
+                                 params["b_n_for_imm"], params["b_days_to_full_potency"],
+                                 t_epitope_locations, params["t_max_immune_cost"], #params["t_days_to_full_potency"],
                                  s)
 
     # Loop through generations
@@ -171,10 +176,20 @@ if __name__ == "__main__":
 
     # Write counts to csv
     keys = [
-        "generation", "active_cell_count", "latent_cell_count",
-        "active_turned_latent", "latent_turned_active", "latent_died", "latent_proliferated",
-        "number_mutations", "number_recombinations",
-        "mean_fitness_active", "mean_conserved_active", "mean_immune_active", "mean_replicative_active",
+        "generation",
+        "active_cell_count",
+        "latent_cell_count",
+        "active_turned_latent",
+        "latent_turned_active",
+        "latent_died",
+        "latent_proliferated",
+        "number_mutations",
+        "number_recombinations",
+        "mean_fitness_active",
+        "mean_conserved_active",
+        "mean_b_immune_active",
+        "mean_t_immune_active",
+        "mean_replicative_active",
     ]
     with open(argv[2] + "counts.csv", "w") as outfile:
         w = writer(outfile)
@@ -185,7 +200,8 @@ if __name__ == "__main__":
     keys = [
         "generation",
         "seq_id",
-        "immune",
+        "b_immune",
+        "t_immune",
         "conserved",
         "replicative",
         "overall",

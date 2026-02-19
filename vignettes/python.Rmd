@@ -20,7 +20,8 @@ you can also run wavess with Python using a command-line script. We provide an
 example Python script `run_wavess.py` (in `inst/python/`) to make this easy to
 do. The script takes a config file (`inst/python/config.yaml`) that includes
 paths to input files and defines various input arguments such as what selective
-pressures to model, as well as an output file path/prefix.
+pressures to model, as well as an output
+file path/prefix.
 
 **Please note that the python script does not check the inputs as comprehensively
 as the R function. If you need to troubleshoot an error you are getting with the
@@ -64,11 +65,12 @@ that defines various parameters and includes paths to input files.
 
 **File inputs (example data in `inst/extdata/`):**
 
-- `pop_samp`: csv with columns generation, active_cell_count, n_sample_active.
+- `inf_pop_size`: csv with columns generation, active_cell_count.
 Note that the initial active cell population size in the first generation must
 be the same as the number of input founder sequences (because it simply _is_ the
-input founder sequences). Can be generated using the [generate_pop_samp()]
-function.
+input founder sequences). Can be generated using the [define_growth_curve()] function.
+- `samp_scheme`: csv with columns day, n_sample_active, n_sample_latent. Can be 
+generated using the [define_samp_scheme()] function.
 - `founder_seqs`: fasta file of founder sequence(s). The founder sequence(s) may
 only contain the characters ACGT, and no gaps are allowed. When modeling immune
 fitness, they are expected to be codon-aligned.
@@ -84,34 +86,42 @@ conserved fitness costs are not included.
 sequence, that can be used as the reference sequence, can be generated using the
 function [identify_conserved_sites()]. If this is an empty string, then fitness
 costs relative to a reference sequence are not included. 
-- `epitope_locations`: csv of epitope locations and maximum fitness
+- `b_epitope_locations`: csv of B-cell epitope locations and maximum fitness
 costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These epitopes
 are expected to be indexed at 0 and in a protein in the correct reading frame,
 as the nucleotide sequences are translated to amino acids to calculate the
-immune fitness cost. This information can be generated using the functions
-[get_epitope_frequencies()] and [sample_epitopes()]. If this is an empty string
-provided, then immune fitness costs are not included.
-- `recomb_rates`: file with one fewer rows than the length of the founder sequence.
-The value in each row corresponds to the breakpoint-specific recombination rate 
-along the sequence. Note that this rate is modeled as an effective recombination 
-rate that includes the rate of co-infection followed by recombination. This file
-is only needed if the recombination rate varies across the sequence.
+B-cell immune fitness cost. This information can be generated using the
+functions [get_epitope_frequencies()] and [sample_epitopes()]. If this is an
+empty string, then B-cell immune fitness costs are not included.
+- `t_epitope_locations`: csv of T-cell epitope locations and escape information
+with columns start (nucleotide start position, indexed at 0),
+days_to_full_potency (days to reach full immune potency for that epitope),
+escape_position (amino acid position within the epitope, indexed starting at 1),
+and recognized_aa (amino acid considered recognized by the immune system at
+that escape position). If this is an empty string, then T-cell immune fitness
+costs are not included.
 
 **Parameters:**
+
+- `generation_time`: generation time in days
 
 Diversity-generating mechanisms:
 
 - `mut_rate`: Mutation rate per site per generation
 - `recomb_rate``: Recombination rate per site per generation (or file where each
 row is a breakpoint-specific recombination rate, if you want to model a variable 
-recombination rate across the sequence)
+recombination rate across the sequence).  If a file, it must have one fewer rows 
+than the length of the founder sequence.
+The value in each row corresponds to the breakpoint-specific recombination rate 
+along the sequence. Note that this rate includes the rate of co-infection 
+followed by recombination.
 
 Latent cell dynamics:
 
-- `prob_act_to_lat`: probability of infected cell becoming latent
-- `prob_lat_to_act`: probability that a latent cell will become active
-- `prob_lat_prolif`: probability that a latent cell will proliferate (based on central memory cells)
-- `prob_lat_die`: probability that a latent cell will die
+- `act_to_lat`: per-day rate that an infected cell will become latent
+- `lat_to_act`: per-day rate that a latent cell will become active
+- `lat_prolif`: per-day rate that a latent cell will proliferate
+- `lat_die`: per-day rate that a latent cell will die
 
 Parameters related to fitness:
 
@@ -121,13 +131,16 @@ Conserved sites:
 
 Fitness relative to a reference sequence:
 
-- `rep_exp`: exponent for replicative fitness function
+- `replicative_cost`: fitness cost per difference from reference
 
 Immune fitness:
 
-- `seroconversion_time`: seroconversion time in generations; immunity considered only at this generation onward
-- `immune_response_proportion`: proportion new virus antigen must reach to initiate immune response against corresponding epitope
-- `time_to_full_potency`: number of generations for a new immune response to reach full potency
+- `b_immune_start_day`: day at which B-cell immunity is first considered
+- `b_n_for_imm`: number a new viral antigen must reach to initiate a B-cell
+  immune response against the corresponding epitope
+- `b_days_to_full_potency`: number of days for a B-cell immune response to
+  reach full potency
+- `t_max_immune_cost`: maximum immune fitness cost for T-cell responses
 
 ### Running `run_wavess.py`
 
@@ -159,8 +172,8 @@ If you want to run an example of modeling a variable recombination rate, then in
 
 ### Python tests
 
-To run the tests for the Python part of the code, navigate to `inst/python` and 
-run:
+To run the tests for the Python part of the code, install pytest and pytest-cov, 
+then  navigate to `inst/python` and run:
 
 ```
 pytest tests.py --cov=. --cov=model --cov-report=html

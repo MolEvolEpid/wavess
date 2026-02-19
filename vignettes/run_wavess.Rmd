@@ -142,7 +142,8 @@ The counts tibble contains the following columns:
 -   `mean_fitness_active`: mean fitness of active cells
 -   `mean_conserved_active`: mean conserved sites fitness of active
     cells
--   `mean_immune_active`: mean immune fitness of active cells
+-   `mean_b_immune_active`: mean antibody immune fitness of active cells
+-   `mean_t_immune_active`: mean cytotoxic T-lymphocyte (CTL) immune fitness of active cells
 -   `mean_replicative_active`: mean replicative fitness (comparison to
     `ref_seq`) of active cells
 
@@ -203,11 +204,12 @@ vignette `vignette("analyze_output")`.
 
 ## Including selective pressures
 
-`run_wavess()` can simulate three types of selective pressure:
+`run_wavess()` can simulate four types of selective pressure:
 
 -   Conserved sites fitness
 -   Replicative fitness relative to a "most fit" reference sequence
--   Immune response
+-   B-cell (antibody) immune response
+-   T-cell (CTL) immune response
 
 Note that all nucleotide positions related to fitness are expected to be indexed
 at 0. Including these requires additional inputs, which are described in more
@@ -226,7 +228,7 @@ conserved sites or the number of nucleotides different from the reference
 sequence.
 
 For additional details on how each of these selective pressures is implemented,
-please see the manuscript [**ADD LINK WHEN WE HAVE IT**].
+please see the [paper](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437).
 
 ### Conserved sites fitness
 
@@ -278,14 +280,23 @@ ref_fitness$counts$mean_replicative_active
 
 ### Immune fitness
 
-Active immunity can be modeled by defining epitopes locations that can be
-recognized by the immune system. Note that, currently, epitope locations must 
-all be the same length. Nucleotide epitopes are translated into amino
-acids before immune fitness costs are calculated. An epitope is recognized only
-when it is present at least 100 times across the population (`n_for_imm`
-argument). Once an epitope is recognized, it undergoes affinity maturation for
-90 days (`days_full_potency`), at which time it reaches a maximum cost. Epitopes
-are also cross-reactive.
+Active immunity can be modeled by defining epitope locations that can be
+recognized by the immune system. There are two components:
+
+-   **B-cell immunity**, controlled by the `b_epitope_locations`,
+    `b_immune_start_day`, `b_n_for_imm`, and `b_days_full_potency` arguments.
+-   **T-cell immunity**, controlled by the `t_epitope_locations` and
+    `t_max_immune_cost` arguments.
+    
+### B-cell immune fitness
+
+For B-cell immunity, epitope locations are specified in `epitope_locations`
+and all epitopes must currently be the same length. Nucleotide epitopes are
+translated into amino acids before B-cell immune fitness costs are calculated.
+An epitope is recognized only when it is present at least 100 times across the
+population (`b_n_for_imm` argument). Once an epitope is recognized, it undergoes
+affinity maturation for 90 days (`b_days_full_potency`), at which time it reaches
+its maximum cost. Epitopes are also cross-reactive.
 
 Cross-reactivity is sampled from a Beta distribution where alpha is 1 and beta
 is the square of the amino acid edit distance to the nearest recognized epitope:
@@ -311,18 +322,55 @@ immune_fitness <- run_wavess(
   inf_pop_size = pop,
   samp_scheme = samp,
   founder_seqs = rep(founder_ref$founder, 10),
-  epitope_locations = epitope_locations
+  b_epitope_locations = epitope_locations
 )
 ```
 
-The immune fitness here is now less than 1 after the immune system kicks in:
+The B-cell immune fitness here is now less than 1 after the immune system
+kicks in:
 
 ```{r}
-immune_fitness$counts$mean_immune_active
+immune_fitness$counts$mean_b_immune_active
 ```
 
-Please note that the model is very sensitive to the maximum immune fitness cost
-for a given epitope.
+Please note that the model is very sensitive to the maximum antibody immune fitness 
+cost for a given epitope.
+
+### T-cell immune fitness
+
+If you specify `t_epitope_locations`, T-cell immunity will also be modeled and 
+the output will additionally include
+T-cell immune fitness summaries in the `mean_t_immune_active` column of the
+`counts` tibble and the `t_immune` column of the `fitness` tibble. 
+
+When modeling the CTL response, we recommend making the conserved cost and the
+maximum T-cell immune cost the same as it is unclear that one selective pressure
+always dominates over the other. Below we use 0.5 for both.
+
+Here is a minimal example using a toy T-cell epitope tibble (matching the
+structure built in `vignette("prepare_input_data")`):
+
+```{r}
+t_epitope_locations <- data.frame(
+  start = c(303, 303, 345, 345, 828, 828),
+  days_to_full_potency = c(4, 4, 11, 11, 4, 4),
+  escape_position = c(2, 9, 2, 9, 2, 9),
+  recognized_aa = c("M", "L", "P", "L", "A", "L")
+)
+
+tcell_fitness <- run_wavess(
+  inf_pop_size = pop,
+  samp_scheme = samp %>% mutate(day = c(0, 1, 2, 3)),
+  founder_seqs = rep(founder_ref$founder, 10),
+  t_epitope_locations = t_epitope_locations,
+  t_max_immune_cost = 0.5,
+  conserved_cost = 0.5
+)
+
+tcell_fitness$counts$mean_t_immune_active
+```
+
+
 
 ## Multiple selective pressures at once
 
@@ -368,7 +416,9 @@ within that segment.
 
 Alternatively, if you want to model two genes separated by n bases that are not 
 modeled (i.e. not included in the founder sequence), then the recombination rate 
-between the two genes is base_rate*(n+1). 
+between the two genes is base_rate*(n+1). [Here](https://github.com/MolEvolEpid/wavess_ctl_manuscript/blob/main/wavess_modeling/scripts/prep_inputs.R) 
+is example code that preps an input founder sequence where pol and gp120 are spliced together
+with a higher recombination rate between the genes. 
 
 ## Seed
 

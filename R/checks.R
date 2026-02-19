@@ -367,6 +367,7 @@ check_run_wavess_inputs <- function(inf_pop_size, samp_scheme,
                                     ref_seq, replicative_cost,
                                     epitope_locations, seroconversion_time,
                                     n_for_imm, gen_full_potency,
+                                    t_epitope_locations, t_max_immune_cost,
                                     act_to_lat, lat_to_act,
                                     lat_prolif, lat_die,
                                     seed) {
@@ -463,6 +464,26 @@ check_run_wavess_inputs <- function(inf_pop_size, samp_scheme,
       warning("n_for_imm is greater than the maximum population size so there will be no immune response")
     }
     check_is_pos(gen_full_potency, "gen_full_potency", FALSE)
+  }
+  if (!is.null(t_epitope_locations)) {
+    check_is_df(t_epitope_locations, "t_epitope_locations")
+    if (!all(c("start", "days_to_full_potency", "escape_position", "recognized_aa") %in%
+      colnames(t_epitope_locations))) {
+      stop(
+        "t_epitope_locations must contain the columns ",
+        "start, days_to_full_potency, escape_position, recognized_aa"
+      )
+    }
+    lapply(t_epitope_locations$start, function(x) {
+      check_is_pos(x, "t_epitope_locations$start", TRUE)
+    })
+    lapply(t_epitope_locations$days_to_full_potency, function(x) {
+      check_is_pos(x, "t_epitope_locations$days_to_full_potency", FALSE)
+    })
+    lapply(t_epitope_locations$escape_position, function(x) {
+      check_is_pos(x, "t_epitope_locations$escape_position", FALSE)
+    })
+    check_is_0to1(t_max_immune_cost, "t_max_immune_cost", ok1 = FALSE)
   }
   check_is_numeric(mut_rate, "mut_rate")
   check_is_numeric(recomb_rate, "recomb_rate")
