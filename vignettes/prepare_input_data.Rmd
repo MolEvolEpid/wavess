@@ -827,10 +827,12 @@ with four columns:
 Here is an example:
 
 ```{r, tcell-example}
-t_epitope_locations <- data.frame(start = c(303, 303, 345, 345, 828, 828), 
-       days_to_full_potency = c(4, 4, 11, 11, 4, 4), 
-       escape_position = c(2, 9, 2, 9, 2, 9), 
-       recognized_aa = c("M", "L", "P", "L", "A", "L"))
+t_epitope_locations <- data.frame(
+  start = c(303, 303, 345, 345, 828, 828),
+  days_to_full_potency = c(4, 4, 11, 11, 4, 4),
+  escape_position = c(2, 9, 2, 9, 2, 9),
+  recognized_aa = c("M", "L", "P", "L", "A", "L")
+)
 
 t_epitope_locations
 ```

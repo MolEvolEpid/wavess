@@ -157,7 +157,6 @@ run_wavess <- function(inf_pop_size,
                        t_epitope_locations = NULL,
                        t_max_immune_cost = 0.5,
                        seed = NULL) {
-
   # Handle deprecated B-cell arguments and prefer new b_* versions
   # Epitope locations
   if (!missing(b_epitope_locations) && !is.null(b_epitope_locations)) {
