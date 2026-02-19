@@ -24,12 +24,11 @@ parameters:
     lat_die: 0.01 # Per-day rate that a latent cell will die
     # Parameters related to fitness
     # Conserved sites
-    conserved_cost: 0.99 # Fitness cost per mutation in a conserved site
+    conserved_cost: 0.5 # Fitness cost per mutation in a conserved site. If not using T-cell immunity, can increase this number
     # Replicative
     replicative_cost: 0.001 # Fitness cost per difference from reference
     # Immune
     b_immune_start_day: 0 # Immunity considered only at this day onward
     b_n_for_imm: 100 # Number new viral antigen must reach to initiate immune response against corresponding epitope
     b_days_to_full_potency: 90 # Number of days for a new immune response to reach full potency
-    t_max_immune_cost: 0.5 # Maximum immune cost for T cells (when presented by MHC)
-    t_days_to_full_potency: 21 # Number of days for a new immune response to reach full potency
+    t_max_immune_cost: 0.5 # Maximum immune cost for T cells (when presented by MHC).
