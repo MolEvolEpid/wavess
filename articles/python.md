@@ -1,0 +1,177 @@
+# Running wavess in Python
+
+We provide the R function
+[`run_wavess()`](https://molevolepid.github.io/wavess/reference/run_wavess.md)
+as a convenience function to run the simulator from R, but since the
+underlying functions are all written in Python, you can also run wavess
+with Python using a command-line script. We provide an example Python
+script `run_wavess.py` (in `inst/python/`) to make this easy to do. The
+script takes a config file (`inst/python/config.yaml`) that includes
+paths to input files and defines various input arguments such as what
+selective pressures to model, as well as an output file path/prefix.
+
+**Please note that the python script does not check the inputs as
+comprehensively as the R function. If you need to troubleshoot an error
+you are getting with the Python script, it is probably worth testing it
+out in the R function to see if you get a more informative error
+message.**
+
+We provide example input files in `inst/extdata`. You can generate the
+input files on your own, or using the functions provided in this
+package. See
+[`vignette("prepare_input_data")`](https://molevolepid.github.io/wavess/articles/prepare_input_data.md)
+for details on how to create and save the required input files. Here, we
+briefly outline what goes in the config file and how to run
+`run_wavess.py` itself.
+
+### Installing dependencies
+
+The Python script implementation of wavess requires the following
+imports: pandas, Bio, time, sys, os, yaml, csv, copy, random, numpy,
+collections
+
+The easiest way to install these is to create a conda environment. f you
+don’t already have it installed, first install
+[mamba](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html)
+(or conda, but it’s slower).
+
+Then, create the wavess conda environment (you only have to do this
+once), you can use the environment yaml file in the `inst/python`
+directory. Navigate to that directory and then run the command:
+
+    mamba env create -f env.yaml
+
+Next, activate the wavess environment (you have to do this once per
+session):
+
+    mamba activate wavess
+
+### Config file
+
+`run_wavess.py` requires a `config.yaml` file (example config file in
+`inst/python`) that defines various parameters and includes paths to
+input files.
+
+**File inputs (example data in `inst/extdata/`):**
+
+- `inf_pop_size`: csv with columns generation, active_cell_count. Note
+  that the initial active cell population size in the first generation
+  must be the same as the number of input founder sequences (because it
+  simply *is* the input founder sequences). Can be generated using the
+  \[define_growth_curve()\] function.
+- `samp_scheme`: csv with columns day, n_sample_active, n_sample_latent.
+  Can be generated using the \[define_samp_scheme()\] function.
+- `founder_seqs`: fasta file of founder sequence(s). The founder
+  sequence(s) may only contain the characters ACGT, and no gaps are
+  allowed. When modeling immune fitness, they are expected to be
+  codon-aligned.
+- `q`: csv that is a named Q matrix of nucleotide substitution rates.
+  Rows are from, columns are to. Can be generated using the
+  \[estimate_q()\] function.
+- `conserved_sites`: csv of conserved sites indexed at 0 where each row
+  contains a conserved site in a column called “position” and the
+  conserved nucleotide found at that site in a column called
+  “nucleotide”. This can be generated using the
+  \[identify_conserved_sites()\] function. If this is an empty string,
+  then conserved fitness costs are not included.
+- `ref_seq`: fasta file of the reference sequence. A consensus sequence,
+  that can be used as the reference sequence, can be generated using the
+  function \[identify_conserved_sites()\]. If this is an empty string,
+  then fitness costs relative to a reference sequence are not included.
+- `b_epitope_locations`: csv of B-cell epitope locations and maximum
+  fitness costs with columns epi_start_nt, epi_end_nt, max_fitness_cost.
+  These epitopes are expected to be indexed at 0 and in a protein in the
+  correct reading frame, as the nucleotide sequences are translated to
+  amino acids to calculate the B-cell immune fitness cost. This
+  information can be generated using the functions
+  \[get_epitope_frequencies()\] and \[sample_epitopes()\]. If this is an
+  empty string, then B-cell immune fitness costs are not included.
+- `t_epitope_locations`: csv of T-cell epitope locations and escape
+  information with columns start (nucleotide start position, indexed at
+  0), days_to_full_potency (days to reach full immune potency for that
+  epitope), escape_position (amino acid position within the epitope,
+  indexed starting at 1), and recognized_aa (amino acid considered
+  recognized by the immune system at that escape position). If this is
+  an empty string, then T-cell immune fitness costs are not included.
+
+**Parameters:**
+
+- `generation_time`: generation time in days
+
+Diversity-generating mechanisms:
+
+- `mut_rate`: Mutation rate per site per generation
+- \`recomb_rate\`\`: Recombination rate per site per generation (or file
+  where each row is a breakpoint-specific recombination rate, if you
+  want to model a variable recombination rate across the sequence). If a
+  file, it must have one fewer rows than the length of the founder
+  sequence. The value in each row corresponds to the breakpoint-specific
+  recombination rate along the sequence. Note that this rate includes
+  the rate of co-infection followed by recombination.
+
+Latent cell dynamics:
+
+- `act_to_lat`: per-day rate that an infected cell will become latent
+- `lat_to_act`: per-day rate that a latent cell will become active
+- `lat_prolif`: per-day rate that a latent cell will proliferate
+- `lat_die`: per-day rate that a latent cell will die
+
+Parameters related to fitness:
+
+Conserved sites:
+
+- `conserved_cost`: fitness cost per mutation in a conserved site
+
+Fitness relative to a reference sequence:
+
+- `replicative_cost`: fitness cost per difference from reference
+
+Immune fitness:
+
+- `b_immune_start_day`: day at which B-cell immunity is first considered
+- `b_n_for_imm`: number a new viral antigen must reach to initiate a
+  B-cell immune response against the corresponding epitope
+- `b_days_to_full_potency`: number of days for a B-cell immune response
+  to reach full potency
+- `t_max_immune_cost`: maximum immune fitness cost for T-cell responses
+
+### Running `run_wavess.py`
+
+`run_wavess.py` takes two required inputs and one optional input:
+
+- The config file, which contains information about input file paths and
+  parameters
+- The prefix to the output files (including directories)
+- An optional number that is the seed to set for random number
+  generation (to make your results reproducible)
+
+Here is an example (we set a seed so it will be reproducible, usually
+you don’t want to do this):
+
+    python run_wavess.py config.yaml wavess_output/ 1234
+
+**Note that the path to the output file has to have at least one forward
+slash.** If the slash is at the end, then there will be no prefix for
+the output files. If you want a prefix for the output files, then you
+can add that to the end.
+
+Two output files are generated: a csv file containing various counts for
+each sampled generation, and a fasta file containing the sampled
+sequences for each generation. See
+[`vignette("run_wavess")`](https://molevolepid.github.io/wavess/articles/run_wavess.md)
+for more details about the outputs.
+
+Example output files can be found in `inst/python/wavess_output/`.
+
+If you want to run an example of modeling a variable recombination rate,
+then in `config.yaml`, replace the recombination rate with
+`../extdata/recomb_rates.txt`.
+
+### Python tests
+
+To run the tests for the Python part of the code, install pytest and
+pytest-cov, then navigate to `inst/python` and run:
+
+    pytest tests.py --cov=. --cov=model --cov-report=html
+
+You can then look at the coverage report in `htmlcov/index.html`.

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">wavess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Analyze wavess output</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/v1.1.0/vignettes/analyze_output.Rmd" class="external-link"><code>vignettes/analyze_output.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/main/vignettes/analyze_output.Rmd" class="external-link"><code>vignettes/analyze_output.Rmd</code></a></small>
       <div class="d-none name"><code>analyze_output.Rmd</code></div>
     </div>
 
@@ -115,7 +115,7 @@ code, or else you’ll get an error telling you to do so.</p>
 <span><span class="co">#&gt;     where</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KlausVigo/phangorn" class="external-link">phangorn</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.amazon.com/Integration-Manipulation-Visualization-Phylogenetic-Computational-ebook/dp/B0B5NLZR1Z/" class="external-link">ggtree</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; ggtree v3.16.3 Learn more at https://yulab-smu.top/contribution-tree-data/</span></span>
+<span><span class="co">#&gt; ggtree v4.0.4 Learn more at https://yulab-smu.top/contribution-tree-data/</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Please cite:</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -150,10 +150,10 @@ code, or else you’ll get an error telling you to do so.</p>
 <span><span class="co">#&gt; Virtual environment 'r-wavess' successfully created.</span></span>
 <span><span class="co">#&gt; Using virtual environment 'r-wavess' ...</span></span>
 <span><span class="co">#&gt; + /home/runner/.virtualenvs/r-wavess/bin/python -m pip install --upgrade --no-user scipy</span></span>
-<span><span class="co">#&gt; Installation of scipy version 1.16.2 complete.</span></span>
+<span><span class="co">#&gt; Installation of scipy version 1.17.0 complete.</span></span>
 <span><span class="co">#&gt; Using virtual environment 'r-wavess' ...</span></span>
 <span><span class="co">#&gt; + /home/runner/.virtualenvs/r-wavess/bin/python -m pip install --upgrade --no-user pandas</span></span>
-<span><span class="co">#&gt; Installation of pandas version 2.3.3 complete.</span></span>
+<span><span class="co">#&gt; Installation of pandas version 3.0.1 complete.</span></span>
 <span><span class="co">#&gt; Warning in create_python_venv(): Skipped installation of the following</span></span>
 <span><span class="co">#&gt; packages: numpy Use `force` to force installation or update.</span></span>
 <span></span>
@@ -185,7 +185,9 @@ code, or else you’ll get an error telling you to do so.</p>
 <span>  ref_seq <span class="op">=</span> <span class="va">founder_ref</span><span class="op">$</span><span class="va">ref</span>,</span>
 <span>  epitope_locations <span class="op">=</span> <span class="va">epitope_locations</span>,</span>
 <span>  seed <span class="op">=</span> <span class="fl">1234</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: `epitope_locations` is deprecated; please use `b_epitope_locations`</span></span>
+<span><span class="co">#&gt; instead.</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="plotting-counts">Plotting counts<a class="anchor" aria-label="anchor" href="#plotting-counts"></a>
@@ -198,7 +200,7 @@ time:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">generation</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyze_output_files/figure-html/plot_counts-1.png" width="700"></p>
+<p><img src="analyze_output_files/figure-html/plot_counts-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="diversity-and-divergence">Diversity and divergence<a class="anchor" aria-label="anchor" href="#diversity-and-divergence"></a>
@@ -240,7 +242,7 @@ so diversity cannot be computed.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">gen</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">facet_grid</a></span><span class="op">(</span><span class="op">~</span><span class="va">name</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="analyze_output_files/figure-html/plot_div-1.png" width="700"></p>
+<p><img src="analyze_output_files/figure-html/plot_div-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="phylogeny">Phylogeny<a class="anchor" aria-label="anchor" href="#phylogeny"></a>
@@ -316,28 +318,15 @@ long time to run - longer than it would take to run IQ-TREE.)</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Set1"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/ggtree/man/geom_treescale.html" class="external-link">geom_treescale</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"Generation"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: `aes_()` was deprecated in ggplot2 3.0.0.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">ggtree</span> package.</span></span>
-<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/YuLab-SMU/ggtree/issues&gt;</span>.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
-<span><span class="co">#&gt; Warning in fortify(data, ...): Arguments in `...` must be used.</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">✖</span> Problematic arguments:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> as.Date = as.Date</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> yscale_mapping = yscale_mapping</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> hang = hang</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Did you misspell an argument name?</span></span>
 <span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">ggtree</span> package.</span></span>
 <span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/YuLab-SMU/ggtree/issues&gt;</span>.</span></span>
-<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once per session.</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
 <span><span class="co">#&gt; Warning in unique(as.numeric(gens)): NAs introduced by coercion</span></span></code></pre></div>
-<p><img src="analyze_output_files/figure-html/plot_tree-1.png" width="700"></p>
+<p><img src="analyze_output_files/figure-html/plot_tree-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="phylogeny-summary-statistics">Phylogeny summary statistics<a class="anchor" aria-label="anchor" href="#phylogeny-summary-statistics"></a>
@@ -394,7 +383,7 @@ post-infection.</strong></p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

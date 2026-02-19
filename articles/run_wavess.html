@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">wavess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Simulate within-host evolution with wavess</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/v1.1.0/vignettes/run_wavess.Rmd" class="external-link"><code>vignettes/run_wavess.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/main/vignettes/run_wavess.Rmd" class="external-link"><code>vignettes/run_wavess.Rmd</code></a></small>
       <div class="d-none name"><code>run_wavess.Rmd</code></div>
     </div>
 
@@ -223,26 +223,30 @@ least one recombination event</li>
 <code>mean_conserved_active</code>: mean conserved sites fitness of
 active cells</li>
 <li>
-<code>mean_immune_active</code>: mean immune fitness of active
-cells</li>
+<code>mean_b_immune_active</code>: mean antibody immune fitness of
+active cells</li>
+<li>
+<code>mean_t_immune_active</code>: mean cytotoxic T-lymphocyte (CTL)
+immune fitness of active cells</li>
 <li>
 <code>mean_replicative_active</code>: mean replicative fitness
 (comparison to <code>ref_seq</code>) of active cells</li>
 </ul>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">required_args_only</span><span class="op">$</span><span class="va">counts</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 15</span></span></span>
 <span><span class="co">#&gt;   generation active_cell_count latent_cell_count active_turned_latent</span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>          0                10                 0                    0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        100              <span style="text-decoration: underline;">2</span>000               123                    3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        200              <span style="text-decoration: underline;">2</span>000               182                    3</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        300              <span style="text-decoration: underline;">2</span>000               174                    0</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: latent_turned_active &lt;int&gt;, latent_died &lt;int&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        100              <span style="text-decoration: underline;">2</span>000               119                    4</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        200              <span style="text-decoration: underline;">2</span>000               175                    2</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        300              <span style="text-decoration: underline;">2</span>000               173                    0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more variables: latent_turned_active &lt;int&gt;, latent_died &lt;int&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   latent_proliferated &lt;int&gt;, number_mutations &lt;int&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   number_recombinations &lt;int&gt;, mean_fitness_active &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   mean_conserved_active &lt;dbl&gt;, mean_immune_active &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   mean_replicative_active &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;">#   mean_conserved_active &lt;dbl&gt;, mean_b_immune_active &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   mean_t_immune_active &lt;dbl&gt;, mean_replicative_active &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   mean_immune_active &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>As you can see, the default values for <code><a href="../reference/run_wavess.html">run_wavess()</a></code>
 include latency, mutations, and dual infections (which lead to
 recombination), but no fitness costs.</p>
@@ -270,19 +274,19 @@ together)</li>
 </ul>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">required_args_only</span><span class="op">$</span><span class="va">fitness</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 80 × 6</span></span></span>
-<span><span class="co">#&gt;    generation seq_id   immune conserved replicative overall</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> founder    founder0      1         1           1       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> founder    founder1      1         1           1       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> founder    founder2      1         1           1       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> founder    founder3      1         1           1       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> founder    founder4      1         1           1       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> founder    founder5      1         1           1       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> founder    founder6      1         1           1       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> founder    founder7      1         1           1       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> founder    founder8      1         1           1       1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> founder    founder9      1         1           1       1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 80 × 8</span></span></span>
+<span><span class="co">#&gt;    generation seq_id   b_immune t_immune conserved replicative overall immune</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> founder    founder0        1        1         1           1       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> founder    founder1        1        1         1           1       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> founder    founder2        1        1         1           1       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> founder    founder3        1        1         1           1       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> founder    founder4        1        1         1           1       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> founder    founder5        1        1         1           1       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> founder    founder6        1        1         1           1       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> founder    founder7        1        1         1           1       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> founder    founder8        1        1         1           1       1      1</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> founder    founder9        1        1         1           1       1      1</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 70 more rows</span></span></span></code></pre></div>
 <p>Again, the fitness is 1 for everything here because we didn’t model
 fitness.</p>
@@ -345,12 +349,13 @@ post-processing vignette <code><a href="../articles/analyze_output.html">vignett
 <div class="section level2">
 <h2 id="including-selective-pressures">Including selective pressures<a class="anchor" aria-label="anchor" href="#including-selective-pressures"></a>
 </h2>
-<p><code><a href="../reference/run_wavess.html">run_wavess()</a></code> can simulate three types of selective
+<p><code><a href="../reference/run_wavess.html">run_wavess()</a></code> can simulate four types of selective
 pressure:</p>
 <ul>
 <li>Conserved sites fitness</li>
 <li>Replicative fitness relative to a “most fit” reference sequence</li>
-<li>Immune response</li>
+<li>B-cell (antibody) immune response</li>
+<li>T-cell (CTL) immune response</li>
 </ul>
 <p>Note that all nucleotide positions related to fitness are expected to
 be indexed at 0. Including these requires additional inputs, which are
@@ -365,8 +370,7 @@ fitness cost and 1 indicates no ability to survive. <code>n_mut</code>
 is the number of mutations in conserved sites or the number of
 nucleotides different from the reference sequence.</p>
 <p>For additional details on how each of these selective pressures is
-implemented, please see the manuscript [<strong>ADD LINK WHEN WE HAVE
-IT</strong>].</p>
+implemented, please see the <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437" class="external-link">paper</a>.</p>
 <div class="section level3">
 <h3 id="conserved-sites-fitness">Conserved sites fitness<a class="anchor" aria-label="anchor" href="#conserved-sites-fitness"></a>
 </h3>
@@ -410,19 +414,36 @@ argument.</p>
 1:</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ref_fitness</span><span class="op">$</span><span class="va">counts</span><span class="op">$</span><span class="va">mean_replicative_active</span></span>
-<span><span class="co">#&gt; [1] 0.8520756 0.8487131 0.8477557 0.8458024</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 0.8520756 0.8491750 0.8467552 0.8450571</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="immune-fitness">Immune fitness<a class="anchor" aria-label="anchor" href="#immune-fitness"></a>
 </h3>
-<p>Active immunity can be modeled by defining epitopes locations that
-can be recognized by the immune system. Note that, currently, epitope
-locations must all be the same length. Nucleotide epitopes are
-translated into amino acids before immune fitness costs are calculated.
-An epitope is recognized only when it is present at least 100 times
-across the population (<code>n_for_imm</code> argument). Once an epitope
-is recognized, it undergoes affinity maturation for 90 days
-(<code>days_full_potency</code>), at which time it reaches a maximum
+<p>Active immunity can be modeled by defining epitope locations that can
+be recognized by the immune system. There are two components:</p>
+<ul>
+<li>
+<strong>B-cell immunity</strong>, controlled by the
+<code>b_epitope_locations</code>, <code>b_immune_start_day</code>,
+<code>b_n_for_imm</code>, and <code>b_days_full_potency</code>
+arguments.</li>
+<li>
+<strong>T-cell immunity</strong>, controlled by the
+<code>t_epitope_locations</code> and <code>t_max_immune_cost</code>
+arguments.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="b-cell-immune-fitness">B-cell immune fitness<a class="anchor" aria-label="anchor" href="#b-cell-immune-fitness"></a>
+</h3>
+<p>For B-cell immunity, epitope locations are specified in
+<code>epitope_locations</code> and all epitopes must currently be the
+same length. Nucleotide epitopes are translated into amino acids before
+B-cell immune fitness costs are calculated. An epitope is recognized
+only when it is present at least 100 times across the population
+(<code>b_n_for_imm</code> argument). Once an epitope is recognized, it
+undergoes affinity maturation for 90 days
+(<code>b_days_full_potency</code>), at which time it reaches its maximum
 cost. Epitopes are also cross-reactive.</p>
 <p>Cross-reactivity is sampled from a Beta distribution where alpha is 1
 and beta is the square of the amino acid edit distance to the nearest
@@ -441,21 +462,55 @@ recognized epitope:</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_color_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Spectral"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Quantile"</span>, y <span class="op">=</span> <span class="st">"Value"</span>, col <span class="op">=</span> <span class="st">"Hamming\ndistance"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="run_wavess_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<p><img src="run_wavess_files/figure-html/unnamed-chunk-14-1.png" class="r-plt" alt="" width="700"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">immune_fitness</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_wavess.html">run_wavess</a></span><span class="op">(</span></span>
 <span>  inf_pop_size <span class="op">=</span> <span class="va">pop</span>,</span>
 <span>  samp_scheme <span class="op">=</span> <span class="va">samp</span>,</span>
 <span>  founder_seqs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">founder_ref</span><span class="op">$</span><span class="va">founder</span>, <span class="fl">10</span><span class="op">)</span>,</span>
-<span>  epitope_locations <span class="op">=</span> <span class="va">epitope_locations</span></span>
+<span>  b_epitope_locations <span class="op">=</span> <span class="va">epitope_locations</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>The immune fitness here is now less than 1 after the immune system
-kicks in:</p>
+<p>The B-cell immune fitness here is now less than 1 after the immune
+system kicks in:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">immune_fitness</span><span class="op">$</span><span class="va">counts</span><span class="op">$</span><span class="va">mean_immune_active</span></span>
-<span><span class="co">#&gt; [1] 1.0000000 0.7098936 0.7093678 0.7320503</span></span></code></pre></div>
-<p>Please note that the model is very sensitive to the maximum immune
-fitness cost for a given epitope.</p>
+<code class="sourceCode R"><span><span class="va">immune_fitness</span><span class="op">$</span><span class="va">counts</span><span class="op">$</span><span class="va">mean_b_immune_active</span></span>
+<span><span class="co">#&gt; [1] 1.0000000 0.7011400 0.7269373 0.7314997</span></span></code></pre></div>
+<p>Please note that the model is very sensitive to the maximum antibody
+immune fitness cost for a given epitope.</p>
+</div>
+<div class="section level3">
+<h3 id="t-cell-immune-fitness">T-cell immune fitness<a class="anchor" aria-label="anchor" href="#t-cell-immune-fitness"></a>
+</h3>
+<p>If you specify <code>t_epitope_locations</code>, T-cell immunity will
+also be modeled and the output will additionally include T-cell immune
+fitness summaries in the <code>mean_t_immune_active</code> column of the
+<code>counts</code> tibble and the <code>t_immune</code> column of the
+<code>fitness</code> tibble.</p>
+<p>When modeling the CTL response, we recommend making the conserved
+cost and the maximum T-cell immune cost the same as it is unclear that
+one selective pressure always dominates over the other. Below we use 0.5
+for both.</p>
+<p>Here is a minimal example using a toy T-cell epitope tibble (matching
+the structure built in <code><a href="../articles/prepare_input_data.html">vignette("prepare_input_data")</a></code>):</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">t_epitope_locations</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">303</span>, <span class="fl">303</span>, <span class="fl">345</span>, <span class="fl">345</span>, <span class="fl">828</span>, <span class="fl">828</span><span class="op">)</span>,</span>
+<span>  days_to_full_potency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>, <span class="fl">4</span>, <span class="fl">11</span>, <span class="fl">11</span>, <span class="fl">4</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span>  escape_position <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">9</span>, <span class="fl">2</span>, <span class="fl">9</span>, <span class="fl">2</span>, <span class="fl">9</span><span class="op">)</span>,</span>
+<span>  recognized_aa <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"M"</span>, <span class="st">"L"</span>, <span class="st">"P"</span>, <span class="st">"L"</span>, <span class="st">"A"</span>, <span class="st">"L"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tcell_fitness</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_wavess.html">run_wavess</a></span><span class="op">(</span></span>
+<span>  inf_pop_size <span class="op">=</span> <span class="va">pop</span>,</span>
+<span>  samp_scheme <span class="op">=</span> <span class="va">samp</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>day <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  founder_seqs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">founder_ref</span><span class="op">$</span><span class="va">founder</span>, <span class="fl">10</span><span class="op">)</span>,</span>
+<span>  t_epitope_locations <span class="op">=</span> <span class="va">t_epitope_locations</span>,</span>
+<span>  t_max_immune_cost <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  conserved_cost <span class="op">=</span> <span class="fl">0.5</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tcell_fitness</span><span class="op">$</span><span class="va">counts</span><span class="op">$</span><span class="va">mean_t_immune_active</span></span>
+<span><span class="co">#&gt; [1] 1.0000000 0.7308239 0.5113636 0.3373580</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -489,7 +544,7 @@ rate across the sequence, you can input a vector of rates where each
 element in the vector is a breakpoint-specific recombination rate. In
 this case, the length of the vector should be one fewer than the number
 of basepairs in the founder sequence. Here’s an example:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">variable_recomb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_wavess.html">run_wavess</a></span><span class="op">(</span></span>
 <span>  inf_pop_size <span class="op">=</span> <span class="va">pop</span>,</span>
 <span>  samp_scheme <span class="op">=</span> <span class="va">samp</span>,</span>
@@ -503,7 +558,10 @@ followed by rassortment, and the rate within a segment is the rate of
 co-infection followed by recombination within that segment.</p>
 <p>Alternatively, if you want to model two genes separated by n bases
 that are not modeled (i.e. not included in the founder sequence), then
-the recombination rate between the two genes is base_rate*(n+1).</p>
+the recombination rate between the two genes is base_rate*(n+1). <a href="https://github.com/MolEvolEpid/wavess_ctl_manuscript/blob/main/wavess_modeling/scripts/prep_inputs.R" class="external-link">Here</a>
+is example code that preps an input founder sequence where pol and gp120
+are spliced together with a higher recombination rate between the
+genes.</p>
 </div>
 </div>
 <div class="section level2">
@@ -529,7 +587,7 @@ ways to visualize and analyze the output data.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

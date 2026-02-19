@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">wavess</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Running wavess in Python</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/v1.1.0/vignettes/python.Rmd" class="external-link"><code>vignettes/python.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/MolEvolEpid/wavess/blob/main/vignettes/python.Rmd" class="external-link"><code>vignettes/python.Rmd</code></a></small>
       <div class="d-none name"><code>python.Rmd</code></div>
     </div>
 
@@ -120,11 +120,14 @@ parameters and includes paths to input files.</p>
 <code>inst/extdata/</code>):</strong></p>
 <ul>
 <li>
-<code>pop_samp</code>: csv with columns generation,
-active_cell_count, n_sample_active. Note that the initial active cell
-population size in the first generation must be the same as the number
-of input founder sequences (because it simply <em>is</em> the input
-founder sequences). Can be generated using the [generate_pop_samp()]
+<code>inf_pop_size</code>: csv with columns generation,
+active_cell_count. Note that the initial active cell population size in
+the first generation must be the same as the number of input founder
+sequences (because it simply <em>is</em> the input founder sequences).
+Can be generated using the [define_growth_curve()] function.</li>
+<li>
+<code>samp_scheme</code>: csv with columns day, n_sample_active,
+n_sample_latent. Can be generated using the [define_samp_scheme()]
 function.</li>
 <li>
 <code>founder_seqs</code>: fasta file of founder sequence(s). The
@@ -149,45 +152,54 @@ generated using the function [identify_conserved_sites()]. If this is an
 empty string, then fitness costs relative to a reference sequence are
 not included.</li>
 <li>
-<code>epitope_locations</code>: csv of epitope locations and maximum
-fitness costs with columns epi_start_nt, epi_end_nt, max_fitness_cost.
-These epitopes are expected to be indexed at 0 and in a protein in the
-correct reading frame, as the nucleotide sequences are translated to
-amino acids to calculate the immune fitness cost. This information can
-be generated using the functions [get_epitope_frequencies()] and
-[sample_epitopes()]. If this is an empty string provided, then immune
-fitness costs are not included.</li>
+<code>b_epitope_locations</code>: csv of B-cell epitope locations
+and maximum fitness costs with columns epi_start_nt, epi_end_nt,
+max_fitness_cost. These epitopes are expected to be indexed at 0 and in
+a protein in the correct reading frame, as the nucleotide sequences are
+translated to amino acids to calculate the B-cell immune fitness cost.
+This information can be generated using the functions
+[get_epitope_frequencies()] and [sample_epitopes()]. If this is an empty
+string, then B-cell immune fitness costs are not included.</li>
 <li>
-<code>recomb_rates</code>: file with one fewer rows than the length
-of the founder sequence. The value in each row corresponds to the
-breakpoint-specific recombination rate along the sequence. Note that
-this rate is modeled as an effective recombination rate that includes
-the rate of co-infection followed by recombination. This file is only
-needed if the recombination rate varies across the sequence.</li>
+<code>t_epitope_locations</code>: csv of T-cell epitope locations
+and escape information with columns start (nucleotide start position,
+indexed at 0), days_to_full_potency (days to reach full immune potency
+for that epitope), escape_position (amino acid position within the
+epitope, indexed starting at 1), and recognized_aa (amino acid
+considered recognized by the immune system at that escape position). If
+this is an empty string, then T-cell immune fitness costs are not
+included.</li>
 </ul>
 <p><strong>Parameters:</strong></p>
+<ul>
+<li>
+<code>generation_time</code>: generation time in days</li>
+</ul>
 <p>Diversity-generating mechanisms:</p>
 <ul>
 <li>
 <code>mut_rate</code>: Mutation rate per site per generation</li>
 <li>`recomb_rate``: Recombination rate per site per generation (or file
 where each row is a breakpoint-specific recombination rate, if you want
-to model a variable recombination rate across the sequence)</li>
+to model a variable recombination rate across the sequence). If a file,
+it must have one fewer rows than the length of the founder sequence. The
+value in each row corresponds to the breakpoint-specific recombination
+rate along the sequence. Note that this rate includes the rate of
+co-infection followed by recombination.</li>
 </ul>
 <p>Latent cell dynamics:</p>
 <ul>
 <li>
-<code>prob_act_to_lat</code>: probability of infected cell becoming
-latent</li>
+<code>act_to_lat</code>: per-day rate that an infected cell will
+become latent</li>
 <li>
-<code>prob_lat_to_act</code>: probability that a latent cell will
-become active</li>
+<code>lat_to_act</code>: per-day rate that a latent cell will become
+active</li>
 <li>
-<code>prob_lat_prolif</code>: probability that a latent cell will
-proliferate (based on central memory cells)</li>
+<code>lat_prolif</code>: per-day rate that a latent cell will
+proliferate</li>
 <li>
-<code>prob_lat_die</code>: probability that a latent cell will
-die</li>
+<code>lat_die</code>: per-day rate that a latent cell will die</li>
 </ul>
 <p>Parameters related to fitness:</p>
 <p>Conserved sites:</p>
@@ -199,20 +211,23 @@ conserved site</li>
 <p>Fitness relative to a reference sequence:</p>
 <ul>
 <li>
-<code>rep_exp</code>: exponent for replicative fitness function</li>
+<code>replicative_cost</code>: fitness cost per difference from
+reference</li>
 </ul>
 <p>Immune fitness:</p>
 <ul>
 <li>
-<code>seroconversion_time</code>: seroconversion time in
-generations; immunity considered only at this generation onward</li>
+<code>b_immune_start_day</code>: day at which B-cell immunity is
+first considered</li>
 <li>
-<code>immune_response_proportion</code>: proportion new virus
-antigen must reach to initiate immune response against corresponding
-epitope</li>
+<code>b_n_for_imm</code>: number a new viral antigen must reach to
+initiate a B-cell immune response against the corresponding epitope</li>
 <li>
-<code>time_to_full_potency</code>: number of generations for a new
+<code>b_days_to_full_potency</code>: number of days for a B-cell
 immune response to reach full potency</li>
+<li>
+<code>t_max_immune_cost</code>: maximum immune fitness cost for
+T-cell responses</li>
 </ul>
 </div>
 <div class="section level3">
@@ -247,8 +262,8 @@ with <code>../extdata/recomb_rates.txt</code>.</p>
 <div class="section level3">
 <h3 id="python-tests">Python tests<a class="anchor" aria-label="anchor" href="#python-tests"></a>
 </h3>
-<p>To run the tests for the Python part of the code, navigate to
-<code>inst/python</code> and run:</p>
+<p>To run the tests for the Python part of the code, install pytest and
+pytest-cov, then navigate to <code>inst/python</code> and run:</p>
 <pre><code>pytest tests.py --cov=. --cov=model --cov-report=html</code></pre>
 <p>You can then look at the coverage report in
 <code>htmlcov/index.html</code>.</p>
@@ -264,7 +279,7 @@ with <code>../extdata/recomb_rates.txt</code>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

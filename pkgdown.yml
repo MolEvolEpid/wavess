@@ -1,12 +1,12 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   analyze_output: analyze_output.html
   prepare_input_data: prepare_input_data.html
   python: python.html
   run_wavess: run_wavess.html
-last_built: 2025-10-23T17:26Z
+last_built: 2026-02-19T18:20Z
 urls:
   reference: https://molevolepid.github.io/wavess/reference
   article: https://molevolepid.github.io/wavess/articles
