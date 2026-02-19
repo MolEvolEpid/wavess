@@ -5,12 +5,12 @@
 The goal of wavess is to simulate within-host virus sequence evolution
 optionally including recombination, a latent infected cell reservoir,
 and three types of selection (conserved sites, comparison to a fit
-sequence, and antibody-mediated immunity). The package also provides
-functions to pre-process data for input into the simulator, as well as
-post-processing functions to analyze the simulation output. The
-post-processing functions can also be used on real data. The default
-settings for the simulator assume that the sequences being simulated are
-HIV gp120.
+sequence, antibody-mediated immunity, and cytotoxic T-cell mediated
+immunity). The package also provides functions to pre-process data for
+input into the simulator, as well as post-processing functions to
+analyze the simulation output. The post-processing functions can also be
+used on real data. The default settings for the simulator assume that
+the sequences being simulated are HIV gp120.
 
 Website:
 [molevolepid.github.io/wavess/](https://molevolepid.github.io/wavess/)
@@ -18,6 +18,11 @@ Website:
 Manuscript: [wavess: An R package for simulation of adaptive within-host
 virus sequence
 evolution](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437)
+
+\*\*Note that another manuscript is in prep describing the CTL response
+and variable recombination rate. Release v1.1 includes the variable
+recombination rate. Upcoming release v1.2 will include the CTL response.
+Installing as described below includes the CTL response implementation.
 
 ## Installation
 
