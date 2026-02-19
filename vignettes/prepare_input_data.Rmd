@@ -800,7 +800,7 @@ epitope_locations %>% # using . in next line, so have to use dplyr pipe instead 
 To write them to a file:
 
 ```{r, write_epi}
-write_csv(epitope_locations, "input_data/epitope_locations.csv")
+write_csv(epitope_locations, "input_data/b_epitope_locations.csv")
 ```
 
 ## On to simulations

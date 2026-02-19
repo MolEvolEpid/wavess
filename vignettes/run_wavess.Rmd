@@ -203,11 +203,12 @@ vignette `vignette("analyze_output")`.
 
 ## Including selective pressures
 
-`run_wavess()` can simulate three types of selective pressure:
+`run_wavess()` can simulate four types of selective pressure:
 
 -   Conserved sites fitness
 -   Replicative fitness relative to a "most fit" reference sequence
--   Immune response
+-   B-cell immune response
+-   T-cell immune response
 
 Note that all nucleotide positions related to fitness are expected to be indexed
 at 0. Including these requires additional inputs, which are described in more
@@ -278,14 +279,21 @@ ref_fitness$counts$mean_replicative_active
 
 ### Immune fitness
 
-Active immunity can be modeled by defining epitopes locations that can be
-recognized by the immune system. Note that, currently, epitope locations must 
-all be the same length. Nucleotide epitopes are translated into amino
-acids before immune fitness costs are calculated. An epitope is recognized only
-when it is present at least 100 times across the population (`n_for_imm`
-argument). Once an epitope is recognized, it undergoes affinity maturation for
-90 days (`days_full_potency`), at which time it reaches a maximum cost. Epitopes
-are also cross-reactive.
+Active immunity can be modeled by defining epitope locations that can be
+recognized by the immune system. There are two components:
+
+-   **B-cell immunity**, controlled by the `epitope_locations`,
+    `immune_start_day`, `n_for_imm`, and `days_full_potency` arguments.
+-   **T-cell immunity**, controlled by the `t_epitope_locations` and
+    `t_max_immune_cost` arguments.
+
+For B-cell immunity, epitope locations are specified in `epitope_locations`
+and all epitopes must currently be the same length. Nucleotide epitopes are
+translated into amino acids before B-cell immune fitness costs are calculated.
+An epitope is recognized only when it is present at least 100 times across the
+population (`n_for_imm` argument). Once an epitope is recognized, it undergoes
+affinity maturation for 90 days (`days_full_potency`), at which time it reaches
+its maximum cost. Epitopes are also cross-reactive.
 
 Cross-reactivity is sampled from a Beta distribution where alpha is 1 and beta
 is the square of the amino acid edit distance to the nearest recognized epitope:
@@ -315,14 +323,19 @@ immune_fitness <- run_wavess(
 )
 ```
 
-The immune fitness here is now less than 1 after the immune system kicks in:
+The B-cell immune fitness here is now less than 1 after the immune system
+kicks in:
 
 ```{r}
-immune_fitness$counts$mean_immune_active
+immune_fitness$counts$mean_b_immune_active
 ```
 
-Please note that the model is very sensitive to the maximum immune fitness cost
-for a given epitope.
+Please note that the model is very sensitive to the maximum antibody immune fitness 
+cost for a given epitope.
+
+If you also specify `t_epitope_locations`, the output will additionally include
+T-cell immune fitness summaries in the `mean_t_immune_active` column of the
+`counts` tibble and the `t_immune` column of the `fitness` tibble. 
 
 ## Multiple selective pressures at once
 

@@ -1,23 +1,23 @@
 #' Run wavess
 #'
 #' Simulate within-host evolution optionally including recombination (default:
-#' on), latency (default: on), and fitness costs (default: off). The three
+#' on), latency (default: on), and fitness costs (default: off). The four
 #' fitness costs that can be simulated are conserved sites, fitness relative to
-#' a reference sequence, and antibody-based immune fitness costs. Nucleotide
-#' positions for conserved and immune fitness are expected to be indexed at 0.
-#' Please note that the default arguments were set with the the HIV *env* gp120
-#' gene in mind. If you'd like to simulate something else, you will likely have
-#' to modify certain parameters. However, if you are interested in this gene in
-#' particular, you can probably use most of the defaults including the founder
-#' and reference sequences provided as examples. However, by default no fitness
-#' costs are modeled. We recommend including fitness to obtain a realistic model
-#' output. To model these, you can use the pre-processing functions (see
-#' `vignette('prepare_input_data')`) to generate the relevant inputs. Also, the
-#' parameters for latent probabilities are assumed to be small, such that it is
-#' unlikely that multiple events (activate, die, proliferate) will occur to a
-#' single latent cell in a single (active cell) generation. See
-#' `vignette('run_wavess')` for more details about the simulator and input
-#' arguments.
+#' a reference sequence, B-cell immune fitness costs, and T-cell immune fitness
+#' costs. Nucleotide positions for conserved and immune fitness are expected to
+#' be indexed at 0. Please note that the default arguments were set with the the
+#' HIV *env* gp120 gene in mind. If you'd like to simulate something else, you
+#' will likely have to modify certain parameters. However, if you are interested
+#' in this gene in particular, you can probably use most of the defaults
+#' including the founder and reference sequences provided as examples. However,
+#' by default no fitness costs are modeled. We recommend including fitness to
+#' obtain a realistic model output. To model these, you can use the
+#' pre-processing functions (see `vignette('prepare_input_data')`) to generate
+#' the relevant inputs. Also, the parameters for latent probabilities are
+#' assumed to be small, such that it is unlikely that multiple events (activate,
+#' die, proliferate) will occur to a single latent cell in a single (active
+#' cell) generation. See `vignette('run_wavess')` for more details about the
+#' simulator and input arguments.
 #'
 #' Also note that some of the inputs are expected to be in units of
 #' *generations* and some are expected to be in units of *days*. These choices
@@ -61,25 +61,36 @@
 #' @param replicative_cost Replicative fitness cost, only relevant when ref_seq
 #'   is not NULL, must be in the range [0,1) where 0 indicates no cost. 1, which
 #'   indicates no ability to survive, is not allowed (default: 0.001)
-#' @param epitope_locations Tibble of epitope locations and maximum fitness
-#'   costs with columns epi_start_nt, epi_end_nt, max_fitness_cost. These
-#'   epitopes are expected to be indexed at 0 and in a protein in the correct
-#'   reading frame, as the nucleotide sequences are translated to amino acids to
-#'   calculate the immune fitness cost. The maximum fitness cost must be in the
-#'   range [0,1) where 0 indicates no cost. 1, which indicates no ability to
-#'   survive. This epitope location tibble can be generated using the functions
-#'   [get_epitope_frequencies()] and [sample_epitopes()]. (default: NULL, i.e.
-#'   no immune fitness costs)
-#' @param immune_start_day *Day* to start checking for an immune response, only
-#'   relevant when epitope_locations is not NULL (default: 0, but note that the
-#'   immune response will not actually start until there are at least
-#'   `n_for_imm` cells in the active population).
+#' @param epitope_locations Optional tibble of B-cell epitope locations and maximum
+#'   fitness costs with columns epi_start_nt, epi_end_nt, max_fitness_cost.
+#'   These epitopes are expected to be indexed at 0 and in a protein in the
+#'   correct reading frame, as the nucleotide sequences are translated to amino
+#'   acids to calculate the B-cell immune fitness cost. The maximum fitness cost
+#'   must be in the range [0,1) where 0 indicates no cost. 1, which indicates no
+#'   ability to survive. This epitope location tibble can be generated using the
+#'   functions [get_epitope_frequencies()] and [sample_epitopes()]. (default:
+#'   NULL, i.e. no B-cell immune fitness costs)
+#' @param immune_start_day *Day* to start checking for a B-cell immune
+#'   response, only relevant when `epitope_locations` is not NULL (default: 0,
+#'   but note that the immune response will not actually start until there are
+#'   at least `n_for_imm` cells in the active population).
 #' @param n_for_imm Number of infected cells that must contain a given sequence
-#'   for that sequence to be recognized by the immune system, only relevant when
-#'   epitope_locations is not NULL (default: 100).
-#' @param days_full_potency Number of *days* it takes for an immune response to
-#'   an epitope to reach full potency, only relevant when epitope_locations is
-#'   not NULL (default: 90).
+#'   for that sequence to be recognized by the B-cell immune system, only
+#'   relevant when `epitope_locations` is not NULL (default: 100).
+#' @param days_full_potency Number of *days* it takes for a B-cell immune
+#'   response to an epitope to reach full potency, only relevant when
+#'   `epitope_locations` is not NULL (default: 90).
+#' @param t_epitope_locations Optional tibble of T-cell epitope locations and
+#'   escape information with columns start (nucleotide start position, indexed
+#'   at 0), days_to_full_potency (days to reach full immune potency for that
+#'   epitope), escape_position (amino acid position within the epitope, indexed
+#'   starting at 1), and recognized_aa (amino acid considered recognized by the
+#'   immune system at that escape position). When provided, these are used to
+#'   compute an additional T-cell immune fitness cost. (default: NULL, i.e. no
+#'   T-cell immune fitness costs)
+#' @param t_max_immune_cost Maximum fitness cost per recognized T-cell epitope,
+#'   must be in the range [0,1) where 0 indicates no cost. 1, which indicates no
+#'   ability to survive, is not allowed (default: 0.5).
 #' @param mut_rate Mutation rate per-site, per-*generation* (default: 3.0e-5)
 #' @param recomb_rate Recombination rate per-breakpoint, per-*generation*
 #'   (default: 1.5e-5). This can be a single number or a numeric vector where
@@ -133,6 +144,8 @@ run_wavess <- function(inf_pop_size,
                        n_for_imm = 100,
                        days_full_potency = 90,
                        immune_start_day = 0,
+                       t_epitope_locations = NULL,
+                       t_max_immune_cost = 0.5,
                        seed = NULL) {
   check_run_wavess_inputs(
     inf_pop_size, samp_scheme, founder_seqs, generation_time, q,
@@ -141,6 +154,7 @@ run_wavess <- function(inf_pop_size,
     ref_seq, replicative_cost,
     epitope_locations, immune_start_day,
     n_for_imm, days_full_potency,
+    t_epitope_locations, t_max_immune_cost,
     act_to_lat, lat_to_act,
     lat_prolif, lat_die,
     seed
@@ -200,6 +214,7 @@ run_wavess <- function(inf_pop_size,
     conserved_sites, conserved_cost,
     ref_seq, replicative_cost,
     epitope_locations, immune_start_day, n_for_imm, days_full_potency,
+    t_epitope_locations, t_max_immune_cost,
     seed
   )
 
@@ -215,6 +230,17 @@ run_wavess <- function(inf_pop_size,
   names(out) <- c("counts", "fitness", "seqs_active", "seqs_latent")
   out$counts <- out$counts |> dplyr::bind_rows()
   out$fitness <- out$fitness |> dplyr::bind_rows()
+
+  # Maintain backwards compatibility with earlier versions that only
+  # exposed a single immune fitness component.
+  if ("mean_b_immune_active" %in% names(out$counts) &&
+    !("mean_immune_active" %in% names(out$counts))) {
+    out$counts$mean_immune_active <- out$counts$mean_b_immune_active
+  }
+  if ("b_immune" %in% names(out$fitness) &&
+    !("immune" %in% names(out$fitness))) {
+    out$fitness$immune <- out$fitness$b_immune
+  }
   out$seqs_active <- ape::as.DNAbin(t(sapply(out$seqs_active, function(x) strsplit(x, split = "")[[1]])))
   if (length(out$seqs_latent) == 0) {
     out$seqs_latent <- NULL

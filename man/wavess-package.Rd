@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Simulates within-host virus sequence evolution. Optionally includes recombination, a latent cell reservoir, and three types of selective pressures (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell immunity).
+Simulates within-host virus sequence evolution. Optionally includes recombination, a latent cell reservoir, and four types of selective pressures (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell and T-cell immunity).
 }
 \seealso{
 Useful links:
