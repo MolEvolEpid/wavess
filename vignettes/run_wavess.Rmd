@@ -351,14 +351,16 @@ Here is a minimal example using a toy T-cell epitope tibble (matching the
 structure built in `vignette("prepare_input_data")`):
 
 ```{r}
-t_epitope_locations <- data.frame(start = c(303, 303, 345, 345, 828, 828), 
-       days_to_full_potency = c(4, 4, 11, 11, 4, 4), 
-       escape_position = c(2, 9, 2, 9, 2, 9), 
-       recognized_aa = c("M", "L", "P", "L", "A", "L"))
+t_epitope_locations <- data.frame(
+  start = c(303, 303, 345, 345, 828, 828),
+  days_to_full_potency = c(4, 4, 11, 11, 4, 4),
+  escape_position = c(2, 9, 2, 9, 2, 9),
+  recognized_aa = c("M", "L", "P", "L", "A", "L")
+)
 
 tcell_fitness <- run_wavess(
   inf_pop_size = pop,
-  samp_scheme = samp %>% mutate(day = c(0,1,2,3)),
+  samp_scheme = samp %>% mutate(day = c(0, 1, 2, 3)),
   founder_seqs = rep(founder_ref$founder, 10),
   t_epitope_locations = t_epitope_locations,
   t_max_immune_cost = 0.5,
