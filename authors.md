@@ -42,3 +42,14 @@ Computational Biology*, **21**(9), e1013437.
       publisher = {Public Library of Science San Francisco, CA USA},
       doi = {https://doi.org/10.1371/journal.pcbi.1013437},
     }
+
+Lapp, Zena, Leitner, Thomas (2026). “wavess 1.2: Presenting an HLA-aware
+within-host virus sequence simulation framework.” *bioRxiv*.
+
+    @Article{,
+      title = {wavess 1.2: Presenting an HLA-aware within-host virus sequence simulation framework},
+      author = {{Lapp} and {Zena} and {Leitner} and {Thomas}},
+      journal = {bioRxiv},
+      year = {2026},
+      publisher = {Cold Spring Harbor Laboratory},
+    }

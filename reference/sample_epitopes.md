@@ -85,18 +85,18 @@ tibble with the `num_epitopes` rows and the following columns:
 
 ``` r
 sample_epitopes(get_epitope_frequencies(env_features$Position - 1))
-#> 5 resamples required
+#> 2 resamples required
 #> # A tibble: 10 × 3
 #>    epi_start_nt epi_end_nt max_fitness_cost
 #>           <dbl>      <dbl>            <dbl>
-#>  1          882        912             0.03
-#>  2          819        849             0.06
-#>  3          489        519             0.09
-#>  4          576        606             0.12
-#>  5          522        552             0.15
-#>  6          459        489             0.18
-#>  7          357        387             0.21
-#>  8          951        981             0.24
-#>  9         1080       1110             0.27
-#> 10         1272       1302             0.3 
+#>  1          273        303             0.03
+#>  2          486        516             0.06
+#>  3          909        939             0.09
+#>  4          384        414             0.12
+#>  5          456        486             0.15
+#>  6          702        732             0.18
+#>  7         1173       1203             0.21
+#>  8         1251       1281             0.24
+#>  9         1092       1122             0.27
+#> 10          984       1014             0.3 
 ```

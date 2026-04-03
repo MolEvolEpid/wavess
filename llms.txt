@@ -4,34 +4,36 @@
 
 The goal of wavess is to simulate within-host virus sequence evolution
 optionally including recombination, a latent infected cell reservoir,
-and three types of selection (conserved sites, comparison to a fit
-sequence, antibody-mediated immunity, and cytotoxic T-cell mediated
-immunity). The package also provides functions to pre-process data for
-input into the simulator, as well as post-processing functions to
-analyze the simulation output. The post-processing functions can also be
-used on real data. The default settings for the simulator assume that
-the sequences being simulated are HIV gp120.
+and four types of selection (conserved sites, comparison to a fit
+sequence, cytotoxic T-lymphocyte (CTL)-mediated immunity, and
+antibody-mediated immunity). The package also provides functions to
+pre-process data for input into the simulator, as well as
+post-processing functions to analyze the simulation output. The
+post-processing functions can also be used on empirical data. The
+default settings for the simulator assume that the sequences being
+simulated are HIV-1 gp120.
 
-Website:
-[molevolepid.github.io/wavess/](https://molevolepid.github.io/wavess/)
+The core of the wavess algorithm is written in Python, with a wrapper
+function in R. Therefore, wavess can be run in R or Python. All helper
+functions related to preparing model inputs and analyzing model outputs
+are contained solely in the R package.
 
-Manuscript: [wavess: An R package for simulation of adaptive within-host
-virus sequence
-evolution](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437)
-
-\*\*Note that another manuscript is in prep describing the CTL response
-and variable recombination rate. Release v1.1 includes the variable
-recombination rate. Upcoming release v1.2 will include the CTL response.
-Installing as described below includes the CTL response implementation.
+Below, we briefly share information about the R package. For more
+details about running `wavess`, please visit our website:
+[molevolepid.github.io/wavess/](https://molevolepid.github.io/wavess/).
+For more details about the model, please check out the [original
+paper](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437)
+and the \[paper describing the CTL
+response\]((<https://www.biorxiv.org/content/10.64898/2026.02.19.706869v1>).
 
 ## Installation
 
-You can install the development version of wavess from
+You can install the development version of the `wavess` R package from
 [GitHub](https://github.com/MolEvolEpid/wavess) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("MolEvolEpid/wavess")
+# install.packages("remotes")
+remotes::install_github("MolEvolEpid/wavess")
 ```
 
 This will not install the vignettes locally, but you can still see the
@@ -39,25 +41,43 @@ vignettes on the [website](https://molevolepid.github.io/wavess/). If
 you’d like to install the vignettes locally, you can use the command:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("MolEvolEpid/wavess", build_vignettes = TRUE, force = TRUE)
+# install.packages("remotes")
+remotes::install_github("MolEvolEpid/wavess", build_vignettes = TRUE, force = TRUE)
 ```
 
 ## Vignettes
 
-Please go to the [website](https://molevolepid.github.io/wavess/) and
-see the following vignettes for examples:
+The vignettes are hosted on our
+[website](https://molevolepid.github.io/wavess/) under the “Articles”
+tab, or if you installed them locally you can check them out using the
+[`vignette()`](https://rdrr.io/r/utils/vignette.html) command.
 
-- Preparing input data:
+- [Preparing input
+  data](https://molevolepid.github.io/wavess/articles/prepare_input_data.html):
   [`vignette("prepare_input_data")`](https://molevolepid.github.io/wavess/articles/prepare_input_data.md)
-- Running wavess:
+- [Running
+  wavess](https://molevolepid.github.io/wavess/articles/run_wavess.html):
   [`vignette("run_wavess")`](https://molevolepid.github.io/wavess/articles/run_wavess.md)
-- Analyzing the output:
+- [Analyzing the
+  output](https://molevolepid.github.io/wavess/articles/analyze_output.html):
   [`vignette("analyze_output")`](https://molevolepid.github.io/wavess/articles/analyze_output.md)
-- Running the python script:
+- [Running the python
+  script](https://molevolepid.github.io/wavess/articles/python.html):
   [`vignette("python")`](https://molevolepid.github.io/wavess/articles/python.md)
 
 ## Citation
+
+If you use the wavess algorithm or any of the helper functions, please
+cite this paper: [wavess: An R package for simulation of adaptive
+within-host virus sequence
+evolution](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437)
+
+If you model the CTL response or use the variable recombination rate
+feature, please also cite: [wavess 1.2: Presenting an HLA-aware
+within-host virus sequence simulation
+framework](https://www.biorxiv.org/content/10.64898/2026.02.19.706869v1)
+
+You can also see the citations using the following command in R:
 
 ``` r
 citation("wavess")
@@ -73,6 +93,8 @@ proposed change, create a [pull
 request](https://github.com/MolEvolEpid/wavess/pulls) with the
 implemented change, or reach out to <tkl@lanl.gov>,
 <nsambaturu@binghamton.edu>, or <zenalapp@lanl.gov>.
+
+–\>
 
 # Package index
 

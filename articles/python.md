@@ -5,8 +5,11 @@ We provide the R function
 as a convenience function to run the simulator from R, but since the
 underlying functions are all written in Python, you can also run wavess
 with Python using a command-line script. We provide an example Python
-script `run_wavess.py` (in `inst/python/`) to make this easy to do. The
-script takes a config file (`inst/python/config.yaml`) that includes
+script `run_wavess.py` to make this easy to do. The script can be found
+on GitHub in
+[`inst/python/`](https://github.com/MolEvolEpid/wavess/tree/main/inst/python)
+or in the `python` directory where the R package is locally installed.
+The script takes a config file (`inst/python/config.yaml`) that includes
 paths to input files and defines various input arguments such as what
 selective pressures to model, as well as an output file path/prefix.
 

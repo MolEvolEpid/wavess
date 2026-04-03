@@ -49,7 +49,7 @@ library(ape)
 #>     where
 library(phangorn)
 library(ggtree)
-#> ggtree v4.0.4 Learn more at https://yulab-smu.top/contribution-tree-data/
+#> ggtree v4.0.5 Learn more at https://yulab-smu.top/contribution-tree-data/
 #> 
 #> Please cite:
 #> 
@@ -84,10 +84,10 @@ create_python_venv()
 #> Virtual environment 'r-wavess' successfully created.
 #> Using virtual environment 'r-wavess' ...
 #> + /home/runner/.virtualenvs/r-wavess/bin/python -m pip install --upgrade --no-user scipy
-#> Installation of scipy version 1.17.0 complete.
+#> Installation of scipy version 1.17.1 complete.
 #> Using virtual environment 'r-wavess' ...
 #> + /home/runner/.virtualenvs/r-wavess/bin/python -m pip install --upgrade --no-user pandas
-#> Installation of pandas version 3.0.1 complete.
+#> Installation of pandas version 3.0.2 complete.
 #> Warning in create_python_venv(): Skipped installation of the following
 #> packages: numpy Use `force` to force installation or update.
 

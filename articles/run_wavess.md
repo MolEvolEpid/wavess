@@ -164,9 +164,9 @@ required_args_only$counts
 #>   generation active_cell_count latent_cell_count active_turned_latent
 #>        <int>             <int>             <int>                <int>
 #> 1          0                10                 0                    0
-#> 2        100              2000               102                    1
-#> 3        200              2000               161                    1
-#> 4        300              2000               193                    2
+#> 2        100              2000                94                    5
+#> 3        200              2000               166                    2
+#> 4        300              2000               196                    3
 #> # ℹ 11 more variables: latent_turned_active <int>, latent_died <int>,
 #> #   latent_proliferated <int>, number_mutations <int>,
 #> #   number_recombinations <int>, mean_fitness_active <dbl>,
@@ -235,7 +235,7 @@ required_args_only$seqs_active
 #> 
 #> Base composition:
 #>     a     c     g     t 
-#> 0.371 0.165 0.222 0.242 
+#> 0.371 0.164 0.222 0.243 
 #> (Total: 120.24 kb)
 ```
 
@@ -258,7 +258,7 @@ required_args_only$seqs_latent
 #> 
 #> Base composition:
 #>     a     c     g     t 
-#> 0.371 0.165 0.222 0.243 
+#> 0.370 0.165 0.222 0.243 
 #> (Total: 90.18 kb)
 ```
 
@@ -354,7 +354,7 @@ Here, you can see that the mean replicative fitness is now less than 1:
 
 ``` r
 ref_fitness$counts$mean_replicative_active
-#> [1] 0.8520756 0.8484841 0.8453578 0.8431324
+#> [1] 0.8520756 0.8497389 0.8466103 0.8437957
 ```
 
 ### Immune fitness
@@ -415,7 +415,7 @@ system kicks in:
 
 ``` r
 immune_fitness$counts$mean_b_immune_active
-#> [1] 1.0000000 0.7105450 0.7165300 0.7066007
+#> [1] 1.0000000 0.7076650 0.7227383 0.7151043
 ```
 
 Please note that the model is very sensitive to the maximum antibody

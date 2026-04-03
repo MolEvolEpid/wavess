@@ -61,13 +61,13 @@ calc_tr_stats(tr, times)
 #> # A tibble: 9 × 2
 #>   stat_name        stat_value
 #>   <chr>                 <dbl>
-#> 1 mean_leaf_depth       8.37 
-#> 2 mean_bl               0.527
-#> 3 mean_int_bl           0.548
-#> 4 mean_ext_bl           0.506
-#> 5 mean_divergence       4.74 
-#> 6 mean_diversity        7.65 
-#> 7 divergence_slope      0.288
-#> 8 diversity_slope       0.429
-#> 9 mean_ltt             22.5  
+#> 1 mean_leaf_depth     8.43   
+#> 2 mean_bl             0.527  
+#> 3 mean_int_bl         0.509  
+#> 4 mean_ext_bl         0.544  
+#> 5 mean_divergence     4.22   
+#> 6 mean_diversity      7.00   
+#> 7 divergence_slope   -0.00326
+#> 8 diversity_slope    -0.0413 
+#> 9 mean_ltt           22.5    
 ```
