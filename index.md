@@ -19,12 +19,13 @@ functions related to preparing model inputs and analyzing model outputs
 are contained solely in the R package.
 
 Below, we briefly share information about the R package. For more
-details about running `wavess`, please visit our website:
+details about running `wavess`, including a tutorial, please visit our
+website:
 [molevolepid.github.io/wavess/](https://molevolepid.github.io/wavess/).
 For more details about the model, please check out the [original
 paper](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437)
-and the \[paper describing the CTL
-response\]((<https://www.biorxiv.org/content/10.64898/2026.02.19.706869v1>).
+and the [paper describing the CTL
+response](https://www.biorxiv.org/content/10.64898/2026.02.19.706869v2).
 
 ## Installation
 
@@ -32,6 +33,7 @@ You can install the development version of the `wavess` R package from
 [GitHub](https://github.com/MolEvolEpid/wavess) with:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("MolEvolEpid/wavess")
 ```
@@ -41,45 +43,59 @@ vignettes on the [website](https://molevolepid.github.io/wavess/). If
 you’d like to install the vignettes locally, you can use the command:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("MolEvolEpid/wavess", build_vignettes = TRUE, force = TRUE)
 ```
 
-## Vignettes
+## Tutorials (vignettes)
 
-The vignettes are hosted on our
-[website](https://molevolepid.github.io/wavess/) under the “Articles”
-tab, or if you installed them locally you can check them out using the
-[`vignette()`](https://rdrr.io/r/utils/vignette.html) command.
+Tutorials (vignettes) providing a detailed step-by-step guide with
+examples of how to use the model and analyze the output are hosted on
+our [website](https://molevolepid.github.io/wavess/) under the
+“Articles” tab, or if you installed them locally you can check them out
+using the [`vignette()`](https://rdrr.io/r/utils/vignette.html) command.
+Links to specific tutorials are also included below.
 
 - [Preparing input
-  data](https://molevolepid.github.io/wavess/articles/prepare_input_data.html):
+  data](https://molevolepid.github.io/wavess/articles/prepare_input_data.html)  
+  The details about generating input data.  
+  To render locally:
   [`vignette("prepare_input_data")`](https://molevolepid.github.io/wavess/articles/prepare_input_data.md)
 - [Running
-  wavess](https://molevolepid.github.io/wavess/articles/run_wavess.html):
+  wavess](https://molevolepid.github.io/wavess/articles/run_wavess.html)  
+  How to run the wavess algorithm.  
+  To render locally:
   [`vignette("run_wavess")`](https://molevolepid.github.io/wavess/articles/run_wavess.md)
 - [Analyzing the
-  output](https://molevolepid.github.io/wavess/articles/analyze_output.html):
+  output](https://molevolepid.github.io/wavess/articles/analyze_output.html)  
+  Examples of how to analyze the output of wavess.  
+  To render locally:
   [`vignette("analyze_output")`](https://molevolepid.github.io/wavess/articles/analyze_output.md)
 - [Running the python
-  script](https://molevolepid.github.io/wavess/articles/python.html):
+  script](https://molevolepid.github.io/wavess/articles/python.html)  
+  How to run wavess using a Python script.  
+  To render locally:
   [`vignette("python")`](https://molevolepid.github.io/wavess/articles/python.md)
 
 ## Citation
 
 If you use the wavess algorithm or any of the helper functions, please
-cite this paper: [wavess: An R package for simulation of adaptive
-within-host virus sequence
+cite this paper:  
+[wavess: An R package for simulation of adaptive within-host virus
+sequence
 evolution](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437)
 
 If you model the CTL response or use the variable recombination rate
-feature, please also cite: [wavess 1.2: Presenting an HLA-aware
-within-host virus sequence simulation
-framework](https://www.biorxiv.org/content/10.64898/2026.02.19.706869v1)
+feature, please also cite:  
+[wavess 1.2: Presenting an HLA-aware within-host virus sequence
+simulation
+framework](https://www.biorxiv.org/content/10.64898/2026.02.19.706869v2)
 
 You can also see the citations using the following command in R:
 
 ``` r
+
 citation("wavess")
 ```
 
@@ -93,5 +109,3 @@ proposed change, create a [pull
 request](https://github.com/MolEvolEpid/wavess/pulls) with the
 implemented change, or reach out to <tkl@lanl.gov>,
 <nsambaturu@binghamton.edu>, or <zenalapp@lanl.gov>.
-
-–\>

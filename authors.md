@@ -23,7 +23,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/MolEvolEpid/wavess/blob/v1.2.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/MolEvolEpid/wavess/blob/main/inst/CITATION)
 
 Sambaturu, Narmada, Lapp, Zena, Tria, DK F, Romero-Severson, Ethan,
 Molina-Paris, Carmen, Leitner, Thomas (2025). “wavess: An R package for

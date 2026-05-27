@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="favicon.ico">
 <link rel="manifest" href="site.webmanifest">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Within-Host Adaptive Virus Evolution Sequence Simulator">
 <meta name="description" content='Simulates within-host virus sequence evolution. Optionally includes recombination, a latent cell reservoir, and four types of selective pressures (conserved sites, comparison to a "most fit" sequence, and adaptive B-cell and T-cell immunity).'>
@@ -72,7 +72,7 @@
 
 <p>The goal of wavess is to simulate within-host virus sequence evolution optionally including recombination, a latent infected cell reservoir, and four types of selection (conserved sites, comparison to a fit sequence, cytotoxic T-lymphocyte (CTL)-mediated immunity, and antibody-mediated immunity). The package also provides functions to pre-process data for input into the simulator, as well as post-processing functions to analyze the simulation output. The post-processing functions can also be used on empirical data. The default settings for the simulator assume that the sequences being simulated are HIV-1 gp120.</p>
 <p>The core of the wavess algorithm is written in Python, with a wrapper function in R. Therefore, wavess can be run in R or Python. All helper functions related to preparing model inputs and analyzing model outputs are contained solely in the R package.</p>
-<p>Below, we briefly share information about the R package. For more details about running <code>wavess</code>, please visit our website: <a href="https://molevolepid.github.io/wavess/">molevolepid.github.io/wavess/</a>. For more details about the model, please check out the <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437" class="external-link">original paper</a> and the [paper describing the CTL response]((<a href="https://www.biorxiv.org/content/10.64898/2026.02.19.706869v1" class="external-link uri">https://www.biorxiv.org/content/10.64898/2026.02.19.706869v1</a>).</p>
+<p>Below, we briefly share information about the R package. For more details about running <code>wavess</code>, including a tutorial, please visit our website: <a href="https://molevolepid.github.io/wavess/">molevolepid.github.io/wavess/</a>. For more details about the model, please check out the <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437" class="external-link">original paper</a> and the <a href="https://www.biorxiv.org/content/10.64898/2026.02.19.706869v2" class="external-link">paper describing the CTL response</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -86,29 +86,37 @@
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"MolEvolEpid/wavess"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
+<h2 id="tutorials-vignettes">Tutorials (vignettes)<a class="anchor" aria-label="anchor" href="#tutorials-vignettes"></a>
 </h2>
-<p>The vignettes are hosted on our <a href="https://molevolepid.github.io/wavess/">website</a> under the “Articles” tab, or if you installed them locally you can check them out using the <code><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette()</a></code> command.</p>
+<p>Tutorials (vignettes) providing a detailed step-by-step guide with examples of how to use the model and analyze the output are hosted on our <a href="https://molevolepid.github.io/wavess/">website</a> under the “Articles” tab, or if you installed them locally you can check them out using the <code><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette()</a></code> command. Links to specific tutorials are also included below.</p>
 <ul>
 <li>
-<a href="https://molevolepid.github.io/wavess/articles/prepare_input_data.html">Preparing input data</a>: <code><a href="articles/prepare_input_data.html">vignette("prepare_input_data")</a></code>
+<a href="https://molevolepid.github.io/wavess/articles/prepare_input_data.html">Preparing input data</a><br>
+The details about generating input data.<br>
+To render locally: <code><a href="articles/prepare_input_data.html">vignette("prepare_input_data")</a></code>
 </li>
 <li>
-<a href="https://molevolepid.github.io/wavess/articles/run_wavess.html">Running wavess</a>: <code><a href="articles/run_wavess.html">vignette("run_wavess")</a></code>
+<a href="https://molevolepid.github.io/wavess/articles/run_wavess.html">Running wavess</a><br>
+How to run the wavess algorithm.<br>
+To render locally: <code><a href="articles/run_wavess.html">vignette("run_wavess")</a></code>
 </li>
 <li>
-<a href="https://molevolepid.github.io/wavess/articles/analyze_output.html">Analyzing the output</a>: <code><a href="articles/analyze_output.html">vignette("analyze_output")</a></code>
+<a href="https://molevolepid.github.io/wavess/articles/analyze_output.html">Analyzing the output</a><br>
+Examples of how to analyze the output of wavess.<br>
+To render locally: <code><a href="articles/analyze_output.html">vignette("analyze_output")</a></code>
 </li>
 <li>
-<a href="https://molevolepid.github.io/wavess/articles/python.html">Running the python script</a>: <code><a href="articles/python.html">vignette("python")</a></code>
+<a href="https://molevolepid.github.io/wavess/articles/python.html">Running the python script</a><br>
+How to run wavess using a Python script.<br>
+To render locally: <code><a href="articles/python.html">vignette("python")</a></code>
 </li>
 </ul>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<p>If you use the wavess algorithm or any of the helper functions, please cite this paper: <a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437" class="external-link">wavess: An R package for simulation of adaptive within-host virus sequence evolution</a></p>
-<p>If you model the CTL response or use the variable recombination rate feature, please also cite: <a href="https://www.biorxiv.org/content/10.64898/2026.02.19.706869v1" class="external-link">wavess 1.2: Presenting an HLA-aware within-host virus sequence simulation framework</a></p>
+<p>If you use the wavess algorithm or any of the helper functions, please cite this paper:<br><a href="https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437" class="external-link">wavess: An R package for simulation of adaptive within-host virus sequence evolution</a></p>
+<p>If you model the CTL response or use the variable recombination rate feature, please also cite:<br><a href="https://www.biorxiv.org/content/10.64898/2026.02.19.706869v2" class="external-link">wavess 1.2: Presenting an HLA-aware within-host virus sequence simulation framework</a></p>
 <p>You can also see the citations using the following command in R:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"wavess"</span><span class="op">)</span></span></code></pre></div>
@@ -117,7 +125,6 @@
 <h2 id="contributing">Contributing<a class="anchor" aria-label="anchor" href="#contributing"></a>
 </h2>
 <p>You are of course welcome to fork the package for your own use. If you would like for your changes to be incorporated into the latest version of <code>wavess</code>, please open an <a href="https://github.com/MolEvolEpid/wavess/issues" class="external-link">issue</a> related to your proposed change, create a <a href="https://github.com/MolEvolEpid/wavess/pulls" class="external-link">pull request</a> with the implemented change, or reach out to <a href="mailto:tkl@lanl.gov" class="email">tkl@lanl.gov</a>, <a href="mailto:nsambaturu@binghamton.edu" class="email">nsambaturu@binghamton.edu</a>, or <a href="mailto:zenalapp@lanl.gov" class="email">zenalapp@lanl.gov</a>.</p>
-<p>–&gt;</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

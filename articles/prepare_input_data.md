@@ -13,16 +13,16 @@ may be necessary if your inputs require more customization than these
 functions provide. However, we expect these functions to be sufficient
 for most users.
 
-| [`run_wavess()`](https://molevolepid.github.io/wavess/reference/run_wavess.md) argument | `wavess` function to generate input                                                                                                                                                                | Description                                                                                       |
-|-----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| `inf_pop_size`                                                                          | [`define_growth_curve()`](https://molevolepid.github.io/wavess/reference/define_growth_curve.md)                                                                                                   | [Define active cell growth](#define-active-cell-growth)                                           |
-| `samp_scheme`                                                                           | `define_samp_scheme()`                                                                                                                                                                             | [Define sampling scheme](#define-sampling-scheme)                                                 |
-| `founder_seqs`                                                                          | [`extract_seqs()`](https://molevolepid.github.io/wavess/reference/extract_seqs.md)                                                                                                                 | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment)         |
-| `q`                                                                                     | [`estimate_q()`](https://molevolepid.github.io/wavess/reference/estimate_q.md)                                                                                                                     | [Determine nucleotide substitution probabilities](#estimate-q-matrix)                             |
-| `conserved_sites`                                                                       | [`identify_conserved_sites()`](https://molevolepid.github.io/wavess/reference/identify_conserved_sites.md)                                                                                         | [Identify conserved sites](#identify-conserved-sites)                                             |
-| `ref_seq`                                                                               | [`identify_conserved_sites()`](https://molevolepid.github.io/wavess/reference/identify_conserved_sites.md), [`extract_seqs()`](https://molevolepid.github.io/wavess/reference/extract_seqs.md)     | [Get reference sequence that is considered to be the best replicator](#find-a-consensus-sequence) |
-| `b_epitope_locations`                                                                   | [`get_epitope_frequencies()`](https://molevolepid.github.io/wavess/reference/get_epitope_frequencies.md), [`sample_epitopes()`](https://molevolepid.github.io/wavess/reference/sample_epitopes.md) | [Sample epitopes](#sample-epitopes)                                                               |
-| `t_epitope_locations`                                                                   |                                                                                                                                                                                                    | [Identify T epitopes](#get-t-epitopes)                                                            |
+| [`run_wavess()`](https://molevolepid.github.io/wavess/reference/run_wavess.md) argument | `wavess` function to generate input | Description |
+|----|----|----|
+| `inf_pop_size` | [`define_growth_curve()`](https://molevolepid.github.io/wavess/reference/define_growth_curve.md) | [Define active cell growth](#define-active-cell-growth) |
+| `samp_scheme` | `define_samp_scheme()` | [Define sampling scheme](#define-sampling-scheme) |
+| `founder_seqs` | [`extract_seqs()`](https://molevolepid.github.io/wavess/reference/extract_seqs.md) | [Extract founder sequence from an alignment](#extract-founder-sequence-from-an-alignment) |
+| `q` | [`estimate_q()`](https://molevolepid.github.io/wavess/reference/estimate_q.md) | [Determine nucleotide substitution probabilities](#estimate-q-matrix) |
+| `conserved_sites` | [`identify_conserved_sites()`](https://molevolepid.github.io/wavess/reference/identify_conserved_sites.md) | [Identify conserved sites](#identify-conserved-sites) |
+| `ref_seq` | [`identify_conserved_sites()`](https://molevolepid.github.io/wavess/reference/identify_conserved_sites.md), [`extract_seqs()`](https://molevolepid.github.io/wavess/reference/extract_seqs.md) | [Get reference sequence that is considered to be the best replicator](#find-a-consensus-sequence) |
+| `b_epitope_locations` | [`get_epitope_frequencies()`](https://molevolepid.github.io/wavess/reference/get_epitope_frequencies.md), [`sample_epitopes()`](https://molevolepid.github.io/wavess/reference/sample_epitopes.md) | [Sample epitopes](#sample-epitopes) |
+| `t_epitope_locations` |  | [Identify T epitopes](#get-t-epitopes) |
 
 Each of the sections below goes into more detail.
 
@@ -37,6 +37,7 @@ you would like to do the same, you will have to create that directory
 before running the file saving commands. For example:
 
 ``` r
+
 dir.create("input_data")
 #> Warning in dir.create("input_data"): 'input_data' already exists
 ```
@@ -50,6 +51,7 @@ First, you need to install (if needed) and load the `wavess` library, as
 well as a few others, and we will set the plotting theme and a seed:
 
 ``` r
+
 # install.packages("remotes")
 # remotes::install_github("MolEvolEpid/wavess")
 # install.packages("ggplot2")
@@ -147,6 +149,7 @@ function to generate it:
 All of the arguments in this function have defaults, so you can run:
 
 ``` r
+
 define_growth_curve()
 #> # A tibble: 5,001 × 2
 #>    generation active_cell_count
@@ -175,6 +178,7 @@ Here is an example where we allow the simulation to run for longer (for
 as long as sequences are being sampled):
 
 ``` r
+
 (inf_pop_size <- define_growth_curve(n_gen = 10000))
 #> # A tibble: 10,001 × 2
 #>    generation active_cell_count
@@ -195,6 +199,7 @@ as long as sequences are being sampled):
 If you’d like to write this to a file:
 
 ``` r
+
 write_csv(inf_pop_size, "input_data/inf_pop_size.csv")
 ```
 
@@ -209,6 +214,7 @@ You can visualize the active cell dynamics over time using the following
 code:
 
 ``` r
+
 # plot active cell counts
 inf_pop_size |>
   filter(generation <= 500) |>
@@ -242,6 +248,7 @@ function to generate it:
 All of the arguments in this function have defaults, so you can run:
 
 ``` r
+
 define_sampling_scheme()
 #> # A tibble: 11 × 3
 #>      day n_sample_active n_sample_latent
@@ -266,6 +273,7 @@ Here is an example with sampling over a shorter time period, but more
 frequent sampling and fewer samples taken at each sampling event:
 
 ``` r
+
 (samp_scheme <- define_sampling_scheme(
   sampling_frequency_active = 30,
   max_samp_active = 10,
@@ -296,6 +304,7 @@ time, even if the growth curve continues for more generations.
 If you’d like to write this to a file:
 
 ``` r
+
 write_csv(samp_scheme, "input_data/samp_scheme.csv")
 ```
 
@@ -336,6 +345,7 @@ can therefore find what alignment positions correspond to these HXB2
 coordinates:
 
 ``` r
+
 gp120_start <- which(cumsum(as.character(
   hxb2_cons_founder["B.FR.83.HXB2_LAI_IIIB_BRU.K03455", ]
 ) != "-") == 6225)[1]
@@ -348,6 +358,7 @@ Then we can use these start and end positions to extract gp120 for our
 founder sequence:
 
 ``` r
+
 founder_seq <- extract_seqs(hxb2_cons_founder, "B.US.2011.DEMB11US006.KC473833",
   start = gp120_start, end = gp120_end
 )$founder
@@ -363,6 +374,7 @@ into an [`ape::DNAbin`](https://rdrr.io/pkg/ape/man/DNAbin.html) object
 and then save it:
 
 ``` r
+
 rep(list(strsplit(founder_seq, "")[[1]]), 10) |>
   as.DNAbin() |>
   as.matrix() |>
@@ -377,6 +389,7 @@ nucleotides. By default, this matrix is estimated from approximately
 neutral sites:
 
 ``` r
+
 (hiv_q_mat <- calc_q_from_rates(hiv_mut_rates, mut_rate = 2.4e-5, generation_time = 1.2))
 #>            A          C          G          T
 #> A -1.3935602  0.1650215  1.1002145  0.1283242
@@ -411,6 +424,7 @@ Here is an example (but note that this matrix isn’t accurate because
 it’s simply a random set of sequences):
 
 ``` r
+
 estimate_q(hiv_env_flt_2022)
 #> optimize edge weights:  -13347 --> -13272.97 
 #> optimize rate matrix:  -13272.97 --> -12963.97 
@@ -474,6 +488,7 @@ and no tree rearrangement (`rearrangement`).
 To save this to a file:
 
 ``` r
+
 data.frame(hiv_q_mat) |>
   rownames_to_column(var = "nt_from") |>
   write_csv("input_data/hiv_q_mat.csv")
@@ -483,6 +498,7 @@ data.frame(hiv_q_mat) |>
 use this code:
 
 ``` r
+
 as.matrix(read.csv("input_data/hiv_q_mat.csv", row.names = 1))
 #>            A          C          G          T
 #> A -1.3935602  0.1650215  1.1002145  0.1283242
@@ -519,6 +535,7 @@ ordered list will be chosen as the event that occurred to the cell in
 that generation: cell becomes active, cell dies, cell proliferates.
 
 ``` r
+
 # set parameters to get latent curve
 to_latent <- 0.001
 to_active <- 0.01
@@ -583,15 +600,21 @@ generations.
 The fitness, F, of a virus is defined by the product of the fitness of
 each component:
 
-$$F = F_{C}*F_{R}*F_{I}$$ where $F_{C}$ is the conserved fitness,
-$F_{R}$ is the replicative fitness, and $F_{I}$ is the immune fitness.
+``` math
+F=F_C*F_R*F_I
+```
+where $`F_C`$ is the conserved fitness, $`F_R`$ is the replicative
+fitness, and $`F_I`$ is the immune fitness.
 
-The equation used to compute $F_{C}$ and $F_{R}$ is:
+The equation used to compute $`F_C`$ and $`F_R`$ is:
 
-$$F_{C/R} = (1 - c)^{n}$$ Where $c$ is either the conserved fitness cost
-or the replicative fitness cost, and $n$ is the number of mutations at
-conserved sites or the number of sites that differ from the reference
-sequence, respectively.
+``` math
+F_{C/R} = (1-c)^n
+```
+Where $`c`$ is either the conserved fitness cost or the replicative
+fitness cost, and $`n`$ is the number of mutations at conserved sites or
+the number of sites that differ from the reference sequence,
+respectively.
 
 When both forms of fitness are used, if the position is considered to be
 a conserved site, then it is not considered for replicative fitness.
@@ -600,6 +623,7 @@ Here is a plot of how the cost and number of mutations influences
 overall fitness:
 
 ``` r
+
 costs <- c(0, 0.001, 0.01, 0.1, 0.99)
 n_muts <- 0:100
 tibble(n_mut = sort(rep(n_muts, length(costs))), cost = rep(costs, length(n_muts))) |>
@@ -616,10 +640,12 @@ The calculation of immune fitness is a bit more involved, but the result
 is that it is computed as the largest fitness cost across all
 immune-recognized epitopes:
 
-$$F_{I} = max\left( c_{epitope} \right)$$ Where $c_{epitope}$ is a
-vector of the costs of each epitope recognized by the immune system.
-Note that this cost changes over generations. Please refer to the
-manuscript for more details.
+``` math
+F_I = max(c_{epitope})
+```
+Where $`c_{epitope}`$ is a vector of the costs of each epitope
+recognized by the immune system. Note that this cost changes over
+generations. Please refer to the manuscript for more details.
 
 In the next sections, we will discuss how to identify conserved sites,
 create a reference sequence, and generate epitopes.
@@ -664,6 +690,7 @@ function to slice out the desired section of the alignment. Here’s an
 example:
 
 ``` r
+
 (gp120 <- slice_aln(hxb2_cons_founder, gp120_start, gp120_end))
 #> 3 DNA sequences in binary format stored in a matrix.
 #> 
@@ -732,6 +759,7 @@ just want to simulate gp120, we have to slice out that part of the
 alignment:
 
 ``` r
+
 # get hxb2 gp120 length and end position in flt alignment
 len_hxb2_gp120 <- nchar(extract_seqs(hxb2_cons_founder,
   "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
@@ -746,6 +774,7 @@ hiv_gp120_flt_2022 <- slice_aln(hiv_env_flt_2022, 1, flt_gp120_end)
 Then we can use this sliced alignment to identify conserved sites:
 
 ``` r
+
 identify_conserved_sites(hiv_gp120_flt_2022, "B.FR.83.HXB2_LAI_IIIB_BRU.K03455")
 #> # A tibble: 1,533 × 5
 #>    founder_pos founder_base consensus_base consensus_prop conserved
@@ -771,6 +800,7 @@ relative to the founder sequence. In this case, the shared reference
 sequence is assumed to have the same start position in each alignment.
 
 ``` r
+
 (founder_conserved_df <- identify_conserved_sites(hiv_gp120_flt_2022,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
@@ -796,6 +826,7 @@ You can visualize the conserved sites across the genome using the
 following code:
 
 ``` r
+
 founder_conserved_df |>
   ggplot(aes(x = founder_pos, y = consensus_prop, fill = conserved)) +
   geom_col()
@@ -817,6 +848,7 @@ input of `run_wavess` only takes a vector of the conserved sites. To
 generate this, you can run the following code:
 
 ``` r
+
 founder_conserved_sites_example <- founder_conserved_df |>
   filter(conserved == "Yes") |>
   select(founder_pos, founder_base) |>
@@ -837,6 +869,7 @@ above, which is not accurate since it was only run on a handful of
 genomes):
 
 ``` r
+
 write_csv(enframe(founder_conserved_sites, name = "position", value = "nucleotide"), "input_data/founder_conserved_sites.csv")
 ```
 
@@ -858,6 +891,7 @@ format for
 you can use the following code, where NA values are converted to gaps:
 
 ``` r
+
 gsub("NA", "-", paste0(founder_conserved_df$consensus_base, collapse = ""))
 #> [1] "atgagagtgatgg---------ggacacagatg---aagtggagatgggggactatgatcttgggaatgataataatttgtagtgctacagaaaacttgtgggttactgtctactatggggtacctgtgtggaaagatgcagagaccaccctattttgtgcatcagatgctaaagcatatgatacagaagtgcataatgtctgggctacacatgcctgtgtacccacagaccccaacccacaagaaataaatttggaaaatgtgacagaagagtttaacatgtggaaaaataacatggtagaacagatgcataaagatataatcagtctatgggaccaaagcctaaagccatgtgtaaagttaacccctctctgtgttactttaaagtgcaatgactacaacaacaaca--aa---cactactacaactgaggaaggagaaataaaaaactgctctttcaatatgaccacagaattaagagataagaaacagaaagtatattcacttttttatagacttgatatagtacaaattgataataa---------t------aagtatagattaataaattgtaatacctcagccattacacaggcttgtccaaaggtatcctttgagccaattcccatacattattgtgccccagctggttttgcgattctaaagtgtaatgataaggagttcaatggaacaggaccatgcaagaatgtcagcacagtacaatgcacacatggaatcaagccagtagtatcaactcaactgctgttaaatggcagtctagcagaagaagagataatgattagatctgaaaatatcacagacaatgccaaaaccataatagtacaacttaataagcctgtaaaaattaattgtaccagacctaacaacaatacaagaaaaagtatacat--aggaccaggacaagcattctatgcaacaggtga---cataggggatataagaaaagcacattgtaatgtcagtagaacagaatggaataaaactttacaaaaggtagccaaacaattaagaaaacactttaacaaaacaataatcttt---aataattcaggaggggatttagaaattacaacacatagttttaattgtggaggagaatttttctactgcaacacatcaggcctgtttaatagcacttggaataaaaacaataacacaaaaaaaaataaaactataactctcccatgcagaataaagcaaattataaatatgtggcagagagcaggacaagcaatatatgcccctcccatccaaggagtaataaggtgtgaatcaaacattacaggactactattaacaagagatggtggaaa------taataaa------aataccgaaaccttcagacctggaggaggagatatgagggacaattggagaagtgaattatataaatataaagtagtaaaaattgaaccactaggagtagcacccaccaaggcaaaaagaagagtggtggagagagaaaaaaga"
 ```
@@ -868,6 +902,7 @@ reference sequence you’d like to use, then you can also use the
 function to obtain both at once:
 
 ``` r
+
 (founder_ref <- extract_seqs(hxb2_cons_founder,
   founder = "B.US.2011.DEMB11US006.KC473833",
   ref = "CON_B(1295)",
@@ -887,6 +922,7 @@ To write this to a fasta file, you use a similar method as writing the
 founder to a fasta file:
 
 ``` r
+
 strsplit(founder_ref$ref, "")[[1]] |>
   as.DNAbin() |>
   as.matrix() |>
@@ -923,6 +959,7 @@ some sort of known antibody contact/binding/neutralization maps. For HIV
 ENV gp120, we used the features from the LANL HIV immunology database:
 
 ``` r
+
 env_features
 #> # A tibble: 3,022 × 13
 #>       ID Title                   Reference `Feature type` `Mab(s)(Binding type)`
@@ -960,6 +997,7 @@ function, which returns a tibble with three columns:
   given the input positions
 
 ``` r
+
 (epi_probs <- get_epitope_frequencies(env_features$Position))
 #> # A tibble: 480 × 3
 #>    aa_position n_features epitope_probability
@@ -980,6 +1018,7 @@ function, which returns a tibble with three columns:
 We can visualize it as follows:
 
 ``` r
+
 epi_probs |>
   ggplot(aes(x = aa_position, y = epitope_probability)) +
   geom_col() +
@@ -994,6 +1033,7 @@ function. Note that the output of this function is different each time
 it’s run, since the locations are selected randomly each time.
 
 ``` r
+
 sample_epitopes(epi_probs)
 #> 2 resamples required
 #> # A tibble: 10 × 3
@@ -1036,6 +1076,7 @@ function, which returns reference and founder positions mapped to each
 other:
 
 ``` r
+
 (ref_founder_map <- map_ref_founder(gp120,
   ref = "B.FR.83.HXB2_LAI_IIIB_BRU.K03455",
   founder = "B.US.2011.DEMB11US006.KC473833"
@@ -1062,6 +1103,7 @@ which will then return nucleotide positions relative to the founder
 sequence (instead of HXB2):
 
 ``` r
+
 (b_epitope_locations <- sample_epitopes(epi_probs,
   ref_founder_map = ref_founder_map
 ))
@@ -1084,6 +1126,7 @@ sequence (instead of HXB2):
 Here are two ways to visualize the epitopes:
 
 ``` r
+
 b_epitope_locations |>
   ggplot(aes(x = epi_start_nt, y = max_fitness_cost)) +
   geom_point() +
@@ -1093,6 +1136,7 @@ b_epitope_locations |>
 ![](prepare_input_data_files/figure-html/plot_epi-1.png)
 
 ``` r
+
 
 b_epitope_locations %>% # using . in next line, so have to use dplyr pipe instead of base R pipe
   ggplot(aes(x = seq_len(nrow(.)), y = max_fitness_cost, col = epi_start_nt)) +
@@ -1106,6 +1150,7 @@ b_epitope_locations %>% # using . in next line, so have to use dplyr pipe instea
 To write them to a file:
 
 ``` r
+
 write_csv(b_epitope_locations, "input_data/b_epitope_locations.csv")
 ```
 
@@ -1133,6 +1178,7 @@ is a tibble (or data frame) with four columns:
 Here is an example:
 
 ``` r
+
 t_epitope_locations <- data.frame(
   start = c(303, 303, 345, 345, 828, 828),
   days_to_full_potency = c(4, 4, 11, 11, 4, 4),
@@ -1157,6 +1203,7 @@ These inputs can be written to a CSV file for use with the Python
 command-line interface:
 
 ``` r
+
 write_csv(t_epitope_locations, "input_data/t_epitope_locations.csv")
 ```
 

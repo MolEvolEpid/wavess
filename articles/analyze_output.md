@@ -29,6 +29,7 @@ function prior to running the below code, or else you’ll get an error
 telling you to do so.
 
 ``` r
+
 library(wavess)
 library(dplyr)
 #> 
@@ -49,7 +50,7 @@ library(ape)
 #>     where
 library(phangorn)
 library(ggtree)
-#> ggtree v4.0.5 Learn more at https://yulab-smu.top/contribution-tree-data/
+#> ggtree v4.2.0 Learn more at https://yulab-smu.top/contribution-tree-data/
 #> 
 #> Please cite:
 #> 
@@ -87,7 +88,7 @@ create_python_venv()
 #> Installation of scipy version 1.17.1 complete.
 #> Using virtual environment 'r-wavess' ...
 #> + /home/runner/.virtualenvs/r-wavess/bin/python -m pip install --upgrade --no-user pandas
-#> Installation of pandas version 3.0.2 complete.
+#> Installation of pandas version 3.0.3 complete.
 #> Warning in create_python_venv(): Skipped installation of the following
 #> packages: numpy Use `force` to force installation or update.
 
@@ -129,6 +130,7 @@ wavess_out <- run_wavess(
 Here are various counts and mean fitness values plotted over time:
 
 ``` r
+
 wavess_out$counts |>
   pivot_longer(!generation) |>
   ggplot(aes(x = generation, y = value)) +
@@ -146,6 +148,7 @@ calculations
 [here](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004625)):
 
 ``` r
+
 gens <- gsub("gen|_.*", "", labels(wavess_out$seqs_active))
 (div_metrics <- calc_div_metrics(wavess_out$seqs_active, "founder0", gens) |>
   filter(!is.na(diversity)))
@@ -176,6 +179,7 @@ is because there is only one sampled sequence at those timepoints, so
 diversity cannot be computed.
 
 ``` r
+
 div_metrics |>
   mutate(gen = as.numeric(gen)) |>
   pivot_longer(!gen) |>
@@ -201,6 +205,7 @@ R by deleting `rearrangement = "none"`, just be prepared for it to take
 a long time to run - longer than it would take to run IQ-TREE.)
 
 ``` r
+
 seqs_active <- wavess_out$seqs_active[grepl("founder0|gen30|gen90|gen150|gen480", labels(wavess_out$seqs_active)), ]
 pml_out <- pml_bb(seqs_active,
   start = bionj(dist.dna(seqs_active, model = "TN93")),
@@ -296,6 +301,7 @@ trees that are derived from the same sampling scheme, i.e. the same
 number of samples taken at the same time points post-infection.**
 
 ``` r
+
 calc_tr_stats(tr, factor(gens, levels = c("founder0", sort(unique(as.numeric(gens))))))
 #> Warning in unique(as.numeric(gens)): NAs introduced by coercion
 #> Warning in FUN(X[[i]], ...): Generation founder0 has only one tip, cannot

@@ -38,6 +38,7 @@ First, we have to load the wavess library and a few additional libraries
 that we’ll use for this vignette:
 
 ``` r
+
 library(wavess)
 library(ape)
 library(dplyr)
@@ -64,6 +65,7 @@ is written in Python. You only have to create the virtual environment
 once on each machine.
 
 ``` r
+
 create_python_venv()
 #> Warning in create_python_venv(): Skipped installation of the following
 #> packages: numpyscipypandas Use `force` to force installation or update.
@@ -80,6 +82,7 @@ We will only simulate 300 generations with sampling every 100
 generations so the simulation doesn’t take too long to run.
 
 ``` r
+
 pop <- define_growth_curve(n_gens = 300)
 samp <- define_sampling_scheme(sampling_frequency_active = 100, sampling_frequency_latent = 100) |> filter(day <= 300)
 founder_ref <- extract_seqs(hxb2_cons_founder,
@@ -109,6 +112,7 @@ Please note that the total population size simulated greatly influences
 the simulation output.
 
 ``` r
+
 required_args_only <- run_wavess(
   inf_pop_size = pop,
   samp_scheme = samp,
@@ -130,6 +134,7 @@ fitness of the sampled viruses, and the DNA sequences of the sampled
 viruses from the active and latent reservoir:
 
 ``` r
+
 names(required_args_only)
 #> [1] "counts"      "fitness"     "seqs_active" "seqs_latent"
 ```
@@ -159,14 +164,15 @@ The counts tibble contains the following columns:
   `ref_seq`) of active cells
 
 ``` r
+
 required_args_only$counts
 #> # A tibble: 4 × 15
 #>   generation active_cell_count latent_cell_count active_turned_latent
 #>        <int>             <int>             <int>                <int>
 #> 1          0                10                 0                    0
-#> 2        100              2000               117                    0
-#> 3        200              2000               161                    1
-#> 4        300              2000               203                    1
+#> 2        100              2000               139                    3
+#> 3        200              2000               173                    1
+#> 4        300              2000               212                    1
 #> # ℹ 11 more variables: latent_turned_active <int>, latent_died <int>,
 #> #   latent_proliferated <int>, number_mutations <int>,
 #> #   number_recombinations <int>, mean_fitness_active <dbl>,
@@ -193,6 +199,7 @@ the active pool) and the following columns:
 - `overall`: overall fitness (the other three multiplied together)
 
 ``` r
+
 required_args_only$fitness
 #> # A tibble: 80 × 8
 #>    generation seq_id   b_immune t_immune conserved replicative overall immune
@@ -219,6 +226,7 @@ The sequences are returned as well, in
 Sequences from active cells:
 
 ``` r
+
 required_args_only$seqs_active
 #> 80 DNA sequences in binary format stored in a matrix.
 #> 
@@ -235,13 +243,14 @@ required_args_only$seqs_active
 #> 
 #> Base composition:
 #>     a     c     g     t 
-#> 0.370 0.164 0.222 0.243 
+#> 0.370 0.164 0.222 0.244 
 #> (Total: 120.24 kb)
 ```
 
 Sequences from latent cells:
 
 ``` r
+
 required_args_only$seqs_latent
 #> 60 DNA sequences in binary format stored in a matrix.
 #> 
@@ -258,7 +267,7 @@ required_args_only$seqs_latent
 #> 
 #> Base composition:
 #>     a     c     g     t 
-#> 0.370 0.165 0.222 0.243 
+#> 0.370 0.164 0.222 0.244 
 #> (Total: 90.18 kb)
 ```
 
@@ -317,6 +326,7 @@ these sites is 0.99 (`conserved_cost` argument).
 Here’s an example of simulating evolution with conserved sites fitness:
 
 ``` r
+
 conserved_fitness <- run_wavess(
   inf_pop_size = pop,
   samp_scheme = samp,
@@ -331,6 +341,7 @@ that it’s not always 1 (although it may sometimes be 1 depending on the
 simulation, since the output is stochastic).
 
 ``` r
+
 conserved_fitness$counts$mean_conserved_active
 #> [1] 1.000000 0.999505 1.000000 1.000000
 ```
@@ -342,6 +353,7 @@ sequence to compare each simulated sequence to. The strength of this
 fitness can be altered using the `replicative_cost` argument.
 
 ``` r
+
 ref_fitness <- run_wavess(
   inf_pop_size = pop,
   samp_scheme = samp,
@@ -353,8 +365,9 @@ ref_fitness <- run_wavess(
 Here, you can see that the mean replicative fitness is now less than 1:
 
 ``` r
+
 ref_fitness$counts$mean_replicative_active
-#> [1] 0.8520756 0.8488856 0.8468299 0.8459049
+#> [1] 0.8520756 0.8487903 0.8458284 0.8441887
 ```
 
 ### Immune fitness
@@ -384,6 +397,7 @@ and beta is the square of the amino acid edit distance to the nearest
 recognized epitope:
 
 ``` r
+
 lapply(1:5, function(x) {
   tibble(
     n_muts = factor(x),
@@ -402,6 +416,7 @@ lapply(1:5, function(x) {
 ![](run_wavess_files/figure-html/unnamed-chunk-14-1.png)
 
 ``` r
+
 immune_fitness <- run_wavess(
   inf_pop_size = pop,
   samp_scheme = samp,
@@ -414,8 +429,9 @@ The B-cell immune fitness here is now less than 1 after the immune
 system kicks in:
 
 ``` r
+
 immune_fitness$counts$mean_b_immune_active
-#> [1] 1.0000000 0.7046500 0.7099150 0.7145449
+#> [1] 1.0000000 0.7068400 0.7664070 0.7110941
 ```
 
 Please note that the model is very sensitive to the maximum antibody
@@ -438,6 +454,7 @@ the structure built in
 [`vignette("prepare_input_data")`](https://molevolepid.github.io/wavess/articles/prepare_input_data.md)):
 
 ``` r
+
 t_epitope_locations <- data.frame(
   start = c(303, 303, 345, 345, 828, 828),
   days_to_full_potency = c(4, 4, 11, 11, 4, 4),
@@ -487,6 +504,7 @@ length of the vector should be one fewer than the number of basepairs in
 the founder sequence. Here’s an example:
 
 ``` r
+
 variable_recomb <- run_wavess(
   inf_pop_size = pop,
   samp_scheme = samp,
