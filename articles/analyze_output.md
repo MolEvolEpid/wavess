@@ -214,48 +214,48 @@ pml_out <- pml_bb(seqs_active,
 #> optimize edge weights:  -8695.359 --> -8629.877 
 #> optimize rate matrix:  -8629.877 --> -8318.683 
 #> optimize invariant sites:  -8318.683 --> -8021.469 
-#> optimize free rate parameters:  -8021.469 --> -7397.918 
-#> optimize edge weights:  -7397.918 --> -7396.594 
-#> optimize rate matrix:  -7396.594 --> -7393.582 
-#> optimize invariant sites:  -7393.582 --> -7393.582 
-#> optimize free rate parameters:  -7393.582 --> -7383.328 
-#> optimize edge weights:  -7383.328 --> -7382.81 
-#> optimize rate matrix:  -7382.81 --> -7382.797 
-#> optimize invariant sites:  -7382.797 --> -7382.797 
-#> optimize free rate parameters:  -7382.797 --> -7376.082 
-#> optimize edge weights:  -7376.082 --> -7375.892 
-#> optimize rate matrix:  -7375.892 --> -7375.603 
-#> optimize invariant sites:  -7375.603 --> -7375.603 
-#> optimize free rate parameters:  -7375.603 --> -7373.518 
-#> optimize edge weights:  -7373.518 --> -7373.421 
-#> optimize rate matrix:  -7373.421 --> -7373.281 
-#> optimize invariant sites:  -7373.281 --> -7373.281 
-#> optimize free rate parameters:  -7373.281 --> -7372.963 
-#> optimize edge weights:  -7372.963 --> -7372.947 
-#> optimize rate matrix:  -7372.947 --> -7372.946 
-#> optimize invariant sites:  -7372.946 --> -7372.946 
-#> optimize free rate parameters:  -7372.946 --> -7372.847 
-#> optimize edge weights:  -7372.847 --> -7372.841 
-#> optimize rate matrix:  -7372.841 --> -7372.841 
-#> optimize invariant sites:  -7372.841 --> -7372.841 
-#> optimize free rate parameters:  -7372.841 --> -7372.813 
+#> optimize free rate parameters:  -8021.469 --> -7397.92 
+#> optimize edge weights:  -7397.92 --> -7396.593 
+#> optimize rate matrix:  -7396.593 --> -7393.581 
+#> optimize invariant sites:  -7393.581 --> -7393.581 
+#> optimize free rate parameters:  -7393.581 --> -7383.357 
+#> optimize edge weights:  -7383.357 --> -7382.831 
+#> optimize rate matrix:  -7382.831 --> -7382.817 
+#> optimize invariant sites:  -7382.817 --> -7382.817 
+#> optimize free rate parameters:  -7382.817 --> -7376.116 
+#> optimize edge weights:  -7376.116 --> -7375.929 
+#> optimize rate matrix:  -7375.929 --> -7375.647 
+#> optimize invariant sites:  -7375.647 --> -7375.647 
+#> optimize free rate parameters:  -7375.647 --> -7373.567 
+#> optimize edge weights:  -7373.567 --> -7373.467 
+#> optimize rate matrix:  -7373.467 --> -7373.318 
+#> optimize invariant sites:  -7373.318 --> -7373.318 
+#> optimize free rate parameters:  -7373.318 --> -7372.979 
+#> optimize edge weights:  -7372.979 --> -7372.961 
+#> optimize rate matrix:  -7372.961 --> -7372.96 
+#> optimize invariant sites:  -7372.96 --> -7372.96 
+#> optimize free rate parameters:  -7372.96 --> -7372.851 
+#> optimize edge weights:  -7372.851 --> -7372.845 
+#> optimize rate matrix:  -7372.845 --> -7372.844 
+#> optimize invariant sites:  -7372.844 --> -7372.844 
+#> optimize free rate parameters:  -7372.844 --> -7372.813 
 #> optimize edge weights:  -7372.813 --> -7372.811 
 #> optimize rate matrix:  -7372.811 --> -7372.811 
 #> optimize invariant sites:  -7372.811 --> -7372.811 
-#> optimize free rate parameters:  -7372.811 --> -7372.803 
-#> optimize edge weights:  -7372.803 --> -7372.802 
-#> optimize rate matrix:  -7372.802 --> -7372.802 
-#> optimize invariant sites:  -7372.802 --> -7372.802 
-#> optimize free rate parameters:  -7372.802 --> -7372.798 
-#> optimize edge weights:  -7372.798 --> -7372.798 
-#> optimize rate matrix:  -7372.798 --> -7372.798 
-#> optimize invariant sites:  -7372.798 --> -7372.798 
-#> optimize free rate parameters:  -7372.798 --> -7372.795 
-#> optimize edge weights:  -7372.795 --> -7372.795 
-#> optimize rate matrix:  -7372.795 --> -7372.795 
-#> optimize invariant sites:  -7372.795 --> -7372.795 
-#> optimize free rate parameters:  -7372.795 --> -7372.793 
-#> optimize edge weights:  -7372.793 --> -7372.793
+#> optimize free rate parameters:  -7372.811 --> -7372.802 
+#> optimize edge weights:  -7372.802 --> -7372.801 
+#> optimize rate matrix:  -7372.801 --> -7372.801 
+#> optimize invariant sites:  -7372.801 --> -7372.801 
+#> optimize free rate parameters:  -7372.801 --> -7372.798 
+#> optimize edge weights:  -7372.798 --> -7372.797 
+#> optimize rate matrix:  -7372.797 --> -7372.797 
+#> optimize invariant sites:  -7372.797 --> -7372.797 
+#> optimize free rate parameters:  -7372.797 --> -7372.795 
+#> optimize edge weights:  -7372.795 --> -7372.794 
+#> optimize rate matrix:  -7372.794 --> -7372.794 
+#> optimize invariant sites:  -7372.794 --> -7372.794 
+#> optimize free rate parameters:  -7372.794 --> -7372.793 
+#> optimize edge weights:  -7372.793 --> -7372.792
 
 tr <- root(pml_out$tree, "founder0", resolve.root = TRUE)
 gens <- gsub("gen|_.*", "", tr$tip.label)
@@ -319,7 +319,7 @@ calc_tr_stats(tr, factor(gens, levels = c("founder0", sort(unique(as.numeric(gen
 #> 4 mean_ext_bl       0.00218  
 #> 5 mean_divergence   0.00806  
 #> 6 mean_diversity    0.0171   
-#> 7 divergence_slope  0.0000524
+#> 7 divergence_slope  0.0000525
 #> 8 diversity_slope   0.0000904
 #> 9 mean_ltt         12.4
 ```
