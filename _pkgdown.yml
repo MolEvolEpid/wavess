@@ -9,6 +9,7 @@ articles:
   - run_wavess
   - analyze_output
   - python
+  - sars-cov-2_example
 reference:
 - title: Pre-processing
   contents:
