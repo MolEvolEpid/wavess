@@ -10,3 +10,5 @@
   output](https://molevolepid.github.io/wavess/articles/analyze_output.md):
 - [Running wavess in
   Python](https://molevolepid.github.io/wavess/articles/python.md):
+- [SARS-CoV-2
+  example](https://molevolepid.github.io/wavess/articles/sars-cov-2_example.md):

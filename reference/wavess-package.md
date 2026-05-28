@@ -22,16 +22,19 @@ Useful links:
 
 Authors:
 
+- Zena Lapp <zenalapp@lanl.gov>
+  ([ORCID](https://orcid.org/0000-0003-4674-2176)) \[copyright holder\]
+
 - Narmada Sambaturu <narmada.sambaturu@gmail.com>
   ([ORCID](https://orcid.org/0000-0002-2570-3699)) \[copyright holder\]
 
 Other contributors:
 
-- Kenneth Benoit ([ORCID](https://orcid.org/0000-0002-0797-564X))
-  (python install) \[copyright holder\]
+- Kenneth Benoit ([ORCID](https://orcid.org/0000-0002-0797-564X)) (code:
+  python install) \[copyright holder\]
 
-- Akitaka Matsuo ([ORCID](https://orcid.org/0000-0002-3323-6330))
-  (python install) \[copyright holder\]
+- Akitaka Matsuo ([ORCID](https://orcid.org/0000-0002-3323-6330)) (code:
+  python install) \[copyright holder\]
 
 - Johannes Gruber ([ORCID](https://orcid.org/0000-0001-9177-1772))
-  (python install) \[copyright holder\]
+  (code: python install) \[copyright holder\]

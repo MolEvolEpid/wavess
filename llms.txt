@@ -55,7 +55,8 @@ examples of how to use the model and analyze the output are hosted on
 our [website](https://molevolepid.github.io/wavess/) under the
 “Articles” tab, or if you installed them locally you can check them out
 using the [`vignette()`](https://rdrr.io/r/utils/vignette.html) command.
-Links to specific tutorials are also included below.
+Links to specific tutorials are also included below. All tutorials
+except the last one listed use the HIV-1 envelope gene as an example.
 
 - [Preparing input
   data](https://molevolepid.github.io/wavess/articles/prepare_input_data.html)  
@@ -77,6 +78,11 @@ Links to specific tutorials are also included below.
   How to run wavess using a Python script.  
   To render locally:
   [`vignette("python")`](https://molevolepid.github.io/wavess/articles/python.md)
+- [A SARS-CoV-2
+  example](https://molevolepid.github.io/wavess/articles/sars-cov-2_example.html)  
+  An example using the SARS-CoV-2 S gene instead of HIV envelope.  
+  To render locally:
+  [`vignette("sars-cov-2_example")`](https://molevolepid.github.io/wavess/articles/sars-cov-2_example.md)
 
 ## Citation
 
@@ -178,3 +184,5 @@ implemented change, or reach out to <tkl@lanl.gov>,
   output](https://molevolepid.github.io/wavess/articles/analyze_output.md):
 - [Running wavess in
   Python](https://molevolepid.github.io/wavess/articles/python.md):
+- [SARS-CoV-2
+  example](https://molevolepid.github.io/wavess/articles/sars-cov-2_example.md):

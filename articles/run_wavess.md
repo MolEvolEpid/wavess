@@ -14,7 +14,11 @@ and genomic region in mind. If you’d like to simulate something else,
 you may have to modify certain parameters. However, if you are
 interested in this gene in particular, you can probably use most of the
 defaults including the founder and reference sequences provided as
-examples.
+examples. We have also included an example of using the SARS-CoV-2 S
+gene instead of HIV in
+[`vignette("sars-cov-2_example")`](https://molevolepid.github.io/wavess/articles/sars-cov-2_example.md),
+although we recommend going through this vignette first because it is
+slightly more detailed.
 
 ## A note about using the simulation output
 
@@ -78,8 +82,8 @@ more about how to prepare the input data, please see the corresponding
 vignette (see
 [`vignette("prepare_input_data")`](https://molevolepid.github.io/wavess/articles/prepare_input_data.md)).
 
-We will only simulate 300 generations with sampling every 100
-generations so the simulation doesn’t take too long to run.
+We will only simulate 300 generations with sampling every 100 days so
+the simulation doesn’t take too long to run.
 
 ``` r
 
@@ -170,9 +174,9 @@ required_args_only$counts
 #>   generation active_cell_count latent_cell_count active_turned_latent
 #>        <int>             <int>             <int>                <int>
 #> 1          0                10                 0                    0
-#> 2        100              2000               139                    3
-#> 3        200              2000               173                    1
-#> 4        300              2000               212                    1
+#> 2        100              2000               129                    1
+#> 3        200              2000               181                    1
+#> 4        300              2000               188                    3
 #> # ℹ 11 more variables: latent_turned_active <int>, latent_died <int>,
 #> #   latent_proliferated <int>, number_mutations <int>,
 #> #   number_recombinations <int>, mean_fitness_active <dbl>,
@@ -243,7 +247,7 @@ required_args_only$seqs_active
 #> 
 #> Base composition:
 #>     a     c     g     t 
-#> 0.370 0.164 0.222 0.244 
+#> 0.371 0.164 0.222 0.243 
 #> (Total: 120.24 kb)
 ```
 
@@ -267,7 +271,7 @@ required_args_only$seqs_latent
 #> 
 #> Base composition:
 #>     a     c     g     t 
-#> 0.370 0.164 0.222 0.244 
+#> 0.371 0.164 0.222 0.243 
 #> (Total: 90.18 kb)
 ```
 
@@ -343,7 +347,7 @@ simulation, since the output is stochastic).
 ``` r
 
 conserved_fitness$counts$mean_conserved_active
-#> [1] 1.000000 0.999505 1.000000 1.000000
+#> [1] 1.000000 1.000000 1.000000 0.999505
 ```
 
 ### Replicative fitness
@@ -367,7 +371,7 @@ Here, you can see that the mean replicative fitness is now less than 1:
 ``` r
 
 ref_fitness$counts$mean_replicative_active
-#> [1] 0.8520756 0.8487903 0.8458284 0.8441887
+#> [1] 0.8520756 0.8485380 0.8458047 0.8439516
 ```
 
 ### Immune fitness
@@ -431,7 +435,7 @@ system kicks in:
 ``` r
 
 immune_fitness$counts$mean_b_immune_active
-#> [1] 1.0000000 0.7068400 0.7664070 0.7110941
+#> [1] 1.000000 0.704245 0.718424 0.708535
 ```
 
 Please note that the model is very sensitive to the maximum antibody
