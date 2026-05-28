@@ -1,0 +1,202 @@
+---
+title: "SARS-CoV-2 example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SARS-CoV-2 example}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+In this vignette, we show an example of how to modify the arguments to simulate
+SARS-CoV-2 evolution. Note that this is purely an example and we are not experts in this area, 
+so if you would like to simulate SARS-CoV-2 evolution for a research project, we would 
+recommend looking into the specific parameter values yourself.
+
+If you would like more detail about how to generate inputs or more details
+about the `run_wavess()` function, please see `vignette("prepare_input_data")`
+and `vignette("run_wavess")`, respectively. 
+
+Also note that this example requires using data from the "data-raw" folder in the package.
+You will have to update those paths to make the code run. If you want a fully
+built-in example where you don't have to change the paths, please see 
+`vignette("run_wavess")`.
+
+
+
+
+## Load libraries
+
+First, we have to load the wavess library and a few additional libraries that
+we'll use for this vignette:
+
+```{r}
+library(wavess)
+library(ape)
+library(dplyr)
+library(tibble)
+library(readr)
+library(tidyr)
+```
+
+## Create Python virtual environment
+
+Next, we must create a Python virtual environment. The virtual environment is
+required because the underlying code of `run_wavess()` is written in Python. You
+only have to create the virtual environment once on each machine.
+
+```{r}
+create_python_venv()
+```
+
+## Prepare input data
+
+Next, we must generate the input data. If you're interested in learning more
+about how to prepare the input data, please see the corresponding vignette (see
+`vignette("prepare_input_data")`).
+
+We will only simulate 60 generations with sampling every day so the
+simulation doesn't take too long to run.
+
+```{r setup}
+pop <- define_growth_curve(n_gens = 60/0.125)
+samp <- define_sampling_scheme(sampling_frequency_active = 1, sampling_frequency_latent = 0) |> filter(day <= 60)
+```
+
+Let's load in the founder sequence first:
+
+```{r}
+founder <- extract_seqs(read.dna('../data-raw/EPI_ISL_402124-S.fasta', format = 'fasta'), # you will need to update this path for it to run!
+  founder = "EPI_ISL_402124-S")
+```
+
+We will need to change the generation time, mutation rate, and recombination rate.
+
+Unlike HIV, SARS-CoV-2 has no latent reservoir, so we will 
+turn this feature off in the model.
+
+generation time - 3 hours --> 0.125 days  
+https://www.pnas.org/doi/10.1073/pnas.2406303121
+
+mutation rate - 1.5e-6 per site per generation  
+https://www.nature.com/articles/s41467-025-61555-x
+
+recombination rate - 2e-6 per site per year --> 2e-6/(365/0.125) = 6.8e-10 per site per generation  
+https://www.nature.com/articles/s41467-022-31749-8
+
+```{r}
+gen_time <- 0.125
+mut_rate <- 1.5e-6
+rec_rate <- 6.8e-10
+```
+
+
+For simplicity, we will not model conserved sites or replicative fitness, and
+we will use a Jukes Cantor model of nucleotide subtitution rather than a
+SARS-CoV-2 specific Q matrix, although these would make the simulation output 
+more realistic.
+
+```{r}
+q_mat <- matrix(c(-0.75,0.25,0.25,0.25,
+                  0.25,-0.75,0.25,0.25,
+                  0.25,0.25,-0.75,0.25,
+                  0.25,0.25,0.25,-0.75), 
+                ncol = 4)
+rownames(q_mat) <- c('A','C','G','T')
+colnames(q_mat) <- c('A','C','G','T')
+```
+
+
+To get CTL epitopes for the founder amino acid sequence, we used the IEDB T-cell prediction 
+tool for MHC class I molecules with HLA alleles A*02:01, A*01:01, B*07:02, B*08:01 
+and pMHC immunogenicity prediction, both with the default settings. We filtered
+them in the same way as we do for the HIV CTL epitopes.
+Website: https://nextgen-tools.iedb.org/pipeline?tool=tc1
+
+```{r}
+# get the amino acid sequence for use with IEDB
+founder_aa <- ape::trans(ape::as.DNAbin(strsplit(founder$founder, split = '')[[1]]))
+```
+
+
+```{r}
+ctl_epitopes <- read_tsv('../data-raw/sars-cov-2-spike_peptide_table.tsv') %>% # you will need to update this path for it to run!
+  # arrange(`netmhcpan_el percentile`)
+  filter(`netmhcpan_el percentile` < 0.1 & `immunogenicity score` > 1/90) %>% 
+    mutate(start = (start-1)*3,
+           start = ifelse(`seq #` == 1, start, start + nchar(founder_ref_pol$founder)),
+           days_to_full_potency = 1/`immunogenicity score`) %>%
+  group_by(`seq #`, peptide, start) %>%
+  summarize(days_to_full_potency = round(min(days_to_full_potency))) %>% # if multiple HLAs recognize the same epitope
+  arrange(`seq #`, start) %>%
+  rowwise() %>%
+  mutate(anchor2=strsplit(peptide, '')[[1]][2],
+         anchor9=strsplit(peptide, '')[[1]][9]) %>%
+  ungroup() %>%
+  pivot_longer(starts_with('anchor'), names_to = 'escape_position', values_to = 'recognized_aa') %>%
+  mutate(escape_position = as.numeric(gsub('anchor', '', escape_position))) %>%
+  select(-c(peptide, `seq #`))
+```
+
+We downloaded SARS-CoV-2 spike protein antibody epitopes from the LANL database and 
+used them in the same way as we use the HIV antibody epitopes.  
+Website (Spike feature download): https://cov.lanl.gov/components/sequence/COV/neutralization/download_db.comp
+
+```{r}
+antibody_epitopes <- read_tsv('../data-raw/sars-cov-2-spike-antibody-features.txt') %>% # you will need to update this path for it to run!
+  pull(Position) %>% 
+  get_epitope_frequencies() %>% 
+  sample_epitopes()
+```
+
+
+## SARS-CoV-2 simulation with `run_wavess()`
+
+
+```{r}
+spike_sim <- run_wavess(
+  inf_pop_size = pop,
+  samp_scheme = samp,
+  generation_time = gen_time,
+  mut_rate = mut_rate,
+  q = q_mat,
+  recomb_rate = rec_rate,
+  founder_seqs = rep(founder$founder, 10),
+  b_epitope_locations = antibody_epitopes,
+  t_epitope_locations = ctl_epitopes,
+  act_to_lat = 0 # no latency
+)
+```
+
+Summary:
+
+```{r}
+spike_sim$counts %>% 
+  select(-c(contains('latent'), contains('replicative'), contains('conserved'))) # not modeling these so they are uninteresting
+```
+
+Fitness:
+
+```{r}
+spike_sim$fitness
+```
+
+Sequences from active cells:
+
+```{r}
+spike_sim$seqs_active
+```
+
+If you'd like to learn more about how to analyze the output, please check out 
+the post-processing vignette `vignette("analyze_output")`.
+

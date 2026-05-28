@@ -1,0 +1,468 @@
+Antibody	Feature type	Study	Method	Position	Annotation
+10-40	contacts	Liu2022a(35438546)	Cryo-EM	369	CDRH3 contact with WA1
+10-40	contacts	Liu2022a(35438546)	Cryo-EM	371	CDRH3 contact with WA1
+10-40	contacts	Liu2022a(35438546)	Cryo-EM	377	CDRH3 contact with WA1
+10-40	contacts	Liu2022a(35438546)	Cryo-EM	378	CDRH3 and CDRL2 contact with WA1
+10-40	contacts	Liu2022a(35438546)	Cryo-EM	379	CDRH3 contact with WA1
+10-40	contacts	Liu2022a(35438546)	Cryo-EM	405	CDRH3 contact with WA1
+10-40	contacts	Liu2022a(35438546)	Cryo-EM	408	CDRH3 contact with WA1
+10-40	contacts	Liu2022a(35438546)	Cryo-EM	415	CDRH3 contact with WA1
+10-40	contacts	Liu2022a(35438546)	Cryo-EM	432	CDRH3 contact with WA1
+22.9-1	binding	Hua2023(37306579)	Binding assay,Peptide mapping	405	linear epitope coordinates 405-412
+22.9-1	binding	Hua2023(37306579)	Binding assay,Peptide mapping	406	linear epitope coordinates 405-412
+22.9-1	binding	Hua2023(37306579)	Binding assay,Peptide mapping	407	linear epitope coordinates 405-412
+22.9-1	binding	Hua2023(37306579)	Binding assay,Peptide mapping	408	linear epitope coordinates 405-412
+22.9-1	binding	Hua2023(37306579)	Binding assay,Peptide mapping	409	linear epitope coordinates 405-412
+22.9-1	binding	Hua2023(37306579)	Binding assay,Peptide mapping	410	linear epitope coordinates 405-412
+22.9-1	binding	Hua2023(37306579)	Binding assay,Peptide mapping	411	linear epitope coordinates 405-412
+22.9-1	binding	Hua2023(37306579)	Binding assay,Peptide mapping	412	linear epitope coordinates 405-412
+2-36	contacts	Wang2022g(34836485)	Cryo-EM	369	hydrogen bond with HC
+2-36	contacts	Wang2022g(34836485)	Cryo-EM	379	hydrogen bond with HC
+2-36	contacts	Wang2022g(34836485)	Cryo-EM	408	hydrogen bond with HC
+2-36	contacts	Wang2022g(34836485)	Cryo-EM	414	hydrogen bond with HC
+2-36	contacts	Wang2022g(34836485)	Cryo-EM	427	hydrogen bond with HC
+2-4	contacts	Liu2020(32698192)	Cryo-EM	453	light chain contact with RBD
+2-4	contacts	Liu2020(32698192)	Cryo-EM	455	light chain contact with RBD
+2-4	contacts	Liu2020(32698192)	Cryo-EM	456	light chain contact with RBD
+2-4	contacts	Liu2020(32698192)	Cryo-EM	481	heavy chain contact with RBD
+2-4	contacts	Liu2020(32698192)	Cryo-EM	483	heavy chain contact with RBD
+2-4	contacts	Liu2020(32698192)	Cryo-EM	484	heavy chain contact with RBD
+2-4	contacts	Liu2020(32698192)	Cryo-EM	486	light chain contact with RBD
+2-4	contacts	Liu2020(32698192)	Cryo-EM	489	light chain contact with RBD
+2-4	contacts	Liu2020(32698192)	Cryo-EM	490	heavy chain contact with RBD
+A23-58.1	contacts	Wang2021a(33655252)	X-ray crystallography	475	A23-58.1 contact
+A23-58.1	contacts	Wang2021a(33655252)	X-ray crystallography	477	A23-58.1 contact
+A23-58.1	contacts	Wang2021a(33655252)	X-ray crystallography	478	A23-58.1 contact
+A23-58.1	contacts	Wang2021a(33655252)	X-ray crystallography	487	A23-58.1 contact
+ADG20	contacts	Yuan2022(35767670)	X-ray crystallography	403	salt bridge with HC
+ADG20	contacts	Yuan2022(35767670)	X-ray crystallography	405	hydrogen bond with HC
+ADG20	contacts	Yuan2022(35767670)	X-ray crystallography	498	hydrogen bond with HC
+ADG20	contacts	Yuan2022(35767670)	X-ray crystallography	500	hydrogen bond with HC
+ADG20	contacts	Yuan2022(35767670)	X-ray crystallography	501	hydrogen bond with HC
+ADG20	contacts	Yuan2022(35767670)	X-ray crystallography	502	hydrogen bond with HC
+ADG20	contacts	Yuan2022(35767670)	X-ray crystallography	505	hydrogen bond with HC
+ADG20	neutralization	Yuan2022(35767670)	Mutational analysis,Neutralization assay	504	mutation G504D escapes neutralization by ADG20
+ADI-55688	contacts	Yuan2022(35767670)	X-ray crystallography	405	hydrogen bond with HC
+ADI-55688	contacts	Yuan2022(35767670)	X-ray crystallography	500	hydrogen bond with HC
+ADI-55688	contacts	Yuan2022(35767670)	X-ray crystallography	501	hydrogen bond with HC
+ADI-55688	contacts	Yuan2022(35767670)	X-ray crystallography	502	hydrogen bond with HC
+ADI-55688	contacts	Yuan2022(35767670)	X-ray crystallography	503	hydrogen bond with LC
+ADI-55688	contacts	Yuan2022(35767670)	X-ray crystallography	506	hydrogen bond with LC
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	346	Key residue; respectively, N/F/E/Q/D/T and Y/C/L/V/S/W/A/I/M/G mutations nearly abrogated and greatly diminished AZD1061 binding
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	406	E406W, 1 of 3 functionally viable mutations, greatly diminished AZD1061 binding
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	444	Key residue; Respectively, mutation to F or any other aa greatly diminished or abrogated AZD1061 binding
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	445	Respectively, P/G or D mutations nearly abrogated or moderately diminished AZD1061 binding
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	446	Respectively, P, L, or Y/F mutations nearly abrogated, greatly diminished, or slightly diminished AZD1061 binding
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	447	Respectively, P/H/L/D/Q/E/Y/N, V/F/I/M/T, K, or S mutations nearly abrogated, greatly diminished, moderately diminished or slightly diminished AZD1061 binding
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	448	Respectively, V/K/R/P, D/T/Y/G, or E mutations nearly abrogated, greatly diminished, or moderately diminished AZD1061 binding
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	449	Respectively, K/R, L/D, or T mutations nearly abrogated, greatly diminished, or slightly diminished AZD1061 binding
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	450	Respectively, P, T/D, or E mutations nearly abrogated, greatly diminished, or slightly diminished AZD1061 binding
+AZD1061	binding	Dong2021(34548634)	Binding assay,Mutational analysis	494	Respectively, K, R, or D mutations nearly abrogated, greatly diminished, or slightly diminished AZD1061 binding
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	345	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	346	AZD1061 contact, H-bond
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	439	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	440	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	441	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	443	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	444	AZD1061 contact, H-bond
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	445	AZD1061 contact, H-bond
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	446	AZD1061 contact, H-bond
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	447	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	449	AZD1061 contact, H-bond
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	450	AZD1061 contact, H-bond
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	452	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	484	AZD1061 contact, H-bond
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	490	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	492	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	493	AZD1061 contact, H-bond
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	494	AZD1061 contact
+AZD1061	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	499	AZD1061 contact
+AZD8895	binding	Dong2021(34548634)	Binding assay,Mutational analysis	472	Respectively, D or G mutations greatly or moderately diminished AZD8895 binding
+AZD8895	binding	Dong2021(34548634)	Binding assay,Mutational analysis	475	Respectively, D, N, or E mutations nearly abrogated, greatly diminished, or slightly diminished AZD8895 binding
+AZD8895	binding	Dong2021(34548634)	Binding assay,Mutational analysis	476	Respectively, D/E/Q/R/T/K or N/H mutations nearly abrogated or greatly diminished AZD8895 binding
+AZD8895	binding	Dong2021(34548634)	Binding assay,Mutational analysis	485	Respectively, P or D mutations nearly abrogated or greatly diminished AZD8895 binding
+AZD8895	binding	Dong2021(34548634)	Binding assay,Mutational analysis	486	Key residue; respectively, R/S/G/D/E/Q/W/K/T/P/N/A/C/H or V/I mutations nearly abrogated or slightly diminished AZD8895 binding
+AZD8895	binding	Dong2021(34548634)	Binding assay,Mutational analysis	487	Key residue; respectively, F/Y/R/E/T/K/M/D, Q, or A/S/H/L mutations nearly abrogated, greatly diminished, or slightly diminished AZD8895 binding
+AZD8895	binding	Dong2021(34548634)	Binding assay,Mutational analysis	489	All functionally viable mutations affected AZD8895 binding: W nearly abrogated binding, V greatly diminished binding, and L/I/Q/F/H/M moderately diminished binding
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	455	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	456	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	475	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	476	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	477	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	478	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	479	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	484	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	485	AZD8895 contact, interacts with hydrophobic pocket formed by HC and LC
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	486	AZD8895 contact, interacts with hydrophobic pocket formed by HC and LC
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	487	AZD8895 contact, interacts with hydrophobic pocket formed by HC and LC
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	488	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	489	AZD8895 contact
+AZD8895	contacts	Dong2021(34548634)	Molecular modeling,X-ray crystallography	493	AZD8895 contact
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	346	Respectively, E and D mutations nearly ablated and greatly diminished binding by C110
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	444	Respectively, Y/Q/A/L/G/E/V, M/I/F/W/D, and C/S mutations nearly ablated, greatly diminished, and slightly diminished binding by C110
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	446	Respectively, R/K, I/V, and E mutations greatly, moderately and slightly diminished binding by C110
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	447	Respectively, D/E/P/L and I mutations nearly ablated and slightly diminished binding by C110
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	448	Respectively, Q, R, G/P/K/D, and Y mutations completely abrogated, nearly abrogated, greatly
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	449	Respectively, V/D/E/K/P/T/L/Q, R/I/A/S and N mutations nearly abrogated, greatly diminished, and moderately diminished binding by C110
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	450	Respectively, P and T/D mutations nearly abrogated and greatly diminished binding by C110
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	452	Respectively, W/R/F/Y/K/E/S, D/T/H, N and Q mutations nearly abrogated, greatly diminished, moderately diminished and slightly diminished binding by C110
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	490	Respectively, D/E/K/A/N/R, P/S/Q, T, and G/V/C mutations nearly abrogated, greatly diminished, moderately diminished and slightly diminished binding by C110
+C110	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	494	Respectively, M/W/N/H, K/I/D/Y/V/F, R, and P mutations nearly abrogated, greatly diminished, moderately diminished and slightly diminished binding by C110
+C110	contacts	Greaney2021(34234131)	Molecular modeling	346	structural C110 contact
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	449	R/K mutations moderately diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	453	R/A/Q mutations slightly diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	455	R/P mutations slightly diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	456	G/A/R/Q/K/T mutations moderately diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	472	Respectively, W/G/D, Y, and S/K/F mutations greatly, moderately, and slightly diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	473	Y473C slightly diminished binding by C121a
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	484	D/S/Q mutations moderately diminished binding by C121 while mutation to any other aa nearly abrogated C121 binding
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	485	Respectively, P and H/R/C mutations nearly abrogated and slightly diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	486	Respectively, G and T mutations moderately and slightly diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	489	Respectively, L and I/V/Q mutations moderately and slightly diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	490	Respectively, D/I/K/Q/E/L/R/V/N and M/C/T/P/A/G/S mutations nearly abrogated and moderately diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	493	Respectively, K and R/E mutations nearly abrogated and moderately diminished binding by C121
+C121	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	494	Respectively, R/K and W mutations moderately and slightly diminished binding by C121
+C121	contacts	Greaney2021(34234131)	Molecular modeling	484	structural C121 contact
+C121	contacts	Greaney2021(34234131)	Molecular modeling	490	structural C121 contact
+C121	contacts	Greaney2021(34234131)	Molecular modeling	493	structural C121 contact
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	345	K/R mutations moderately diminished binding by C135
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	346	All viable mutations greatly diminished binding by C135
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	440	Respectively, K/L, I/F, and R/V/M mutations greatly, moderately, and slightly diminished binding by C135
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	441	L441S greatly diminished binding by C135
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	443	S443Y moderately diminished binding by C135
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	444	Respectively, W/P/F/I/E/L, D/Y/V and M/G mutations greatly, moderately, and slightly diminished binding by C135
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	445	Respectively, P and G mutations moderately and slightly diminished binding by C135
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	446	I/V mutations slightly diminished binding by C135
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	448	Respectively, R/Y/V and P/K mutations greatly and moderately diminished binding by C135
+C135	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	450	T/P mutations greatly diminished binding by C135
+C135	contacts	Greaney2021(34234131)	Molecular modeling	346	structural C135 contact
+C135	contacts	Greaney2021(34234131)	Molecular modeling	444	structural C135 contact
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	449	Y449K moderately diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	455	Respectively, R/G/W/S/H, E/F/P, A/Y/N, and T mutations nearly abrogated, greatly diminished, moderately diminished, and slightly diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	456	Respectively, A/G/C/Q/K/H/I/T/Y/R/V/L and M mutations nearly abrogated and greatly diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	472	Respectively, D, G, and K mutations nearly abrogated, greatly diminished, and moderately diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	473	Respectively, N/E and S/A/Q mutations moderately and slightly diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	484	Mutation to any other aa greatly diminished or nearly abrogated binding to C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	485	G485P nearly abrogated binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	486	Respectively, G, S, and P mutations greatly, moderately, and slightly diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	487	N487D moderately diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	489	Respectively, Q/I/L/V and M/H mutations nearly abrogated and greatly diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	490	Respectively, K/R/P/I/G/L/N/Q, V/D, M/C/E, and T mutations nearly abrogated, greatly diminished, moderately diminished and slightly diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	493	Respectively, K/T/R/I/A/C, S/D/V/F/L/G, W, and Y mutations nearly abrogated, greatly diminished, moderately diminished and slightly diminished binding by C144
+C144	binding	Greaney2021(34234131)	Binding assay,Mutational analysis	494	Respectively, P and K mutations nearly abrogated and slightly diminished binding by C144
+C144	contacts	Greaney2021(34234131)	Molecular modeling	456	structural C144 contact
+C144	contacts	Greaney2021(34234131)	Molecular modeling	484	structural C144 contact; quaternary contact
+C144	contacts	Greaney2021(34234131)	Molecular modeling	490	structural C144 contact
+C144	contacts	Greaney2021(34234131)	Molecular modeling	493	structural C144 contact
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	405	Respectively, R, K and N/E mutations nearly ablated, greatly dimininished and slightly diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	415	Respectively, G and D mutations greatly and slightly diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	417	Mutation to any aa except R nearly ablated binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	420	All functional mutations (Q/N/M/R/A/E/K/S) nearly ablated binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	421	Mutation to W/L nearly ablated binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	455	Respectively, E/R/W, N/G, and H mutations nearly ablated, greatly diminished and slightly diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	456	H/G/R/Q/A/C/K/V/T mutations nearly ablated binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	460	Respectively, K/T/L/R/I/A/F/V/M/P/E/H/S/Q, C/Y, and G mutations nearly ablated, greatly diminished and moderately diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	472	Respectively, G, D, E/S/C, and N/K/P mutations nearly ablated, greatly diminished, moderately diminished and slightly diminished binding by CB6
+CB6	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	472	Respectively, D and K mutations greatly and moderately diminished binding of LY-CoV555+CB6 cockail
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	473	Respectively, Q/I/C/V/E/S/T/L/N and M/A mutations nearly ablated and greatly diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	475	Respectively, E/R/I/Y/K/F/D/Q/M, N, and V mutations nearly ablated, greatly diminished, and moderately diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	476	Respectively, T, E/R/K, and N/Q mutations nearly ablated, greatly diminished, and slightly diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	484	Respectively, W and Y mutations moderately and slightly diminished binding by CB6
+CB6	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	484	Respectively, F/Y and W/P mutations moderately and slightly diminished binding by LY-CoV555+CB6 cocktail
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	485	G485P mutation greatly diminished binding by CB6
+CB6	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	485	G485P completely abrogated binding by LY-Cov555+CB6 cocktail
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	486	Respectively, K/G/R, C/A, and P/S/T/N/V/Q mutations greatly, moderately, and modestly diminished binding by CB6
+CB6	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	486	Respectively, P and R/T/V mutations moderately and slightly diminished binding by LY-CoV555+CB6 cocktail
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	487	Respectively, S/T/Y/A/E/K/R/D/H/L/F, G/Q and M mutations nearly ablated, greatly diminished, and slightly diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	489	V/L/Q/H/M/I/W mutations nearly ablated binding by CB6
+CB6	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	493	R/K mutations moderately diminished binding by LY-CoV555+CB6 cocktail
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	493	Respectively, R/K and V mutations moderately and slightly diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	501	Respectively, R/W and M mutations moderately and slightly diminished binding by CB6
+CB6	binding	Starr2021(33495308)	Binding assay,Mutational analysis	504	Respectively, I, C/L/V/K, M, and F/N/W/R/Q/P/D/H nearly ablated, greatly diminished, moderately diminished, and slightly diminished binding by CB6
+CB6	contacts	Starr2021(33495308)	Molecular modeling	406	CB6 contact
+CB6	contacts	Greaney2021(34234131)	Molecular modeling	417	structural CB6 contact
+CB6	contacts	Starr2021(33495308)	Molecular modeling	417	CB6 polar contacts
+CB6	contacts	Greaney2021(34234131)	Molecular modeling	460	structural CB6 contact
+CB6	contacts	Starr2021(33495308)	Molecular modeling	472	May structurally affect CB6 contact residues 473, 475, 487, and 489
+CB6	contacts	Starr2021(33495308)	Molecular modeling	473	CB6 contact
+CB6	contacts	Starr2021(33495308)	Molecular modeling	475	CB6 contact
+CB6	contacts	Greaney2021(34234131)	Molecular modeling	486	structural CB6 contact
+CB6	contacts	Greaney2021(34234131)	Molecular modeling	504	structural CB6 contact
+CB6	neutralization	Starr2021(33495308)	Mutational analysis,Neutralization assay	406	E406W modestly reduced neutralization by CB6
+CB6	neutralization	Starr2021(33495308)	Mutational analysis,Neutralization assay	417	K417N greatly diminished neutralization by CB6
+CB6	neutralization	Starr2021(33495308)	Mutational analysis,Neutralization assay	460	N460T greatly diminished neutralization by CB6
+CB6	neutralization	Starr2021(33495308)	Mutational analysis,Neutralization assay	475	A475V modestly reduced neutralization by CB6
+COV2-2130	binding	Zost2020(32668443)	Alanine scanning,Binding assay,Mutational analysis	444	K444A nearly abrograted binding of COV2-2130
+COV2-2130	binding	Zost2020(32668443)	Alanine scanning,Binding assay,Mutational analysis	447	G447R greatly diminished COV2-2130 binding
+COV2-2196	binding	Zost2020(32668443)	Alanine scanning,Binding assay	486	F486A nearly abrogated COV2-2196 binding
+COV2-2196	binding	Zost2020(32668443)	Alanine scanning,Binding assay	487	N487A nearly abrogated COV2-2196 binding
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	369	HC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	372	HC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	374	HC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	377	HC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	378	HC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	380	HC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	382	LC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	390	LC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	392	LC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	430	LC contact
+CR3022	contacts	Yuan2020(32245784)	X-ray crystallography	515	LC contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	446	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	449	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	475	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	477	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	478	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	485	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	486	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	487	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	489	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	493	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	498	hydrogen bond contact
+CV07-250	contacts	Kreye2020(33058755)	X-ray crystallography	505	hydrogen bond contact
+CV07-270	contacts	Kreye2020(33058755)	X-ray crystallography	346	hydrogen bond contact and salt bridge
+CV07-270	contacts	Kreye2020(33058755)	X-ray crystallography	349	hydrogen bond contact
+CV07-270	contacts	Kreye2020(33058755)	X-ray crystallography	444	hydrogen bond contact and salt bridge
+CV07-270	contacts	Kreye2020(33058755)	X-ray crystallography	447	hydrogen bond contact
+CV07-270	contacts	Kreye2020(33058755)	X-ray crystallography	448	hydrogen bond contact
+CV07-270	contacts	Kreye2020(33058755)	X-ray crystallography	449	hydrogen bond contact
+CV07-270	contacts	Kreye2020(33058755)	X-ray crystallography	450	hydrogen bond contact
+CV07-270	contacts	Kreye2020(33058755)	X-ray crystallography	484	hydrogen bond contact and salt bridge
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	77	heavy chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	369	heavy chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	377	light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	378	light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	379	light chain salt bridge
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	380	light chain salt bridge
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	381	heavy chain and light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	382	heavy chain and light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	383	heavy chain salt bridge and light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	384	heavy chain and light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	385	heavy chain salt bridge
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	386	heavy chain salt bridge
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	392	heavy chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	412	light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	427	light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	429	light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	482	light chain contact
+EY6A	contacts	Zhou2020(32737466)	Cryo-EM,X-ray crystallography	517	heavy chain contact
+fp.006	contacts	Bianchini2023(36701425)	X-ray crystallography	815	heavy chain contact
+fp.006	contacts	Bianchini2023(36701425)	X-ray crystallography	819	heavy chain contact
+fp.006	contacts	Bianchini2023(36701425)	X-ray crystallography	820	salt bridge and H-bond contacts with heavy chain
+fp.006	contacts	Bianchini2023(36701425)	X-ray crystallography	823	van der Waals contact with heavy and light chains
+LY-CoV1404	binding	Westendorf2022(35568025)	Binding assay,Mutational analysis	444	K444Q greatly diminished LY-CoV1404 and ACE2 binding
+LY-CoV1404	binding	Westendorf2022(35568025)	Binding assay,Mutational analysis	445	V445A greatly diminished LY-CoV1404 and ACE2 binding
+LY-CoV1404	binding	Westendorf2022(35568025)	Binding assay,Mutational analysis	446	G446V greatly diminished LY-CoV1404 and ACE2 binding
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	345	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	346	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	439	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	440	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	441	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	443	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	444	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	445	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	446	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	447	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	448	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	449	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	450	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	498	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	499	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	500	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	501	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	502	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	503	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	506	LY-CoV1404 contact
+LY-CoV1404	contacts	Westendorf2022(35568025)	Cryo-EM,X-ray crystallography	509	LY-CoV1404 contact
+LY-CoV1404	neutralization	Westendorf2022(35568025)	Mutational analysis,Neutralization assay	444	K444Q greatly diminished neutralization by LY-CoV1404 but also binding to ACE2
+LY-CoV1404	neutralization	Westendorf2022(35568025)	Mutational analysis,Neutralization assay	445	V445A greatly diminished neutralization by LY-CoV1404, but also binding to ACE2
+LY-CoV1404	neutralization	Westendorf2022(35568025)	Mutational analysis,Neutralization assay	446	G446V greatly diminished neutralization by LY-CoV1404
+LY-CoV555	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	452	Respectively, E/D/K/R and W mutations nearly abrogated and slightly diminished LY-CoV555 binding
+LY-CoV555	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	472	Respectively, W, K/D, Y and C mutations nearly abrogated, greatly diminished, moderately diminished and slightly diminished LY-CoV555 binding; Respectively, D and K mutations greatly and moderately diminished binding of LY-CoV555+LY-Cov016 cocktail
+LY-CoV555	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	483	Respectively, R, K/E/Q/D, Y/S/N and H/W mutations nearly abrogated, greatly diminished, moderately diminished and slightly diminished LY-CoV555 binding
+LY-CoV555	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	484	Mutation to any other aa except G greatly diminished or nearly abrogated LY-CoV555 binding; Respectively, F/Y and W/P mutations moderately and slightly diminished binding by LY-CoV555+LY-CoV016 cocktail
+LY-CoV555	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	485	Respectively, P, K/R/N/T/D and H mutations nearly abrogated, greatly diminished, and moderately diminished LY-CoV555 binding; G485P completely abrogated binding by LY-Cov555+LY-Cov016 cocktail
+LY-CoV555	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	486	Respectively, P/L/T/I/V and R mutations greatly and slightly diminished LY-CoV555 binding; Respectively, P and R/T/V mutations moderately and slightly diminished binding by LY-CoV555+LY-CoV016 cocktail
+LY-CoV555	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	490	Respectively, K/R/D/E/P/N/G, T/S/Q/A, and Y/H mutations nearly abrogated, greatly diminished, and slightly diminished LY-CoV555 binding
+LY-CoV555	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	493	Respectively, K/R, Y/F/W and V mutations nearly abrogated, greatly diminished, and slightly diminished LY-CoV555 binding; R/K mutations moderately diminished binding by LY-CoV555+LY-CoV016 cocktail
+LY-CoV555	binding	Starr2021a(33842902)	Binding assay,Mutational analysis	494	Respectively, R/K, P/W/D/Y, and H/N mutations nearly abrogated, greatly diminished, and slightly diminished LY-CoV555 binding
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	403	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	417	hydrogen bond and salt bridge
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	420	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	421	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	449	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	453	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	455	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	457	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	458	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	473	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	475	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	476	solvent hydrogen bond bridge
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	477	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	487	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	489	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	496	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	498	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	501	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	502	hydrogen bond
+P4A1	contacts	Guo2021(33976198)	X-ray crystallography	505	hydrogen bond and solvent hydrogen bond bridge
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	406	Respectively, E406W modestly and strongly escaped binding by REGN10933 alone and REGN10933+REGN10987 cocktail
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	417	Respectively, F/D/W/Y, E/H, and C/G mutations strongly, moderately and slightly diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	453	Respectively, K/R, A/F/M/V/H, and S mutations strongly, moderately and slightly diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	455	Respectively, E, R/G/A, W/S/N/H/C/F, and Y/P mutations nearly ablated, greatly diminished, moderately diminished and slightly diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	456	Respectively, G and A/K mutations greatly and moderately diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	472	Respectively, D and G mutations moderately and slightly diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	475	Respectively, N and K/D mutations nearly ablated and moderately diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	476	Respectively, D/E, R/K and N mutations greatly, moderately and slightly diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	484	Respectively, V/L/I/Y/F and W mutations moderately and slightly diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	485	Respectively, P and T mutations greatly and slightly diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	486	Respectively, K/D/G/S/A/P/N/T/R/E/V/Q/C, I, H, and L/M mutations nearly ablated, greatly diminished, moderately diminished and slightly diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	487	Respectively, E/F/R/Y and D/L/K/T/M mutations nearly ablated and greatly diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	489	Respectively, H/V, Q/I/L/W, and M mutations nearly ablated, greatly diminished and moderately diminished binding by REGN10933
+REGN10933	binding	Starr2021(33495308)	Binding assay,Mutational analysis	493	Respectively, D/E/Y/K/C, F/W, and H/L/R mutations greatly, moderately and slightly diminished binding by REGN10933
+REGN10933	contacts	Starr2021(33495308)	Molecular modeling	486	interacts with a REGN10933 hydrophobic pocket
+REGN10933	neutralization	Starr2021(33495308)	Mutational analysis,Neutralization assay	406	E406W moderately escaped neutralization by either REGN10933 or REGN10933+REGN10987 cocktail
+REGN10933	neutralization	Starr2021(33495308)	Mutational analysis,Neutralization assay	486	F486K greatly diminished neutralization by REGN10933
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	406	Respectively, E406W modestly and strongly escaped binding by REGN10987 and REGN10933+REGN10987 cocktail
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	439	Respectively, T, S/Y/K and L greatly, moderately and slightly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	440	Respectively, L/I, F/E, K/V/Y/T/D/M and Q nearly ablated, greatly diminished, moderately diminished, and slightly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	443	Y/N/Q mutations greatly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	444	Mutations to any aa except R nearly ablated or greatly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	445	Respectively, K, Q/E/A/P/G/S/N/C/Y/R/D/T, H/F/L/W, and M mutations completed ablated, nearly ablated, greatly diminished and moderately diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	446	Respectively, P/K/T/D/Q/V/E/R/I/H/C/N and L/S/Y/M/W/A/F mutations nearly ablated and greatly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	447	Respectively, D/N/P/F/L, V/H/E/Y/Q/T/S, C/I/M/K, and A/R mutations nearly ablated, greatly diminished, moderately diminished, and slightly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	448	Respectively, P, R/V/G/K/E/D, Q/H/C/A and T mutations nearly ablated, greatly diminished, moderately diminished, and slightly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	450	Respectively, T and P mutations nearly ablated and greatly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	498	Q498W slightly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	499	Respectively, D, R/E/C/G/S/N/Q, T/Y/H and M mutations nearly ablated, greatly diminished, moderately diminished, and slightly diminished binding by REGN10987
+REGN10987	binding	Starr2021(33495308)	Binding assay,Mutational analysis	500	T500D moderately diminished binding by REGN10987
+REGN10987	contacts	Starr2021(33495308)	Molecular modeling	444	REGN10987 contact
+REGN10987	contacts	Starr2021(33495308)	Molecular modeling	445	REGN10987 contact
+REGN10987	contacts	Starr2021(33495308)	Molecular modeling	446	REGN10987 contact
+REGN10987	contacts	Starr2021(33495308)	Molecular modeling	447	Likely affects structure of REGN10987 contact residues 444-446
+REGN10987	neutralization	Starr2021(33495308)	Mutational analysis,Neutralization assay	406	E406W moderately diminished neutralization by either REGN10987 or REGN10933+REGN10987
+REGN10987	neutralization	Starr2021(33495308)	Mutational analysis,Neutralization assay	439	N439K moderately diminished neutralization by REGN10987
+REGN10987	neutralization	Starr2021(33495308)	Mutational analysis,Neutralization assay	444	K444Q greatly reduced neutralization by REGN10987
+S2X259	contacts	Tortorici2021(34280951)	Cryo-EM	369	heavy chain contact
+S2X259	contacts	Tortorici2021(34280951)	Cryo-EM	377	heavy chain contact
+S2X259	contacts	Tortorici2021(34280951)	Cryo-EM	379	heavy chain contact
+S2X259	contacts	Tortorici2021(34280951)	Cryo-EM	390	heavy chain contact
+S2X259	contacts	Tortorici2021(34280951)	Cryo-EM	406	light chain contact
+S2X259	contacts	Tortorici2021(34280951)	Cryo-EM	408	light chain contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	333	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	334	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	335	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	337	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	339	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	340	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	341	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	343	S309 contact, glycosylation site
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	344	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	345	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	346	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	354	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	356	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	357	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	358	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	359	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	360	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	361	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	440	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	441	S309 contact
+S309	contacts	Pinto2020(32422645)	Cryo-EM,X-ray crystallography	444	S309 contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	331	contact with N331 glycan
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	520	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	554	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	556	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	558	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	560	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	561	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	562	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	577	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	580	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	581	contact
+sd1.040	contacts	Bianchini2023(36701425)	Cryo-EM	582	contact
+ShAb01	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	369	hydrogen bond; critical binding residue
+ShAb01	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	371	hydrogen bond
+ShAb01	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	375	hydrogen bond
+ShAb01	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	377	hydrogen bond
+ShAb01	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	378	hydrogen bond and salt bridge
+ShAb01	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	379	hydrogen bond
+ShAb01	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	383	hydrogen bond
+ShAb02	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	346	hydrogen bond and salt bridge; critical binding residue
+ShAb02	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	354	hydrogen bond; critical binding residue
+ShAb02	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	355	hydrogen bond
+ShAb02	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	356	critical binding residue
+ShAb02	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	357	hydrogen bond and salt bridge
+ShAb02	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	396	hydrogen bond
+ShAb02	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	450	hydrogen bond
+ShAb02	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	466	hydrogen bond and salt bridge
+ShAb02	contacts	Chen2023(36737435)	Alanine scanning,Binding assay,X-ray crystallography	470	hydrogen bond
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	449	heavy chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	453	heavy chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	455	heavy chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	475	light chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	484	heavy chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	485	heavy chain and light chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	486	heavy chain and light chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	489	heavy chain and light chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	496	heavy chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	498	heavy chain contact
+XGv-051	contacts	Wang2022d(35672388)	X-ray crystallography	501	heavy chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	345	heavy chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	346	heavy chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	439	light chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	440	heavy chain and light chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	441	heavy chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	444	heavy chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	445	heavy chain and light chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	450	heavy chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	499	light chain contact
+XGv-264	contacts	Wang2022d(35672388)	X-ray crystallography	500	light chain contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	346	HC contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	439	LC contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	442	HC contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	443	HC contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	444	HC contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	445	HC and LC contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	446	HC contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	447	HC contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	499	LC contact
+XGv-265	contacts	Wang2022e(35090164)	X-ray crystallography	509	HC contact
+XGv-282	contacts	Wang2022e(35090164)	X-ray crystallography	440	HC contact
+XGv-282	contacts	Wang2022e(35090164)	X-ray crystallography	443	HC contact
+XGv-282	contacts	Wang2022e(35090164)	X-ray crystallography	444	HC contact
+XGv-282	contacts	Wang2022e(35090164)	X-ray crystallography	445	HC and LC contact
+XGv-282	contacts	Wang2022e(35090164)	X-ray crystallography	446	HC contact
+XGv-282	contacts	Wang2022e(35090164)	X-ray crystallography	449	HC contact
+XGv-282	contacts	Wang2022e(35090164)	X-ray crystallography	452	HC contact
+XGv-282	contacts	Wang2022e(35090164)	X-ray crystallography	490	HC contact
+XGv-282	contacts	Wang2022e(35090164)	X-ray crystallography	498	LC contact
+XGv-286	contacts	Wang2022d(35672388)	X-ray crystallography	445	heavy chain contact
+XGv-286	contacts	Wang2022d(35672388)	X-ray crystallography	498	heavy chain contact
+XGv-286	contacts	Wang2022d(35672388)	X-ray crystallography	499	heavy chain contact
+XGv-286	contacts	Wang2022d(35672388)	X-ray crystallography	500	heavy chain and light chain contact
+XGv-286	contacts	Wang2022d(35672388)	X-ray crystallography	501	light chain contact
+XGv-286	contacts	Wang2022d(35672388)	X-ray crystallography	503	light chain contact
+XGv-286	contacts	Wang2022d(35672388)	X-ray crystallography	506	light chain contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	374	LC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	375	LC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	439	HC and LC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	440	HC and LC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	443	HC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	445	HC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	446	HC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	499	HC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	500	HC and LC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	502	HC and LC contact
+XGv-289	contacts	Wang2022e(35090164)	X-ray crystallography	503	LC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	455	HC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	456	HC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	473	HC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	475	HC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	476	HC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	478	HC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	485	HC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	486	HC and LC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	487	HC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	489	HC contact
+XGv-347	contacts	Wang2022e(35090164)	X-ray crystallography	493	HC contact
