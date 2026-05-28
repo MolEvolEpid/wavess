@@ -125,8 +125,7 @@ the virtual environment once on each machine.</p>
 </h2>
 <p>Next, we must generate the input data. If you’re interested in
 learning more about how to prepare the input data, please see the
-corresponding vignette (see
-<code><a href="../articles/prepare_input_data.html">vignette("prepare_input_data")</a></code>).</p>
+corresponding vignette <code><a href="../articles/prepare_input_data.html">vignette("prepare_input_data")</a></code>.</p>
 <p>We will only simulate 60 generations with sampling every day so the
 simulation doesn’t take too long to run.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -250,14 +249,14 @@ Website (Spike feature download): <a href="https://cov.lanl.gov/components/seque
 <span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>          0                10                0                     0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>          8                80                0                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         16               529                2                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         24              <span style="text-decoration: underline;">1</span>605               10                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         32              <span style="text-decoration: underline;">1</span>970                7                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>         40              <span style="text-decoration: underline;">1</span>999               13                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>         48              <span style="text-decoration: underline;">2</span>000                7                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         16               529                1                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         24              <span style="text-decoration: underline;">1</span>605               17                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         32              <span style="text-decoration: underline;">1</span>970               14                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>         40              <span style="text-decoration: underline;">1</span>999                9                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>         48              <span style="text-decoration: underline;">2</span>000               12                     0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>         56              <span style="text-decoration: underline;">2</span>000                9                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>         64              <span style="text-decoration: underline;">2</span>000               15                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>         72              <span style="text-decoration: underline;">2</span>000               19                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>         64              <span style="text-decoration: underline;">2</span>000               13                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>         72              <span style="text-decoration: underline;">2</span>000               11                     0</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 51 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: mean_fitness_active &lt;dbl&gt;, mean_b_immune_active &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   mean_t_immune_active &lt;dbl&gt;, mean_immune_active &lt;dbl&gt;</span></span></span></code></pre></div>
@@ -296,7 +295,7 @@ Website (Spike feature download): <a href="https://cov.lanl.gov/components/seque
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Base composition:</span></span>
 <span><span class="co">#&gt;     a     c     g     t </span></span>
-<span><span class="co">#&gt; 0.295 0.189 0.184 0.332 </span></span>
+<span><span class="co">#&gt; 0.295 0.189 0.185 0.332 </span></span>
 <span><span class="co">#&gt; (Total: 4.66 Mb)</span></span></code></pre></div>
 <p>If you’d like to learn more about how to analyze the output, please
 check out the post-processing vignette

@@ -61,8 +61,8 @@ create_python_venv()
 
 Next, we must generate the input data. If you’re interested in learning
 more about how to prepare the input data, please see the corresponding
-vignette (see
-[`vignette("prepare_input_data")`](https://molevolepid.github.io/wavess/articles/prepare_input_data.md)).
+vignette
+[`vignette("prepare_input_data")`](https://molevolepid.github.io/wavess/articles/prepare_input_data.md).
 
 We will only simulate 60 generations with sampling every day so the
 simulation doesn’t take too long to run.
@@ -226,14 +226,14 @@ spike_sim$counts %>%
 #>         <int>             <int>            <int>                 <int>
 #>  1          0                10                0                     0
 #>  2          8                80                0                     0
-#>  3         16               529                2                     0
-#>  4         24              1605               10                     0
-#>  5         32              1970                7                     0
-#>  6         40              1999               13                     0
-#>  7         48              2000                7                     0
+#>  3         16               529                1                     0
+#>  4         24              1605               17                     0
+#>  5         32              1970               14                     0
+#>  6         40              1999                9                     0
+#>  7         48              2000               12                     0
 #>  8         56              2000                9                     0
-#>  9         64              2000               15                     0
-#> 10         72              2000               19                     0
+#>  9         64              2000               13                     0
+#> 10         72              2000               11                     0
 #> # ℹ 51 more rows
 #> # ℹ 4 more variables: mean_fitness_active <dbl>, mean_b_immune_active <dbl>,
 #> #   mean_t_immune_active <dbl>, mean_immune_active <dbl>
@@ -280,7 +280,7 @@ spike_sim$seqs_active
 #> 
 #> Base composition:
 #>     a     c     g     t 
-#> 0.295 0.189 0.184 0.332 
+#> 0.295 0.189 0.185 0.332 
 #> (Total: 4.66 Mb)
 ```
 
