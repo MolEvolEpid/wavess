@@ -178,7 +178,7 @@ implemented change, or reach out to <tkl@lanl.gov>,
 
 - [Prepare input
   data](https://molevolepid.github.io/wavess/articles/prepare_input_data.md):
-- [Simulate within-host evolution with
+- [Simulate within-host HIV-1 evolution with
   wavess](https://molevolepid.github.io/wavess/articles/run_wavess.md):
 - [Analyze wavess
   output](https://molevolepid.github.io/wavess/articles/analyze_output.md):

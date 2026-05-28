@@ -39,7 +39,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/prepare_input_data.html">Prepare input data</a></li>
-    <li><a class="dropdown-item" href="../articles/run_wavess.html">Simulate within-host evolution with wavess</a></li>
+    <li><a class="dropdown-item" href="../articles/run_wavess.html">Simulate within-host HIV-1 evolution with wavess</a></li>
     <li><a class="dropdown-item" href="../articles/analyze_output.html">Analyze wavess output</a></li>
     <li><a class="dropdown-item" href="../articles/python.html">Running wavess in Python</a></li>
     <li><a class="dropdown-item" href="../articles/sars-cov-2_example.html">SARS-CoV-2 example</a></li>
@@ -73,15 +73,17 @@
 
     
     
-<p>In this vignette, we show an example of how to modify the arguments
-to simulate SARS-CoV-2 S gene evolution. Note that this is purely an
+<p>All other examples on this website are using the HIV-1 envelope gene.
+In this vignette, we show an example of how to modify the arguments to
+simulate SARS-CoV-2 S gene evolution. Note that this is purely an
 example and we are not experts in this area, so if you would like to
 simulate SARS-CoV-2 evolution for a research project, we would recommend
 looking into the specific parameter values yourself.</p>
 <p>If you would like more detail about how to generate inputs or more
 details about the <code><a href="../reference/run_wavess.html">run_wavess()</a></code> function, please see
 <code><a href="../articles/prepare_input_data.html">vignette("prepare_input_data")</a></code> and
-<code><a href="../articles/run_wavess.html">vignette("run_wavess")</a></code>, respectively.</p>
+<code><a href="../articles/run_wavess.html">vignette("run_wavess")</a></code>, respectively. In fact, we would
+recommend starting there.</p>
 <div class="section level2">
 <h2 id="load-libraries">Load libraries<a class="anchor" aria-label="anchor" href="#load-libraries"></a>
 </h2>
@@ -140,9 +142,9 @@ simulation doesn’t take too long to run.</p>
 recombination rate.</p>
 <p>Unlike HIV, SARS-CoV-2 has no latent reservoir, so we will turn this
 feature off in the model.</p>
-<p>generation time - 3 hours –&gt; 0.125 days<br><a href="https://www.pnas.org/doi/10.1073/pnas.2406303121" class="external-link uri">https://www.pnas.org/doi/10.1073/pnas.2406303121</a></p>
-<p>mutation rate - 1.5e-6 per site per generation<br><a href="https://www.nature.com/articles/s41467-025-61555-x" class="external-link uri">https://www.nature.com/articles/s41467-025-61555-x</a></p>
-<p>recombination rate - 2e-6 per site per year –&gt; 2e-6/(365/0.125) =
+<p>Generation time - 3 hours –&gt; 0.125 days<br><a href="https://www.pnas.org/doi/10.1073/pnas.2406303121" class="external-link uri">https://www.pnas.org/doi/10.1073/pnas.2406303121</a></p>
+<p>Mutation rate - 1.5e-6 per site per generation<br><a href="https://www.nature.com/articles/s41467-025-61555-x" class="external-link uri">https://www.nature.com/articles/s41467-025-61555-x</a></p>
+<p>Recombination rate - 2e-6 per site per year –&gt; 2e-6/(365/0.125) =
 6.8e-10 per site per generation<br><a href="https://www.nature.com/articles/s41467-022-31749-8" class="external-link uri">https://www.nature.com/articles/s41467-022-31749-8</a></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gen_time</span> <span class="op">&lt;-</span> <span class="fl">0.125</span></span>
@@ -248,14 +250,14 @@ Website (Spike feature download): <a href="https://cov.lanl.gov/components/seque
 <span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>          0                10                0                     0</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>          8                80                0                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         16               529                0                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         24              <span style="text-decoration: underline;">1</span>605               15                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         32              <span style="text-decoration: underline;">1</span>970               12                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>         40              <span style="text-decoration: underline;">1</span>999                9                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>         48              <span style="text-decoration: underline;">2</span>000                9                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>         56              <span style="text-decoration: underline;">2</span>000               10                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>         64              <span style="text-decoration: underline;">2</span>000                6                     0</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>         72              <span style="text-decoration: underline;">2</span>000                9                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>         16               529                2                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>         24              <span style="text-decoration: underline;">1</span>605               10                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>         32              <span style="text-decoration: underline;">1</span>970                7                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>         40              <span style="text-decoration: underline;">1</span>999               13                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>         48              <span style="text-decoration: underline;">2</span>000                7                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>         56              <span style="text-decoration: underline;">2</span>000                9                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>         64              <span style="text-decoration: underline;">2</span>000               15                     0</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>         72              <span style="text-decoration: underline;">2</span>000               19                     0</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 51 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 4 more variables: mean_fitness_active &lt;dbl&gt;, mean_b_immune_active &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   mean_t_immune_active &lt;dbl&gt;, mean_immune_active &lt;dbl&gt;</span></span></span></code></pre></div>
@@ -294,7 +296,7 @@ Website (Spike feature download): <a href="https://cov.lanl.gov/components/seque
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Base composition:</span></span>
 <span><span class="co">#&gt;     a     c     g     t </span></span>
-<span><span class="co">#&gt; 0.295 0.189 0.184 0.333 </span></span>
+<span><span class="co">#&gt; 0.295 0.189 0.184 0.332 </span></span>
 <span><span class="co">#&gt; (Total: 4.66 Mb)</span></span></code></pre></div>
 <p>If you’d like to learn more about how to analyze the output, please
 check out the post-processing vignette

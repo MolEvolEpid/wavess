@@ -1,6 +1,7 @@
 # SARS-CoV-2 example
 
-In this vignette, we show an example of how to modify the arguments to
+All other examples on this website are using the HIV-1 envelope gene. In
+this vignette, we show an example of how to modify the arguments to
 simulate SARS-CoV-2 S gene evolution. Note that this is purely an
 example and we are not experts in this area, so if you would like to
 simulate SARS-CoV-2 evolution for a research project, we would recommend
@@ -13,7 +14,7 @@ function, please see
 [`vignette("prepare_input_data")`](https://molevolepid.github.io/wavess/articles/prepare_input_data.md)
 and
 [`vignette("run_wavess")`](https://molevolepid.github.io/wavess/articles/run_wavess.md),
-respectively.
+respectively. In fact, we would recommend starting there.
 
 ## Load libraries
 
@@ -88,13 +89,13 @@ recombination rate.
 Unlike HIV, SARS-CoV-2 has no latent reservoir, so we will turn this
 feature off in the model.
 
-generation time - 3 hours –\> 0.125 days  
+Generation time - 3 hours –\> 0.125 days  
 <https://www.pnas.org/doi/10.1073/pnas.2406303121>
 
-mutation rate - 1.5e-6 per site per generation  
+Mutation rate - 1.5e-6 per site per generation  
 <https://www.nature.com/articles/s41467-025-61555-x>
 
-recombination rate - 2e-6 per site per year –\> 2e-6/(365/0.125) =
+Recombination rate - 2e-6 per site per year –\> 2e-6/(365/0.125) =
 6.8e-10 per site per generation  
 <https://www.nature.com/articles/s41467-022-31749-8>
 
@@ -225,14 +226,14 @@ spike_sim$counts %>%
 #>         <int>             <int>            <int>                 <int>
 #>  1          0                10                0                     0
 #>  2          8                80                0                     0
-#>  3         16               529                0                     0
-#>  4         24              1605               15                     0
-#>  5         32              1970               12                     0
-#>  6         40              1999                9                     0
-#>  7         48              2000                9                     0
-#>  8         56              2000               10                     0
-#>  9         64              2000                6                     0
-#> 10         72              2000                9                     0
+#>  3         16               529                2                     0
+#>  4         24              1605               10                     0
+#>  5         32              1970                7                     0
+#>  6         40              1999               13                     0
+#>  7         48              2000                7                     0
+#>  8         56              2000                9                     0
+#>  9         64              2000               15                     0
+#> 10         72              2000               19                     0
 #> # ℹ 51 more rows
 #> # ℹ 4 more variables: mean_fitness_active <dbl>, mean_b_immune_active <dbl>,
 #> #   mean_t_immune_active <dbl>, mean_immune_active <dbl>
@@ -279,7 +280,7 @@ spike_sim$seqs_active
 #> 
 #> Base composition:
 #>     a     c     g     t 
-#> 0.295 0.189 0.184 0.333 
+#> 0.295 0.189 0.184 0.332 
 #> (Total: 4.66 Mb)
 ```
 
