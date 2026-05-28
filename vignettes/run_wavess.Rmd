@@ -72,7 +72,7 @@ Next, we must generate the input data. If you're interested in learning more
 about how to prepare the input data, please see the corresponding vignette (see
 `vignette("prepare_input_data")`).
 
-We will only simulate 300 generations with sampling every 100 generations so the
+We will only simulate 300 generations with sampling every 100 days so the
 simulation doesn't take too long to run.
 
 ```{r setup}
