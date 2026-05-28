@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 ```
 
 
+All other examples on this website are using the HIV-1 envelope gene.
 In this vignette, we show an example of how to modify the arguments to simulate
 SARS-CoV-2 S gene evolution. Note that this is purely an example and we are not experts in this area, 
 so if you would like to simulate SARS-CoV-2 evolution for a research project, we would 
@@ -25,7 +26,8 @@ recommend looking into the specific parameter values yourself.
 
 If you would like more detail about how to generate inputs or more details
 about the `run_wavess()` function, please see `vignette("prepare_input_data")`
-and `vignette("run_wavess")`, respectively. 
+and `vignette("run_wavess")`, respectively. In fact, we would recommend starting
+there. 
 
 
 ## Load libraries
@@ -80,13 +82,13 @@ We will need to change the generation time, mutation rate, and recombination rat
 Unlike HIV, SARS-CoV-2 has no latent reservoir, so we will 
 turn this feature off in the model.
 
-generation time - 3 hours --> 0.125 days  
+Generation time - 3 hours --> 0.125 days  
 https://www.pnas.org/doi/10.1073/pnas.2406303121
 
-mutation rate - 1.5e-6 per site per generation  
+Mutation rate - 1.5e-6 per site per generation  
 https://www.nature.com/articles/s41467-025-61555-x
 
-recombination rate - 2e-6 per site per year --> 2e-6/(365/0.125) = 6.8e-10 per site per generation  
+Recombination rate - 2e-6 per site per year --> 2e-6/(365/0.125) = 6.8e-10 per site per generation  
 https://www.nature.com/articles/s41467-022-31749-8
 
 ```{r}

@@ -1,5 +1,5 @@
 ---
-title: "Simulate within-host evolution with wavess"
+title: "Simulate within-host HIV-1 evolution with wavess"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Simulate within-host evolution with wavess}
