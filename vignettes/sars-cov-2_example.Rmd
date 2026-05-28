@@ -57,8 +57,8 @@ create_python_venv()
 ## Prepare input data
 
 Next, we must generate the input data. If you're interested in learning more
-about how to prepare the input data, please see the corresponding vignette (see
-`vignette("prepare_input_data")`).
+about how to prepare the input data, please see the corresponding vignette
+`vignette("prepare_input_data")`.
 
 We will only simulate 60 generations with sampling every day so the
 simulation doesn't take too long to run.
