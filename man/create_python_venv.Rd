@@ -25,7 +25,7 @@ collections), numpy, scipy, and pandas.
 The function checks whether a suitable installation of Python is
 present on the system and installs one via \code{\link[reticulate:install_python]{reticulate::install_python()}}
 otherwise. It then creates a virtual environment with the necessary
-packages in the default location chosen by \code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_root()}}.
+packages in the default location chosen by \code{\link[reticulate:virtualenv_root]{reticulate::virtualenv_root()}}.
 
 If you want to install a different version of Python than the default, you
 should call \code{\link[reticulate:install_python]{reticulate::install_python()}} directly. If you want to create

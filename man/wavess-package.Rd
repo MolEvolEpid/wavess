@@ -24,14 +24,15 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Zena Lapp \email{zenalapp@lanl.gov} (\href{https://orcid.org/0000-0003-4674-2176}{ORCID}) [copyright holder]
   \item Narmada Sambaturu \email{narmada.sambaturu@gmail.com} (\href{https://orcid.org/0000-0002-2570-3699}{ORCID}) [copyright holder]
 }
 
 Other contributors:
 \itemize{
-  \item Kenneth Benoit (\href{https://orcid.org/0000-0002-0797-564X}{ORCID}) (python install) [copyright holder]
-  \item Akitaka Matsuo (\href{https://orcid.org/0000-0002-3323-6330}{ORCID}) (python install) [copyright holder]
-  \item Johannes Gruber (\href{https://orcid.org/0000-0001-9177-1772}{ORCID}) (python install) [copyright holder]
+  \item Kenneth Benoit (\href{https://orcid.org/0000-0002-0797-564X}{ORCID}) (code: python install) [copyright holder]
+  \item Akitaka Matsuo (\href{https://orcid.org/0000-0002-3323-6330}{ORCID}) (code: python install) [copyright holder]
+  \item Johannes Gruber (\href{https://orcid.org/0000-0001-9177-1772}{ORCID}) (code: python install) [copyright holder]
 }
 
 }
