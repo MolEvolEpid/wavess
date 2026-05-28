@@ -73,7 +73,8 @@ envelope gene as an example.
   To render locally: `vignette("prepare_input_data")`
 - [Running
   wavess](https://molevolepid.github.io/wavess/articles/run_wavess.html)  
-  How to run the wavess algorithm.  
+  How to run the wavess algorithm using the HIV-1 envelope gene as an
+  example.  
   To render locally: `vignette("run_wavess")`
 - [Analyzing the
   output](https://molevolepid.github.io/wavess/articles/analyze_output.html)  
