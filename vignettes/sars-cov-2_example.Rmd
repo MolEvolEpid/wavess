@@ -19,20 +19,13 @@ knitr::opts_chunk$set(
 
 
 In this vignette, we show an example of how to modify the arguments to simulate
-SARS-CoV-2 evolution. Note that this is purely an example and we are not experts in this area, 
+SARS-CoV-2 S gene evolution. Note that this is purely an example and we are not experts in this area, 
 so if you would like to simulate SARS-CoV-2 evolution for a research project, we would 
 recommend looking into the specific parameter values yourself.
 
 If you would like more detail about how to generate inputs or more details
 about the `run_wavess()` function, please see `vignette("prepare_input_data")`
 and `vignette("run_wavess")`, respectively. 
-
-Also note that this example requires using data from the "data-raw" folder in the package.
-You will have to update those paths to make the code run. If you want a fully
-built-in example where you don't have to change the paths, please see 
-`vignette("run_wavess")`.
-
-
 
 
 ## Load libraries
@@ -76,7 +69,8 @@ samp <- define_sampling_scheme(sampling_frequency_active = 1, sampling_frequency
 Let's load in the founder sequence first:
 
 ```{r}
-founder <- extract_seqs(read.dna('../data-raw/EPI_ISL_402124-S.fasta', format = 'fasta'), # you will need to update this path for it to run!
+fa_file <- system.file("extdata", "EPI_ISL_402124-S.fasta", package = "wavess")
+founder <- extract_seqs(read.dna(fa_file, format = 'fasta'), 
   founder = "EPI_ISL_402124-S")
 ```
 
@@ -130,7 +124,8 @@ founder_aa <- ape::trans(ape::as.DNAbin(strsplit(founder$founder, split = '')[[1
 
 
 ```{r}
-ctl_epitopes <- read_tsv('../data-raw/sars-cov-2-spike_peptide_table.tsv') %>% # you will need to update this path for it to run!
+peptide_table_file <- system.file("extdata", "sars-cov-2-spike_peptide_table.tsv", package = "wavess")
+ctl_epitopes <- read_tsv(peptide_table_file) %>% 
   # arrange(`netmhcpan_el percentile`)
   filter(`netmhcpan_el percentile` < 0.1 & `immunogenicity score` > 1/90) %>% 
     mutate(start = (start-1)*3,
@@ -153,7 +148,8 @@ used them in the same way as we use the HIV antibody epitopes.
 Website (Spike feature download): https://cov.lanl.gov/components/sequence/COV/neutralization/download_db.comp
 
 ```{r}
-antibody_epitopes <- read_tsv('../data-raw/sars-cov-2-spike-antibody-features.txt') %>% # you will need to update this path for it to run!
+antibody_file <- system.file("extdata", "sars-cov-2-spike-antibody-features.txt", package = "wavess")
+antibody_epitopes <- read_tsv(antibody_file) %>% 
   pull(Position) %>% 
   get_epitope_frequencies() %>% 
   sample_epitopes()

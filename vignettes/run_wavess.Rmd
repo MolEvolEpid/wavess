@@ -28,7 +28,10 @@ Please note that the default arguments were set with this particular organism
 and genomic region in mind. If you'd like to simulate something else, you may
 have to modify certain parameters. However, if you are interested in this gene
 in particular, you can probably use most of the defaults including the founder
-and reference sequences provided as examples.
+and reference sequences provided as examples. We have also included an example
+of using the SARS-CoV-2 S gene instead of HIV in `vignette("sars-cov-2_example")`,
+although we recommend going through this vignette first because it is slightly
+more detailed.
 
 ## A note about using the simulation output
 
