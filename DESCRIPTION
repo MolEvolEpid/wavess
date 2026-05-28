@@ -18,7 +18,6 @@ Description: Simulates within-host virus sequence evolution. Optionally includes
 License: file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Suggests: 
     ggplot2,
     ggtree,
@@ -43,3 +42,4 @@ VignetteBuilder: knitr
 SystemRequirements: python, numpy
 URL: https://molevolepid.github.io/wavess/, https://github.com/MolEvolEpid/wavess
 BugReports: https://github.com/MolEvolEpid/wavess/issues
+Config/roxygen2/version: 8.0.0

@@ -16,7 +16,7 @@ tips, you must drop them from the tree prior to using this function.}
 
 \item{bl_thresh}{Branch length threshold under which branches are collapsed
 to prior to calculations (default: 1e-08). This is the \code{tol} argument in
-\code{\link[ape:multi2di]{ape::di2multi()}}.}
+\code{\link[ape:di2multi]{ape::di2multi()}}.}
 }
 \value{
 Tibble including tree summary statistics:

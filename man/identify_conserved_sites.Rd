@@ -14,7 +14,7 @@ identify_conserved_sites(
 }
 \arguments{
 \item{aln}{Alignment in \link[ape:DNAbin]{ape::DNAbin} format (e.g. read in with
-\code{\link[ape:read.dna]{ape::read.dna()}} or \code{\link[ape:read.dna]{ape::read.FASTA()}}) that includes the founder
+\code{\link[ape:read.dna]{ape::read.dna()}} or \code{\link[ape:read.FASTA]{ape::read.FASTA()}}) that includes the founder
 sequence or a reference sequence, plus a representative set of sequences
 for your genome region of interest}
 
