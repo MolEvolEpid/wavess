@@ -62,7 +62,9 @@ define_sampling_scheme <- function(sampling_frequency_active = 365,
     n_sample_active = ifelse(.data$day %% sampling_frequency_active == 0, max_samp_active, 0),
     n_sample_latent = ifelse(.data$day %% sampling_frequency_latent == 0, max_samp_latent, 0)
   ) |>
-    dplyr::mutate(n_sample_active = ifelse(is.na(.data$n_sample_active), 0, .data$n_sample_active),
-           n_sample_latent = ifelse(is.na(.data$n_sample_latent), 0, .data$n_sample_latent)) |>
+    dplyr::mutate(
+      n_sample_active = ifelse(is.na(.data$n_sample_active), 0, .data$n_sample_active),
+      n_sample_latent = ifelse(is.na(.data$n_sample_latent), 0, .data$n_sample_latent)
+    ) |>
     dplyr::filter(.data$n_sample_active != 0 | .data$n_sample_latent != 0)
 }

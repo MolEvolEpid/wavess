@@ -62,7 +62,7 @@ We will only simulate 60 generations with sampling every day so the
 simulation doesn't take too long to run.
 
 ```{r setup}
-pop <- define_growth_curve(n_gens = 60/0.125)
+pop <- define_growth_curve(n_gens = 60 / 0.125)
 samp <- define_sampling_scheme(sampling_frequency_active = 1, sampling_frequency_latent = 0) |> filter(day <= 60)
 ```
 
@@ -70,8 +70,9 @@ Let's load in the founder sequence first:
 
 ```{r}
 fa_file <- system.file("extdata", "EPI_ISL_402124-S.fasta", package = "wavess")
-founder <- extract_seqs(read.dna(fa_file, format = 'fasta'), 
-  founder = "EPI_ISL_402124-S")
+founder <- extract_seqs(read.dna(fa_file, format = "fasta"),
+  founder = "EPI_ISL_402124-S"
+)
 ```
 
 We will need to change the generation time, mutation rate, and recombination rate.
@@ -101,13 +102,17 @@ SARS-CoV-2 specific Q matrix, although these would make the simulation output
 more realistic.
 
 ```{r}
-q_mat <- matrix(c(-0.75,0.25,0.25,0.25,
-                  0.25,-0.75,0.25,0.25,
-                  0.25,0.25,-0.75,0.25,
-                  0.25,0.25,0.25,-0.75), 
-                ncol = 4)
-rownames(q_mat) <- c('A','C','G','T')
-colnames(q_mat) <- c('A','C','G','T')
+q_mat <- matrix(
+  c(
+    -0.75, 0.25, 0.25, 0.25,
+    0.25, -0.75, 0.25, 0.25,
+    0.25, 0.25, -0.75, 0.25,
+    0.25, 0.25, 0.25, -0.75
+  ),
+  ncol = 4
+)
+rownames(q_mat) <- c("A", "C", "G", "T")
+colnames(q_mat) <- c("A", "C", "G", "T")
 ```
 
 
@@ -119,27 +124,31 @@ Website: https://nextgen-tools.iedb.org/pipeline?tool=tc1
 
 ```{r}
 # get the amino acid sequence for use with IEDB
-founder_aa <- ape::trans(ape::as.DNAbin(strsplit(founder$founder, split = '')[[1]]))
+founder_aa <- ape::trans(ape::as.DNAbin(strsplit(founder$founder, split = "")[[1]]))
 ```
 
 
 ```{r}
 peptide_table_file <- system.file("extdata", "sars-cov-2-spike_peptide_table.tsv", package = "wavess")
-ctl_epitopes <- read_tsv(peptide_table_file) %>% 
+ctl_epitopes <- read_tsv(peptide_table_file) %>%
   # arrange(`netmhcpan_el percentile`)
-  filter(`netmhcpan_el percentile` < 0.1 & `immunogenicity score` > 1/90) %>% 
-    mutate(start = (start-1)*3,
-           start = ifelse(`seq #` == 1, start, start + nchar(founder_ref_pol$founder)),
-           days_to_full_potency = 1/`immunogenicity score`) %>%
+  filter(`netmhcpan_el percentile` < 0.1 & `immunogenicity score` > 1 / 90) %>%
+  mutate(
+    start = (start - 1) * 3,
+    start = ifelse(`seq #` == 1, start, start + nchar(founder_ref_pol$founder)),
+    days_to_full_potency = 1 / `immunogenicity score`
+  ) %>%
   group_by(`seq #`, peptide, start) %>%
   summarize(days_to_full_potency = round(min(days_to_full_potency))) %>% # if multiple HLAs recognize the same epitope
   arrange(`seq #`, start) %>%
   rowwise() %>%
-  mutate(anchor2=strsplit(peptide, '')[[1]][2],
-         anchor9=strsplit(peptide, '')[[1]][9]) %>%
+  mutate(
+    anchor2 = strsplit(peptide, "")[[1]][2],
+    anchor9 = strsplit(peptide, "")[[1]][9]
+  ) %>%
   ungroup() %>%
-  pivot_longer(starts_with('anchor'), names_to = 'escape_position', values_to = 'recognized_aa') %>%
-  mutate(escape_position = as.numeric(gsub('anchor', '', escape_position))) %>%
+  pivot_longer(starts_with("anchor"), names_to = "escape_position", values_to = "recognized_aa") %>%
+  mutate(escape_position = as.numeric(gsub("anchor", "", escape_position))) %>%
   select(-c(peptide, `seq #`))
 ```
 
@@ -149,9 +158,9 @@ Website (Spike feature download): https://cov.lanl.gov/components/sequence/COV/n
 
 ```{r}
 antibody_file <- system.file("extdata", "sars-cov-2-spike-antibody-features.txt", package = "wavess")
-antibody_epitopes <- read_tsv(antibody_file) %>% 
-  pull(Position) %>% 
-  get_epitope_frequencies() %>% 
+antibody_epitopes <- read_tsv(antibody_file) %>%
+  pull(Position) %>%
+  get_epitope_frequencies() %>%
   sample_epitopes()
 ```
 
@@ -177,8 +186,8 @@ spike_sim <- run_wavess(
 Summary:
 
 ```{r}
-spike_sim$counts %>% 
-  select(-c(contains('latent'), contains('replicative'), contains('conserved'))) # not modeling these so they are uninteresting
+spike_sim$counts %>%
+  select(-c(contains("latent"), contains("replicative"), contains("conserved"))) # not modeling these so they are uninteresting
 ```
 
 Fitness:
