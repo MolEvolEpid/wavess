@@ -47,7 +47,7 @@ details about running `wavess`, including a tutorial, please visit our website:
 For more details about the model, please check out the [original
 paper](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1013437)
 and the [paper describing the CTL
-response](https://www.biorxiv.org/content/10.64898/2026.02.19.706869v2).
+response](https://academic.oup.com/bioinformaticsadvances/article/6/1/vbag174/8711486).
 
 
 ## Installation
@@ -111,7 +111,7 @@ If you model the CTL response or use the variable recombination rate
 feature, please also cite:  
 [wavess 1.2: Presenting an HLA-aware
 within-host virus sequence simulation
-framework](https://www.biorxiv.org/content/10.64898/2026.02.19.706869v2)
+framework](https://academic.oup.com/bioinformaticsadvances/article/6/1/vbag174/8711486)
 
 You can also see the citations using the following command in R:
 
