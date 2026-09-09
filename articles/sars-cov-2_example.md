@@ -226,14 +226,14 @@ spike_sim$counts %>%
 #>         <int>             <int>            <int>                 <int>
 #>  1          0                10                0                     0
 #>  2          8                80                0                     0
-#>  3         16               529                0                     0
-#>  4         24              1605               10                     0
-#>  5         32              1970                9                     0
-#>  6         40              1999                9                     0
-#>  7         48              2000               13                     0
-#>  8         56              2000                3                     0
-#>  9         64              2000               11                     0
-#> 10         72              2000                9                     0
+#>  3         16               529                3                     0
+#>  4         24              1605                6                     0
+#>  5         32              1970               12                     0
+#>  6         40              1999               16                     0
+#>  7         48              2000               11                     0
+#>  8         56              2000               14                     0
+#>  9         64              2000                8                     0
+#> 10         72              2000               13                     0
 #> # ℹ 51 more rows
 #> # ℹ 4 more variables: mean_fitness_active <dbl>, mean_b_immune_active <dbl>,
 #> #   mean_t_immune_active <dbl>, mean_immune_active <dbl>
@@ -280,7 +280,7 @@ spike_sim$seqs_active
 #> 
 #> Base composition:
 #>     a     c     g     t 
-#> 0.294 0.189 0.184 0.332 
+#> 0.295 0.189 0.184 0.333 
 #> (Total: 4.66 Mb)
 ```
 
